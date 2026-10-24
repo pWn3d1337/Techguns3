@@ -10,6 +10,8 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import techguns.Techguns;
 import techguns.client.gun.ClientGunController;
+import techguns.client.gun.GunAmmoDecorator;
+import techguns.client.particle.ClientFx;
 import techguns.client.render.entity.BeamProjectileRenderer;
 import techguns.client.render.entity.GenericProjectileRenderer;
 import techguns.client.render.entity.RocketProjectileRenderer;
@@ -29,8 +31,10 @@ public class TechgunsClient {
         modEventBus.addListener(TechgunsClient::registerEntityRenderers);
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
+        modEventBus.addListener(GunAmmoDecorator::register);
 
         ClientGunController.init(NeoForge.EVENT_BUS);
+        ClientFx.init(modEventBus, NeoForge.EVENT_BUS);
         RenderingEntityTracker.init(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(TGDebugCommands::register);
     }

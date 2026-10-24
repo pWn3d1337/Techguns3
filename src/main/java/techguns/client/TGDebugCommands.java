@@ -1,11 +1,17 @@
 package techguns.client;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
+import techguns.client.particle.ClientFx;
+import techguns.client.particle.TGParticleManager;
+import techguns.client.render.entity.RenderLateEntityRenderer;
 
 /**
  * Development-only client commands for automated testing (agents can't hold the mouse button via MCP).
@@ -56,6 +62,26 @@ public final class TGDebugCommands {
                 .then(Commands.literal("zoom")
                         .executes(ctx -> {
                             ClientGunController.get().toggleZoomForHeldGun();
+                            return 1;
+                        }))
+                .then(Commands.literal("fx")
+                        .then(Commands.argument("name", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    // spawns a particle system where the crosshair hits, bypassing the network
+                                    Minecraft mc = Minecraft.getInstance();
+                                    if (mc.level == null || mc.hitResult == null) {
+                                        return 0;
+                                    }
+                                    Vec3 pos = mc.hitResult.getLocation();
+                                    String name = StringArgumentType.getString(ctx, "name");
+                                    ClientFx.createFX(name, mc.level, pos.x, pos.y, pos.z, 0, 0, 0, 0f, 0f, 1.0f);
+                                    ctx.getSource().sendSystemMessage(Component.literal("Spawned " + name + " at " + pos));
+                                    return 1;
+                                })))
+                .then(Commands.literal("fxstats")
+                        .executes(ctx -> {
+                            ctx.getSource().sendSystemMessage(Component.literal(TGParticleManager.get().debugStats()
+                                    + " " + RenderLateEntityRenderer.debugStats()));
                             return 1;
                         })));
     }

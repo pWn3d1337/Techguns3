@@ -10,7 +10,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 |---|---|
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
-| 2 — Gun framework | in progress (3 guns working; FX particle system and late render pass open) |
+| 2 — Gun framework | in progress (3 guns working with FX; death effects open) |
 | 3 — All guns, ammo, grenades, tools | — |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
@@ -54,5 +54,5 @@ Per-item tables (guns, ammo, armor, blocks, machines, NPCs, structures) are adde
 | Gun item render pipeline (GunRenderer abstraction, RenderGunBase/90, GunAnimation, muzzle FX) | F | rendered | |
 | FX render types + `particle_alpha` core shader | F | rendered | port of Fabric TGRenderHelper |
 | Projectile renderers (bullet, beam, rocket) | F | rendered | Fabric "late" render pass not ported yet |
-| Impact FX / Techguns particle system | F | — | vanilla block particles as placeholder |
+| Techguns particle system, FX payloads, late render pass (bullet/laser impacts, rocket exhaust + explosion) | F | rendered | `/tgdebug fx <name>` spawns an FX at the crosshair |
 | Dev test hooks: `/tgdebug fire`, `projectiles`, `slowbeams`, `zoom` | — | done | dev builds only (MCP testing) |

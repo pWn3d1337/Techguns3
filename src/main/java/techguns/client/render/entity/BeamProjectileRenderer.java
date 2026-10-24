@@ -12,7 +12,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -26,7 +25,7 @@ import techguns.entity.projectile.GenericBeamProjectile.BeamType;
  * Renders hit-scan beams (laser, NDR, tesla): crossed additive quads from the muzzle to the hit point
  * (Techguns 2 beam renderer). The entity sits at the muzzle and its rotation is the beam direction.
  */
-public class BeamProjectileRenderer extends EntityRenderer<GenericBeamProjectile> {
+public class BeamProjectileRenderer extends RenderLateEntityRenderer<GenericBeamProjectile> {
     private static final int FULL_BRIGHT = 0xF000F0;
 
     private static final Map<BeamType, BeamParams> PARAMS = new EnumMap<>(BeamType.class);
@@ -57,7 +56,7 @@ public class BeamProjectileRenderer extends EntityRenderer<GenericBeamProjectile
     }
 
     @Override
-    public void render(GenericBeamProjectile entity, float entityYaw, float partialTick, PoseStack poseStack,
+    protected void renderLate(GenericBeamProjectile entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffers, int packedLight) {
         float distance = (float) entity.length();
         if (distance <= 0f) {

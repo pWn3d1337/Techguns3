@@ -1,5 +1,6 @@
 package techguns.entity.projectile;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +17,8 @@ import techguns.damage.TGDamage;
 import techguns.damage.TGDamageSource;
 import techguns.gun.ProjectileFactory;
 import techguns.gun.ShotParams;
+import techguns.network.FxPayloads;
+import techguns.network.TGNetwork;
 import techguns.registry.TGEntities;
 
 /**
@@ -24,6 +27,9 @@ import techguns.registry.TGEntities;
  */
 // TODO: port TGExplosion (block damage chance, line of sight, knockback multiplier) if the vanilla-based blast is not close enough.
 public class RocketProjectile extends GenericProjectile {
+    /** Radius (blocks) within which players see the explosion FX. */
+    private static final double EXPLOSION_FX_RADIUS = 64.0;
+
     public RocketProjectile(EntityType<? extends RocketProjectile> type, Level level) {
         super(type, level);
     }
@@ -43,7 +49,8 @@ public class RocketProjectile extends GenericProjectile {
     }
 
     private void explode() {
-        if (!level().isClientSide) {
+        if (level() instanceof ServerLevel server) {
+            TGNetwork.sendFxNear(server, getX(), getY(), getZ(), EXPLOSION_FX_RADIUS, new FxPayloads.SpawnFx("RocketExplosion", getX(), getY(), getZ()));
             damageEntities();
             // vanilla blast for sound, particles and (outside safe mode) block damage; it never damages entities
             Level.ExplosionInteraction interaction = blockDamage ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE;

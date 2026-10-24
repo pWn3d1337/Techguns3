@@ -292,21 +292,6 @@ public class GunItem extends Item {
         return slotChanged || oldStack.getItem() != newStack.getItem();
     }
 
-    @Override
-    public boolean isBarVisible(ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public int getBarWidth(ItemStack stack) {
-        return Math.round(13.0f * GunData.loaded(stack) / stats.firing().clipSize());
-    }
-
-    @Override
-    public int getBarColor(ItemStack stack) {
-        return 0xC0C0C0;
-    }
-
     public TGDamageCategory damageCategory(ItemStack stack) {
         return projectiles.factory(GunData.variant(stack)).damageCategory();
     }

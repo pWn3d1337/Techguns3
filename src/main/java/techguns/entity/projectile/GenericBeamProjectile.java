@@ -1,6 +1,5 @@
 package techguns.entity.projectile;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +22,8 @@ import techguns.damage.TGDamageSource;
 import techguns.gun.FirePos;
 import techguns.gun.ProjectileFactory;
 import techguns.gun.ShotParams;
+import techguns.network.FxPayloads;
+import techguns.network.TGNetwork;
 import techguns.registry.TGEntities;
 
 /**
@@ -34,6 +35,8 @@ public class GenericBeamProjectile extends GenericProjectile {
     public static final int BEAM_LIFETIME = 10;
     /** Dev testing only (/tgdebug slowbeams): keeps beams visible longer; 0 = normal. */
     public static int debugLifetimeOverride = 0;
+    /** Particle system played where the beam hits (Techguns 2 {@code impactFX} of the laser gun factory). */
+    private static final String IMPACT_FX = "LaserGunImpact";
     private static final float FORWARD_OFFSET = 0.35f;
     private static final float SIDE_OFFSET = 0.16f;
 
@@ -142,16 +145,25 @@ public class GenericBeamProjectile extends GenericProjectile {
                 owner.setLastHurtMob(target);
             }
             target.hurt(createDamageSource(), damage);
+            if (level() instanceof ServerLevel server) {
+                Vec3 pos = result.getLocation();
+                sendImpactFx(server, pos, Vec3.ZERO);
+            }
         }
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
         if (level() instanceof ServerLevel server) {
-            Vec3 pos = result.getLocation();
-            // TODO Phase 2c FX: "LaserGunImpact" particle system
-            server.sendParticles(ParticleTypes.SMALL_FLAME, pos.x, pos.y, pos.z, 4, 0.02, 0.02, 0.02, 0.01);
+            // the impact FX flies away from the surface
+            Vec3 normal = Vec3.atLowerCornerOf(result.getDirection().getNormal()).scale(0.1);
+            sendImpactFx(server, result.getLocation(), normal);
         }
+    }
+
+    private void sendImpactFx(ServerLevel server, Vec3 pos, Vec3 motion) {
+        TGNetwork.sendFxNear(server, pos.x, pos.y, pos.z, IMPACT_FX_RADIUS,
+                new FxPayloads.SpawnFx(IMPACT_FX, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z));
     }
 
     @Override
@@ -192,6 +204,10 @@ public class GenericBeamProjectile extends GenericProjectile {
     @Override
     public void readSpawnData(RegistryFriendlyByteBuf buf) {
         super.readSpawnData(buf);
+        // the base class derives the pitch from the motion in arrow convention (positive = up);
+        // beams trace and render with the view convention (positive = down), like the server side
+        setXRot(-getXRot());
+        xRotO = getXRot();
         beamType = BeamType.values()[buf.readByte()];
         damageTicks = buf.readVarInt();
         moveWithShooter = buf.readBoolean();

@@ -2,13 +2,10 @@ package techguns.entity.projectile;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,6 +15,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -34,6 +32,8 @@ import techguns.gun.FirePos;
 import techguns.gun.ProjectileFactory;
 import techguns.gun.ShotParams;
 import techguns.gun.ammo.DamageModifier;
+import techguns.network.FxPayloads;
+import techguns.network.TGNetwork;
 import techguns.registry.TGEntities;
 
 /**
@@ -176,7 +176,8 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
 
     @Override
     protected boolean canHitEntity(Entity target) {
-        if (!super.canHitEntity(target)) {
+        // never the shooter (Techguns 2): slow projectiles start inside the shooter's inflated hitbox
+        if (!super.canHitEntity(target) || target == getOwner()) {
             return false;
         }
         // respect PvP settings
@@ -215,13 +216,45 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         removeAfterHit();
     }
 
-    /** Placeholder impact feedback until the Techguns particle system is ported (Phase 2c). */
+    /** Radius (blocks) within which players get the impact sound and particles. */
+    protected static final double IMPACT_FX_RADIUS = 64.0;
+    /** Sends the impact sound and particles for a block hit; sound and particles depend on the block's sound type. */
     protected void impactEffects(ServerLevel level, BlockHitResult result) {
         BlockState state = level.getBlockState(result.getBlockPos());
-        Vec3 pos = result.getLocation();
-        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.x, pos.y, pos.z, 6, 0.05, 0.05, 0.05, 0.1);
         SoundType sound = state.getSoundType(level, result.getBlockPos(), this);
-        level.playSound(null, pos.x, pos.y, pos.z, sound.getHitSound(), SoundSource.BLOCKS, 0.6f, 1.2f);
+        Vec3 pos = result.getLocation();
+
+        float pitch = 0.0f;
+        float yaw = 0.0f;
+        Direction face = result.getDirection();
+        if (face == Direction.UP) {
+            pitch = -90.0f;
+        } else if (face == Direction.DOWN) {
+            pitch = 90.0f;
+        } else {
+            yaw = face.toYRot();
+        }
+        TGNetwork.sendGunImpactNear(level, new FxPayloads.GunImpactFx(impactSoundType(sound), pos.x, pos.y, pos.z, pitch, yaw,
+                kind == Kind.INCENDIARY), IMPACT_FX_RADIUS);
+    }
+
+    /**
+     * Impact FX group of a block sound type: 0 stone, 1 wood, 2 glass, 3 metal, 4 gravel/sand, -1 everything else
+     * (default FX). 5 (dirt sound only) is not sent by bullets.
+     */
+    protected static short impactSoundType(SoundType sound) {
+        if (sound == SoundType.STONE) {
+            return 0;
+        } else if (sound == SoundType.WOOD || sound == SoundType.LADDER) {
+            return 1;
+        } else if (sound == SoundType.GLASS) {
+            return 2;
+        } else if (sound == SoundType.METAL || sound == SoundType.ANVIL) {
+            return 3;
+        } else if (sound == SoundType.GRAVEL || sound == SoundType.SAND) {
+            return 4;
+        }
+        return -1;
     }
 
     protected TGDamageSource createDamageSource() {

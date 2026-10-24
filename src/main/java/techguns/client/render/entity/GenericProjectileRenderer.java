@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -21,7 +20,7 @@ import techguns.entity.projectile.GenericProjectile;
  * Renders a bullet as a glowing tracer: four crossed quads along the flight direction, drawn additively and
  * fully bright (Techguns 2 {@code GenericProjectileRenderer}).
  */
-public class GenericProjectileRenderer extends EntityRenderer<GenericProjectile> {
+public class GenericProjectileRenderer extends RenderLateEntityRenderer<GenericProjectile> {
     private static final ResourceLocation BULLET_TEXTURE = TGIds.id("textures/entity/bullet1.png");
     private static final int FULL_BRIGHT = 0xF000F0;
     private static final float HALF_LENGTH = 10f;
@@ -37,7 +36,7 @@ public class GenericProjectileRenderer extends EntityRenderer<GenericProjectile>
     }
 
     @Override
-    public void render(GenericProjectile entity, float entityYaw, float partialTick, PoseStack poseStack,
+    protected void renderLate(GenericProjectile entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffers, int packedLight) {
         // hide the bullet for its first moments so it does not pop up inside the muzzle
         if (!(entity.tickCount >= 2 || (entity.tickCount == 1 && partialTick > 0.35f))) {
