@@ -5,7 +5,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
+import techguns.damage.TGDamageEvents;
 import techguns.data.TGDataGenerators;
 import techguns.network.TGNetwork;
 import techguns.registry.TGRegistries;
@@ -22,6 +24,8 @@ public class Techguns {
         TGRegistries.register(modEventBus);
         modEventBus.addListener(TGNetwork::registerPayloads);
         modEventBus.addListener(TGDataGenerators::gatherData);
+
+        NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TGConfig.COMMON_SPEC);
     }

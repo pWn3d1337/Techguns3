@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:plates/carbon"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "pattern": [
+    "iii",
+    " pp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:carbon_stock"
+  }
+}

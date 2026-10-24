@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "n": {
+      "item": "minecraft:iron_ingot"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    }
+  },
+  "pattern": [
+    "nnn",
+    "gpg",
+    "nnn"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:pump_mechanism"
+  }
+}

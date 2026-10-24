@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "tag": "c:nuggets/copper"
+    }
+  },
+  "pattern": [
+    " cc",
+    " c ",
+    "cc "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:copper_wire"
+  }
+}

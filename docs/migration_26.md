@@ -6,3 +6,4 @@ Each entry matches a `// MIGRATION(26.x): ...` comment in the code. See design d
 | File | Note |
 |---|---|
 | `src/main/java/techguns/TGIds.java` | `ResourceLocation` renamed `Identifier` in newer Mojang mappings — only this class creates identifiers. |
+| `src/main/java/techguns/registry/TGAttachments.java` | Newer NeoForge syncs attachments automatically; replace manual payload sync. |
