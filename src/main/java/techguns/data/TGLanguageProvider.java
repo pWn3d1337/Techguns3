@@ -45,7 +45,9 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("circuit_board_advanced", "Advanced Circuit Board"),
             Map.entry("power_plating", "Power Armor Plating"),
             Map.entry("power_plating_mk2", "Power Armor Plating Mk2"),
-            Map.entry("antigrav_core", "Anti Gravity Core"));
+            Map.entry("antigrav_core", "Anti Gravity Core"),
+            Map.entry("m4", "M4"),
+            Map.entry("assault_rifle_magazine_empty", "Assault Rifle Magazine (Empty)"));
 
     @Override
     protected void addTranslations() {
@@ -57,6 +59,18 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.FORCE_RELOAD.getName(), "Force Reload");
         add(TGKeyMappings.TOGGLE_SAFE_MODE.getName(), "Toggle Safe Mode");
         add(TGKeyMappings.TOGGLE_STEP_ASSIST.getName(), "Toggle Step Assist");
+        addGunTooltips();
+    }
+
+    private void addGunTooltips() {
+        add("tooltip.techguns.gun.ammo", "Ammo: %s/%s");
+        add("tooltip.techguns.gun.ammo_item", "Loads: %s");
+        add("tooltip.techguns.gun.damage", "Damage: %s");
+        add("tooltip.techguns.gun.damage_type", "Damage type: %s");
+        add("tooltip.techguns.gun.range", "Range: %s");
+        add("tooltip.techguns.gun.reload_time", "Reload time: %ss");
+        add("tooltip.techguns.gun.penetration", "Armor penetration: %s");
+        add("tooltip.techguns.shift_for_details", "Hold Shift for details");
     }
 
     /** Every block and item gets an English name; title-cased from its registry name unless overridden. */
