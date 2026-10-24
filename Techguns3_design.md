@@ -496,8 +496,32 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - **Source lookup**: Fabric path → Mojmap translation (Appendix A) → else 1.12 path → modern equivalent.
 - **Keep a porting tracker** (`docs/port_status.md`): table of every 1.12 content entry with status (not started / logic / rendered / tested / done).
 - **No hand-written JSON** where datagen can produce it.
-- **Verification**: `gradlew build`, datagen diff check, GameTests in CI; author does visual review in client for rendering units.
+- **Verification — proportional to the change** (decided 2026-10-24):
+  - Default: local `gradlew build`, plus `runData` / `runGameTestServer` when data or logic changed.
+  - **Don't wait for CI on every simple step.** Push, keep working, and check the CI result later (before a phase or PR is considered done, or when a CI-relevant file changed: build scripts, workflow, dependencies).
+  - **MCP screenshots / in-game checks only when needed**: new or changed rendering, GUIs, models/textures, particles/FX, or behaviour that GameTests can't cover. Not for pure logic, data or refactoring changes.
+  - The author does the final visual review of rendering units.
 - **One phase = one branch/PR series**; plan refined at the start of each phase.
+
+### 8.1 Orchestrator and subagents (decided 2026-10-24)
+
+The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, integrates and verifies. Simple, well-bounded tasks go to **cheaper subagents** when that saves cost or time without risking quality.
+
+| Who | Model | Does |
+|---|---|---|
+| Orchestrator | Opus | Phase planning, architecture & abstraction layers (§4.7), rendering pipeline, cross-cutting systems (damage, networking, attachments), hard ports, design-doc updates, reviewing subagent output, final build/GameTest/MCP verification, commits. |
+| Search / extraction agents | Haiku | Read-only lookups in the 1.12 and Fabric repos ("where is X", "list all uses of Y"), extracting data tables (gun stats, recipes, loot, lang keys) into structured form, inventory lists for `docs/port_status.md`. |
+| Porting agents | Sonnet | Mechanical, pattern-following ports once a reference implementation exists: further items/blocks of an established kind, datagen entries, GameTest boilerplate, Yarn/MCP → Mojmap translation of self-contained classes, asset copying/renaming. |
+| Review agents | Sonnet | Diff review against `CLAUDE.md` rules (TGIds, accessors, `compat/` isolation, `MIGRATION(26.x)` markers). |
+
+**Rules**
+- **Delegate only bounded work**: clear inputs, a reference example to copy, and a checkable result. Anything needing design judgement stays with the orchestrator.
+- **First of a kind is done by the orchestrator** (first gun, first machine, first NPC…); following units of the same kind can go to porting agents.
+- **Every brief** names the source files, target files/packages, the reference implementation to follow, the `CLAUDE.md` conventions, and what "done" means (compiles, datagen run, GameTest passes).
+- **The orchestrator verifies** every subagent result: reads the diff, runs `gradlew build` / `runData` / `runGameTestServer` as relevant, and uses MCP in-game checks only for visual work (see verification rules in §8). A subagent's report is not proof.
+- **No two writers on the same files.** Parallel writing agents get separate worktrees; read-only agents can run in parallel freely.
+- **Subagents don't commit or push**; the orchestrator commits after verification.
+- Don't spawn an agent for something a few direct tool calls settle — the cold start costs more than it saves.
 
 ---
 

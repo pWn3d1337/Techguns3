@@ -43,6 +43,18 @@ See design doc §4.1. Key rules from §4.7 (migration readiness for 26.x):
 - Mark uses of volatile APIs with `// MIGRATION(26.x): <note>` and list them in `docs/migration_26.md`.
 - Mixins only as a last resort, each with a comment explaining why.
 
+## Orchestrator & subagents
+The main session (Opus) orchestrates; delegate simple, bounded tasks to cheaper subagents (design doc §8.1):
+- **Haiku**: read-only searches in the reference repos, data extraction (stats, recipes, lang keys).
+- **Sonnet**: mechanical ports following an existing reference implementation, datagen entries, GameTest boilerplate, diff reviews.
+- **Opus (self)**: architecture, rendering, cross-cutting systems, first unit of each kind, verification, commits.
+- Briefs name source/target files, the reference to copy, conventions and the done criteria. Verify every result (diff, build, GameTests; MCP only for visual work) before committing. Subagents never commit; parallel writers need separate worktrees.
+
+## Verification (proportional to the change)
+- Default: local `./gradlew build`; add `runData` / `runGameTestServer` when data or logic changed.
+- Don't wait for CI on every simple step — push and continue; check CI before a phase/PR is done or when build scripts, the workflow or dependencies changed.
+- MCP screenshots / in-game checks only when needed: rendering, GUIs, models/textures, FX, or behaviour GameTests can't cover.
+
 ## Conventions
 - Generate JSON (models, recipes, loot, tags, lang) with datagen; don't hand-write it.
 - Every ported unit gets a GameTest where logic is testable.
