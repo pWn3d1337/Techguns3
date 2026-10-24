@@ -1,0 +1,13 @@
+{
+  "values": [
+    "techguns:bullet",
+    "techguns:fire",
+    "techguns:energy",
+    "techguns:poison",
+    "techguns:ice",
+    "techguns:lightning",
+    "techguns:radiation",
+    "techguns:radiation_poisoning",
+    "techguns:dark"
+  ]
+}

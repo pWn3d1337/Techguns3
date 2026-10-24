@@ -12,5 +12,12 @@ public final class TGRegistries {
     public static void register(IEventBus modEventBus) {
         TGBlocks.BLOCKS.register(modEventBus);
         TGItems.ITEMS.register(modEventBus);
+        TGCreativeTabs.TABS.register(modEventBus);
+        TGAttributes.ATTRIBUTES.register(modEventBus);
+        TGComponents.COMPONENTS.register(modEventBus);
+        TGAttachments.ATTACHMENTS.register(modEventBus);
+        TGSounds.SOUNDS.register(modEventBus);
+
+        modEventBus.addListener(TGAttributes::addToAllLivingEntities);
     }
 }

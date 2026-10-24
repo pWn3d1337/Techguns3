@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.5,
+  "group": "rubber_bar",
+  "ingredient": {
+    "item": "techguns:raw_rubber"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:rubber_bar"
+  }
+}

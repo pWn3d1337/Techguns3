@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:gold_wire"
+    },
+    "g": {
+      "item": "minecraft:ghast_tear"
+    },
+    "i": {
+      "tag": "c:plates/carbon"
+    },
+    "l": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "q": {
+      "item": "minecraft:quartz"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "cqc",
+    "ril",
+    "cgc"
+  ],
+  "result": {
+    "count": 2,
+    "id": "techguns:circuit_board_elite"
+  }
+}

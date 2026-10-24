@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "w": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "pattern": [
+    "ww",
+    " w"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:wood_stock"
+  }
+}

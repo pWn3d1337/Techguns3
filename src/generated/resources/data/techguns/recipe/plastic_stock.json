@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "p": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "  p"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:plastic_stock"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "s": {
+      "tag": "c:plates/carbon"
+    }
+  },
+  "pattern": [
+    "sss",
+    "   ",
+    "sss"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:carbon_barrel"
+  }
+}

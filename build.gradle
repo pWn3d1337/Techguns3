@@ -93,6 +93,11 @@ configurations {
 }
 
 dependencies {
+    // Plain unit tests for Minecraft-free logic in techguns.core
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }
     }
@@ -127,13 +132,19 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            url = "file://${project.projectDir}/repo"
         }
     }
 }
 
+tasks.named('test', Test) {
+    useJUnitPlatform()
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    // Show deprecated API uses: they are what breaks on the next Minecraft/NeoForge update
+    options.compilerArgs << '-Xlint:deprecation'
 }
 
 idea {

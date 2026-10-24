@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_circuit_board_advanced": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:circuit_board_advanced"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:nether_armor_plating"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_circuit_board_advanced"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:nether_armor_plating"
+    ]
+  }
+}

@@ -27,7 +27,7 @@ The dev client loads **MCP Fabric** (`mcpfabric`, dev-only `localRuntime` depend
 It opens a loopback-only bridge on `127.0.0.1:25599`; the bearer token is in `run/config/mcpfabric.config.json`.
 The `mcpfabric` MCP server exposes tools to inspect the world, run commands, read chat/events and take screenshots.
 Use it to verify rendering, GUIs and gameplay after `runClient`; use GameTests for logic.
-- Test world: `TG Test` (creative, superflat, commands on) — join with `join_world` (`sp:TG Test`) from the title screen.
+- Test world: `TestworldFlat` (creative, superflat, commands on) — join with `join_world` (`sp:TestworldFlat`) from the title screen.
 - "Pause on lost focus" is disabled in the dev client (F3+P), so the game keeps running while the window is in the background.
 - Call `get_status` first; screenshots need the player in a world with no screen open (`close_screen`).
 

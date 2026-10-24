@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 1.5,
+  "group": "titanium_ingot",
+  "ingredient": {
+    "item": "techguns:raw_titanium"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:titanium_ingot"
+  }
+}

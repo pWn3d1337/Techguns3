@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_obsidian_steel_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/obsidian_steel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:mechanical_parts_obsidian_steel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_obsidian_steel_ingot"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:mechanical_parts_obsidian_steel"
+    ]
+  }
+}

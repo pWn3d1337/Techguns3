@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "s": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "sss",
+    "   ",
+    "sss"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:stone_barrel"
+  }
+}

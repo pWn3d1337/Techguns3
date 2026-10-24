@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_laser_focus": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:laser_focus"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:laser_barrel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_laser_focus"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:laser_barrel"
+    ]
+  }
+}

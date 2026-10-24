@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.8,
+  "group": "lead_ingot",
+  "ingredient": {
+    "item": "techguns:deepslate_lead_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:lead_ingot"
+  }
+}

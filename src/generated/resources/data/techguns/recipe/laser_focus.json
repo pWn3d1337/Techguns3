@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "rrr",
+    "rdr",
+    "rrr"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:laser_focus"
+  }
+}
