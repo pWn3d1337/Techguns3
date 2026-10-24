@@ -74,12 +74,12 @@ public class TGRecipeProvider extends RecipeProvider {
                 .requires(Items.DIAMOND).requires(Items.BLAZE_POWDER)
                 .unlockedBy("has_diamond", has(Items.DIAMOND)).save(output, TGIds.id("carbon_fibers"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.TREATED_LEATHER.get())
-                .requires(Items.LEATHER, 2).requires(Items.SLIME_BALL).requires(Items.GUNPOWDER)
+                .requires(Items.LEATHER, 2).requires(Tags.Items.SLIME_BALLS).requires(Items.GUNPOWDER)
                 .unlockedBy("has_leather", has(Items.LEATHER)).save(output, TGIds.id("treated_leather"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.BIOMASS.get(), 4)
                 .pattern(" g ").pattern("gbg").pattern(" g ")
-                .define('g', Items.GREEN_DYE).define('b', Tags.Items.SLIME_BALLS)
+                .define('g', Tags.Items.DYES_GREEN).define('b', Tags.Items.SLIME_BALLS)
                 .unlockedBy("has_slime_ball", has(Tags.Items.SLIME_BALLS)).save(output, TGIds.id("biomass"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.COPPER_WIRE.get())
                 .pattern(" cc").pattern(" c ").pattern("cc ")
@@ -173,7 +173,7 @@ public class TGRecipeProvider extends RecipeProvider {
         // Electronics
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.CIRCUIT_BOARD.get(), 4)
                 .pattern("cgc").pattern("rir").pattern("cgc")
-                .define('r', Items.REDSTONE).define('c', TGItems.COPPER_WIRE.get()).define('g', Items.GREEN_DYE).define('i', iron)
+                .define('r', Items.REDSTONE).define('c', TGItems.COPPER_WIRE.get()).define('g', Tags.Items.DYES_GREEN).define('i', iron)
                 .unlockedBy("has_copper_wire", has(TGItems.COPPER_WIRE.get())).save(output, TGIds.id("circuit_board"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.CIRCUIT_BOARD_ADVANCED.get())
                 .requires(TGItems.CIRCUIT_BOARD.get()).requires(TGItems.GOLD_WIRE.get()).requires(Items.LAPIS_LAZULI)

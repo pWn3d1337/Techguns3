@@ -6,7 +6,7 @@
       "tag": "c:slime_balls"
     },
     "g": {
-      "item": "minecraft:green_dye"
+      "tag": "c:dyes/green"
     }
   },
   "pattern": [

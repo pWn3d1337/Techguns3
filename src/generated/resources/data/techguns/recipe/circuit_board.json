@@ -6,7 +6,7 @@
       "item": "techguns:copper_wire"
     },
     "g": {
-      "item": "minecraft:green_dye"
+      "tag": "c:dyes/green"
     },
     "i": {
       "tag": "c:ingots/iron"
