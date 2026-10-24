@@ -6,6 +6,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import techguns.gun.ShooterState;
 import org.slf4j.Logger;
 import techguns.damage.TGDamageEvents;
 import techguns.data.TGDataGenerators;
@@ -26,6 +28,7 @@ public class Techguns {
         modEventBus.addListener(TGDataGenerators::gatherData);
 
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
+        NeoForge.EVENT_BUS.addListener((PlayerTickEvent.Post event) -> ShooterState.of(event.getEntity()).tick());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TGConfig.COMMON_SPEC);
     }

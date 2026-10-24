@@ -444,6 +444,13 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - 2b: Rendering: render abstraction (§4.3), port `RenderGunBase*`, `GunAnimation`, muzzle flash, scopes, arm poses, HUD/crosshairs, screen effects. **Prototype one gun in GeckoLib** in parallel to decide Q3.
 - 2c: Projectile entities (bullet, beam, rocket, grenade, flamethrower, tesla, bio, …) + renderers + particle system + death effects/gibs.
 - **Exit:** 3 representative guns fully working (M4 = ballistic, Lasergun = beam, Rocket Launcher = explosive) in SP and dedicated server.
+- **Implementation notes (refined 2026-10-24):**
+  - Firing model as in Fabric: client predicts (ammo, effects), server is authoritative; both run the same `shoot` logic gated by a per-hand fire delay.
+  - Per-player shooter state (fire delay, loop-sound delay) = non-synced attachment ticked on both sides; client-only visual timers (recoil, muzzle flash, reload anim) in a client `ShooterValues` map keyed by entity id.
+  - Input without mixins: poll the attack key in `ClientTickEvent`, cancel vanilla attack/mining with `InputEvent.InteractionKeyMappingTriggered`; zoom via `ComputeFovModifierEvent`.
+  - Gun item state as data components (`techguns:gun_ammo` = loaded ammo + ammo variant), read via `GunData`.
+  - Projectiles carry spawn data via `IEntityWithComplexSpawn`. Rockets use vanilla `Level.explode` with a Techguns damage source first; `TGExplosion` is ported only if needed.
+  - The ammo items these three guns need (assault rifle magazine, energy cell, rocket + empties) are pulled forward from Phase 3.
 
 ### Phase 3 — All guns, ammo, grenades, tools
 - Port remaining guns in batches (by projectile family), ammo items, magazines, Ammo Bag (§4.4), grenades, mining drill/chainsaw/power hammer/shishkebap, guided missiles, TFG.
@@ -532,7 +539,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q1 | ~~Base version?~~ **Decided 2026-10-24: 1.21.1 / NeoForge 21.1.x.** Reasons: largest NeoForge mod base (≈21.6k on Modrinth vs ≈3.8k for 1.20.6), all libraries released (incl. EMI, Veil, KubeJS), NeoForge still maintained, closest to the Fabric 1.19.4 render code. Accepted cost: renderer rework on the later 26.x jump, mitigated by §4.7. | ✔ Decided |
 | Q2 | Keep mod id `techguns` and asset paths? | Yes. |
 | Q3 | Gun models: keep ported Java models (Fabric) vs convert to Blockbench/GeckoLib? | Port Java models first; prototype one GeckoLib gun in Phase 2b; decide based on result. Use GeckoLib for complex NPCs regardless. |
-| Q4 | Data-driven gun stats (datapack registry) vs hardcoded? | Data-driven stats, Java behaviour types. |
+| Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. | ✔ Decided |
 | Q5 | Extra slots: Curios dependency vs own system? | Curios (soft or hard dependency — decide). |
 | Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | Discuss. |
 | Q7 | Energy: plain FE only? | FE only. |

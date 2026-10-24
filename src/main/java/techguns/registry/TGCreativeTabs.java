@@ -18,6 +18,9 @@ public final class TGCreativeTabs {
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .icon(() -> TGItems.STEEL_INGOT.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
+                TGGuns.guns().forEach(gun -> output.accept(gun.get()));
+                TGAmmo.flatAmmo().forEach(item -> output.accept(item.get()));
+                TGAmmo.modelAmmo().forEach(item -> output.accept(item.get()));
                 TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
             })
