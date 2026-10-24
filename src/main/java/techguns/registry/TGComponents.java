@@ -1,5 +1,6 @@
 package techguns.registry;
 
+import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 
@@ -8,7 +9,7 @@ import techguns.Techguns;
  * such as {@code GunData.of(stack)}, never via scattered {@code stack.get(...)} calls.
  */
 public final class TGComponents {
-    public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Techguns.MODID);
+    public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Techguns.MODID);
 
     private TGComponents() {
     }

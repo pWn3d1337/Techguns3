@@ -79,8 +79,8 @@ public class TGRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.BIOMASS.get(), 4)
                 .pattern(" g ").pattern("gbg").pattern(" g ")
-                .define('g', Items.GREEN_DYE).define('b', Tags.Items.SLIMEBALLS)
-                .unlockedBy("has_slime_ball", has(Tags.Items.SLIMEBALLS)).save(output, TGIds.id("biomass"));
+                .define('g', Items.GREEN_DYE).define('b', Tags.Items.SLIME_BALLS)
+                .unlockedBy("has_slime_ball", has(Tags.Items.SLIME_BALLS)).save(output, TGIds.id("biomass"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.COPPER_WIRE.get())
                 .pattern(" cc").pattern(" c ").pattern("cc ")
                 .define('c', TGTags.Items.nugget("copper"))

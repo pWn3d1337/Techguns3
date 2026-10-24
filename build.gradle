@@ -132,7 +132,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            url = "file://${project.projectDir}/repo"
         }
     }
 }
@@ -143,6 +143,8 @@ tasks.named('test', Test) {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    // Show deprecated API uses: they are what breaks on the next Minecraft/NeoForge update
+    options.compilerArgs << '-Xlint:deprecation'
 }
 
 idea {
