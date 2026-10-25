@@ -78,6 +78,14 @@ public final class TGDebugCommands {
                                     ctx.getSource().sendSystemMessage(Component.literal("Spawned " + name + " at " + pos));
                                     return 1;
                                 })))
+                .then(Commands.literal("alwaysdeath")
+                        .executes(ctx -> {
+                            // works in singleplayer: client and integrated server share the static
+                            techguns.damage.TGDamageEvents.debugAlwaysDeathEffect = !techguns.damage.TGDamageEvents.debugAlwaysDeathEffect;
+                            ctx.getSource().sendSystemMessage(Component.literal("Always play death effects: "
+                                    + techguns.damage.TGDamageEvents.debugAlwaysDeathEffect));
+                            return 1;
+                        }))
                 .then(Commands.literal("fxstats")
                         .executes(ctx -> {
                             ctx.getSource().sendSystemMessage(Component.literal(TGParticleManager.get().debugStats()

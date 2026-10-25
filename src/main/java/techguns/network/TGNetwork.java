@@ -11,6 +11,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import techguns.core.damage.DeathType;
 import techguns.core.fx.EntityCondition;
 import techguns.gun.GunClientEffects;
 import techguns.gun.GunItem;
@@ -35,6 +36,7 @@ public final class TGNetwork {
         registrar.playToClient(FxPayloads.SpawnFx.TYPE, FxPayloads.SpawnFx.STREAM_CODEC, TGNetwork::handleSpawnFx);
         registrar.playToClient(FxPayloads.SpawnFxOnEntity.TYPE, FxPayloads.SpawnFxOnEntity.STREAM_CODEC, TGNetwork::handleSpawnFxOnEntity);
         registrar.playToClient(FxPayloads.GunImpactFx.TYPE, FxPayloads.GunImpactFx.STREAM_CODEC, TGNetwork::handleGunImpactFx);
+        registrar.playToClient(FxPayloads.EntityDeathFx.TYPE, FxPayloads.EntityDeathFx.STREAM_CODEC, TGNetwork::handleEntityDeathFx);
     }
 
     // --- Send helpers ---
@@ -92,6 +94,13 @@ public final class TGNetwork {
         PacketDistributor.sendToPlayersNear(level, null, payload.x(), payload.y(), payload.z(), radius, payload);
     }
 
+    /** Death effect of {@code entity} for everybody tracking it, including itself if it is a player. */
+    public static void sendEntityDeath(LivingEntity entity, DeathType deathType) {
+        Vec3 motion = entity.getDeltaMovement();
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity,
+                new FxPayloads.EntityDeathFx(entity.getId(), deathType, (float) motion.x, (float) motion.y, (float) motion.z));
+    }
+
     // --- Server handlers ---
 
     private static void handleShoot(GunPayloads.Shoot payload, IPayloadContext context) {
@@ -140,6 +149,12 @@ public final class TGNetwork {
     private static void handleGunImpactFx(FxPayloads.GunImpactFx payload, IPayloadContext context) {
         FxClientHandler.get().gunImpact(context.player().level(), payload.soundType(), payload.x(), payload.y(), payload.z(),
                 payload.pitch(), payload.yaw(), payload.incendiary());
+    }
+
+    private static void handleEntityDeathFx(FxPayloads.EntityDeathFx payload, IPayloadContext context) {
+        if (clientEntity(context, payload.entityId()) instanceof LivingEntity entity) {
+            FxClientHandler.get().entityDeath(entity, payload.deathType(), payload.motionX(), payload.motionY(), payload.motionZ());
+        }
     }
 
     private static Entity clientEntity(IPayloadContext context, int id) {

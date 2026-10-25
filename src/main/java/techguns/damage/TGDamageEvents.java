@@ -9,8 +9,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import techguns.TGConfig;
+import techguns.core.damage.DeathEffectRules;
+import techguns.network.TGNetwork;
 import techguns.core.damage.TGArmorFormula;
 import techguns.core.damage.TGDamageCategory;
 import techguns.registry.TGAttributes;
@@ -20,6 +23,19 @@ import techguns.registry.TGAttributes;
  */
 public final class TGDamageEvents {
     private TGDamageEvents() {
+    }
+
+    /** Dev testing only (/tgdebug alwaysdeath): every Techguns kill plays its death effect. */
+    public static boolean debugAlwaysDeathEffect = false;
+
+    /** Death effects (gore, bio, laser) for kills by Techguns damage (Techguns 2 {@code onLivingDeathEvent}). */
+    public static void onLivingDeath(LivingDeathEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (!entity.level().isClientSide && event.getSource() instanceof TGDamageSource source
+                && DeathEffectRules.playsDeathEffect(source.getDeathType(), debugAlwaysDeathEffect ? 1.0f : source.getGoreChance(),
+                        entity.getRandom().nextFloat())) {
+            TGNetwork.sendEntityDeath(entity, source.getDeathType());
+        }
     }
 
     public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {

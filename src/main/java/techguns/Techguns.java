@@ -28,6 +28,7 @@ public class Techguns {
         modEventBus.addListener(TGDataGenerators::gatherData);
 
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
+        NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingDeath);
         NeoForge.EVENT_BUS.addListener((PlayerTickEvent.Post event) -> ShooterState.of(event.getEntity()).tick());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TGConfig.COMMON_SPEC);

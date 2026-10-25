@@ -5,6 +5,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -19,6 +20,7 @@ import techguns.client.render.TGRenderTypes;
 import techguns.client.render.item.RenderingEntityTracker;
 import techguns.client.render.item.TGClientItemExtensions;
 import techguns.registry.TGEntities;
+import techguns.registry.TGParticleTypes;
 
 /**
  * Client-only entrypoint. Never loaded on dedicated servers.
@@ -32,6 +34,8 @@ public class TechgunsClient {
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
+        modEventBus.addListener((RegisterParticleProvidersEvent event) ->
+                event.registerSpecial(TGParticleTypes.NONE.get(), (options, level, x, y, z, dx, dy, dz) -> null));
 
         ClientGunController.init(NeoForge.EVENT_BUS);
         ClientFx.init(modEventBus, NeoForge.EVENT_BUS);

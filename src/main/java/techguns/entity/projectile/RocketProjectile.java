@@ -1,6 +1,7 @@
 package techguns.entity.projectile;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +21,7 @@ import techguns.gun.ShotParams;
 import techguns.network.FxPayloads;
 import techguns.network.TGNetwork;
 import techguns.registry.TGEntities;
+import techguns.registry.TGParticleTypes;
 
 /**
  * Rocket: flies with slight gravity and explodes on impact. Damage falls off from full damage within
@@ -52,9 +54,11 @@ public class RocketProjectile extends GenericProjectile {
         if (level() instanceof ServerLevel server) {
             TGNetwork.sendFxNear(server, getX(), getY(), getZ(), EXPLOSION_FX_RADIUS, new FxPayloads.SpawnFx("RocketExplosion", getX(), getY(), getZ()));
             damageEntities();
-            // vanilla blast for sound, particles and (outside safe mode) block damage; it never damages entities
+            // vanilla blast for sound, knockback and (outside safe mode) block damage; it never damages entities and
+            // spawns no vanilla particles (the RocketExplosion FX replaces them)
             Level.ExplosionInteraction interaction = blockDamage ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE;
-            level().explode(this, null, NO_ENTITY_DAMAGE, getX(), getY(), getZ(), Math.max(1.0f, dropStart), false, interaction);
+            level().explode(this, null, NO_ENTITY_DAMAGE, getX(), getY(), getZ(), Math.max(1.0f, dropStart), false, interaction,
+                    TGParticleTypes.NONE.get(), TGParticleTypes.NONE.get(), SoundEvents.GENERIC_EXPLODE);
         }
         removeAfterHit();
     }

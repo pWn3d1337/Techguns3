@@ -1,7 +1,9 @@
 package techguns.network;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import techguns.core.damage.DeathType;
 import techguns.core.fx.EntityCondition;
 
 /**
@@ -24,6 +26,10 @@ public interface FxClientHandler {
 
     /** Bullet impact on a block: sound and particles depending on the block's sound type. */
     default void gunImpact(Level level, short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary) {
+    }
+
+    /** A living entity died with a special death effect (gore, bio, laser). */
+    default void entityDeath(LivingEntity entity, DeathType deathType, float motionX, float motionY, float motionZ) {
     }
 
     static FxClientHandler get() {

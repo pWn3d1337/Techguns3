@@ -18,6 +18,9 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.minecraft.world.entity.LivingEntity;
+import techguns.client.deatheffects.DeathEffects;
+import techguns.core.damage.DeathType;
 import techguns.core.fx.EntityCondition;
 import techguns.client.render.entity.RenderLateEntityRenderer;
 import techguns.entity.projectile.RocketProjectile;
@@ -51,6 +54,7 @@ public final class ClientFx implements FxClientHandler {
         });
         gameBus.addListener(ClientFx::onRenderLevelStage);
         gameBus.addListener(ClientFx::onEntityJoinLevel);
+        DeathEffects.init(gameBus);
     }
 
     /**
@@ -93,6 +97,11 @@ public final class ClientFx implements FxClientHandler {
     public void spawnFxOnEntity(Level level, String name, Entity entity, float offsetX, float offsetY, float offsetZ,
                                 boolean attachToHead, EntityCondition condition) {
         createFXOnEntity(name, entity, offsetX, offsetY, offsetZ, attachToHead, condition);
+    }
+
+    @Override
+    public void entityDeath(LivingEntity entity, DeathType deathType, float motionX, float motionY, float motionZ) {
+        DeathEffects.play(entity, deathType, motionX, motionY, motionZ);
     }
 
     @Override

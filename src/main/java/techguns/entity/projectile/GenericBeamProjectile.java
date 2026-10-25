@@ -204,9 +204,11 @@ public class GenericBeamProjectile extends GenericProjectile {
     @Override
     public void readSpawnData(RegistryFriendlyByteBuf buf) {
         super.readSpawnData(buf);
-        // the base class derives the pitch from the motion in arrow convention (positive = up);
-        // beams trace and render with the view convention (positive = down), like the server side
+        // the base class derives yaw and pitch from the motion in arrow convention (yaw = atan2(x, z), pitch positive = up);
+        // beams trace and render with the view convention (yaw = atan2(-x, z), pitch positive = down), like the server side
+        setYRot(-getYRot());
         setXRot(-getXRot());
+        yRotO = getYRot();
         xRotO = getXRot();
         beamType = BeamType.values()[buf.readByte()];
         damageTicks = buf.readVarInt();
