@@ -538,7 +538,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 |---|---|---|
 | Q1 | ~~Base version?~~ **Decided 2026-10-24: 1.21.1 / NeoForge 21.1.x.** Reasons: largest NeoForge mod base (≈21.6k on Modrinth vs ≈3.8k for 1.20.6), all libraries released (incl. EMI, Veil, KubeJS), NeoForge still maintained, closest to the Fabric 1.19.4 render code. Accepted cost: renderer rework on the later 26.x jump, mitigated by §4.7. | ✔ Decided |
 | Q2 | Keep mod id `techguns` and asset paths? | Yes. |
-| Q3 | Gun models: keep ported Java models (Fabric) vs convert to Blockbench/GeckoLib? | Port Java models first; prototype one GeckoLib gun in Phase 2b; decide based on result. Use GeckoLib for complex NPCs regardless. |
+| Q3 | ~~Gun models: Java vs GeckoLib?~~ **Decided 2026-10-25: full GeckoLib.** All gun models are GeckoLib geo models (exported from the ported Java models by `TGGeoExporter`, then edited in Blockbench), with keyframed animations. GeckoLib is a required dependency. See §9.1. | ✔ Decided |
 | Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. | ✔ Decided |
 | Q5 | Extra slots: Curios dependency vs own system? | Curios (soft or hard dependency — decide). |
 | Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | Discuss. |
@@ -548,6 +548,26 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q10 | License for Techguns 3 (1.12 has `LICENSE.txt`, Fabric has `LICENSE`). | Author's call. |
 
 ---
+
+### 9.1 Q3 GeckoLib prototype — findings (2026-10-25)
+
+**What was built** (GeckoLib 4.9.3, optional `compileOnly` + dev `localRuntime` dependency):
+- `TGGeoExporter` converts a Java model (`TGModel` with `TGModelPart` fields) to a Bedrock `.geo.json` (`/tgdebug exportgeo`). Mapping: see the correction below; parts rotated on several axes become nested single-axis bones (Java rotates X,Y,Z, GeckoLib Z,Y,X). The prototype M4 export (42 parts) looked pixel-identical, but the Lasergun later exposed a UV issue (see below).
+- `GeoGunModel` is a drop-in `TGModel`: draws the geo model through `TGGeoBridge` (implemented in `client/render/geo/GeckoLibGunRenderer`), falling back to the Java model while a geo file is missing. All Techguns transforms (hand pose, recoil, ADS, muzzle flash, third person) stay in `RenderGunBase` — GeckoLib only draws the bones. No mixins.
+- `assets/techguns/animations/item/m4.animation.json`: keyframed `reload` (magazine drops and tilts, bolt pulls back, gun rolls) on bones grouped at export (`magazine`, `bolt`). Played from the gun's reload timer; bone values verified in game.
+
+**Findings**
+- ➕ Per-part keyframe animation (magazines, bolts, belts, spinning barrels) authored in Blockbench instead of code; Java models can only move parts with hand-written code per gun.
+- ➕ Conversion is mechanical and exact, so existing art isn't lost; a gun can be converted when it needs animation.
+- ➕ Data over code (§4.7) and GeckoLib tracks vanilla renderer changes.
+- ➖ GeckoLib animation state must be per holder and hand; a shared state was reset by the hotbar icon render every frame (fixed in the prototype with keyed animatables; GUI/ground copies never animate).
+- ➖ GeckoLib 5 (1.21.2+/26.x) moves to render states: the ~200-line bridge has to be rewritten at the 26.x jump (the Java models need the same kind of work anyway).
+- ➖ An extra dependency for guns (soft here), and GeckoLib animations run on game ticks while our timers run in ms; reload length and animation length must be kept in sync per gun.
+- Not measured: performance with many NPCs holding geo guns.
+
+**Decision (author, 2026-10-25): full GeckoLib.** GeckoLib becomes a required dependency; every gun ships as geo models (one file per render part, e.g. the launcher and its rocket), the Java models stay only as export source and fallback. Phase 3 workflow per gun: port the Java model → `/tgdebug exportgeo` → copy to `assets/techguns/geo/item` → add keyframe animations in Blockbench.
+
+**Mapping correction (found while converting the Lasergun):** the first mapping (180° turn about X, negated x) swapped north/south box-UV faces, which showed as a few wrongly textured faces. Final mapping: turn 180° about **Z**; cube origin = (px + x, −(py + y + h), pz + z), pivot = (px, −py, pz), rotations unchanged, `mirror` as in Java. M4, Lasergun and Rocket Launcher (+ rocket) are pixel-identical to the Java models in game.
 
 ## Appendix A — Name mapping cheat-sheet (1.12 MCP / Fabric Yarn → Mojmap)
 

@@ -139,4 +139,8 @@ public class TGModelPart {
     public void addChild(TGModelPart child) {
         this.children.add(child);
     }
+
+    List<TGModelPart> children() {
+        return children;
+    }
 }

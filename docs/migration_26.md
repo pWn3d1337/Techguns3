@@ -12,3 +12,4 @@ Each entry matches a `// MIGRATION(26.x): ...` comment in the code. See design d
 | `src/main/java/techguns/client/gun/GunAmmoDecorator.java` | Deferred GUI rendering (1.21.6) may change the item decorator API. |
 | `src/main/java/techguns/client/deatheffects/DeathEffects.java` | Gore gibs read entity model parts (`ListModel`, `AgeableListModel` via reflection, `HierarchicalModel` root children); entity models are reworked in 1.21.2+. Corpse hiding via `RenderLivingEvent.Pre` moves to render states. |
 | `src/main/resources/META-INF/accesstransformer.cfg` | `ModelPart.children` made public for gore gibs. |
+| `src/main/java/techguns/client/render/geo/GeckoLibGunRenderer.java` | GeckoLib 4 `GeoObjectRenderer`/`AnimationController` API; GeckoLib 5 (1.21.2+) uses render states — rewrite the bridge. |

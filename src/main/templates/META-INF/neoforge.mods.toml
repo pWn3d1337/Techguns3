@@ -29,3 +29,10 @@ Techguns 3 - guns, armor, machines, NPCs and structures for modern Minecraft.
 
 [[accessTransformers]]
     file="META-INF/accesstransformer.cfg"
+
+[[dependencies.${mod_id}]]
+    modId="geckolib"
+    type="required"
+    versionRange="[${geckolib_version},)"
+    ordering="NONE"
+    side="BOTH"

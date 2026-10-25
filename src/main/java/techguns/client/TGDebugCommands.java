@@ -1,5 +1,9 @@
 package techguns.client;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.client.Minecraft;
@@ -9,6 +13,11 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
+import techguns.client.model.TGGeoBridge;
+import techguns.client.model.TGGeoExporter;
+import techguns.client.model.gun.ModelLasergun;
+import techguns.client.model.gun.ModelM4;
+import techguns.client.model.gun.ModelRocketLauncher;
 import techguns.client.particle.ClientFx;
 import techguns.client.particle.TGParticleManager;
 import techguns.client.render.entity.RenderLateEntityRenderer;
@@ -78,6 +87,43 @@ public final class TGDebugCommands {
                                     ctx.getSource().sendSystemMessage(Component.literal("Spawned " + name + " at " + pos));
                                     return 1;
                                 })))
+                .then(Commands.literal("geo")
+                        .executes(ctx -> {
+                            // Q3 prototype: switch the M4 between the GeckoLib geo model and the Java model
+                            TGGeoBridge.setEnabled(!TGGeoBridge.enabled());
+                            ctx.getSource().sendSystemMessage(Component.literal("Geo models: " + TGGeoBridge.enabled()));
+                            return 1;
+                        }))
+                .then(Commands.literal("reloadanim")
+                        .then(Commands.argument("ticks", IntegerArgumentType.integer(1, 1200))
+                                .executes(ctx -> {
+                                    // plays the held gun's reload animation slowed down, without touching ammo
+                                    var player = Minecraft.getInstance().player;
+                                    if (player != null) {
+                                        ClientGunController.get().onReloadStarted(player, net.minecraft.world.InteractionHand.MAIN_HAND,
+                                                IntegerArgumentType.getInteger(ctx, "ticks"));
+                                        ctx.getSource().sendSystemMessage(Component.literal("Playing reload animation"));
+                                    }
+                                    return 1;
+                                })))
+                .then(Commands.literal("exportgeo")
+                        .executes(ctx -> {
+                            // writes run/geo_export/<id>.geo.json from the Java gun models (copy to assets/techguns/geo/item)
+                            try {
+                                var dir = Minecraft.getInstance().gameDirectory.toPath().resolve("geo_export");
+                                TGGeoExporter.export(new ModelM4(), "m4",
+                                        Map.of("magazine", List.of("Magazine01", "Magazine02"), "bolt", List.of("Bolt01", "Bolt02", "Bolt03")),
+                                        Set.of("RedDot"), dir);
+                                TGGeoExporter.export(new ModelLasergun(), "lasergun", Map.of(), Set.of(), dir);
+                                ModelRocketLauncher launcher = new ModelRocketLauncher();
+                                TGGeoExporter.export(launcher, "rocket_launcher", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(launcher.rocketModel(), "rocket_launcher_rocket", Map.of(), Set.of(), dir);
+                                ctx.getSource().sendSystemMessage(Component.literal("Exported gun geo models to " + dir));
+                            } catch (java.io.IOException e) {
+                                ctx.getSource().sendSystemMessage(Component.literal("Export failed: " + e));
+                            }
+                            return 1;
+                        }))
                 .then(Commands.literal("view")
                         .executes(ctx -> {
                             // cycles first person / third person back / third person front (F5); MCP has no key input
