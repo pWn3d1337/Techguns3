@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "f": {
+      "item": "techguns:steel_receiver"
+    },
+    "g": {
+      "item": "minecraft:glass_pane"
+    },
+    "i": {
+      "item": "techguns:plastic_sheet"
+    },
+    "m": {
+      "item": "techguns:assault_rifle_magazine"
+    },
+    "p": {
+      "tag": "c:ingots/steel"
+    },
+    "s": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "gpg",
+    "bfs",
+    "im "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:aug"
+  }
+}

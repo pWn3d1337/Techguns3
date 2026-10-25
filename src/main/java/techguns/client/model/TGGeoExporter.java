@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import java.util.Set;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import techguns.Techguns;
 
 /**
  * Dev tool (Q3 GeckoLib prototype): converts a Techguns Java model ({@link TGModel} with {@link TGModelPart} fields)
@@ -97,6 +100,50 @@ public final class TGGeoExporter {
         return size != null ? size : new int[] {model.textureWidth, model.textureHeight};
     }
 
+    private static final Map<Class<?>, Map<String, TGModelPart>> SCALED_PARTS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** Parts with a static render scale, by bone name (field name); their geo bones are scaled at render time. */
+    public static Map<String, TGModelPart> scaledParts(TGModel model) {
+        return SCALED_PARTS.computeIfAbsent(model.getClass(), c -> {
+            Map<String, TGModelPart> scaled = new LinkedHashMap<>();
+            parts(model).forEach((name, p) -> {
+                if (p.hasRenderScale()) {
+                    scaled.put(name, p);
+                    if (!Arrays.equals(geoScale(p), new float[] {p.scaleX, p.scaleY, p.scaleZ})) {
+                        Techguns.LOGGER.warn("{}.{}: render scale doesn't commute with its rotation (shear), geo model approximates it",
+                                c.getSimpleName(), name);
+                    }
+                }
+            });
+            return scaled;
+        });
+    }
+
+    /**
+     * Bone scale (in the part's rotated frame) for a part's static render scale. Exact when the scale commutes with the
+     * rotation; otherwise the Java render shears the box, which a bone can't, so each rotated pair of axes gets the
+     * geometric mean of its two scales.
+     */
+    public static float[] geoScale(TGModelPart p) {
+        float sx = p.scaleX, sy = p.scaleY, sz = p.scaleZ;
+        if (p.roll != 0 && sx != sy) {
+            sx = sy = (float) Math.sqrt(sx * sy);
+        }
+        if (p.yaw != 0 && sx != sz) {
+            sx = sz = (float) Math.sqrt(sx * sz);
+        }
+        if (p.pitch != 0 && sy != sz) {
+            sy = sz = (float) Math.sqrt(sy * sz);
+        }
+        return new float[] {sx, sy, sz};
+    }
+
+    /** Name of the bone that holds the part's cube (the innermost of the nested rotation bones). */
+    public static String cubeBoneName(String name, TGModelPart p) {
+        int rotations = (p.pitch != 0 ? 1 : 0) + (p.yaw != 0 ? 1 : 0) + (p.roll != 0 ? 1 : 0);
+        return rotations > 1 ? name + "_r" + (rotations - 1) : name;
+    }
+
     /** Part fields in declaration order. */
     private static Map<String, TGModelPart> parts(TGModel model) {
         Map<String, TGModelPart> parts = new LinkedHashMap<>();
@@ -159,10 +206,29 @@ public final class TGGeoExporter {
             JsonObject cube = new JsonObject();
             cube.add("origin", vec(px + p.x, -(py + p.y + p.height), pz + p.z));
             cube.add("size", vec(p.width, p.height, p.length));
-            JsonArray uv = new JsonArray();
-            uv.add(p.u);
-            uv.add(p.v);
-            cube.add("uv", uv);
+            if (p.width < 1 && p.height < 1 && p.length < 1) {
+                // GeckoLib floors box UV sizes, so a sub-pixel cube (glow dots) would sample the corner of its
+                // texture area; vanilla samples inside it. Give every face the texel at the box UV origin.
+                JsonObject faces = new JsonObject();
+                for (String face : new String[] {"north", "east", "south", "west", "up", "down"}) {
+                    JsonObject f = new JsonObject();
+                    JsonArray faceUv = new JsonArray();
+                    faceUv.add(p.u + p.length + 0.25f);
+                    faceUv.add(p.v + p.length + 0.25f);
+                    f.add("uv", faceUv);
+                    JsonArray faceSize = new JsonArray();
+                    faceSize.add(0.5f);
+                    faceSize.add(0.5f);
+                    f.add("uv_size", faceSize);
+                    faces.add(face, f);
+                }
+                cube.add("uv", faces);
+            } else {
+                JsonArray uv = new JsonArray();
+                uv.add(p.u);
+                uv.add(p.v);
+                cube.add("uv", uv);
+            }
             if (p.mirror) {
                 cube.addProperty("mirror", true);
             }

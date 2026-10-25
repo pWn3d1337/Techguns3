@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:iron_barrel"
+    },
+    "f": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_iron"
+    },
+    "s": {
+      "item": "techguns:wood_stock"
+    }
+  },
+  "pattern": [
+    "bmf",
+    "s  "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:revolver"
+  }
+}

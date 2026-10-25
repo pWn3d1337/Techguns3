@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:laser_barrel"
+    },
+    "d": {
+      "item": "minecraft:redstone"
+    },
+    "g": {
+      "item": "minecraft:glass_pane"
+    },
+    "m": {
+      "item": "techguns:energy_cell_empty"
+    },
+    "p": {
+      "item": "techguns:mechanical_parts_carbon"
+    },
+    "r": {
+      "item": "techguns:obsidian_steel_receiver"
+    },
+    "s": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "gd ",
+    "brs",
+    "mp "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:lasergun"
+  }
+}

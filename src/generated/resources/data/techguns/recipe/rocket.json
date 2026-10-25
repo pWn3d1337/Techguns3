@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "item": "minecraft:gunpowder"
+    },
+    "s": {
+      "tag": "c:nuggets/iron"
+    },
+    "t": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    " s ",
+    "sts",
+    "sgs"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:rocket"
+  }
+}

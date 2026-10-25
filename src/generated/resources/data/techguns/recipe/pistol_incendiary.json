@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "f": {
+      "item": "techguns:mechanical_parts_obsidian_steel"
+    },
+    "m": {
+      "item": "techguns:pistol_magazine_incendiary"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "s": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "bsp",
+    "fp ",
+    "m  "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 18,
+        "variant": "incendiary"
+      }
+    },
+    "count": 1,
+    "id": "techguns:pistol"
+  }
+}

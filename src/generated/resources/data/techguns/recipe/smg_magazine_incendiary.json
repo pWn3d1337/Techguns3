@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:smg_magazine_empty"
+    },
+    {
+      "item": "techguns:pistol_rounds_incendiary"
+    },
+    {
+      "item": "techguns:pistol_rounds_incendiary"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:smg_magazine_incendiary"
+  }
+}

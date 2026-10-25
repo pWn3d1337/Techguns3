@@ -2,6 +2,7 @@ package techguns.data;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -14,12 +15,18 @@ import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import techguns.TGIds;
+import techguns.gun.GunAmmo;
+import techguns.gun.GunData;
+import techguns.gun.ammo.AmmoType;
+import techguns.registry.TGAmmo;
 import techguns.registry.TGBlocks;
+import techguns.registry.TGGuns;
 import techguns.registry.TGItems;
 import techguns.registry.TGTags;
 
@@ -47,6 +54,8 @@ public class TGRecipeProvider extends RecipeProvider {
         buildNuggetRecipes(output);
         buildMaterialRecipes(output);
         buildComponentRecipes(output);
+        buildAmmoRecipes(output);
+        buildGunRecipes(output);
     }
 
     /** 9 nuggets and 1 ingot, both ways. */
@@ -235,6 +244,183 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('p', TGItems.MECHANICAL_PARTS_CARBON.get()).define('b', TGItems.CIRCUIT_BOARD_ADVANCED.get())
                 .define('c', TGItems.COIL.get()).define('t', TGTags.Items.ingot("titanium"))
                 .unlockedBy("has_coil", has(TGItems.COIL.get())).save(output, TGIds.id("sonic_emitter"));
+    }
+
+    private void buildAmmoRecipes(RecipeOutput output) {
+        TagKey<Item> steelIngot = TGTags.Items.ingot("steel");
+        TagKey<Item> steelNugget = TGTags.Items.nugget("steel");
+        Item mechParts = TGItems.MECHANICAL_PARTS_IRON.get();
+
+        // Empty magazines
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.PISTOL_MAGAZINE_EMPTY.get(), 4)
+                .pattern("ii ").pattern("imi").pattern("igi")
+                .define('g', Tags.Items.INGOTS_IRON).define('i', Tags.Items.NUGGETS_IRON).define('m', mechParts)
+                .unlockedBy("has_mechanical_parts_iron", has(mechParts)).save(output, TGIds.id("pistol_magazine_empty"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.SMG_MAGAZINE_EMPTY.get(), 4)
+                .pattern("ii ").pattern("ii ").pattern("imi")
+                .define('i', Tags.Items.NUGGETS_IRON).define('m', mechParts)
+                .unlockedBy("has_mechanical_parts_iron", has(mechParts)).save(output, TGIds.id("smg_magazine_empty"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ASSAULT_RIFLE_MAGAZINE_EMPTY.get(), 4)
+                .pattern("ss ").pattern("ss ").pattern("sms")
+                .define('s', steelNugget).define('m', mechParts)
+                .unlockedBy("has_mechanical_parts_iron", has(mechParts)).save(output, TGIds.id("assault_rifle_magazine_empty"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.LMG_MAGAZINE_EMPTY.get(), 4)
+                .pattern("ii ").pattern("imi").pattern("iii")
+                .define('i', steelIngot).define('m', mechParts)
+                .unlockedBy("has_mechanical_parts_iron", has(mechParts)).save(output, TGIds.id("lmg_magazine_empty"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.MINIGUN_DRUM_EMPTY.get(), 4)
+                .pattern("sss").pattern("pmp").pattern("sss")
+                .define('p', TGItems.PLASTIC_SHEET.get()).define('s', steelIngot)
+                .define('m', TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get())
+                .unlockedBy("has_mechanical_parts_obsidian_steel", has(TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get()))
+                .save(output, TGIds.id("minigun_drum_empty"));
+
+        // Refill: empty magazine + loose rounds
+        refill(output, TGAmmo.PISTOL_MAGAZINE.get(), TGAmmo.PISTOL_MAGAZINE_EMPTY.get(), TGAmmo.PISTOL_ROUNDS.get(), 3, "pistol_magazine");
+        refill(output, TGAmmo.PISTOL_MAGAZINE_INCENDIARY.get(), TGAmmo.PISTOL_MAGAZINE_EMPTY.get(),
+                TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), 3, "pistol_magazine_incendiary");
+        refill(output, TGAmmo.SMG_MAGAZINE.get(), TGAmmo.SMG_MAGAZINE_EMPTY.get(), TGAmmo.PISTOL_ROUNDS.get(), 2, "smg_magazine");
+        refill(output, TGAmmo.SMG_MAGAZINE_INCENDIARY.get(), TGAmmo.SMG_MAGAZINE_EMPTY.get(),
+                TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), 2, "smg_magazine_incendiary");
+        refill(output, TGAmmo.ASSAULT_RIFLE_MAGAZINE.get(), TGAmmo.ASSAULT_RIFLE_MAGAZINE_EMPTY.get(), TGAmmo.RIFLE_ROUNDS.get(), 3,
+                "assault_rifle_magazine");
+        refill(output, TGAmmo.ASSAULT_RIFLE_MAGAZINE_INCENDIARY.get(), TGAmmo.ASSAULT_RIFLE_MAGAZINE_EMPTY.get(),
+                TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 3, "assault_rifle_magazine_incendiary");
+        // LMG: 8 rounds around the empty magazine (shaped), or 8 incendiary rounds shapeless
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.LMG_MAGAZINE.get())
+                .pattern("bbb").pattern("bmb").pattern("bbb")
+                .define('b', TGAmmo.RIFLE_ROUNDS.get()).define('m', TGAmmo.LMG_MAGAZINE_EMPTY.get())
+                .unlockedBy("has_lmg_magazine_empty", has(TGAmmo.LMG_MAGAZINE_EMPTY.get())).save(output, TGIds.id("lmg_magazine"));
+        refill(output, TGAmmo.LMG_MAGAZINE_INCENDIARY.get(), TGAmmo.LMG_MAGAZINE_EMPTY.get(), TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 8,
+                "lmg_magazine_incendiary");
+
+        // Energy cells
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ENERGY_CELL.get(), 4)
+                .pattern("gwg").pattern("prp").pattern("prp")
+                .define('p', TGItems.PLASTIC_SHEET.get()).define('r', Items.REDSTONE_BLOCK)
+                .define('w', TGItems.COPPER_WIRE.get()).define('g', Tags.Items.INGOTS_GOLD)
+                .unlockedBy("has_copper_wire", has(TGItems.COPPER_WIRE.get())).save(output, TGIds.id("energy_cell"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.ENERGY_CELL.get())
+                .requires(TGAmmo.ENERGY_CELL_EMPTY.get()).requires(Items.REDSTONE, 4)
+                .unlockedBy("has_energy_cell_empty", has(TGAmmo.ENERGY_CELL_EMPTY.get())).save(output, TGIds.id("energy_cell_refill"));
+
+        // Rounds and rockets
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), 4)
+                .requires(TGAmmo.PISTOL_ROUNDS.get(), 4).requires(Items.BLAZE_POWDER)
+                .unlockedBy("has_pistol_rounds", has(TGAmmo.PISTOL_ROUNDS.get())).save(output, TGIds.id("pistol_rounds_incendiary"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 4)
+                .requires(TGAmmo.RIFLE_ROUNDS.get(), 4).requires(Items.BLAZE_POWDER)
+                .unlockedBy("has_rifle_rounds", has(TGAmmo.RIFLE_ROUNDS.get())).save(output, TGIds.id("rifle_rounds_incendiary"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ROCKET.get(), 4)
+                .pattern(" s ").pattern("sts").pattern("sgs")
+                .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER)
+                .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("rocket"));
+    }
+
+    /** Shapeless: empty magazine plus {@code rounds} loose rounds gives the filled magazine. */
+    private static void refill(RecipeOutput output, ItemLike result, ItemLike empty, ItemLike round, int rounds, String id) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, result)
+                .requires(empty).requires(round, rounds)
+                .unlockedBy(getHasName(empty), has(empty)).save(output, TGIds.id(id));
+    }
+
+    private void buildGunRecipes(RecipeOutput output) {
+        TagKey<Item> steelIngot = TGTags.Items.ingot("steel");
+        Item obsBarrel = TGItems.OBSIDIAN_STEEL_BARREL.get();
+        Item steelReceiver = TGItems.STEEL_RECEIVER.get();
+        Item obsReceiver = TGItems.OBSIDIAN_STEEL_RECEIVER.get();
+        Item ironReceiver = TGItems.IRON_RECEIVER.get();
+        Item plasticStock = TGItems.PLASTIC_STOCK.get();
+        Item woodStock = TGItems.WOOD_STOCK.get();
+        Item plastic = TGItems.PLASTIC_SHEET.get();
+        Item glassPane = Items.GLASS_PANE;
+
+        // M4: loaded / empty / incendiary differ only in the magazine and the result's ammo
+        Item m4 = TGGuns.M4.get();
+        Consumer<StackShapedRecipeBuilder> m4Keys = b -> b.define('r', Items.REDSTONE).define('b', obsBarrel).define('s', plasticStock)
+                .define('f', steelReceiver).define('g', glassPane).define('i', Tags.Items.INGOTS_IRON).define('n', Tags.Items.NUGGETS_IRON);
+        gun(output, m4, 30, AmmoType.DEFAULT, "m4", TGAmmo.ASSAULT_RIFLE_MAGAZINE.get(), m4Keys, "gr", "bfs", "nmi");
+        gun(output, m4, 0, AmmoType.DEFAULT, "m4_empty", TGAmmo.ASSAULT_RIFLE_MAGAZINE_EMPTY.get(), m4Keys, "gr", "bfs", "nmi");
+        gun(output, m4, 30, AmmoType.INCENDIARY, "m4_incendiary", TGAmmo.ASSAULT_RIFLE_MAGAZINE_INCENDIARY.get(), m4Keys,
+                "gr", "bfs", "nmi");
+
+        // Pistol
+        Item pistol = TGGuns.PISTOL.get();
+        Consumer<StackShapedRecipeBuilder> pistolKeys = b -> b.define('p', plastic).define('b', obsBarrel).define('s', steelIngot)
+                .define('f', TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get());
+        gun(output, pistol, 18, AmmoType.DEFAULT, "pistol", TGAmmo.PISTOL_MAGAZINE.get(), pistolKeys, "bsp", "fp", "m");
+        gun(output, pistol, 0, AmmoType.DEFAULT, "pistol_empty", TGAmmo.PISTOL_MAGAZINE_EMPTY.get(), pistolKeys, "bsp", "fp", "m");
+        gun(output, pistol, 18, AmmoType.INCENDIARY, "pistol_incendiary", TGAmmo.PISTOL_MAGAZINE_INCENDIARY.get(), pistolKeys,
+                "bsp", "fp", "m");
+
+        // Lasergun
+        Item laser = TGGuns.LASERGUN.get();
+        Consumer<StackShapedRecipeBuilder> laserKeys = b -> b.define('p', TGItems.MECHANICAL_PARTS_CARBON.get())
+                .define('b', TGItems.LASER_BARREL.get()).define('r', obsReceiver).define('s', plasticStock)
+                .define('d', Items.REDSTONE).define('g', glassPane);
+        gun(output, laser, 45, AmmoType.DEFAULT, "lasergun", TGAmmo.ENERGY_CELL.get(), laserKeys, "gd", "brs", "mp");
+        gun(output, laser, 0, AmmoType.DEFAULT, "lasergun_empty", TGAmmo.ENERGY_CELL_EMPTY.get(), laserKeys, "gd", "brs", "mp");
+
+        // Rocket launcher: the loaded one has a rocket left of the barrels
+        Item rocketLauncher = TGGuns.ROCKET_LAUNCHER.get();
+        Consumer<StackShapedRecipeBuilder> rocketKeys = b -> b.define('b', obsBarrel).define('f', steelReceiver);
+        gun(output, rocketLauncher, 1, AmmoType.DEFAULT, "rocket_launcher", TGAmmo.ROCKET.get(), rocketKeys, "mbb", "f");
+        gun(output, rocketLauncher, 0, AmmoType.DEFAULT, "rocket_launcher_empty", null, rocketKeys, "bb", "f");
+
+        // Revolver and bolt action: empty only (Fabric has no loaded recipe)
+        gun(output, TGGuns.REVOLVER.get(), 0, AmmoType.DEFAULT, "revolver_empty", null,
+                b -> b.define('b', TGItems.IRON_BARREL.get()).define('s', woodStock).define('f', Items.FLINT_AND_STEEL)
+                        .define('m', TGItems.MECHANICAL_PARTS_IRON.get()),
+                "bmf", "s");
+        gun(output, TGGuns.BOLT_ACTION.get(), 0, AmmoType.DEFAULT, "bolt_action_empty", null,
+                b -> b.define('b', obsBarrel).define('s', woodStock).define('f', ironReceiver)
+                        .define('g', Tags.Items.GLASS_BLOCKS).define('i', Tags.Items.INGOTS_IRON),
+                "gi", "bfs");
+
+        gun(output, TGGuns.AK47.get(), 30, AmmoType.DEFAULT, "ak47", TGAmmo.ASSAULT_RIFLE_MAGAZINE.get(),
+                b -> b.define('b', obsBarrel).define('s', woodStock).define('f', ironReceiver).define('w', ItemTags.LOGS),
+                "bfs", "wm");
+        gun(output, TGGuns.AUG.get(), 30, AmmoType.DEFAULT, "aug", TGAmmo.ASSAULT_RIFLE_MAGAZINE.get(),
+                b -> b.define('p', steelIngot).define('b', obsBarrel).define('s', plasticStock).define('f', steelReceiver)
+                        .define('g', glassPane).define('i', plastic),
+                "gpg", "bfs", "im");
+        gun(output, TGGuns.SCAR.get(), 20, AmmoType.DEFAULT, "scar", TGAmmo.ASSAULT_RIFLE_MAGAZINE.get(),
+                b -> b.define('p', plastic).define('r', obsReceiver).define('b', obsBarrel).define('s', plasticStock)
+                        .define('d', Items.DIAMOND).define('g', Tags.Items.GLASS_BLOCKS),
+                "gpd", "brs", "m");
+        gun(output, TGGuns.THOMPSON.get(), 20, AmmoType.DEFAULT, "thompson", TGAmmo.SMG_MAGAZINE.get(),
+                b -> b.define('b', TGItems.IRON_BARREL.get()).define('s', woodStock).define('f', ironReceiver),
+                "bfs", "m");
+        gun(output, TGGuns.MAC10.get(), 32, AmmoType.DEFAULT, "mac10", TGAmmo.SMG_MAGAZINE.get(),
+                b -> b.define('p', plastic).define('r', steelReceiver).define('b', obsBarrel).define('i', Tags.Items.NUGGETS_IRON),
+                "pi", "bri", "m");
+        gun(output, TGGuns.VECTOR.get(), 25, AmmoType.DEFAULT, "vector", TGAmmo.SMG_MAGAZINE.get(),
+                b -> b.define('r', obsReceiver).define('b', obsBarrel).define('s', plasticStock).define('d', Items.REDSTONE)
+                        .define('g', glassPane),
+                "gd", "brs", "m");
+        gun(output, TGGuns.LMG.get(), 100, AmmoType.DEFAULT, "lmg", TGAmmo.LMG_MAGAZINE.get(),
+                b -> b.define('r', Items.REDSTONE).define('b', obsBarrel).define('s', plasticStock).define('f', obsReceiver)
+                        .define('g', glassPane),
+                "gr", "bfs", "m");
+        gun(output, TGGuns.MINIGUN.get(), 200, AmmoType.DEFAULT, "minigun", TGAmmo.MINIGUN_DRUM.get(),
+                b -> b.define('b', obsBarrel).define('r', obsReceiver).define('e', TGItems.ELECTRIC_ENGINE.get()),
+                "bbe", "bbr", "bbm");
+    }
+
+    /**
+     * A gun recipe whose result carries the loaded-ammo component. {@code magazine} (may be null) is
+     * defined as 'm' in the pattern.
+     */
+    private static void gun(RecipeOutput output, Item gun, int loaded, String variant, String id, ItemLike magazine,
+                            Consumer<StackShapedRecipeBuilder> keys, String... pattern) {
+        ItemStack result = new ItemStack(gun);
+        GunData.setAmmo(result, new GunAmmo(loaded, variant));
+        StackShapedRecipeBuilder builder = StackShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result, pattern);
+        keys.accept(builder);
+        if (magazine != null) {
+            builder.define('m', magazine);
+        }
+        builder.unlockedBy(getHasName(gun), has(gun)).save(output, TGIds.id(id));
     }
 
     /** Two rows of three with an empty middle row. */

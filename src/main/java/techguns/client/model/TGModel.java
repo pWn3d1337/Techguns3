@@ -38,6 +38,33 @@ public abstract class TGModel extends Model {
     public abstract void render(@Nullable LivingEntity entity, PoseStack poseStack, VertexConsumer vertices, int ammoLeft,
                                 float reloadProgress, ItemDisplayContext context, int part, float fireProgress, float chargeProgress, int light, int overlay);
 
+    /**
+     * Code-driven movement of a whole render part (bolts, slides, spinning barrels), applied to the pose stack before
+     * the part is drawn. The Java render and the geo render ({@link GeoGunModel}) both use it.
+     */
+    public void transformPart(PoseStack poseStack, int part, int ammoLeft, float reloadProgress, float fireProgress) {
+    }
+
+    /**
+     * Code-driven bone changes for the geo version of this model (the Java render does the same in {@link #render}).
+     * Overrides must call super, which applies the static part scales.
+     */
+    public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress,
+                                ItemDisplayContext context) {
+        TGGeoExporter.scaledParts(this).forEach((name, p) -> {
+            // Java: v' = O + S(pivot - O) + R S c; GeckoLib bone scale gives pivot + R S c, the offset adds (S - 1)(pivot - O)
+            float[] scale = TGGeoExporter.geoScale(p);
+            bones.setScale(TGGeoExporter.cubeBoneName(name, p), scale[0], scale[1], scale[2]);
+            bones.setOffset(name, (p.scaleX - 1) * (p.pivotX - p.scaleOriginX()), (p.scaleY - 1) * (p.pivotY - p.scaleOriginY()),
+                    (p.scaleZ - 1) * (p.pivotZ - p.scaleOriginZ()));
+        });
+    }
+
+    /** Java model of render part {@code part} (> 0) when it is a separate nested model; this model otherwise. */
+    public TGModel partModel(int part) {
+        return this;
+    }
+
     /** Render type for one part of this model. */
     public RenderType getRenderType(ResourceLocation texture, int part) {
         return this.renderType(texture);

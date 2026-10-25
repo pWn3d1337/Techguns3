@@ -11,7 +11,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | — |
+| 3 — All guns, ammo, grenades, tools | in progress (batch 3a bullet guns) |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
@@ -59,3 +59,13 @@ Per-item tables (guns, ammo, armor, blocks, machines, NPCs, structures) are adde
 | Techguns particle system, FX payloads, late render pass (bullet/laser impacts, rocket exhaust + explosion) | F | rendered | `/tgdebug fx <name>` spawns an FX at the crosshair |
 | Death effects: gore gibs from the mob's model parts + blood FX, laser/bio FX, corpse hidden on gore; rocket blast without vanilla particles | F + 12 | rendered | gore chance roll from 1.12; laser/bio corpses burn/rot and fade (no mixin: `RenderLivingEvent.Pre`) |
 | Dev test hooks: `/tgdebug fire`, `projectiles`, `slowbeams`, `zoom`, `fx`, `fxstats`, `alwaysdeath`, `view`, `geo`, `exportgeo`, `reloadanim` | — | done | dev builds only (MCP testing) |
+
+### Phase 3 — all guns, ammo, grenades, tools
+
+Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to GeckoLib geo, GameTests (fires and hits, reloads from its ammo, incendiary ignites).
+
+| Unit | Source | Status | Notes |
+|---|---|---|---|
+| 3a guns: revolver, golden revolver, pistol, AKM, The Infiltrator, AUG, SCAR, Thompson, MAC-10, Vector, LMG, bolt action, minigun | F | rendered | 39 generated GameTests; GeckoLib geo models pixel-identical to the Java models in game (SCAR: 1 px scope edges); bolt/slide/barrel/belt animations driven from Java; minigun keeps its spin animation running (`continuousAnimation`); MAC-10 hand type `ONE_POINT_FIVE_HANDED` |
+| 3a ammo: pistol/rifle rounds (+incendiary), pistol/SMG/AR/LMG magazines, minigun drum (+empty, +incendiary) | F | rendered | incendiary ammo has an uncommon (yellow) name instead of the Fabric colour code |
+| 3a recipes: guns (plain, empty, incendiary; ammo in the result), empty magazines, magazine refills, energy cell, rocket | F | logic | 38 recipes; minigun drum refill waits for the rifle rounds stack item; golden revolver/Infiltrator use the ammo transfer recipe (batch 3g) |

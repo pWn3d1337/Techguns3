@@ -47,6 +47,11 @@ public class TGModelPart {
     int u;
     int v;
 
+    /** Static scale of this part (Tabula exports scaled parts in render code); 1 = none. */
+    float scaleX = 1.0f;
+    float scaleY = 1.0f;
+    float scaleZ = 1.0f;
+
     private ModelPart.Cube cuboid = null;
 
     private final List<TGModelPart> children = new ArrayList<>();
@@ -98,7 +103,46 @@ public class TGModelPart {
     }
 
     public void render(PoseStack poseStack, VertexConsumer vertices, int light, int overlay) {
+        if (!hasRenderScale()) {
+            this.render(poseStack, vertices, light, overlay, 0f, 0f, 0f);
+            return;
+        }
+        // scaled around the Tabula scale origin, see scaleOrigin()
+        poseStack.pushPose();
+        poseStack.translate(scaleOriginX() * SCALE, scaleOriginY() * SCALE, scaleOriginZ() * SCALE);
+        poseStack.scale(scaleX, scaleY, scaleZ);
+        poseStack.translate(-scaleOriginX() * SCALE, -scaleOriginY() * SCALE, -scaleOriginZ() * SCALE);
         this.render(poseStack, vertices, light, overlay, 0f, 0f, 0f);
+        poseStack.popPose();
+    }
+
+    /**
+     * Scales this part (Tabula "scale" export, formerly written out as pose stack code in each model). The scale must
+     * commute with the part's rotation (uniform, no rotation, or rotation about the axis whose two other scales are
+     * equal) so the geo model can reproduce it with a bone scale.
+     */
+    public TGModelPart setRenderScale(float x, float y, float z) {
+        this.scaleX = x;
+        this.scaleY = y;
+        this.scaleZ = z;
+        return this;
+    }
+
+    public boolean hasRenderScale() {
+        return scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f;
+    }
+
+    // Tabula scales around pivot + rotation (radians read as pixels); kept as is so the models look unchanged
+    float scaleOriginX() {
+        return pivotX + pitch;
+    }
+
+    float scaleOriginY() {
+        return pivotY + yaw;
+    }
+
+    float scaleOriginZ() {
+        return pivotZ + roll;
     }
 
     public void render(PoseStack poseStack, VertexConsumer vertices, int light, int overlay, float rx, float ry, float rz) {

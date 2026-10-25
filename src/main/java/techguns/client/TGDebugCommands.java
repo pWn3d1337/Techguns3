@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGGeoExporter;
-import techguns.client.model.gun.ModelLasergun;
+import techguns.client.model.gun.*;
 import techguns.client.model.gun.ModelM4;
 import techguns.client.model.gun.ModelRocketLauncher;
 import techguns.client.particle.ClientFx;
@@ -114,10 +114,31 @@ public final class TGDebugCommands {
                                 TGGeoExporter.export(new ModelM4(), "m4",
                                         Map.of("magazine", List.of("Magazine01", "Magazine02"), "bolt", List.of("Bolt01", "Bolt02", "Bolt03")),
                                         Set.of("RedDot"), dir);
-                                TGGeoExporter.export(new ModelLasergun(), "lasergun", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelLasergun(), "lasergun", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow5"), dir);
                                 ModelRocketLauncher launcher = new ModelRocketLauncher();
                                 TGGeoExporter.export(launcher, "rocket_launcher", Map.of(), Set.of(), dir);
-                                TGGeoExporter.export(launcher.rocketModel(), "rocket_launcher_rocket", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(launcher.partModel(1), "rocket_launcher_rocket", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelRevolver(), "revolver", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelGoldenRevolver(), "golden_revolver", Map.of(), Set.of(), dir);
+                                ModelPistol pistol = new ModelPistol();
+                                TGGeoExporter.export(pistol, "pistol", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(pistol.partModel(1), "pistol_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelAK(), "ak47", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelM4Infiltrator(), "m4_infiltrator", Map.of(), Set.of(), dir);
+                                ModelAUG aug = new ModelAUG();
+                                TGGeoExporter.export(aug, "aug", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(aug.partModel(1), "aug_1", Map.of(), Set.of(), dir);
+                                ModelScar scar = new ModelScar();
+                                TGGeoExporter.export(scar, "scar", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(scar.partModel(1), "scar_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelThompson(), "thompson", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelMac10(), "mac10", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelVector(), "vector", Map.of(), Set.of("RedDot"), dir);
+                                TGGeoExporter.export(new ModelLMG(), "lmg", Map.of(), Set.of("RedDot"), dir);
+                                TGGeoExporter.export(new ModelBoltaction(), "bolt_action", Map.of(), Set.of(), dir);
+                                ModelMinigun minigun = new ModelMinigun();
+                                TGGeoExporter.export(minigun, "minigun", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(minigun.partModel(1), "minigun_1", Map.of(), Set.of(), dir);
                                 ctx.getSource().sendSystemMessage(Component.literal("Exported gun geo models to " + dir));
                             } catch (java.io.IOException e) {
                                 ctx.getSource().sendSystemMessage(Component.literal("Export failed: " + e));

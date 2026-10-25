@@ -1,5 +1,7 @@
 package techguns.client.model;
 
+import java.util.function.Consumer;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,10 +17,11 @@ public interface TGGeoBridge {
      * type the gun renderer chose for this part.
      *
      * @param animationKey identifies one animated copy (holder and hand); -1 = static (GUI, ground, frames)
+     * @param bones        code-driven bone changes, applied after the keyframe animations
      * @return false if the model isn't available, so the caller draws the Java model instead
      */
     boolean render(String id, long animationKey, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer,
-                   int light, int overlay, float reloadProgress, float fireProgress);
+                   int light, int overlay, float reloadProgress, float fireProgress, Consumer<GeoBones> bones);
 
     static TGGeoBridge get() {
         return Holder.bridge;

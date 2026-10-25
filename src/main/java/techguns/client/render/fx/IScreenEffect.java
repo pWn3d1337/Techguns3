@@ -12,6 +12,9 @@ public interface IScreenEffect {
 
     IScreenEffect muzzleFlash_rifle = new ScreenEffect("textures/fx/muzzleflashnew_add.png", 4, 4, 12, BlendMode.ADDITIVE);
     IScreenEffect muzzleFlash_gun = new ScreenEffect("textures/fx/muzzleflashnew_2_add_2.png", 4, 4, 11, BlendMode.ADDITIVE);
+    IScreenEffect muzzleFlash_minigun = new ScreenEffect("textures/fx/muzzleflash_minigun.png", 2, 2, 4, BlendMode.ADDITIVE);
+
+    IScreenEffect sniperScope = new ScreenEffect("textures/fx/testscope.png", 1, 1, 1, BlendMode.SCOPE);
 
     default void doRender(PoseStack poseStack, MultiBufferSource buffers, float progress, float offsetX, float offsetY, float offsetZ, float scale, boolean is3p, String ammoVariant) {
         doRender(poseStack, buffers, progress, offsetX, offsetY, offsetZ, scale, 0, 0, 0, is3p, ammoVariant);

@@ -77,8 +77,13 @@ public final class ClientGunController implements GunClientEffects {
     @Override
     public void onFired(LivingEntity shooter, InteractionHand hand, int recoilTicks, int muzzleFlashTicks) {
         ShooterValues values = ShooterValues.of(shooter.getId());
-        values.startRecoil(hand, recoilTicks);
-        values.startMuzzleFlash(hand, muzzleFlashTicks);
+        boolean continuous = shooter.getItemInHand(hand).getItem() instanceof GunItem gun && gun.stats().firing().continuousAnimation();
+        if (!continuous || !values.recoil(hand).isActive()) {
+            values.startRecoil(hand, recoilTicks);
+        }
+        if (!continuous || !values.muzzleFlash(hand).isActive()) {
+            values.startMuzzleFlash(hand, muzzleFlashTicks);
+        }
     }
 
     @Override

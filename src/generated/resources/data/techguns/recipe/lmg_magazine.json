@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:rifle_rounds"
+    },
+    "m": {
+      "item": "techguns:lmg_magazine_empty"
+    }
+  },
+  "pattern": [
+    "bbb",
+    "bmb",
+    "bbb"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:lmg_magazine"
+  }
+}

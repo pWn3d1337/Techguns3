@@ -456,6 +456,15 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - Port remaining guns in batches (by projectile family), ammo items, magazines, Ammo Bag (§4.4), grenades, mining drill/chainsaw/power hammer/shishkebap, guided missiles, TFG.
 - Fabric recipes (ammo change, camo change, mining-head upgrade) as custom recipe serializers.
 - **Exit:** gun parity incl. Fabric additions; GameTests per gun.
+- **Batches (planned 2026-10-25, by projectile family; Fabric `TGuns.java` is the source, 1.12 only for what Fabric lacks):**
+  - 3a Bullet guns: pistol, revolver, golden revolver, AK-47, M4 Infiltrator, AUG, SCAR, Thompson, MAC-10, Vector, LMG, bolt action, minigun + their ammo (pistol rounds, SMG/pistol/LMG magazines, minigun drum, incendiary variants).
+  - 3b Shotguns and special bullets: sawed-off, combat shotgun, AS50 (explosive rounds), Gauss rifle (two-part ammo), PDW, pulse rifle (advanced rounds), blaster rifle, blaster shotgun (= 1.12 scatter beam rifle).
+  - 3c Energy: laser pistol (redstone battery), nuclear death ray, tesla gun, alien blaster, MIB gun, nether blaster (`GenericProjectileFX`), sonic shotgun.
+  - 3d Explosives: rocket variants (nuke, high velocity), grenade launcher (40mm), guided missile launcher, Grim Reaper, hand grenades (stielgranate, frag grenade — 1.12 only).
+  - 3e Charge and fuel: flamethrower (own renderer), biogun, TFG, magic rifle, hand cannon (stone bullets).
+  - 3f Tools: chainsaw, mining drill, power hammer (mining heads), grappling hook, shishkebap (1.12 only).
+  - 3g Ammo Bag (§4.4) and recipe serializers: ammo variant change, ammo transfer, NBT-preserving shaped, camo change, mining head upgrade (the Ammo Bench recipe type goes with the machine in Phase 5).
+- Per gun: stats from Fabric, Java model ported then exported to geo (`/tgdebug exportgeo`), renderer setup, sounds, lang, recipe, GameTest (fire, ammo use, reload). Model and stats porting is mechanical and goes to Sonnet subagents in batches; Opus does the first gun of each family and new projectile types.
 
 ### Phase 4 — Armor & player gear
 - Armor materials, all armor sets, powered armor + energy, armor bonuses (night vision, step assist, jump, etc.), camo, shields.
@@ -568,6 +577,11 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 **Decision (author, 2026-10-25): full GeckoLib.** GeckoLib becomes a required dependency; every gun ships as geo models (one file per render part, e.g. the launcher and its rocket), the Java models stay only as export source and fallback. Phase 3 workflow per gun: port the Java model → `/tgdebug exportgeo` → copy to `assets/techguns/geo/item` → add keyframe animations in Blockbench.
 
 **Mapping correction (found while converting the Lasergun):** the first mapping (180° turn about X, negated x) swapped north/south box-UV faces, which showed as a few wrongly textured faces. Final mapping: turn 180° about **Z**; cube origin = (px + x, −(py + y + h), pz + z), pivot = (px, −py, pz), rotations unchanged, `mirror` as in Java. M4, Lasergun and Rocket Launcher (+ rocket) are pixel-identical to the Java models in game.
+
+**Exporter notes (batch 3a, 2026-10-25):**
+- Code-driven part movement stays in Java and drives both renders: `TGModel.transformPart` (whole render parts: bolts, slides, spinning barrels) and `TGModel.animateGeoBones` (single bones via `GeoBones`: hide, offset, scale — LMG ammo belt, Infiltrator laser hidden in GUI). Multi-part guns nest the moving part in its own `TGModel` (`partModel(n)`), exported as `<id>_<n>`.
+- Tabula "scale" render code became `TGModelPart.setRenderScale`, applied as a bone scale plus offset. A scale that doesn't commute with the part's rotation (SCAR scope tubes) shears the box in Java; GeckoLib can't shear, so those use the geometric mean (visible only as 1-pixel edge differences).
+- GeckoLib floors box-UV sizes; sub-pixel cubes (red-dot glows) get explicit per-face UVs on their texel. Glow parts must be listed in `exportgeo` (`_glow` bones are drawn full bright).
 
 ## Appendix A — Name mapping cheat-sheet (1.12 MCP / Fabric Yarn → Mojmap)
 

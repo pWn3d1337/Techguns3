@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "i": {
+      "tag": "c:nuggets/iron"
+    },
+    "m": {
+      "item": "techguns:smg_magazine"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "r": {
+      "item": "techguns:steel_receiver"
+    }
+  },
+  "pattern": [
+    "pi ",
+    "bri",
+    "m  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:mac10"
+  }
+}

@@ -52,12 +52,23 @@ public class GeoGunModel extends TGModel {
                     || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
             boolean left = context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
             long animationKey = inHand ? entity.getId() * 2L + (left ? 1 : 0) : -1L;
-            if (TGGeoBridge.get().render(geoIds[part], animationKey, poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
-                    vertices, light, overlay, reloadProgress, fireProgress)) {
+            poseStack.pushPose();
+            fallback.transformPart(poseStack, part, ammoLeft, reloadProgress, fireProgress);
+            boolean drawn = TGGeoBridge.get().render(geoIds[part], animationKey, poseStack,
+                    Minecraft.getInstance().renderBuffers().bufferSource(), vertices, light, overlay, reloadProgress, fireProgress,
+                    bones -> partModel(part).animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context));
+            poseStack.popPose();
+            if (drawn) {
                 return;
             }
         }
         fallback.render(entity, poseStack, vertices, ammoLeft, reloadProgress, context, part, fireProgress, chargeProgress, light, overlay);
+    }
+
+    /** The Java model a geo part was exported from (part models are nested in the gun model, see TGGeoExporter). */
+    @Override
+    public TGModel partModel(int part) {
+        return part == 0 ? fallback : fallback.partModel(part);
     }
 
     @Override

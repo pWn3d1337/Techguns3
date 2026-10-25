@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mac10": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:mac10"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:mac10"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mac10"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:mac10"
+    ]
+  }
+}

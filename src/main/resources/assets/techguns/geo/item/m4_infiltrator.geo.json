@@ -1,0 +1,1364 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.m4_infiltrator",
+        "texture_width": 128,
+        "texture_height": 64,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "Grip1",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -2.0,
+            6.0
+          ],
+          "rotation": [
+            25.5621,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -11.0,
+                6.0
+              ],
+              "size": [
+                3.0,
+                9.0,
+                4.0
+              ],
+              "uv": [
+                68,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Receiver02",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            1.0,
+            10.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                0.0,
+                10.0
+              ],
+              "size": [
+                3.0,
+                1.0,
+                2.0
+              ],
+              "uv": [
+                106,
+                19
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Trigger01",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -4.0,
+            3.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -5.0,
+                3.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                5.0
+              ],
+              "uv": [
+                78,
+                12
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Trigger02",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            -1.5,
+            5.0
+          ],
+          "rotation": [
+            -15.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -3.5,
+                5.0
+              ],
+              "size": [
+                1.0,
+                2.0,
+                1.0
+              ],
+              "uv": [
+                87,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Magazine02",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -9.0,
+            -4.4
+          ],
+          "rotation": [
+            -9.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -13.0,
+                -4.4
+              ],
+              "size": [
+                2.0,
+                4.0,
+                6.0
+              ],
+              "uv": [
+                95,
+                19
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Grip02",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -0.5,
+            -12.5
+          ],
+          "rotation": [
+            0.0,
+            45.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -8.5,
+                -12.5
+              ],
+              "size": [
+                2.0,
+                8.0,
+                2.0
+              ],
+              "uv": [
+                56,
+                7
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock01",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            4.0,
+            13.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                1.0,
+                13.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                15.0
+              ],
+              "uv": [
+                65,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Bolt03",
+          "parent": "root",
+          "pivot": [
+            -3.5,
+            3.8,
+            11.0
+          ],
+          "rotation": [
+            0.0,
+            74.5562,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3.5,
+                2.8,
+                11.0
+              ],
+              "size": [
+                4.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelGuard",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            5.0,
+            -23.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                1.0,
+                -23.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                15.0
+              ],
+              "uv": [
+                32,
+                13
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelRails01",
+          "parent": "root",
+          "pivot": [
+            1.5,
+            4.0,
+            -22.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1.5,
+                2.0,
+                -22.0
+              ],
+              "size": [
+                1.0,
+                2.0,
+                13.0
+              ],
+              "uv": [
+                36,
+                33
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelRails02",
+          "parent": "root",
+          "pivot": [
+            -3.5,
+            4.0,
+            -22.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3.5,
+                2.0,
+                -22.0
+              ],
+              "size": [
+                1.0,
+                2.0,
+                13.0
+              ],
+              "uv": [
+                36,
+                33
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "IronSight01",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            8.0,
+            -25.0
+          ],
+          "rotation": [
+            25.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                4.0,
+                -25.0
+              ],
+              "size": [
+                1.0,
+                4.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                47
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Barrel",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            4.5,
+            -41.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                2.5,
+                -41.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                18.0
+              ],
+              "uv": [
+                0,
+                26
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock02",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            4.0,
+            12.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                2.0,
+                12.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                1.0
+              ],
+              "uv": [
+                21,
+                47
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelRails03",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            6.0,
+            -22.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                5.0,
+                -22.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                13.0
+              ],
+              "uv": [
+                34,
+                48
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "IronSight02",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            9.0,
+            -26.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                7.0,
+                -26.0
+              ],
+              "size": [
+                1.0,
+                2.0,
+                2.0
+              ],
+              "uv": [
+                5,
+                47
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "IronSight03",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            7.0,
+            -26.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                4.0,
+                -26.0
+              ],
+              "size": [
+                1.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                47
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Receiver03",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            1.0,
+            -5.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -2.0,
+                -5.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                15.0
+              ],
+              "uv": [
+                92,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Barrel02",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            6.0,
+            -8.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                2.0,
+                -8.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                37
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Magazine01",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -5.0,
+            -4.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -10.0,
+                -4.5
+              ],
+              "size": [
+                2.0,
+                5.0,
+                6.0
+              ],
+              "uv": [
+                112,
+                19
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock03",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            2.0,
+            16.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -2.0,
+                16.0
+              ],
+              "size": [
+                1.0,
+                4.0,
+                8.0
+              ],
+              "uv": [
+                87,
+                48
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock04",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            1.0,
+            26.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -7.0,
+                26.0
+              ],
+              "size": [
+                2.0,
+                8.0,
+                2.0
+              ],
+              "uv": [
+                118,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock05",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            2.0,
+            24.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -3.0,
+                24.0
+              ],
+              "size": [
+                1.0,
+                5.0,
+                3.0
+              ],
+              "uv": [
+                98,
+                47
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock06",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            1.0,
+            15.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -2.0,
+                15.0
+              ],
+              "size": [
+                2.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                65,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock07",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -2.0,
+            19.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -4.0,
+                19.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                2.0
+              ],
+              "uv": [
+                72,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock08",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            1.0,
+            21.0
+          ],
+          "rotation": [
+            33.8905,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -8.0,
+                21.0
+              ],
+              "size": [
+                2.0,
+                9.0,
+                2.0
+              ],
+              "uv": [
+                109,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock09",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -2.0,
+            16.0
+          ],
+          "rotation": [
+            60.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -6.0,
+                16.0
+              ],
+              "size": [
+                2.0,
+                4.0,
+                2.0
+              ],
+              "uv": [
+                72,
+                51
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Stock10",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            0.0,
+            16.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -2.0,
+                16.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                2.0
+              ],
+              "uv": [
+                64,
+                51
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "TopRails",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            6.0,
+            -5.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                5.0,
+                -5.5
+              ],
+              "size": [
+                2.0,
+                1.0,
+                15.0
+              ],
+              "uv": [
+                2,
+                48
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "IronSightTop",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            7.0,
+            5.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                5.0,
+                5.0
+              ],
+              "size": [
+                3.0,
+                2.0,
+                4.0
+              ],
+              "uv": [
+                0,
+                53
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Eotech02",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            8.0,
+            -2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                5.0,
+                -2.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                6.0
+              ],
+              "uv": [
+                56,
+                17
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Grip01",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            1.5,
+            -14.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -0.5,
+                -14.5
+              ],
+              "size": [
+                3.0,
+                2.0,
+                4.0
+              ],
+              "uv": [
+                53,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelRails04",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            1.0,
+            -22.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                0.0,
+                -22.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                13.0
+              ],
+              "uv": [
+                34,
+                48
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MagSocket",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -2.0,
+            -5.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -5.0,
+                -5.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                8.0
+              ],
+              "uv": [
+                84,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Receiver01",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            5.0,
+            -6.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                1.0,
+                -6.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                16.0
+              ],
+              "uv": [
+                2,
+                5
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Receiver04",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            4.0,
+            10.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                1.0,
+                10.0
+              ],
+              "size": [
+                4.0,
+                3.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                15
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Bolt01",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            5.0,
+            10.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                4.0,
+                10.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                11,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Bolt02",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            5.0,
+            11.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                4.0,
+                11.0
+              ],
+              "size": [
+                4.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Silencer",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            5.25,
+            -48.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                2.25,
+                -48.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                18.0
+              ],
+              "uv": [
+                68,
+                24
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "LaserBox",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            1.5,
+            -21.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -2.5,
+                -21.5
+              ],
+              "size": [
+                3.0,
+                4.0,
+                5.0
+              ],
+              "uv": [
+                95,
+                30
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "LaserBeam",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            -0.5,
+            -81.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                -1.5,
+                -81.0
+              ],
+              "size": [
+                0.0,
+                1.0,
+                60.0
+              ],
+              "uv": [
+                0,
+                -60
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "LaserBeam01",
+          "parent": "root",
+          "pivot": [
+            0.0,
+            -1.0,
+            -81.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            90.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0.0,
+                -2.0,
+                -81.0
+              ],
+              "size": [
+                0.0,
+                1.0,
+                60.0
+              ],
+              "uv": [
+                0,
+                -60
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Scope01",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            12.0,
+            -3.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                8.0,
+                -3.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                8.0
+              ],
+              "uv": [
+                26,
+                1
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Scope03",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            12.0,
+            5.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                9.0,
+                5.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                2.0
+              ],
+              "uv": [
+                25,
+                37
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Scope02",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            13.0,
+            -6.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                9.0,
+                -6.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                3.0
+              ],
+              "uv": [
+                0,
+                26
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

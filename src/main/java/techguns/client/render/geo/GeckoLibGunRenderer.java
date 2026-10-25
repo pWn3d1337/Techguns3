@@ -2,6 +2,7 @@ package techguns.client.render.geo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,6 +17,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.cache.GeckoLibCache;
@@ -26,6 +28,7 @@ import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import techguns.TGIds;
 import techguns.Techguns;
+import techguns.client.model.GeoBones;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGGeoExporter;
 
@@ -44,7 +47,7 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
 
     @Override
     public boolean render(String id, long animationKey, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer,
-                          int light, int overlay, float reloadProgress, float fireProgress) {
+                          int light, int overlay, float reloadProgress, float fireProgress, Consumer<GeoBones> bones) {
         GunRenderer renderer = renderers.computeIfAbsent(id, GunRenderer::new);
         if (!GeckoLibCache.getBakedModels().containsKey(renderer.gunModel.model)) {
             if (!renderer.warned) {
@@ -60,6 +63,7 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         animatable.reloading = animationKey >= 0 && reloadProgress > 0f
                 && GeckoLibCache.getBakedAnimations().containsKey(renderer.gunModel.animation);
         animatable.tick = (mc.level != null ? mc.level.getGameTime() : 0) + partialTick;
+        animatable.bones = bones;
 
         poseStack.pushPose();
         // Java model space (y down) from GeckoLib space (y up), see TGGeoExporter
@@ -77,6 +81,9 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
         boolean reloading;
         double tick;
+        /** Code-driven bone changes for the current frame. */
+        Consumer<GeoBones> bones = b -> {
+        };
 
         @Override
         public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
@@ -100,6 +107,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         }
     }
 
+    // GeckoLib 4 deprecates the one-argument resource getters but still declares them abstract
+    @SuppressWarnings("deprecation")
     private static final class GunModel extends GeoModel<GunAnimatable> {
         final ResourceLocation model;
         final ResourceLocation animation;
@@ -123,6 +132,36 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         @Override
         public ResourceLocation getAnimationResource(GunAnimatable animatable) {
             return animation;
+        }
+
+        /** Runs after the keyframe animations: code-driven bone changes (belts, static part scales). */
+        @Override
+        public void setCustomAnimations(GunAnimatable animatable, long instanceId, AnimationState<GunAnimatable> state) {
+            animatable.bones.accept(new GeoBones() {
+                @Override
+                public void setHidden(String bone, boolean hidden) {
+                    getBone(bone).ifPresent(b -> b.setHidden(hidden));
+                }
+
+                // GeckoLib translates by (-posX, posY, posZ) / 16 and the model is turned about Z, see TGGeoExporter
+                @Override
+                public void setOffset(String bone, float x, float y, float z) {
+                    getBone(bone).ifPresent(b -> {
+                        b.setPosX(x);
+                        b.setPosY(-y);
+                        b.setPosZ(z);
+                    });
+                }
+
+                @Override
+                public void setScale(String bone, float x, float y, float z) {
+                    getBone(bone).ifPresent(b -> {
+                        b.setScaleX(x);
+                        b.setScaleY(y);
+                        b.setScaleZ(z);
+                    });
+                }
+            });
         }
     }
 
