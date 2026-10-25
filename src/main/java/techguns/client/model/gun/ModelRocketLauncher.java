@@ -192,6 +192,11 @@ public class ModelRocketLauncher extends TGModel {
 		rocket = new ModelRocket();
 	}
 	
+	/** The loaded rocket (render part 1), exported as its own geo model. */
+	public TGModel rocketModel() {
+		return rocket;
+	}
+
 	@Override
 	public RenderType getRenderType(ResourceLocation texture, int part, String ammoVariant) {
 		if (part == 1) {

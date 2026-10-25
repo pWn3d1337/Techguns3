@@ -22,6 +22,7 @@ public final class TGRegistries {
         TGComponents.COMPONENTS.register(modEventBus);
         TGAttachments.ATTACHMENTS.register(modEventBus);
         TGSounds.SOUNDS.register(modEventBus);
+        TGParticleTypes.PARTICLE_TYPES.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
     }

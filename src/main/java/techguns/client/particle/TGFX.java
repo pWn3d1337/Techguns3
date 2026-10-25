@@ -11,6 +11,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
 
+import javax.annotation.Nullable;
+
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -33,11 +36,25 @@ public class TGFX {
     /** FX by lower case name. */
     static final Map<String, TGFXType> FX_LIST = new HashMap<>();
 
+    /** Incremented on every reload; caches of derived FX types compare against it. */
+    private static int generation;
+
     private TGFX() {
+    }
+
+    /** The particle system type {@code name}, or null if it doesn't exist or is an FX list. */
+    @Nullable
+    public static TGParticleSystemType systemType(String name) {
+        return FX_LIST.get(name.toLowerCase(Locale.ROOT)) instanceof TGParticleSystemType type ? type : null;
+    }
+
+    public static int generation() {
+        return generation;
     }
 
     /** Reloads all FX definitions from the resource manager (client reload listener). */
     public static void load(ResourceManager manager) {
+        generation++;
         FX_LIST.clear();
         for (String file : FX_FILES) {
             ResourceLocation id = TGIds.id("particles/" + file);
