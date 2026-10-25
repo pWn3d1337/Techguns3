@@ -10,7 +10,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 |---|---|
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
-| 2 — Gun framework | in progress (3 guns with FX and death effects; dedicated server run and GeckoLib prototype open) |
+| 2 — Gun framework | in progress (exit criterion met: 3 guns with FX and death effects in SP and on a dedicated server; GeckoLib prototype open) |
 | 3 — All guns, ammo, grenades, tools | — |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
@@ -49,11 +49,12 @@ Per-item tables (guns, ammo, armor, blocks, machines, NPCs, structures) are adde
 | Gun logic (GunStats record, ammo types, fire/reload, client prediction, payloads, input, zoom) | F + 12 | tested | GameTests: firing, fire delay, reload, loose rounds, laser, rocket |
 | M4 | F | rendered | bullets + tracer, muzzle flash; first-person position to be confirmed by the author |
 | Lasergun | F | rendered | hit-scan beam, energy damage, custom additive shader |
-| Rocket Launcher | F | logic | explosion via vanilla blast + TG falloff damage; rocket flight visuals not checked in game yet |
+| Rocket Launcher | F | rendered | explosion via vanilla blast (no vanilla particles) + TG falloff damage; rocket, exhaust trail and explosion FX checked in game |
 | Assault rifle magazine, energy cells, rocket item | F | rendered | |
 | Gun item render pipeline (GunRenderer abstraction, RenderGunBase/90, GunAnimation, muzzle FX) | F | rendered | |
 | FX render types + `particle_alpha` core shader | F | rendered | port of Fabric TGRenderHelper |
-| Projectile renderers (bullet, beam, rocket) | F | rendered | Fabric "late" render pass not ported yet |
+| Projectile renderers (bullet, beam, rocket) | F | rendered | beams and tracers drawn in the late render pass |
+| Dedicated server run (client connected over the network) | — | tested | `runServer -Puse_mcpfabric=false`, offline mode; firing, ammo, impacts, beams, rocket FX and death FX over the network; no client classes loaded on the server |
 | Techguns particle system, FX payloads, late render pass (bullet/laser impacts, rocket exhaust + explosion) | F | rendered | `/tgdebug fx <name>` spawns an FX at the crosshair |
 | Death effects: gore gibs from the mob's model parts + blood FX, laser/bio FX, corpse hidden on gore; rocket blast without vanilla particles | F + 12 | rendered | gore chance roll from 1.12; laser/bio corpses burn/rot and fade (no mixin: `RenderLivingEvent.Pre`) |
 | Dev test hooks: `/tgdebug fire`, `projectiles`, `slowbeams`, `zoom`, `fx`, `fxstats`, `alwaysdeath`, `view` | — | done | dev builds only (MCP testing) |
