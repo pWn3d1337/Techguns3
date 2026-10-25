@@ -78,6 +78,14 @@ public final class TGDebugCommands {
                                     ctx.getSource().sendSystemMessage(Component.literal("Spawned " + name + " at " + pos));
                                     return 1;
                                 })))
+                .then(Commands.literal("view")
+                        .executes(ctx -> {
+                            // cycles first person / third person back / third person front (F5); MCP has no key input
+                            var options = Minecraft.getInstance().options;
+                            options.setCameraType(options.getCameraType().cycle());
+                            ctx.getSource().sendSystemMessage(Component.literal("Camera: " + options.getCameraType()));
+                            return 1;
+                        }))
                 .then(Commands.literal("alwaysdeath")
                         .executes(ctx -> {
                             // works in singleplayer: client and integrated server share the static

@@ -77,12 +77,20 @@ public final class DeathEffects {
         return DEATH_TYPES.get(entity);
     }
 
-    /** Hides the corpse of gored entities; their gibs fly as particles. */
-    // MIGRATION(26.x): entity rendering moves to render states; check how to skip a dying entity there.
+    /** Hides the corpse of gored entities (their gibs fly as particles), dissolves laser and bio corpses. */
+    // MIGRATION(26.x): entity rendering moves to render states; check how to replace a dying entity's render there.
     private static void onRenderLivingPre(RenderLivingEvent.Pre<?, ?> event) {
         LivingEntity entity = event.getEntity();
-        if (entity.deathTime > 0 && DEATH_TYPES.get(entity) == DeathType.GORE) {
+        if (entity.deathTime <= 0) {
+            return;
+        }
+        DeathType type = DEATH_TYPES.get(entity);
+        if (type == DeathType.GORE) {
             event.setCanceled(true);
+        } else if (type == DeathType.LASER || type == DeathType.BIO) {
+            event.setCanceled(true);
+            CorpseDissolveRenderer.render(entity, event.getRenderer(), type, event.getPartialTick(), event.getPoseStack(),
+                    event.getMultiBufferSource(), event.getPackedLight());
         }
     }
 
