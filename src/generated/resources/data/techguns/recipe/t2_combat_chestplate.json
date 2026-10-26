@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "techguns:heavy_cloth"
+    },
+    "i": {
+      "tag": "c:ingots/obsidian_steel"
+    }
+  },
+  "pattern": [
+    "h h",
+    "iii",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t2_combat_chestplate"
+  }
+}

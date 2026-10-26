@@ -15,6 +15,9 @@ import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -52,6 +55,12 @@ public class TGArmorItem extends ArmorItem {
     private final Map<Holder<Attribute>, Double> bonuses = new LinkedHashMap<>();
     @Nullable
     private Supplier<? extends ItemLike> repairItem;
+    /** Custom armor model id (Techguns 2 {@code setArmorModel}), resolved by the client; null = vanilla armor model. */
+    @Nullable
+    private ResourceLocation armorModel;
+    /** Single texture for all layers (Techguns 2 armor models without double textures); null = material layers. */
+    @Nullable
+    private ResourceLocation armorTexture;
 
     public TGArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties, TGArmorStats stats) {
         super(material, type, properties.durability(stats.durability(type)));
@@ -77,6 +86,34 @@ public class TGArmorItem extends ArmorItem {
         return bonus(TGAttributes.FALL_DAMAGE_REDUCTION, reduction).bonus(TGAttributes.FALL_FREE_HEIGHT, freeHeight);
     }
 
+    public TGArmorItem mining(float bonus) {
+        return bonus(TGAttributes.MINING_SPEED_BONUS, bonus);
+    }
+
+    public TGArmorItem waterMining(float bonus) {
+        return bonus(TGAttributes.WATER_MINING_SPEED_BONUS, bonus);
+    }
+
+    public TGArmorItem waterSpeed(float bonus) {
+        return bonus(TGAttributes.WATER_SPEED_BONUS, bonus);
+    }
+
+    public TGArmorItem gunAccuracy(float bonus) {
+        return bonus(TGAttributes.GUN_ACCURACY, bonus);
+    }
+
+    public TGArmorItem radiationResistance(float resistance) {
+        return bonus(TGAttributes.RADIATION_RESISTANCE, resistance);
+    }
+
+    public TGArmorItem oxygenGear(float value) {
+        return bonus(TGAttributes.OXYGEN_GEAR, value);
+    }
+
+    public TGArmorItem cooling(float value) {
+        return bonus(TGAttributes.COOLING_SYSTEM, value);
+    }
+
     public TGArmorItem knockbackResistance(float resistance) {
         return bonus(Attributes.KNOCKBACK_RESISTANCE, resistance);
     }
@@ -92,7 +129,30 @@ public class TGArmorItem extends ArmorItem {
         return this;
     }
 
+    /** Renders with a custom armor model, see {@code TGArmorModels}. */
+    public TGArmorItem armorModel(ResourceLocation model) {
+        this.armorModel = model;
+        return this;
+    }
+
+    /** One texture for every layer instead of the material's {@code _layer_1/_layer_2} textures. */
+    public TGArmorItem armorTexture(ResourceLocation texture) {
+        this.armorTexture = texture;
+        return this;
+    }
+
     // --- State ---
+
+    @Nullable
+    public ResourceLocation armorModel() {
+        return armorModel;
+    }
+
+    @Override
+    @Nullable
+    public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
+        return armorTexture;
+    }
 
     public TGArmorStats stats() {
         return stats;

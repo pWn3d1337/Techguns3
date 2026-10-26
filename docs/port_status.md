@@ -95,3 +95,16 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 | 3g recipe types: `ammo_change` (gun + ammo of another variant, old rounds come back), `mining_head_upgrade` (tool + head, old head comes back), `transfer_ammo` (shaped, result keeps the input guns' rounds: golden revolver, Infiltrator, Grim Reaper); Fabric `crafting_shaped_nbt` = vanilla shaped results with components | F | tested | GameTests: variant change + returned rounds/full magazine, head swap, golden revolver keeps rounds. `camo_change` (Camo Bench) and `ammobench_crafting` move to Phase 5 with their machines |
 | 3g rifle rounds stack (+incendiary), minigun drum refill | F | logic | |
 | Per-gun GameTests (exit criterion): every gun and tool fires and hits (tools at close range), reloads from its own ammo and returns the empties; incendiary/explosive variants; both hand grenades explode | — | tested | `TGBulletGunTests` generator + `TGExplosiveTests`; 149 GameTests |
+
+### Phase 4 — armor & player gear
+
+Batches: design doc Phase 4. Source: Techguns 2 for all values; Fabric for the armor tooltip, model code reference and the camo design.
+
+| Unit | Source | Status | Notes |
+|---|---|---|---|
+| 4a armor framework (`TGArmorItem`, `TGArmorStats`): per-category armor as attributes (regular armor = physical, `techguns:armor.<category>` = the rest), toughness, 1.12 slot split and durability, worn-out pieces give nothing and never break, anvil repair item | 12 | tested | GameTests: category values, durability/repair, worn-out |
+| 4a armor bonus attributes (speed x2 sprinting, water speed, jump, fall reduction/free height, mining, water mining, gun accuracy, cooling, oxygen gear, radiation resistance) applied like Techguns 2 | 12 | tested | night vision and step assist (toggle keys) follow with the items that have them; oxygen gear acts with scuba tanks (4f), radiation resistance with the radiation system |
+| 4a armor tooltip: durability, toughness, bonuses + Fabric icon row of category values | 12 + F | logic | not checked in game (MCP cannot hover) |
+| 4a T1 combat set | 12 | rendered | |
+| 4b plain sets: T1 scout/miner, hazmat, T2 combat/commando/riot, T3 combat, beret (29 items, recipes, lang) | 12 | rendered | default camo textures only (variants in 4d) |
+| 4b custom armor models: riot coat (`coat_0..3`), beret (`IClientItemExtensions#getHumanoidArmorModel`) | 12 | rendered | |

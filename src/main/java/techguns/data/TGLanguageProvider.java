@@ -70,6 +70,35 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("t1_combat_chestplate", "Soldier's Vest"),
             Map.entry("t1_combat_leggings", "Soldier's Pants"),
             Map.entry("t1_combat_boots", "Soldier's Boots"),
+            Map.entry("t1_scout_helmet", "Bandit Mask"),
+            Map.entry("t1_scout_chestplate", "Bandit Vest"),
+            Map.entry("t1_scout_leggings", "Bandit Pants"),
+            Map.entry("t1_scout_boots", "Bandit Boots"),
+            Map.entry("t1_miner_helmet", "Miner's Helmet"),
+            Map.entry("t1_miner_chestplate", "Miner's Jacket"),
+            Map.entry("t1_miner_leggings", "Miner's Pants"),
+            Map.entry("t1_miner_boots", "Miner's Boots"),
+            Map.entry("hazmat_helmet", "Hazmat Suit Helmet"),
+            Map.entry("hazmat_chestplate", "Hazmat Suit Chestplate"),
+            Map.entry("hazmat_leggings", "Hazmat Suit Leggings"),
+            Map.entry("hazmat_boots", "Hazmat Suit Boots"),
+            Map.entry("t2_combat_helmet", "Combat Helmet"),
+            Map.entry("t2_combat_chestplate", "Combat Vest"),
+            Map.entry("t2_combat_leggings", "Combat Pants"),
+            Map.entry("t2_combat_boots", "Combat Boots"),
+            Map.entry("t2_commando_helmet", "Commando Headgear"),
+            Map.entry("t2_commando_chestplate", "Commando Vest"),
+            Map.entry("t2_commando_leggings", "Commando Pants"),
+            Map.entry("t2_commando_boots", "Commando Boots"),
+            Map.entry("t2_riot_helmet", "Ranger Veteran Helmet"),
+            Map.entry("t2_riot_chestplate", "Ranger Veteran Jacket"),
+            Map.entry("t2_riot_leggings", "Ranger Veteran Pants"),
+            Map.entry("t2_riot_boots", "Ranger Veteran Boots"),
+            Map.entry("t3_combat_helmet", "Advanced Combat Helmet"),
+            Map.entry("t3_combat_chestplate", "Advanced Combat Chestplate"),
+            Map.entry("t3_combat_leggings", "Advanced Combat Leggings"),
+            Map.entry("t3_combat_boots", "Advanced Combat Boots"),
+            Map.entry("t2_beret", "Beret"),
             Map.entry("ammo_box_large", "Ammo Box (Large)"),
             Map.entry("rifle_rounds_stack_incendiary", "Rifle Rounds Stack (Incendiary)"),
             Map.entry("assault_rifle_magazine_incendiary", "Assault Rifle Magazine (Incendiary)"),
@@ -154,6 +183,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("attribute.name.techguns.gun_accuracy", "Gun Accuracy");
         add("attribute.name.techguns.cooling_system", "Cooling System");
         add("attribute.name.techguns.radiation_resistance", "Radiation Resistance");
+        add("attribute.name.techguns.oxygen_gear", "Oxygen Gear");
         add("techguns.lock_on.locking", "Locking... : %s");
         add("techguns.lock_on.locked", "Locked On: %s");
     }

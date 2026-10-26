@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "f": {
+      "item": "techguns:carbon_fibers"
+    },
+    "p": {
+      "tag": "c:plates/carbon"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "f f"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t3_combat_helmet"
+  }
+}

@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
+import techguns.client.render.armor.TGArmorClientExtensions;
 import techguns.Techguns;
 import techguns.client.gui.ClientAmmoBagTooltip;
 import techguns.client.gui.ClientArmorTooltip;
@@ -43,6 +44,7 @@ public class TechgunsClient {
         modEventBus.addListener(TGKeyMappings::register);
         modEventBus.addListener(TechgunsClient::registerEntityRenderers);
         modEventBus.addListener(TGClientItemExtensions::register);
+        modEventBus.addListener(TGArmorClientExtensions::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);

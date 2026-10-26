@@ -73,6 +73,69 @@ public class TGRecipeProvider extends RecipeProvider {
         armor(output, TGArmors.T1_COMBAT_LEGGINGS.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth),
                 "iii", "c c", "c c");
         armor(output, TGArmors.T1_COMBAT_BOOTS.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth), "c c", "i i");
+
+        // T1 miner (dyeYellow helmet, nuggetIron boots)
+        Consumer<ShapedRecipeBuilder> minerKeys = b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth);
+        armor(output, TGArmors.T1_MINER_HELMET.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth)
+                .define('y', Tags.Items.DYES_YELLOW), "iyi", "c c");
+        armor(output, TGArmors.T1_MINER_CHESTPLATE.get(), cloth, minerKeys, "c c", "ccc", "ici");
+        armor(output, TGArmors.T1_MINER_LEGGINGS.get(), cloth, minerKeys, "ici", "c c", "c c");
+        armor(output, TGArmors.T1_MINER_BOOTS.get(), cloth, b -> b.define('i', Tags.Items.NUGGETS_IRON).define('c', cloth), "c c", "i i");
+
+        // T1 scout
+        Consumer<ShapedRecipeBuilder> clothOnly = b -> b.define('c', cloth);
+        armor(output, TGArmors.T1_SCOUT_HELMET.get(), cloth, clothOnly, "ccc", "c c");
+        armor(output, TGArmors.T1_SCOUT_CHESTPLATE.get(), cloth, clothOnly, "c c", "ccc", "ccc");
+        armor(output, TGArmors.T1_SCOUT_LEGGINGS.get(), cloth, clothOnly, "ccc", "c c", "c c");
+        armor(output, TGArmors.T1_SCOUT_BOOTS.get(), cloth, clothOnly, "c c", "c c");
+
+        // T2 combat
+        TagKey<Item> obsidianSteel = TGTags.Items.ingot("obsidian_steel");
+        Consumer<ShapedRecipeBuilder> combatKeys = b -> b.define('i', obsidianSteel).define('h', cloth);
+        armor(output, TGArmors.T2_COMBAT_HELMET.get(), cloth, combatKeys, "iii", "h h");
+        armor(output, TGArmors.T2_COMBAT_CHESTPLATE.get(), cloth, combatKeys, "h h", "iii", "iii");
+        armor(output, TGArmors.T2_COMBAT_LEGGINGS.get(), cloth, combatKeys, "ihi", "i i", "h h");
+        armor(output, TGArmors.T2_COMBAT_BOOTS.get(), cloth, combatKeys, "h h", "i i");
+
+        // T2 commando
+        Item rubber = TGItems.RUBBER_BAR.get();
+        Consumer<ShapedRecipeBuilder> commandoKeys = b -> b.define('i', obsidianSteel).define('h', rubber);
+        armor(output, TGArmors.T2_COMMANDO_HELMET.get(), rubber, b -> b.define('i', obsidianSteel).define('h', rubber)
+                .define('g', Tags.Items.GLASS_PANES), "ihi", "hgh");
+        armor(output, TGArmors.T2_COMMANDO_CHESTPLATE.get(), rubber, commandoKeys, "h h", "hih", "iii");
+        armor(output, TGArmors.T2_COMMANDO_LEGGINGS.get(), rubber, commandoKeys, "hih", "i i", "h h");
+        armor(output, TGArmors.T2_COMMANDO_BOOTS.get(), rubber, commandoKeys, "i i", "h h");
+
+        // T3 combat
+        Item fibers = TGItems.CARBON_FIBERS.get();
+        Consumer<ShapedRecipeBuilder> t3Keys = b -> b.define('p', TGTags.Items.plate("carbon")).define('f', fibers);
+        armor(output, TGArmors.T3_COMBAT_HELMET.get(), fibers, t3Keys, "ppp", "f f");
+        armor(output, TGArmors.T3_COMBAT_CHESTPLATE.get(), fibers, t3Keys, "p p", "ppp", "fpf");
+        armor(output, TGArmors.T3_COMBAT_LEGGINGS.get(), fibers, t3Keys, "pfp", "p p", "f f");
+        armor(output, TGArmors.T3_COMBAT_BOOTS.get(), fibers, t3Keys, "f f", "p p");
+
+        // T2 riot: upgrade of the matching T2 combat piece
+        Item treated = TGItems.TREATED_LEATHER.get();
+        Consumer<ShapedRecipeBuilder> riotKeys = b -> b.define('p', TGTags.Items.plate("lead")).define('l', treated);
+        armor(output, TGArmors.T2_RIOT_HELMET.get(), treated,
+                b -> riotKeys.accept(b.define('h', TGArmors.T2_COMBAT_HELMET.get())), "php", "l l");
+        armor(output, TGArmors.T2_RIOT_CHESTPLATE.get(), treated,
+                b -> riotKeys.accept(b.define('c', TGArmors.T2_COMBAT_CHESTPLATE.get())), "p p", "lcl", "lpl");
+        armor(output, TGArmors.T2_RIOT_LEGGINGS.get(), treated,
+                b -> riotKeys.accept(b.define('h', TGArmors.T2_COMBAT_LEGGINGS.get())), "lhl", "p p", "l l");
+        armor(output, TGArmors.T2_RIOT_BOOTS.get(), treated,
+                b -> riotKeys.accept(b.define('h', TGArmors.T2_COMBAT_BOOTS.get())), "lhl", "p p");
+
+        // Beret
+        armor(output, TGArmors.T2_BERET_ITEM.get(), cloth, clothOnly, " cc", "c c");
+
+        // Hazmat suit
+        Item fiber = TGItems.PROTECTIVE_FIBER.get();
+        Consumer<ShapedRecipeBuilder> hazmatKeys = b -> b.define('f', fiber);
+        armor(output, TGArmors.HAZMAT_HELMET.get(), fiber, hazmatKeys, "fff", "f f");
+        armor(output, TGArmors.HAZMAT_CHESTPLATE.get(), fiber, hazmatKeys, "f f", "fff", "fff");
+        armor(output, TGArmors.HAZMAT_LEGGINGS.get(), fiber, hazmatKeys, "fff", "f f", "f f");
+        armor(output, TGArmors.HAZMAT_BOOTS.get(), fiber, hazmatKeys, "f f", "f f");
     }
 
     private static void armor(RecipeOutput output, Item armor, ItemLike unlock, Consumer<ShapedRecipeBuilder> keys, String... pattern) {

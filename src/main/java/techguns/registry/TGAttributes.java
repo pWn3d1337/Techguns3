@@ -53,12 +53,14 @@ public final class TGAttributes {
     public static final Holder<Attribute> GUN_ACCURACY = bonus("gun_accuracy", 1.0);
     /** At 1 or more, burning players are extinguished. */
     public static final Holder<Attribute> COOLING_SYSTEM = bonus("cooling_system", 1024.0);
+    /** At 1 or more, scuba tanks supply air under water (Techguns 2 OXYGEN_GEAR). */
+    public static final Holder<Attribute> OXYGEN_GEAR = bonus("oxygen_gear", 1024.0);
     /** Radiation resistance (used by the radiation system). */
     public static final Holder<Attribute> RADIATION_RESISTANCE = bonus("radiation_resistance", 1024.0);
 
     private static final List<Holder<Attribute>> PLAYER_BONUSES = List.of(SPEED_BONUS, WATER_SPEED_BONUS, JUMP_BONUS,
             FALL_DAMAGE_REDUCTION, FALL_FREE_HEIGHT, MINING_SPEED_BONUS, WATER_MINING_SPEED_BONUS, GUN_ACCURACY, COOLING_SYSTEM,
-            RADIATION_RESISTANCE);
+            OXYGEN_GEAR, RADIATION_RESISTANCE);
 
     private static Holder<Attribute> bonus(String name, double max) {
         return ATTRIBUTES.register(name,

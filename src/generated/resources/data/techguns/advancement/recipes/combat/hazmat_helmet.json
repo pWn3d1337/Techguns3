@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_protective_fiber": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:protective_fiber"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:hazmat_helmet"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_protective_fiber"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:hazmat_helmet"
+    ]
+  }
+}

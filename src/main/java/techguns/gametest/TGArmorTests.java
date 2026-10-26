@@ -120,4 +120,50 @@ public class TGArmorTests {
         helper.assertTrue(near(event.getDistance(), 8.0), "Fall distance should be 8, was " + event.getDistance());
         helper.succeed();
     }
+
+    @GameTest(template = ARENA)
+    public static void everyArmorPieceHasArmorAndDurability(GameTestHelper helper) {
+        for (var holder : TGArmors.armors()) {
+            ItemStack stack = new ItemStack(holder.get());
+            String id = holder.getId().getPath();
+            helper.assertTrue(modifier(stack, Attributes.ARMOR) > 0.0, id + " should have armor");
+            helper.assertTrue(stack.getMaxDamage() > 0, id + " should have durability");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void commandoHelmetHasOxygenGearAndWaterMining(GameTestHelper helper) {
+        ItemStack helmet = new ItemStack(TGArmors.T2_COMMANDO_HELMET.get());
+        helper.assertTrue(near(modifier(helmet, TGAttributes.OXYGEN_GEAR), 1.0), "Commando helmet oxygen gear should be 1");
+        helper.assertTrue(near(modifier(helmet, TGAttributes.WATER_MINING_SPEED_BONUS), 1.25), "Commando helmet water mining should be 1.25");
+        helper.assertTrue(near(modifier(helmet, TGAttributes.GUN_ACCURACY), 0.05), "Commando helmet gun accuracy should be 0.05");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void hazmatBootsHaveFallProtectionAndRadiationResistance(GameTestHelper helper) {
+        ItemStack boots = new ItemStack(TGArmors.HAZMAT_BOOTS.get());
+        helper.assertTrue(near(modifier(boots, TGAttributes.FALL_DAMAGE_REDUCTION), 0.1), "Hazmat boots fall reduction should be 0.1");
+        helper.assertTrue(near(modifier(boots, TGAttributes.FALL_FREE_HEIGHT), 0.5), "Hazmat boots free height should be 0.5");
+        helper.assertTrue(near(modifier(boots, TGAttributes.RADIATION_RESISTANCE), 1.0), "Hazmat boots radiation resistance should be 1");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void minerHelmetHasMiningBonus(GameTestHelper helper) {
+        ItemStack helmet = new ItemStack(TGArmors.T1_MINER_HELMET.get());
+        helper.assertTrue(near(modifier(helmet, TGAttributes.MINING_SPEED_BONUS), 0.05), "Miner helmet mining bonus should be 0.05");
+        helper.assertTrue(near(modifier(helmet, TGAttributes.SPEED_BONUS), 0.08), "Miner helmet speed bonus should be 0.08");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void hazmatSuitHasElementalArmorAndRadiation(GameTestHelper helper) {
+        ItemStack chest = new ItemStack(TGArmors.HAZMAT_CHESTPLATE.get());
+        // radiation 20 * 30% = 6, poison 20 * 30% = 6; regular armor does not count against either
+        helper.assertTrue(near(modifier(chest, TGAttributes.bonusArmor(TGDamageCategory.RADIATION)), 6.0), "Hazmat chest radiation armor should be 6");
+        helper.assertTrue(near(modifier(chest, TGAttributes.bonusArmor(TGDamageCategory.POISON)), 6.0), "Hazmat chest poison armor should be 6");
+        helper.succeed();
+    }
 }

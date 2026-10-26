@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:t2_riot_helmet"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_treated_leather": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:treated_leather"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_treated_leather"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:t2_riot_helmet"
+    ]
+  }
+}

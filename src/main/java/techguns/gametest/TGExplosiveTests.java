@@ -55,7 +55,8 @@ public class TGExplosiveTests {
         return helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 0));
     }
 
-    @GameTest(template = ARENA)
+    // own batch: the nuke blast would reach the bystanders of neighbouring tests
+    @GameTest(template = ARENA, batch = "nuke")
     public static void nukeRocketHasLargerBlast(GameTestHelper helper) {
         Player player = shooter(helper);
         ItemStack gun = hold(player, TGGuns.ROCKET_LAUNCHER.get(), 1, AmmoType.NUKE);

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:heavy_cloth"
+    }
+  },
+  "pattern": [
+    " cc",
+    "c c"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t2_beret"
+  }
+}
