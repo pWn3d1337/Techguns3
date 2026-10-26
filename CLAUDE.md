@@ -2,6 +2,7 @@
 
 Port of Techguns (1.12.2 Forge) to Minecraft **1.21.1 / NeoForge 21.1.x**, later 26.x.
 The plan and all design decisions live in [Techguns3_design.md](Techguns3_design.md) — read the relevant section before starting a phase.
+Current session state, next steps and open questions: [docs/session_handoff.md](docs/session_handoff.md) — read it first when resuming.
 
 ## Language
 Everything is English: code, comments, commit messages, docs, replies.
