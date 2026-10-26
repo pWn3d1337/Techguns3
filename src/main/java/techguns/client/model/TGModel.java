@@ -54,7 +54,7 @@ public abstract class TGModel extends Model {
         TGGeoExporter.scaledParts(this).forEach((name, p) -> {
             // Java: v' = O + S(pivot - O) + R S c; GeckoLib bone scale gives pivot + R S c, the offset adds (S - 1)(pivot - O)
             float[] scale = TGGeoExporter.geoScale(p);
-            bones.setScale(TGGeoExporter.cubeBoneName(name, p), scale[0], scale[1], scale[2]);
+            bones.setScale(name, scale[0], scale[1], scale[2]);
             bones.setOffset(name, (p.scaleX - 1) * (p.pivotX - p.scaleOriginX()), (p.scaleY - 1) * (p.pivotY - p.scaleOriginY()),
                     (p.scaleZ - 1) * (p.pivotZ - p.scaleOriginZ()));
         });

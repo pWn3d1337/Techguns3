@@ -441,35 +441,7 @@
           ],
           "rotation": [
             3.1,
-            0.0,
-            0.0
-          ]
-        },
-        {
-          "name": "Stock4_r1",
-          "parent": "Stock4",
-          "pivot": [
-            -1.4,
-            1.4,
-            11.7
-          ],
-          "rotation": [
-            0.0,
             -5.0,
-            0.0
-          ]
-        },
-        {
-          "name": "Stock4_r2",
-          "parent": "Stock4_r1",
-          "pivot": [
-            -1.4,
-            1.4,
-            11.7
-          ],
-          "rotation": [
-            0.0,
-            0.0,
             45.0
           ],
           "cubes": [
@@ -533,35 +505,7 @@
           ],
           "rotation": [
             5.0,
-            0.0,
-            0.0
-          ]
-        },
-        {
-          "name": "Stock4_2_r1",
-          "parent": "Stock4_2",
-          "pivot": [
-            0.4,
-            1.4,
-            11.7
-          ],
-          "rotation": [
-            0.0,
             -3.1,
-            0.0
-          ]
-        },
-        {
-          "name": "Stock4_2_r2",
-          "parent": "Stock4_2_r1",
-          "pivot": [
-            0.4,
-            1.4,
-            11.7
-          ],
-          "rotation": [
-            0.0,
-            0.0,
             45.0
           ],
           "cubes": [

@@ -153,17 +153,19 @@ public class TGModelPart {
 
         poseStack.translate(pivotX * SCALE, pivotY * SCALE, pivotZ * SCALE);
 
-        poseStack.pushPose();
-        if (this.pitch != 0.0 || rx != 0.0f) {
-            TGMatrixOps.rotate(poseStack, this.pitch * RAD2DEG + rx, 1F, 0F, 0F);
+        // Techguns 2 ModelRenderer order: Z, then Y, then X (the Fabric port had X, Y, Z, which turned parts rotated
+        // on several axes, e.g. the LMG and MAC-10 stocks, away from the original models)
+        if (this.roll != 0.0 || rz != 0.0f) {
+            TGMatrixOps.rotate(poseStack, this.roll * RAD2DEG + rz, 0F, 0F, 1F);
         }
         if (this.yaw != 0.0 || ry != 0.0f) {
             TGMatrixOps.rotate(poseStack, this.yaw * RAD2DEG + ry, 0F, 1F, 0F);
         }
-        if (this.roll != 0.0 || rz != 0.0f) {
-            TGMatrixOps.rotate(poseStack, this.roll * RAD2DEG + rz, 0F, 0F, 1F);
+        if (this.pitch != 0.0 || rx != 0.0f) {
+            TGMatrixOps.rotate(poseStack, this.pitch * RAD2DEG + rx, 1F, 0F, 0F);
         }
 
+        poseStack.pushPose();
         // Expansion
         if (this.expansionX != 0 || this.expansionY != 0.0f || this.expansionZ != 0.0f) {
             float scaleX = (this.width + (this.expansionX * 2.0f)) / this.width;
@@ -174,8 +176,9 @@ public class TGModelPart {
 
         this.cuboid.compile(poseStack.last(), vertices, light, overlay, -1);
         poseStack.popPose();
+        // children inherit the rotation, as in Techguns 2 (the Fabric port only applied the parent's pivot)
         for (TGModelPart child : this.children) {
-            child.render(poseStack, vertices, light, overlay, rx, ry, rz);
+            child.render(poseStack, vertices, light, overlay, 0f, 0f, 0f);
         }
         poseStack.popPose();
     }
