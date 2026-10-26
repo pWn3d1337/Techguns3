@@ -294,6 +294,56 @@ public class TGRecipeProvider extends RecipeProvider {
         refill(output, TGAmmo.LMG_MAGAZINE_INCENDIARY.get(), TGAmmo.LMG_MAGAZINE_EMPTY.get(), TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 8,
                 "lmg_magazine_incendiary");
 
+        TagKey<Item> obsidianSteel = TGTags.Items.ingot("obsidian_steel");
+        TagKey<Item> titanium = TGTags.Items.ingot("titanium");
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.AS50_MAGAZINE_EMPTY.get(), 4)
+                .pattern("s s").pattern("s s").pattern("sms")
+                .define('s', steelIngot).define('m', mechParts)
+                .unlockedBy("has_mechanical_parts_iron", has(mechParts)).save(output, TGIds.id("as50_magazine_empty"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), 4)
+                .pattern("i i").pattern("i i").pattern("imi")
+                .define('i', obsidianSteel).define('m', TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get())
+                .unlockedBy("has_mechanical_parts_obsidian_steel", has(TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get()))
+                .save(output, TGIds.id("advanced_magazine_empty"));
+        refill(output, TGAmmo.AS50_MAGAZINE.get(), TGAmmo.AS50_MAGAZINE_EMPTY.get(), TGAmmo.SNIPER_ROUNDS.get(), 2, "as50_magazine");
+        refill(output, TGAmmo.AS50_MAGAZINE_INCENDIARY.get(), TGAmmo.AS50_MAGAZINE_EMPTY.get(), TGAmmo.SNIPER_ROUNDS_INCENDIARY.get(), 2,
+                "as50_magazine_incendiary");
+        refill(output, TGAmmo.AS50_MAGAZINE_EXPLOSIVE.get(), TGAmmo.AS50_MAGAZINE_EMPTY.get(), TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 2,
+                "as50_magazine_explosive");
+        refill(output, TGAmmo.ADVANCED_MAGAZINE.get(), TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), TGAmmo.ADVANCED_ROUNDS.get(), 3,
+                "advanced_magazine");
+        // shotgun and sniper rounds come from the ammo bench (Phase 5); explosive sniper rounds have no Fabric recipe
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ADVANCED_ROUNDS.get(), 16)
+                .pattern("i").pattern("t")
+                .define('i', obsidianSteel).define('t', TGItems.TGX.get())
+                .unlockedBy("has_tgx", has(TGItems.TGX.get())).save(output, TGIds.id("advanced_rounds"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4)
+                .pattern("i").pattern("t")
+                .define('i', titanium).define('t', obsidianSteel)
+                .unlockedBy("has_titanium_ingot", has(titanium)).save(output, TGIds.id("gauss_rifle_slugs"));
+
+        // Batch 3c power sources
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.REDSTONE_BATTERY.get(), 2)
+                .pattern("nwn").pattern("nrn").pattern("nrn")
+                .define('r', Items.REDSTONE).define('w', TGItems.COPPER_WIRE.get()).define('n', TGTags.Items.nugget("copper"))
+                .unlockedBy("has_copper_wire", has(TGItems.COPPER_WIRE.get())).save(output, TGIds.id("redstone_battery"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.REDSTONE_BATTERY.get())
+                .requires(TGAmmo.REDSTONE_BATTERY_EMPTY.get()).requires(Items.REDSTONE, 2)
+                .unlockedBy("has_redstone_battery_empty", has(TGAmmo.REDSTONE_BATTERY_EMPTY.get()))
+                .save(output, TGIds.id("redstone_battery_refill"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get(), 2)
+                .pattern("wgw").pattern("prp").pattern("prp")
+                .define('p', TGTags.Items.ingot("lead")).define('r', Items.REDSTONE_BLOCK).define('w', TGItems.GOLD_WIRE.get())
+                .define('g', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy("has_circuit_board", has(TGItems.CIRCUIT_BOARD.get())).save(output, TGIds.id("nuclear_power_cell_empty"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.NUCLEAR_POWER_CELL.get())
+                .requires(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get()).requires(TGItems.ENRICHED_URANIUM.get())
+                .unlockedBy("has_nuclear_power_cell_empty", has(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get()))
+                .save(output, TGIds.id("nuclear_power_cell"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.NETHER_CHARGE.get(), 4)
+                .requires(Items.NETHERRACK).requires(Items.SOUL_SAND).requires(Items.LAVA_BUCKET)
+                .unlockedBy("has_soul_sand", has(Items.SOUL_SAND)).save(output, TGIds.id("nether_charge"));
+
         // Energy cells
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ENERGY_CELL.get(), 4)
                 .pattern("gwg").pattern("prp").pattern("prp")
@@ -311,6 +361,12 @@ public class TGRecipeProvider extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 4)
                 .requires(TGAmmo.RIFLE_ROUNDS.get(), 4).requires(Items.BLAZE_POWDER)
                 .unlockedBy("has_rifle_rounds", has(TGAmmo.RIFLE_ROUNDS.get())).save(output, TGIds.id("rifle_rounds_incendiary"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), 8)
+                .requires(TGAmmo.SHOTGUN_ROUNDS.get(), 8).requires(Items.BLAZE_POWDER)
+                .unlockedBy("has_shotgun_rounds", has(TGAmmo.SHOTGUN_ROUNDS.get())).save(output, TGIds.id("shotgun_rounds_incendiary"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.SNIPER_ROUNDS_INCENDIARY.get(), 2)
+                .requires(TGAmmo.SNIPER_ROUNDS.get(), 2).requires(Items.BLAZE_POWDER)
+                .unlockedBy("has_sniper_rounds", has(TGAmmo.SNIPER_ROUNDS.get())).save(output, TGIds.id("sniper_rounds_incendiary"));
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ROCKET.get(), 4)
                 .pattern(" s ").pattern("sts").pattern("sgs")
                 .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER)
@@ -405,6 +461,102 @@ public class TGRecipeProvider extends RecipeProvider {
         gun(output, TGGuns.MINIGUN.get(), 200, AmmoType.DEFAULT, "minigun", TGAmmo.MINIGUN_DRUM.get(),
                 b -> b.define('b', obsBarrel).define('r', obsReceiver).define('e', TGItems.ELECTRIC_ENGINE.get()),
                 "bbe", "bbr", "bbm");
+
+        // --- Batch 3b ---
+        TagKey<Item> obsidianSteel = TGTags.Items.ingot("obsidian_steel");
+        TagKey<Item> titanium = TGTags.Items.ingot("titanium");
+        Item carbonBarrel = TGItems.CARBON_BARREL.get();
+        Item carbonReceiver = TGItems.CARBON_RECEIVER.get();
+        Item carbonStock = TGItems.CARBON_STOCK.get();
+        Item advancedCircuit = TGItems.CIRCUIT_BOARD_ADVANCED.get();
+
+        // Shotguns: empty only (Fabric has no loaded recipe)
+        gun(output, TGGuns.SAWED_OFF.get(), 0, AmmoType.DEFAULT, "sawed_off_empty", null,
+                b -> b.define('b', TGItems.IRON_BARREL.get()).define('f', Items.FLINT_AND_STEEL).define('w', woodStock),
+                "bfw", "bf ");
+        gun(output, TGGuns.COMBAT_SHOTGUN.get(), 0, AmmoType.DEFAULT, "combat_shotgun_empty", null,
+                b -> b.define('b', obsBarrel).define('s', plasticStock).define('f', steelReceiver).define('i', steelIngot),
+                "bfs", "i  ");
+
+        Item as50 = TGGuns.AS50.get();
+        Consumer<StackShapedRecipeBuilder> as50Keys = b -> b.define('p', obsidianSteel).define('b', obsBarrel).define('t', plasticStock)
+                .define('d', Items.DIAMOND).define('f', obsReceiver);
+        gun(output, as50, 10, AmmoType.DEFAULT, "as50", TGAmmo.AS50_MAGAZINE.get(), as50Keys, "dpd", "bbf", " mt");
+        gun(output, as50, 0, AmmoType.DEFAULT, "as50_empty", TGAmmo.AS50_MAGAZINE_EMPTY.get(), as50Keys, "dpd", "bbf", " mt");
+        gun(output, as50, 10, AmmoType.INCENDIARY, "as50_incendiary", TGAmmo.AS50_MAGAZINE_INCENDIARY.get(), as50Keys,
+                "dpd", "bbf", " mt");
+        gun(output, as50, 10, AmmoType.EXPLOSIVE, "as50_explosive", TGAmmo.AS50_MAGAZINE_EXPLOSIVE.get(), as50Keys,
+                "dpd", "bbf", " mt");
+
+        // Gauss rifle: the loaded one takes slugs ('a') and a full cell ('e'), the empty one an empty cell
+        Item gauss = TGGuns.GAUSS_RIFLE.get();
+        Consumer<StackShapedRecipeBuilder> gaussKeys = b -> b.define('p', titanium).define('b', TGItems.GAUSS_BARREL.get())
+                .define('r', carbonReceiver).define('s', carbonStock).define('c', advancedCircuit).define('d', Items.DIAMOND);
+        gun(output, gauss, 8, AmmoType.DEFAULT, "gauss_rifle",  null,
+                gaussKeys.andThen(b -> b.define('a', TGAmmo.GAUSS_RIFLE_SLUGS.get()).define('e', TGAmmo.ENERGY_CELL.get())),
+                "dpc", "brs", " ae");
+        gun(output, gauss, 0, AmmoType.DEFAULT, "gauss_rifle_empty", null,
+                gaussKeys.andThen(b -> b.define('e', TGAmmo.ENERGY_CELL_EMPTY.get())), "dpc", "brs", "  e");
+
+        Item blaster = TGGuns.BLASTER_RIFLE.get();
+        Consumer<StackShapedRecipeBuilder> blasterKeys = b -> b.define('p', TGTags.Items.plate("carbon"))
+                .define('b', TGItems.LASER_BARREL.get()).define('r', carbonReceiver).define('c', advancedCircuit)
+                .define('s', carbonStock).define('g', Tags.Items.GLASS_BLOCKS);
+        gun(output, blaster, 50, AmmoType.DEFAULT, "blaster_rifle", TGAmmo.ENERGY_CELL.get(), blasterKeys, "pcg", "brs", " m ");
+        gun(output, blaster, 0, AmmoType.DEFAULT, "blaster_rifle_empty", TGAmmo.ENERGY_CELL_EMPTY.get(), blasterKeys,
+                "pcg", "brs", " m ");
+        // blaster shotgun: no Fabric recipe
+
+        Item pulse = TGGuns.PULSE_RIFLE.get();
+        Consumer<StackShapedRecipeBuilder> pulseKeys = b -> b.define('p', titanium).define('b', carbonBarrel).define('r', carbonReceiver)
+                .define('s', carbonStock).define('c', advancedCircuit).define('d', Items.DIAMOND);
+        gun(output, pulse, 12, AmmoType.DEFAULT, "pulse_rifle", TGAmmo.ADVANCED_MAGAZINE.get(), pulseKeys, "dpc", "brs", " m ");
+        gun(output, pulse, 0, AmmoType.DEFAULT, "pulse_rifle_empty", TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), pulseKeys,
+                "dpc", "brs", " m ");
+
+        Item pdw = TGGuns.PDW.get();
+        Consumer<StackShapedRecipeBuilder> pdwKeys = b -> b.define('b', carbonBarrel).define('r', carbonReceiver).define('s', carbonStock);
+        gun(output, pdw, 40, AmmoType.DEFAULT, "pdw", TGAmmo.ADVANCED_MAGAZINE.get(), pdwKeys, "brs", " m ");
+        gun(output, pdw, 0, AmmoType.DEFAULT, "pdw_empty", TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), pdwKeys, "brs", " m ");
+
+        // --- Batch 3c ---
+        Item laserPistol = TGGuns.LASER_PISTOL.get();
+        Consumer<StackShapedRecipeBuilder> laserPistolKeys = b -> b.define('p', plastic).define('b', TGItems.LASER_BARREL.get())
+                .define('s', TGTags.Items.nugget("steel")).define('c', advancedCircuit).define('o', obsidianSteel);
+        gun(output, laserPistol, 20, AmmoType.DEFAULT, "laser_pistol", TGAmmo.REDSTONE_BATTERY.get(), laserPistolKeys, "obo", "scm", "ssp");
+        gun(output, laserPistol, 0, AmmoType.DEFAULT, "laser_pistol_empty", TGAmmo.REDSTONE_BATTERY_EMPTY.get(), laserPistolKeys,
+                "obo", "scm", "ssp");
+
+        Item ndr = TGGuns.NUCLEAR_DEATHRAY.get();
+        Consumer<StackShapedRecipeBuilder> ndrKeys = b -> b.define('r', carbonReceiver).define('s', carbonStock).define('t', titanium)
+                .define('e', TGItems.RAD_EMITTER.get()).define('l', TGTags.Items.ingot("lead"));
+        gun(output, ndr, 40, AmmoType.DEFAULT, "nuclear_deathray", TGAmmo.NUCLEAR_POWER_CELL.get(), ndrKeys, "ltl", "ers", " m ");
+        gun(output, ndr, 0, AmmoType.DEFAULT, "nuclear_deathray_empty", TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get(), ndrKeys,
+                "ltl", "ers", " m ");
+
+        Item tesla = TGGuns.TESLA_GUN.get();
+        Consumer<StackShapedRecipeBuilder> teslaKeys = b -> b.define('r', carbonReceiver).define('c', TGItems.COIL.get()).define('s', carbonStock)
+                .define('d', Items.REDSTONE).define('g', glassPane);
+        gun(output, tesla, 25, AmmoType.DEFAULT, "tesla_gun", TGAmmo.ENERGY_CELL.get(), teslaKeys, " gd", "crs", " m ");
+        gun(output, tesla, 0, AmmoType.DEFAULT, "tesla_gun_empty", TGAmmo.ENERGY_CELL_EMPTY.get(), teslaKeys, " gd", "crs", " m ");
+
+        Item mib = TGGuns.MIB_GUN.get();
+        Consumer<StackShapedRecipeBuilder> mibKeys = b -> b.define('p', titanium).define('b', TGItems.LASER_BARREL.get())
+                .define('s', TGItems.SONIC_EMITTER.get()).define('f', TGItems.MECHANICAL_PARTS_CARBON.get());
+        gun(output, mib, 20, AmmoType.DEFAULT, "mib_gun", TGAmmo.ENERGY_CELL.get(), mibKeys, "bsp", " fp", "  m");
+        gun(output, mib, 0, AmmoType.DEFAULT, "mib_gun_empty", TGAmmo.ENERGY_CELL_EMPTY.get(), mibKeys, "bsp", " fp", "  m");
+
+        // nether blaster: loaded only (the charge is used up); the alien blaster has no Fabric recipe
+        gun(output, TGGuns.NETHER_BLASTER.get(), 10, AmmoType.DEFAULT, "nether_blaster", TGAmmo.NETHER_CHARGE.get(),
+                b -> b.define('p', obsidianSteel).define('b', obsBarrel).define('c', TGItems.CYBERNETIC_PARTS.get())
+                        .define('s', TGItems.PUMP_MECHANISM.get()),
+                "cpc", "bms", "cpc");
+
+        Item sonic = TGGuns.SONIC_SHOTGUN.get();
+        Consumer<StackShapedRecipeBuilder> sonicKeys = b -> b.define('p', titanium).define('r', carbonReceiver).define('s', carbonStock)
+                .define('e', TGItems.SONIC_EMITTER.get());
+        gun(output, sonic, 8, AmmoType.DEFAULT, "sonic_shotgun", TGAmmo.ENERGY_CELL.get(), sonicKeys, " p ", "ers", " m ");
+        gun(output, sonic, 0, AmmoType.DEFAULT, "sonic_shotgun_empty", TGAmmo.ENERGY_CELL_EMPTY.get(), sonicKeys, " p ", "ers", " m ");
     }
 
     /**

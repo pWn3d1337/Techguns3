@@ -28,8 +28,9 @@ import techguns.gun.ammo.AmmoType;
 import techguns.registry.TGGuns;
 
 /**
- * The same checks for every bullet gun (Phase 3 batch 3a): a shot uses one round and hits, an empty gun reloads from
- * its own ammo item, incendiary ammo sets the target on fire.
+ * The same checks for every projectile and beam gun (Phase 3 batches 3a-3c): a shot uses one round and hits, an empty gun
+ * reloads from its own ammo items and gives back the empty ones, incendiary ammo sets the target on fire, explosive
+ * ammo also hurts what stands next to the target.
  */
 @GameTestHolder(Techguns.MODID)
 public class TGBulletGunTests {
@@ -37,7 +38,11 @@ public class TGBulletGunTests {
 
     private static final List<DeferredItem<GunItem>> GUNS = List.of(
             TGGuns.REVOLVER, TGGuns.GOLDEN_REVOLVER, TGGuns.PISTOL, TGGuns.AK47, TGGuns.M4_INFILTRATOR, TGGuns.AUG,
-            TGGuns.SCAR, TGGuns.THOMPSON, TGGuns.MAC10, TGGuns.VECTOR, TGGuns.LMG, TGGuns.BOLT_ACTION, TGGuns.MINIGUN);
+            TGGuns.SCAR, TGGuns.THOMPSON, TGGuns.MAC10, TGGuns.VECTOR, TGGuns.LMG, TGGuns.BOLT_ACTION, TGGuns.MINIGUN,
+            TGGuns.SAWED_OFF, TGGuns.COMBAT_SHOTGUN, TGGuns.AS50, TGGuns.GAUSS_RIFLE, TGGuns.BLASTER_RIFLE, TGGuns.BLASTER_SHOTGUN,
+            TGGuns.PULSE_RIFLE, TGGuns.PDW,
+            TGGuns.LASER_PISTOL, TGGuns.NUCLEAR_DEATHRAY, TGGuns.TESLA_GUN, TGGuns.ALIEN_BLASTER, TGGuns.MIB_GUN, TGGuns.NETHER_BLASTER,
+            TGGuns.SONIC_SHOTGUN);
 
     @GameTestGenerator
     public static Collection<TestFunction> bulletGunTests() {
@@ -46,8 +51,15 @@ public class TGBulletGunTests {
             String name = gun.getId().getPath();
             tests.add(test(name + "_fires_and_hits", gun, TGBulletGunTests::firesAndHits));
             tests.add(test(name + "_reloads_from_ammo", gun, TGBulletGunTests::reloadsFromAmmo));
-            tests.add(test(name + "_incendiary_ignites", gun, TGBulletGunTests::incendiaryIgnites));
+            if (gun.get().ammoType().hasVariant(AmmoType.INCENDIARY)) {
+                tests.add(test(name + "_incendiary_ignites", gun, TGBulletGunTests::incendiaryIgnites));
+            }
+            if (gun.get().ammoType().hasVariant(AmmoType.EXPLOSIVE)) {
+                tests.add(test(name + "_explosive_blast", gun, TGBulletGunTests::explosiveBlast));
+            }
         }
+        tests.add(test("nether_blaster_ignites", TGGuns.NETHER_BLASTER, (helper, gun) -> ignites(helper, gun, AmmoType.DEFAULT)));
+        tests.add(test("sonic_shotgun_pierces", TGGuns.SONIC_SHOTGUN, TGBulletGunTests::pierces));
         return tests;
     }
 
@@ -103,17 +115,54 @@ public class TGBulletGunTests {
         for (ItemStack a : ammo) {
             helper.assertTrue(player.getInventory().countItem(a.getItem()) < 2, "Ammo should be used: " + a);
         }
+        for (ItemStack empty : gun.ammoType().emptyStacks()) {
+            helper.assertTrue(empty.isEmpty() || player.getInventory().countItem(empty.getItem()) > 0, "Should get back " + empty);
+        }
         helper.succeed();
     }
 
     private static void incendiaryIgnites(GameTestHelper helper, GunItem gun) {
         helper.assertTrue(gun.ammoType().hasVariant(AmmoType.INCENDIARY), "Gun should accept incendiary ammo");
+        ignites(helper, gun, AmmoType.INCENDIARY);
+    }
+
+    private static void ignites(GameTestHelper helper, GunItem gun, String variant) {
         Player player = shooter(helper);
-        ItemStack stack = hold(player, gun, gun.stats().firing().clipSize(), AmmoType.INCENDIARY);
+        ItemStack stack = hold(player, gun, gun.stats().firing().clipSize(), variant);
         Zombie zombie = target(helper);
 
         gun.shoot(stack, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
 
-        helper.succeedWhen(() -> helper.assertTrue(zombie.isOnFire(), "Incendiary round should set the zombie on fire"));
+        helper.succeedWhen(() -> helper.assertTrue(zombie.isOnFire(), "The hit should set the zombie on fire"));
+    }
+
+    /** The sonic wave passes through the first target and hits the one behind it. */
+    private static void pierces(GameTestHelper helper, GunItem gun) {
+        Player player = shooter(helper);
+        ItemStack stack = hold(player, gun, gun.stats().firing().clipSize(), AmmoType.DEFAULT);
+        Zombie front = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(3, 1, 4));
+        Zombie back = target(helper);
+        float frontHealth = front.getHealth();
+        float backHealth = back.getHealth();
+
+        gun.shoot(stack, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
+
+        helper.succeedWhen(() -> {
+            helper.assertTrue(front.getHealth() < frontHealth, "Front zombie was not hit");
+            helper.assertTrue(back.getHealth() < backHealth, "Wave should pass through to the zombie behind");
+        });
+    }
+
+    private static void explosiveBlast(GameTestHelper helper, GunItem gun) {
+        Player player = shooter(helper);
+        ItemStack stack = hold(player, gun, gun.stats().firing().clipSize(), AmmoType.EXPLOSIVE);
+        Zombie zombie = target(helper);
+        // out of the line of fire, inside the blast radius
+        Zombie neighbour = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(5, 1, 6));
+        float health = neighbour.getHealth();
+
+        gun.shoot(stack, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
+
+        helper.succeedWhen(() -> helper.assertTrue(neighbour.getHealth() < health, "Blast should hurt the zombie next to the target"));
     }
 }

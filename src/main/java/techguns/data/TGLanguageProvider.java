@@ -69,7 +69,24 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("minigun_drum", "Minigun Ammo Drum"),
             Map.entry("minigun_drum_empty", "Minigun Ammo Drum (Empty)"),
             Map.entry("minigun_drum_incendiary", "Minigun Ammo Drum (Incendiary)"),
-            Map.entry("assault_rifle_magazine_empty", "Assault Rifle Magazine (Empty)"));
+            Map.entry("assault_rifle_magazine_empty", "Assault Rifle Magazine (Empty)"),
+            Map.entry("sawed_off", "Double Barrel Shotgun"),
+            Map.entry("combat_shotgun", "Combat Shotgun"),
+            Map.entry("as50", "AS50 Sniper Rifle"),
+            Map.entry("pdw", "PDW"),
+            Map.entry("shotgun_rounds_incendiary", "Shotgun Rounds (Incendiary)"),
+            Map.entry("sniper_rounds_incendiary", "Sniper Rounds (Incendiary)"),
+            Map.entry("sniper_rounds_explosive", "Sniper Rounds (Explosive)"),
+            Map.entry("as50_magazine", "AS50 Magazine"),
+            Map.entry("as50_magazine_empty", "AS50 Magazine (Empty)"),
+            Map.entry("as50_magazine_incendiary", "AS50 Magazine (Incendiary)"),
+            Map.entry("as50_magazine_explosive", "AS50 Magazine (Explosive)"),
+            Map.entry("advanced_magazine_empty", "Advanced Magazine (Empty)"),
+            Map.entry("nuclear_deathray", "Nuclear Death Ray"),
+            Map.entry("sonic_shotgun", "Sonic Rifle"),
+            Map.entry("mib_gun", "De-Atomizer Pistol"),
+            Map.entry("redstone_battery_empty", "Redstone Battery (Empty)"),
+            Map.entry("nuclear_power_cell_empty", "Nuclear Power Cell (Depleted)"));
 
     @Override
     protected void addTranslations() {

@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:gauss_barrel"
+    },
+    "c": {
+      "item": "techguns:circuit_board_advanced"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "e": {
+      "item": "techguns:energy_cell_empty"
+    },
+    "p": {
+      "tag": "c:ingots/titanium"
+    },
+    "r": {
+      "item": "techguns:carbon_receiver"
+    },
+    "s": {
+      "item": "techguns:carbon_stock"
+    }
+  },
+  "pattern": [
+    "dpc",
+    "brs",
+    "  e"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:gauss_rifle"
+  }
+}

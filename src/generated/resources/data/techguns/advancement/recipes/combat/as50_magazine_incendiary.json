@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_as50_magazine_empty": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:as50_magazine_empty"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:as50_magazine_incendiary"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_as50_magazine_empty"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:as50_magazine_incendiary"
+    ]
+  }
+}

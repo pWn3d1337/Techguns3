@@ -1,6 +1,7 @@
 package techguns.registry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +42,24 @@ public final class TGAmmo {
     public static final DeferredItem<Item> ENERGY_CELL = flat("energy_cell", 16);
     public static final DeferredItem<Item> ENERGY_CELL_EMPTY = flat("energy_cell_empty", 16);
     public static final DeferredItem<Item> ROCKET = model("rocket", 8);
+    public static final DeferredItem<Item> SHOTGUN_ROUNDS = flat("shotgun_rounds", 64);
+    public static final DeferredItem<Item> SHOTGUN_ROUNDS_INCENDIARY = flat("shotgun_rounds_incendiary", 64);
+    public static final DeferredItem<Item> SNIPER_ROUNDS = flat("sniper_rounds", 64);
+    public static final DeferredItem<Item> SNIPER_ROUNDS_INCENDIARY = flat("sniper_rounds_incendiary", 64);
+    public static final DeferredItem<Item> SNIPER_ROUNDS_EXPLOSIVE = flat("sniper_rounds_explosive", 64);
+    public static final DeferredItem<Item> ADVANCED_ROUNDS = flat("advanced_rounds", 64);
+    public static final DeferredItem<Item> AS50_MAGAZINE = model("as50_magazine", 16);
+    public static final DeferredItem<Item> AS50_MAGAZINE_EMPTY = model("as50_magazine_empty", 16);
+    public static final DeferredItem<Item> AS50_MAGAZINE_INCENDIARY = model("as50_magazine_incendiary", 16);
+    public static final DeferredItem<Item> AS50_MAGAZINE_EXPLOSIVE = model("as50_magazine_explosive", 16);
+    public static final DeferredItem<Item> ADVANCED_MAGAZINE = flat("advanced_magazine", 16);
+    public static final DeferredItem<Item> ADVANCED_MAGAZINE_EMPTY = flat("advanced_magazine_empty", 16);
+    public static final DeferredItem<Item> GAUSS_RIFLE_SLUGS = flat("gauss_rifle_slugs", 64);
+    public static final DeferredItem<Item> REDSTONE_BATTERY = flat("redstone_battery", 16);
+    public static final DeferredItem<Item> REDSTONE_BATTERY_EMPTY = flat("redstone_battery_empty", 16);
+    public static final DeferredItem<Item> NUCLEAR_POWER_CELL = flat("nuclear_power_cell", 16);
+    public static final DeferredItem<Item> NUCLEAR_POWER_CELL_EMPTY = flat("nuclear_power_cell_empty", 16);
+    public static final DeferredItem<Item> NETHER_CHARGE = flat("nether_charge", 16);
 
     // --- Ammo types ---
     public static final AmmoType PISTOL_ROUNDS_TYPE = AmmoType.simple(PISTOL_ROUNDS)
@@ -59,6 +78,18 @@ public final class TGAmmo {
             .addVariant(AmmoType.INCENDIARY, MINIGUN_DRUM_INCENDIARY, RIFLE_ROUNDS_INCENDIARY);
     public static final AmmoType ENERGY_CELL_TYPE = AmmoType.withEmpty(ENERGY_CELL, ENERGY_CELL_EMPTY, null, 0);
     public static final AmmoType ROCKETS_TYPE = AmmoType.simple(ROCKET);
+    public static final AmmoType SHOTGUN_ROUNDS_TYPE = AmmoType.simple(SHOTGUN_ROUNDS)
+            .addVariant(AmmoType.INCENDIARY, SHOTGUN_ROUNDS_INCENDIARY, SHOTGUN_ROUNDS_INCENDIARY);
+    public static final AmmoType AS50_MAGAZINE_TYPE = AmmoType.withEmpty(AS50_MAGAZINE, AS50_MAGAZINE_EMPTY, SNIPER_ROUNDS, 2)
+            .addVariant(AmmoType.INCENDIARY, AS50_MAGAZINE_INCENDIARY, SNIPER_ROUNDS_INCENDIARY)
+            .addVariant(AmmoType.EXPLOSIVE, AS50_MAGAZINE_EXPLOSIVE, SNIPER_ROUNDS_EXPLOSIVE);
+    public static final AmmoType ADVANCED_MAGAZINE_TYPE = AmmoType.withEmpty(ADVANCED_MAGAZINE, ADVANCED_MAGAZINE_EMPTY, ADVANCED_ROUNDS, 3);
+    public static final AmmoType REDSTONE_BATTERY_TYPE = AmmoType.withEmpty(REDSTONE_BATTERY, REDSTONE_BATTERY_EMPTY, null, 0);
+    public static final AmmoType NUCLEAR_POWER_CELL_TYPE = AmmoType.withEmpty(NUCLEAR_POWER_CELL, NUCLEAR_POWER_CELL_EMPTY, null, 0);
+    public static final AmmoType NETHER_CHARGE_TYPE = AmmoType.simple(NETHER_CHARGE);
+    /** Gauss rifle: one slug pack plus one energy cell per reload; the cell comes back empty. */
+    public static final AmmoType GAUSS_RIFLE_TYPE = AmmoType.multi(List.of(GAUSS_RIFLE_SLUGS, ENERGY_CELL),
+            Arrays.asList(null, ENERGY_CELL_EMPTY), Arrays.asList(GAUSS_RIFLE_SLUGS, null), 1);
 
     private TGAmmo() {
     }

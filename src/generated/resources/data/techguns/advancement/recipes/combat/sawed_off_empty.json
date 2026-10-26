@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sawed_off": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:sawed_off"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:sawed_off_empty"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sawed_off"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:sawed_off_empty"
+    ]
+  }
+}

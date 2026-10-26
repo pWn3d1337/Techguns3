@@ -22,6 +22,8 @@ import techguns.entity.projectile.GenericProjectile;
  */
 public class GenericProjectileRenderer extends RenderLateEntityRenderer<GenericProjectile> {
     private static final ResourceLocation BULLET_TEXTURE = TGIds.id("textures/entity/bullet1.png");
+    private static final ResourceLocation ADVANCED_TEXTURE = TGIds.id("textures/entity/bullet_blue.png");
+    private static final ResourceLocation BLASTER_TEXTURE = TGIds.id("textures/fx/laser3.png");
     private static final int FULL_BRIGHT = 0xF000F0;
     private static final float HALF_LENGTH = 10f;
     private static final float HALF_WIDTH = 1.25f;
@@ -32,12 +34,20 @@ public class GenericProjectileRenderer extends RenderLateEntityRenderer<GenericP
 
     @Override
     public ResourceLocation getTextureLocation(GenericProjectile entity) {
-        return BULLET_TEXTURE;
+        return switch (entity.kind()) {
+            case BLASTER -> BLASTER_TEXTURE;
+            case ADVANCED, GAUSS -> ADVANCED_TEXTURE;
+            default -> BULLET_TEXTURE;
+        };
     }
 
     @Override
     protected void renderLate(GenericProjectile entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffers, int packedLight) {
+        // FX projectiles are only their particle trail
+        if (!entity.kind().visible) {
+            return;
+        }
         // hide the bullet for its first moments so it does not pop up inside the muzzle
         if (!(entity.tickCount >= 2 || (entity.tickCount == 1 && partialTick > 0.35f))) {
             return;

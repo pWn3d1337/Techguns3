@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:laser_barrel"
+    },
+    "c": {
+      "item": "techguns:circuit_board_advanced"
+    },
+    "m": {
+      "item": "techguns:redstone_battery"
+    },
+    "o": {
+      "tag": "c:ingots/obsidian_steel"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "s": {
+      "tag": "c:nuggets/steel"
+    }
+  },
+  "pattern": [
+    "obo",
+    "scm",
+    "ssp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:laser_pistol"
+  }
+}

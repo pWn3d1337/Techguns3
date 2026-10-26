@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import techguns.core.damage.TGDamageCategory;
 import techguns.gun.ammo.AmmoType;
 import techguns.gun.ammo.DamageModifier;
+import techguns.core.fx.EntityCondition;
 import techguns.network.TGNetwork;
 import techguns.registry.TGComponents;
 
@@ -43,12 +44,27 @@ public class GunItem extends Item {
     private final GunStats stats;
     private final GunSounds sounds;
     private final ProjectileSelector projectiles;
+    /** Particle system attached to the shooter on every shot (NDR muzzle beam); null = none. */
+    @Nullable
+    private String fireFx;
+    private float fireFxX;
+    private float fireFxY;
+    private float fireFxZ;
 
     public GunItem(Properties properties, GunStats stats, GunSounds sounds, ProjectileSelector projectiles) {
         super(properties.stacksTo(1).component(TGComponents.GUN_AMMO.get(), new GunAmmo(stats.firing().clipSize(), AmmoType.DEFAULT)));
         this.stats = stats;
         this.sounds = sounds;
         this.projectiles = projectiles;
+    }
+
+    /** Fabric {@code setFireFX}: the x offset is mirrored for the right hand. */
+    public GunItem withFireFx(String name, float x, float y, float z) {
+        this.fireFx = name;
+        this.fireFxX = x;
+        this.fireFxY = y;
+        this.fireFxZ = z;
+        return this;
     }
 
     public GunStats stats() {
@@ -104,6 +120,10 @@ public class GunItem extends Item {
                 firePos = FirePos.CENTER;
             }
             fireProjectiles(level, player, stack, spreadMultiplier, 1.0f, firePos);
+            if (fireFx != null) {
+                float x = firePos == FirePos.RIGHT ? -fireFxX : fireFxX;
+                TGNetwork.sendFxOnEntityAndSelf(player, fireFx, x, fireFxY - 0.1f, fireFxZ, true, EntityCondition.ENTITY_ALIVE);
+            }
             TGNetwork.sendGunFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks());
         } else {
             GunClientEffects.get().onFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks());
@@ -153,6 +173,16 @@ public class GunItem extends Item {
     }
 
     protected void spawnProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float forwardOffset, float damageMultiplier, FirePos firePos) {
+        Projectile entity = createProjectile(level, shooter, stack, spread, damageMultiplier, firePos);
+        if (forwardOffset > 0.0f) {
+            float speed = projectiles.factory(GunData.variant(stack)).modifier().velocity(stats.projectile().speed());
+            entity.setPos(entity.position().add(entity.getDeltaMovement().scale(forwardOffset / speed)));
+        }
+        level.addFreshEntity(entity);
+    }
+
+    /** Creates (but does not spawn) one projectile of the loaded ammo variant. */
+    protected Projectile createProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos) {
         ProjectileFactory<?> factory = projectiles.factory(GunData.variant(stack));
         DamageModifier mod = factory.modifier();
         GunStats.Damage damage = stats.damage();
@@ -166,11 +196,7 @@ public class GunItem extends Item {
                 speed, lifetime, spread, projectile.gravity(), mod.radius(damage.radius()),
                 blockDamage(shooter), firePos);
 
-        Projectile entity = factory.create(params);
-        if (forwardOffset > 0.0f) {
-            entity.setPos(entity.position().add(entity.getDeltaMovement().scale(forwardOffset / speed)));
-        }
-        level.addFreshEntity(entity);
+        return factory.create(params);
     }
 
     /** Players in safe mode never damage blocks. */

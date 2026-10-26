@@ -1,0 +1,571 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.combat_shotgun",
+        "texture_width": 64,
+        "texture_height": 32,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "Shape1",
+          "parent": "root",
+          "pivot": [
+            -7.0,
+            -2.5,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7.0,
+                -3.5,
+                0.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                50,
+                4
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2",
+          "parent": "root",
+          "pivot": [
+            -9.0,
+            -1.5,
+            -0.5
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            19.1716
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -9.0,
+                -8.5,
+                -0.5
+              ],
+              "size": [
+                3.0,
+                7.0,
+                2.0
+              ],
+              "uv": [
+                54,
+                14
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Shape3",
+          "parent": "root",
+          "pivot": [
+            8.0,
+            1.5,
+            1.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                8.0,
+                0.5,
+                1.0
+              ],
+              "size": [
+                24.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                4
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape5",
+          "parent": "root",
+          "pivot": [
+            8.0,
+            1.5,
+            -1.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                8.0,
+                0.5,
+                -1.0
+              ],
+              "size": [
+                24.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                4
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape6",
+          "parent": "root",
+          "pivot": [
+            8.0,
+            -1.0,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                8.0,
+                -3.0,
+                -0.5
+              ],
+              "size": [
+                22.0,
+                2.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Shape7",
+          "parent": "root",
+          "pivot": [
+            -10.0,
+            1.5,
+            -1.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -10.0,
+                -2.5,
+                -1.0
+              ],
+              "size": [
+                8.0,
+                4.0,
+                3.0
+              ],
+              "uv": [
+                32,
+                14
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape8",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            3.0,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                2.0,
+                -0.5
+              ],
+              "size": [
+                10.0,
+                1.0,
+                2.0
+              ],
+              "uv": [
+                32,
+                21
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Shape9",
+          "parent": "root",
+          "pivot": [
+            8.0,
+            2.5,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                8.0,
+                -0.5,
+                0.0
+              ],
+              "size": [
+                24.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape10",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            2.0,
+            -1.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -3.0,
+                -1.0
+              ],
+              "size": [
+                10.0,
+                5.0,
+                3.0
+              ],
+              "uv": [
+                32,
+                24
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape11",
+          "parent": "root",
+          "pivot": [
+            27.0,
+            -0.5,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                27.0,
+                -1.5,
+                0.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                50,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape12",
+          "parent": "root",
+          "pivot": [
+            -9.0,
+            2.5,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -9.0,
+                1.5,
+                -0.5
+              ],
+              "size": [
+                7.0,
+                1.0,
+                2.0
+              ],
+              "uv": [
+                46,
+                9
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape13",
+          "parent": "root",
+          "pivot": [
+            -7.5,
+            3.5,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7.5,
+                2.5,
+                0.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                50,
+                2
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape14",
+          "parent": "root",
+          "pivot": [
+            29.0,
+            3.5,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                29.0,
+                2.5,
+                0.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                50,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape15",
+          "parent": "root",
+          "pivot": [
+            -21.0,
+            0.5,
+            -1.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -21.0,
+                -4.5,
+                -1.0
+              ],
+              "size": [
+                2.0,
+                5.0,
+                3.0
+              ],
+              "uv": [
+                18,
+                10
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape16",
+          "parent": "root",
+          "pivot": [
+            -21.0,
+            -2.5,
+            -0.5
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            -15.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -21.0,
+                -4.5,
+                -0.5
+              ],
+              "size": [
+                12.0,
+                2.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                19
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape17",
+          "parent": "root",
+          "pivot": [
+            -23.0,
+            -5.0,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -23.0,
+                -8.0,
+                -0.5
+              ],
+              "size": [
+                2.0,
+                3.0,
+                2.0
+              ],
+              "uv": [
+                10,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Shape18",
+          "parent": "root",
+          "pivot": [
+            -23.0,
+            0.0,
+            -1.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -23.0,
+                -5.0,
+                -1.0
+              ],
+              "size": [
+                2.0,
+                5.0,
+                3.0
+              ],
+              "uv": [
+                0,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Shape19",
+          "parent": "root",
+          "pivot": [
+            -21.0,
+            -4.5,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -21.0,
+                -6.5,
+                -0.5
+              ],
+              "size": [
+                1.0,
+                2.0,
+                2.0
+              ],
+              "uv": [
+                10,
+                15
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape20",
+          "parent": "root",
+          "pivot": [
+            -19.5,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            -8.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -19.5,
+                -1.0,
+                0.0
+              ],
+              "size": [
+                10.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                29,
+                12
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

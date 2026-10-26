@@ -1,0 +1,57 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.combat_shotgun_1",
+        "texture_width": 64,
+        "texture_height": 32,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "Pump",
+          "parent": "root",
+          "pivot": [
+            7.0,
+            1.0,
+            -1.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                7.0,
+                -4.0,
+                -1.5
+              ],
+              "size": [
+                12.0,
+                5.0,
+                4.0
+              ],
+              "uv": [
+                0,
+                23
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

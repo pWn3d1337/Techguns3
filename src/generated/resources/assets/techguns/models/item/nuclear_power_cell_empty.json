@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "techguns:item/nuclear_power_cell_empty"
+  }
+}

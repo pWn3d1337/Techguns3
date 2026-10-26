@@ -148,7 +148,7 @@ public final class TGNetwork {
 
     private static void handleGunImpactFx(FxPayloads.GunImpactFx payload, IPayloadContext context) {
         FxClientHandler.get().gunImpact(context.player().level(), payload.soundType(), payload.x(), payload.y(), payload.z(),
-                payload.pitch(), payload.yaw(), payload.incendiary());
+                payload.pitch(), payload.yaw(), payload.incendiary(), payload.blue());
     }
 
     private static void handleEntityDeathFx(FxPayloads.EntityDeathFx payload, IPayloadContext context) {

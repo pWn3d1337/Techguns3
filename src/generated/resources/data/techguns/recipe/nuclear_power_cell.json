@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:nuclear_power_cell_empty"
+    },
+    {
+      "item": "techguns:enriched_uranium"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:nuclear_power_cell"
+  }
+}

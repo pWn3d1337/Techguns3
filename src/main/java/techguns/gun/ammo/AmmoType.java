@@ -49,6 +49,11 @@ public final class AmmoType {
         return new AmmoType(List.of(ammo), Collections.singletonList(bullet), List.of(empty), bulletsPerMag);
     }
 
+    /** Several items consumed together per reload (gauss rifle: slugs + energy cell); lists are per slot, null = nothing. */
+    public static AmmoType multi(List<ItemLike> ammo, List<ItemLike> emptyItems, List<ItemLike> bullet, int bulletsPerMag) {
+        return new AmmoType(List.copyOf(ammo), bullet, emptyItems, bulletsPerMag);
+    }
+
     public AmmoType addVariant(String key, ItemLike ammo, ItemLike bullet) {
         variants.add(new Variant(key, List.of(ammo), Collections.singletonList(bullet)));
         return this;

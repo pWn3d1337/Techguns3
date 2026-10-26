@@ -81,6 +81,8 @@ public final class ClientFx implements FxClientHandler {
         if (event.getLevel().isClientSide && event.getEntity() instanceof RocketProjectile rocket) {
             createFXOnEntity("RocketLauncherExhaust", rocket, 0f, 0f, 0f, false, EntityCondition.ENTITY_ALIVE);
         }
+        // trails that depend on spawn data (bullet kind, sonic main segment) start in readSpawnData: NeoForge applies
+        // the spawn data after the entity joined the client level
     }
 
     // --- FxClientHandler ---
@@ -105,7 +107,8 @@ public final class ClientFx implements FxClientHandler {
     }
 
     @Override
-    public void gunImpact(Level level, short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary) {
+    public void gunImpact(Level level, short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary,
+                          boolean blue) {
         if (!(level instanceof ClientLevel clientLevel)) {
             return;
         }
@@ -147,7 +150,8 @@ public final class ClientFx implements FxClientHandler {
         }
         clientLevel.playLocalSound(x, y, z, sound, SoundSource.AMBIENT, 1.0f, 1.0f, true);
         if (fx != null) {
-            createFX(fx, clientLevel, x, y, z, 0, 0, 0, pitch, yaw, 1.0f);
+            // advanced and gauss rounds use the blue variants (Fabric handleBulletImpactBlue)
+            createFX(blue ? fx + "_Blue" : fx, clientLevel, x, y, z, 0, 0, 0, pitch, yaw, 1.0f);
         }
     }
 

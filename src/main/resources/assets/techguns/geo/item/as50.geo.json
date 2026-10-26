@@ -1,0 +1,1554 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.as50",
+        "texture_width": 256,
+        "texture_height": 128,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "Grip1",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -2.0,
+            6.0
+          ],
+          "rotation": [
+            25.5621,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -11.0,
+                6.0
+              ],
+              "size": [
+                3.0,
+                9.0,
+                4.0
+              ],
+              "uv": [
+                73,
+                37
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Trigger01",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -4.0,
+            2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -5.0,
+                2.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                6.0
+              ],
+              "uv": [
+                96,
+                32
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Trigger02",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -2.0,
+            2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -4.0,
+                2.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                1.0
+              ],
+              "uv": [
+                96,
+                34
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MuzzleFront2",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            4.88,
+            -66.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                3.88,
+                -66.0
+              ],
+              "size": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                43
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Magazine01",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -7.0,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -9.0,
+                -0.5
+              ],
+              "size": [
+                2.0,
+                2.0,
+                1.0
+              ],
+              "uv": [
+                52,
+                101
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Trigger03",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            -1.5,
+            5.0
+          ],
+          "rotation": [
+            -15.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -3.5,
+                5.0
+              ],
+              "size": [
+                1.0,
+                2.0,
+                1.0
+              ],
+              "uv": [
+                106,
+                34
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MagHolder",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            4.0,
+            -12.0
+          ],
+          "rotation": [
+            -5.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                0.0,
+                -12.0
+              ],
+              "size": [
+                3.0,
+                4.0,
+                13.0
+              ],
+              "uv": [
+                0,
+                99
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CheekRest",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            10.0,
+            17.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                6.0,
+                17.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                16.0
+              ],
+              "uv": [
+                68,
+                3
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "LowerTrigger",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -1.0,
+            2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -2.0,
+                2.0
+              ],
+              "size": [
+                3.0,
+                1.0,
+                13.0
+              ],
+              "uv": [
+                96,
+                40
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Magazine02",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            0.0,
+            -11.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -8.0,
+                -11.5
+              ],
+              "size": [
+                2.0,
+                8.0,
+                12.0
+              ],
+              "uv": [
+                34,
+                99
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Magazine03",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -6.0,
+            -11.0
+          ],
+          "rotation": [
+            -5.25,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -8.0,
+                -11.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                11.0
+              ],
+              "uv": [
+                63,
+                100
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MidRailPart1",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            10.0,
+            -17.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                9.0,
+                -17.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                71
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "UpperBarrel",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            9.0,
+            -48.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                8.0,
+                -48.0
+              ],
+              "size": [
+                1.0,
+                1.0,
+                19.0
+              ],
+              "uv": [
+                69,
+                72
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelBigPart",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            8.5,
+            -21.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.5,
+                -21.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                6.0
+              ],
+              "uv": [
+                0,
+                65
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Barrel",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            7.0,
+            -59.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                5.0,
+                -59.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                38.0
+              ],
+              "uv": [
+                0,
+                24
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ReceiverTop",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            9.0,
+            -15.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                8.0,
+                -15.0
+              ],
+              "size": [
+                3.0,
+                1.0,
+                32.0
+              ],
+              "uv": [
+                0,
+                65
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelBigPartTop",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            9.0,
+            -29.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                7.0,
+                -29.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                14.0
+              ],
+              "uv": [
+                0,
+                20
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeMount4",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            15.0,
+            3.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                12.0,
+                3.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                130,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelFrontPartBottom",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            4.5,
+            -61.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                3.5,
+                -61.5
+              ],
+              "size": [
+                2.0,
+                1.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                37
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MidRailPart2",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            10.0,
+            -26.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                9.0,
+                -26.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                71
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MidRailPart3",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            10.0,
+            -23.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                9.0,
+                -23.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                71
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MidRailPart4",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            10.0,
+            -20.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                9.0,
+                -20.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                71
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MidRailPartTop",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            11.0,
+            -28.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                10.0,
+                -28.0
+              ],
+              "size": [
+                2.0,
+                1.0,
+                14.0
+              ],
+              "uv": [
+                113,
+                24
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MidRailPartFront",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            11.0,
+            -28.0
+          ],
+          "rotation": [
+            -18.5,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                8.0,
+                -28.0
+              ],
+              "size": [
+                2.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                71
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelMidPartTop",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            9.0,
+            -48.0
+          ],
+          "rotation": [
+            -38.4319,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                6.0,
+                -48.0
+              ],
+              "size": [
+                2.0,
+                3.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                56
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelMidPart01",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            7.7,
+            -50.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.7,
+                -50.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                3.0
+              ],
+              "uv": [
+                0,
+                55
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelMidPartBottom",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            4.5,
+            -49.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                3.5,
+                -49.5
+              ],
+              "size": [
+                2.0,
+                1.0,
+                2.0
+              ],
+              "uv": [
+                0,
+                37
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeFront",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            19.0,
+            -18.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                14.0,
+                -18.0
+              ],
+              "size": [
+                5.0,
+                5.0,
+                5.0
+              ],
+              "uv": [
+                129,
+                12
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelFrontPart01",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            7.7,
+            -62.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.7,
+                -62.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                3.0
+              ],
+              "uv": [
+                0,
+                55
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MuzzleFront3",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            7.7,
+            -67.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.7,
+                -67.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                5,
+                41
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "MuzzleFront",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            7.7,
+            -66.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                6.7,
+                -66.0
+              ],
+              "size": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                43
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Muzzle05",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            8.5,
+            -64.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.5,
+                -64.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                1.0
+              ],
+              "uv": [
+                12,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "UpperTrigger",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            2.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                -1.0,
+                0.0
+              ],
+              "size": [
+                4.0,
+                3.0,
+                17.0
+              ],
+              "uv": [
+                45,
+                34
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "StockBack02",
+          "parent": "root",
+          "pivot": [
+            -3.0,
+            7.0,
+            32.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3.0,
+                -3.0,
+                32.0
+              ],
+              "size": [
+                5.0,
+                10.0,
+                1.0
+              ],
+              "uv": [
+                93,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "StockFlip",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -1.0,
+            21.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -3.0,
+                21.0
+              ],
+              "size": [
+                3.0,
+                2.0,
+                10.0
+              ],
+              "uv": [
+                58,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "StockBack01",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            7.0,
+            31.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                -3.0,
+                31.0
+              ],
+              "size": [
+                4.0,
+                10.0,
+                1.0
+              ],
+              "uv": [
+                117,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "StockLower",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            4.0,
+            17.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                -1.0,
+                17.0
+              ],
+              "size": [
+                4.0,
+                5.0,
+                14.0
+              ],
+              "uv": [
+                92,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "TopRails",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            11.0,
+            -14.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                9.0,
+                -14.0
+              ],
+              "size": [
+                2.0,
+                2.0,
+                25.0
+              ],
+              "uv": [
+                39,
+                68
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeAdjust",
+          "parent": "root",
+          "pivot": [
+            -4.3,
+            15.4,
+            -3.1
+          ],
+          "rotation": [
+            45.0,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.3,
+                12.4,
+                -3.1
+              ],
+              "size": [
+                2.0,
+                3.0,
+                3.0
+              ],
+              "uv": [
+                40,
+                9
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeMount2",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            15.0,
+            -6.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                12.0,
+                -6.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                130,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "BarrelBigPartFront",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            8.5,
+            -29.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.5,
+                -29.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                8.0
+              ],
+              "uv": [
+                0,
+                76
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Scope01",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            18.25,
+            6.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                14.25,
+                6.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                7.0
+              ],
+              "uv": [
+                133,
+                23
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Scope02",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            17.5,
+            -8.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                14.5,
+                -8.0
+              ],
+              "size": [
+                3.0,
+                3.0,
+                14.0
+              ],
+              "uv": [
+                150,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Scope03",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            18.25,
+            -13.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                14.25,
+                -13.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                5.0
+              ],
+              "uv": [
+                21,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Receiver",
+          "parent": "root",
+          "pivot": [
+            -2.5,
+            8.0,
+            -15.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.5,
+                2.0,
+                -15.0
+              ],
+              "size": [
+                4.0,
+                6.0,
+                32.0
+              ],
+              "uv": [
+                56,
+                23
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeMount",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            12.0,
+            -6.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                11.0,
+                -6.0
+              ],
+              "size": [
+                3.0,
+                1.0,
+                10.0
+              ],
+              "uv": [
+                129,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeAdjust2",
+          "parent": "root",
+          "pivot": [
+            -2.62,
+            19.5,
+            -1.0
+          ],
+          "rotation": [
+            0.0,
+            45.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.62,
+                17.5,
+                -1.0
+              ],
+              "size": [
+                3.0,
+                2.0,
+                3.0
+              ],
+              "uv": [
+                51,
+                13
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "ScopeMiddle",
+          "parent": "root",
+          "pivot": [
+            -2.3,
+            17.5,
+            -3.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.3,
+                13.5,
+                -3.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                4.0
+              ],
+              "uv": [
+                40,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Muzzle01",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            8.5,
+            -65.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.5,
+                -65.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Muzzle04",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            8.5,
+            -63.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                4.5,
+                -63.0
+              ],
+              "size": [
+                4.0,
+                4.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                46
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
