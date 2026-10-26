@@ -145,11 +145,19 @@ public class TGExplosiveTests {
 
     @GameTest(template = ARENA, timeoutTicks = 200)
     public static void handGrenadeExplodes(GameTestHelper helper) {
+        grenadeExplodes(helper, TGGuns.STIELGRANATE.get());
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void fragGrenadeExplodes(GameTestHelper helper) {
+        grenadeExplodes(helper, TGGuns.FRAG_GRENADE.get());
+    }
+
+    private static void grenadeExplodes(GameTestHelper helper, GrenadeItem item) {
         Player player = shooter(helper);
-        ItemStack grenade = new ItemStack(TGGuns.STIELGRANATE.get(), 2);
+        ItemStack grenade = new ItemStack(item, 2);
         player.setItemInHand(InteractionHand.MAIN_HAND, grenade);
         Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(3, 1, 4));
-        GrenadeItem item = TGGuns.STIELGRANATE.get();
 
         // fully wound up (30 ticks)
         item.releaseUsing(grenade, helper.getLevel(), player, item.getUseDuration(grenade, player) - 30);
