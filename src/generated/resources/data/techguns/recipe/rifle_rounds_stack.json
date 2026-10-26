@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:rifle_rounds"
+    },
+    {
+      "item": "techguns:rifle_rounds"
+    },
+    {
+      "item": "techguns:rifle_rounds"
+    },
+    {
+      "item": "techguns:rifle_rounds"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:rifle_rounds_stack"
+  }
+}

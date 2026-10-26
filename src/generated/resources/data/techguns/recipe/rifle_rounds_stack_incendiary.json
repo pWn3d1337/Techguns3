@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:rifle_rounds_incendiary"
+    },
+    {
+      "item": "techguns:rifle_rounds_incendiary"
+    },
+    {
+      "item": "techguns:rifle_rounds_incendiary"
+    },
+    {
+      "item": "techguns:rifle_rounds_incendiary"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:rifle_rounds_stack_incendiary"
+  }
+}

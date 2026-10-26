@@ -16,9 +16,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
+import techguns.recipe.TransferAmmoRecipe;
 
 /**
  * Shaped recipe whose result is an arbitrary {@link ItemStack} (with data components, e.g. a gun with
@@ -31,6 +33,7 @@ public final class StackShapedRecipeBuilder {
     private final Map<Character, Ingredient> key = new LinkedHashMap<>();
     private String criterionName;
     private Criterion<?> criterion;
+    private boolean transferAmmo;
 
     private StackShapedRecipeBuilder(RecipeCategory category, ItemStack result, String... pattern) {
         this.category = category;
@@ -53,6 +56,12 @@ public final class StackShapedRecipeBuilder {
         return this;
     }
 
+    /** Saves a {@link TransferAmmoRecipe}: the result keeps the rounds of the input guns. */
+    public StackShapedRecipeBuilder transferAmmo() {
+        this.transferAmmo = true;
+        return this;
+    }
+
     public StackShapedRecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
         this.criterionName = name;
         this.criterion = criterion;
@@ -66,7 +75,9 @@ public final class StackShapedRecipeBuilder {
                 .rewards(AdvancementRewards.Builder.recipe(id))
                 .requirements(AdvancementRequirements.Strategy.OR);
         advancement.addCriterion(criterionName, criterion);
-        ShapedRecipe recipe = new ShapedRecipe("", RecipeBuilder.determineBookCategory(category), shapedPattern, result);
+        CraftingBookCategory bookCategory = RecipeBuilder.determineBookCategory(category);
+        ShapedRecipe recipe = transferAmmo ? new TransferAmmoRecipe("", bookCategory, shapedPattern, result, true)
+                : new ShapedRecipe("", bookCategory, shapedPattern, result);
         output.accept(id, recipe, advancement.build(id.withPrefix("recipes/" + category.getFolderName() + "/")));
     }
 }

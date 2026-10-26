@@ -12,6 +12,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -25,6 +26,8 @@ import techguns.gun.GunAmmo;
 import techguns.gun.GunData;
 import techguns.gun.MeleeToolItem;
 import techguns.gun.ammo.AmmoType;
+import techguns.recipe.AmmoChangeRecipe;
+import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGBlocks;
 import techguns.registry.TGGuns;
@@ -385,6 +388,18 @@ public class TGRecipeProvider extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.FUEL_TANK.get(), 2)
                 .requires(TGAmmo.FUEL_TANK_EMPTY.get(), 2).requires(Items.LAVA_BUCKET)
                 .unlockedBy("has_fuel_tank_empty", has(TGAmmo.FUEL_TANK_EMPTY.get())).save(output, TGIds.id("fuel_tank"));
+        // Batch 3g: rifle round stacks refill the minigun drum
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_STACK.get())
+                .requires(TGAmmo.RIFLE_ROUNDS.get(), 4)
+                .unlockedBy("has_rifle_rounds", has(TGAmmo.RIFLE_ROUNDS.get())).save(output, TGIds.id("rifle_rounds_stack"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_STACK_INCENDIARY.get())
+                .requires(TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 4)
+                .unlockedBy("has_rifle_rounds_incendiary", has(TGAmmo.RIFLE_ROUNDS_INCENDIARY.get()))
+                .save(output, TGIds.id("rifle_rounds_stack_incendiary"));
+        refill(output, TGAmmo.MINIGUN_DRUM.get(), TGAmmo.MINIGUN_DRUM_EMPTY.get(), TGAmmo.RIFLE_ROUNDS_STACK.get(), 4, "minigun_drum");
+        refill(output, TGAmmo.MINIGUN_DRUM_INCENDIARY.get(), TGAmmo.MINIGUN_DRUM_EMPTY.get(), TGAmmo.RIFLE_ROUNDS_STACK_INCENDIARY.get(), 4,
+                "minigun_drum_incendiary");
+
         // Batch 3f: compressed air tanks and tool mining heads
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get(), 4)
                 .pattern(" l ").pattern("i i").pattern("i i")
@@ -607,7 +622,9 @@ public class TGRecipeProvider extends RecipeProvider {
         gun(output, guided, 1, AmmoType.HIGH_VELOCITY, "guided_missile_launcher_high_velocity", TGAmmo.ROCKET_HIGH_VELOCITY.get(), guidedKeys,
                 " gc", "mbb", " f ");
         gun(output, guided, 0, AmmoType.DEFAULT, "guided_missile_launcher_empty", null, guidedKeys, "gc", "bb", "f ");
-        // the Grim Reaper is made from four guided missile launchers with the ammo transfer recipe (batch 3g)
+        // the Grim Reaper: four guided missile launchers, their rockets carry over
+        transfer(output, TGGuns.GRIM_REAPER.get(), "grim_reaper",
+                b -> b.define('r', guided).define('c', TGItems.CARBON_RECEIVER.get()), "rr ", "rrc");
 
         // --- Batch 3c ---
         Item laserPistol = TGGuns.LASER_PISTOL.get();
@@ -660,6 +677,25 @@ public class TGRecipeProvider extends RecipeProvider {
                 b -> b.define('p', TGTags.Items.plate("obsidian_steel")).define('f', TGItems.PUMP_MECHANISM.get()).define('s', plastic),
                 "p ", "pf", "sm");
         // the grappling hook has no recipe in Fabric or Techguns 2
+
+        // --- Batch 3g: guns made from guns keep their rounds; special recipes ---
+        transfer(output, TGGuns.GOLDEN_REVOLVER.get(), "golden_revolver",
+                b -> b.define('r', TGGuns.REVOLVER.get()).define('g', Tags.Items.INGOTS_GOLD), "ggg", "grg", "ggg");
+        transfer(output, TGGuns.M4_INFILTRATOR.get(), "m4_infiltrator",
+                b -> b.define('g', Tags.Items.GLASS_BLOCKS).define('p', steelIngot).define('w', ItemTags.WOOL)
+                        .define('m', TGGuns.M4.get()).define('r', Items.REDSTONE).define('i', steelIngot),
+                "gpg", "wwm", "rri");
+        SpecialRecipeBuilder.special(AmmoChangeRecipe::new).save(output, TGIds.id("ammo_change"));
+        SpecialRecipeBuilder.special(MiningHeadUpgradeRecipe::new).save(output, TGIds.id("mining_head_upgrade"));
+    }
+
+    /** A {@link techguns.recipe.TransferAmmoRecipe}: the result gun gets the rounds of the input guns. */
+    private static void transfer(RecipeOutput output, Item gun, String id, Consumer<StackShapedRecipeBuilder> keys, String... pattern) {
+        ItemStack result = new ItemStack(gun);
+        GunData.setAmmo(result, new GunAmmo(0, AmmoType.DEFAULT));
+        StackShapedRecipeBuilder builder = StackShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result, pattern).transferAmmo();
+        keys.accept(builder);
+        builder.unlockedBy(getHasName(gun), has(gun)).save(output, TGIds.id(id));
     }
 
     /** One empty tool recipe per mining head; the head ('h') sets the result's head level. */

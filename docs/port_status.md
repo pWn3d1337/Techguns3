@@ -11,7 +11,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools) |
+| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
@@ -68,7 +68,7 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 |---|---|---|---|
 | 3a guns: revolver, golden revolver, pistol, AKM, The Infiltrator, AUG, SCAR, Thompson, MAC-10, Vector, LMG, bolt action, minigun | F | rendered | 39 generated GameTests; GeckoLib geo models pixel-identical to the Java models in game (SCAR: 1 px scope edges); bolt/slide/barrel/belt animations driven from Java; minigun keeps its spin animation running (`continuousAnimation`); MAC-10 hand type `ONE_POINT_FIVE_HANDED` |
 | 3a ammo: pistol/rifle rounds (+incendiary), pistol/SMG/AR/LMG magazines, minigun drum (+empty, +incendiary) | F | rendered | incendiary ammo has an uncommon (yellow) name instead of the Fabric colour code |
-| 3a recipes: guns (plain, empty, incendiary; ammo in the result), empty magazines, magazine refills, energy cell, rocket | F | logic | 38 recipes; minigun drum refill waits for the rifle rounds stack item; golden revolver/Infiltrator use the ammo transfer recipe (batch 3g) |
+| 3a recipes: guns (plain, empty, incendiary; ammo in the result), empty magazines, magazine refills, energy cell, rocket | F | logic | 38 recipes; minigun drum refill and golden revolver/Infiltrator/Grim Reaper added in 3g |
 | 3b guns: double barrel shotgun, combat shotgun, AS50, gauss rifle, blaster rifle, blaster shotgun, pulse rifle, PDW | F | rendered | generated GameTests (fires and hits, reloads and returns empties, incendiary, AS50 explosive blast); checked in game: models, AS50 scope, explosive rounds, gauss, blaster bolts, blue impacts |
 | 3b projectile kinds: explosive (Techguns 2 blast, power 1.5, block damage only outside safe mode), advanced (blue tracer + blue impacts), blaster (energy damage, laser death, LaserGunImpact), gauss (blue impacts + GaussRifleImpact_Block, GaussProjectileTrail) | F + 12 | logic | Fabric dropped the explosive blast; ported from 1.12 |
 | 3b ammo: shotgun rounds (+incendiary), sniper rounds (+incendiary, +explosive), advanced rounds, AS50 magazine (+empty, +incendiary, +explosive), advanced magazine (+empty), gauss rifle slugs (loaded together with an energy cell) | F | logic | shotgun/sniper rounds need the ammo bench (Phase 5); explosive sniper rounds have no Fabric recipe |
@@ -91,3 +91,6 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 | 3f drill area mining: (2r+1)² plane at the speed of its hardest block, sneaking mines one block (NeoForge break speed/break events instead of mixins); plane outline client-side | F | tested | GameTest: plane facing the player, none while sneaking |
 | 3f grappling hook, chainsaw/power hammer projectiles | F | logic | awaiting in-game check |
 | 3f recipes: compressed air tank (+empty), mining heads, tools (empty, one per head), shishkebap (Techguns 2) | F + 12 | logic | head swap on an existing tool = mining head upgrade recipe (batch 3g); grappling hook has no recipe |
+| 3g Ammo Bag: small (256) / large (512) ammo box, capacity weighted by stack size, only `#techguns:ammo`; bundle-style insert/extract and tooltip, fill bar; reloads count and take ammo from bags (loose items first), returned ammo and picked-up ammo go into bags | F | tested | GameTests: capacity, stack-size weight, non-ammo rejected, consume through bags, gun reload from a bag. No recipe in Fabric or Techguns 2 (creative only for now) |
+| 3g recipe types: `ammo_change` (gun + ammo of another variant, old rounds come back), `mining_head_upgrade` (tool + head, old head comes back), `transfer_ammo` (shaped, result keeps the input guns' rounds: golden revolver, Infiltrator, Grim Reaper); Fabric `crafting_shaped_nbt` = vanilla shaped results with components | F | tested | GameTests: variant change + returned rounds/full magazine, head swap, golden revolver keeps rounds. `camo_change` (Camo Bench) and `ammobench_crafting` move to Phase 5 with their machines |
+| 3g rifle rounds stack (+incendiary), minigun drum refill | F | logic | |

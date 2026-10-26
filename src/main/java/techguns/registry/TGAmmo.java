@@ -24,6 +24,8 @@ public final class TGAmmo {
     public static final DeferredItem<Item> PISTOL_ROUNDS_INCENDIARY = flat("pistol_rounds_incendiary", 64);
     public static final DeferredItem<Item> RIFLE_ROUNDS = flat("rifle_rounds", 64);
     public static final DeferredItem<Item> RIFLE_ROUNDS_INCENDIARY = flat("rifle_rounds_incendiary", 64);
+    public static final DeferredItem<Item> RIFLE_ROUNDS_STACK = flat("rifle_rounds_stack", 64);
+    public static final DeferredItem<Item> RIFLE_ROUNDS_STACK_INCENDIARY = flat("rifle_rounds_stack_incendiary", 64);
     public static final DeferredItem<Item> PISTOL_MAGAZINE = flat("pistol_magazine", 16);
     public static final DeferredItem<Item> PISTOL_MAGAZINE_EMPTY = flat("pistol_magazine_empty", 16);
     public static final DeferredItem<Item> PISTOL_MAGAZINE_INCENDIARY = flat("pistol_magazine_incendiary", 16);

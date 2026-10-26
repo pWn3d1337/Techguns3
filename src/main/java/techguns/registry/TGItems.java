@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import techguns.item.AmmoBagItem;
 
 /**
  * Techguns items. Plain material/component items are registered with {@link #simple} and get their
@@ -117,6 +118,10 @@ public final class TGItems {
 
     private TGItems() {
     }
+
+    // --- Ammo Bags (capacity in rounds; a full stack counts 64) ---
+    public static final DeferredItem<Item> AMMO_BOX = ITEMS.registerItem("ammo_box", props -> new AmmoBagItem(props, 64 * 4));
+    public static final DeferredItem<Item> AMMO_BOX_LARGE = ITEMS.registerItem("ammo_box_large", props -> new AmmoBagItem(props, 64 * 8));
 
     private static DeferredItem<Item> simple(String name) {
         DeferredItem<Item> item = ITEMS.registerSimpleItem(name);

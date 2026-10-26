@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_m4_infiltrator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:m4_infiltrator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:m4_infiltrator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_m4_infiltrator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:m4_infiltrator"
+    ]
+  }
+}

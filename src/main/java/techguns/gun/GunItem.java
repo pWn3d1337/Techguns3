@@ -309,6 +309,39 @@ public class GunItem extends Item {
         }
     }
 
+    /**
+     * Items an unloaded gun gives back (ammo change recipe, Fabric {@code AmmoChangeRecipe}): per ammo slot a full
+     * magazine if the rounds left fill one, else the loose rounds and the empty item.
+     */
+    public List<ItemStack> unloadedItems(GunAmmo current) {
+        List<ItemStack> items = new java.util.ArrayList<>();
+        AmmoType type = ammoType();
+        AmmoType.Variant variant = type.variant(current.variant());
+        GunStats.Firing firing = stats.firing();
+        float shotsPerBullet = techguns.core.gun.GunMath.shotsPerBullet(firing.clipSize(), firing.ammoPerReload(), type.bulletsPerMag());
+        int bullets = (int) Math.floor(current.loaded() / shotsPerBullet);
+        List<ItemStack> empties = type.emptyStacks();
+        for (int slot = 0; slot < variant.ammo().size(); slot++) {
+            ItemStack empty = slot < empties.size() ? empties.get(slot) : ItemStack.EMPTY;
+            net.minecraft.world.level.ItemLike bullet = slot < variant.bullet().size() ? variant.bullet().get(slot) : null;
+            if (!empty.isEmpty() && type.bulletsPerMag() > 0 && bullets == type.bulletsPerMag()) {
+                items.add(new ItemStack(variant.ammo().get(slot)));
+                continue;
+            }
+            if (bullets > 0 && bullet != null) {
+                // split into valid stack sizes
+                ItemStack rounds = new ItemStack(bullet);
+                for (int left = bullets; left > 0; left -= rounds.getMaxStackSize()) {
+                    items.add(rounds.copyWithCount(Math.min(left, rounds.getMaxStackSize())));
+                }
+            }
+            if (!empty.isEmpty()) {
+                items.add(empty);
+            }
+        }
+        return items;
+    }
+
     // ------------------------------------------------------------------------------------------------
     // Item behaviour
     // ------------------------------------------------------------------------------------------------
