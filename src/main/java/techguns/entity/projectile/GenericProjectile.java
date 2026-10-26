@@ -118,7 +118,7 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
     protected Vec3 start = Vec3.ZERO;
 
     /** Client side: keep the bullet a few ticks after impact so the trail can fade out. */
-    private boolean dying;
+    protected boolean dying;
     private int dyingTicks;
 
     public GenericProjectile(EntityType<? extends GenericProjectile> type, Level level) {

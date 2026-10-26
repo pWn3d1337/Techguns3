@@ -2,7 +2,10 @@ package techguns.gun;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import javax.annotation.Nullable;
+
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -24,11 +27,11 @@ public class SonicShotgunItem extends GunItem {
 
     @Override
     protected void fireProjectiles(Level level, LivingEntity shooter, ItemStack stack, float spreadMultiplier, float damageMultiplier,
-                                   FirePos firePos) {
+                                   FirePos firePos, @Nullable Entity target) {
         IntSet hit = new IntOpenHashSet();
         GunStats.Projectile projectile = stats().projectile();
         SonicShotgunProjectile main = (SonicShotgunProjectile) createProjectile(level, shooter, stack,
-                projectile.spread() * spreadMultiplier, damageMultiplier, firePos);
+                projectile.spread() * spreadMultiplier, damageMultiplier, firePos, null);
         main.joinShot(hit, true);
         level.addFreshEntity(main);
 
@@ -40,7 +43,7 @@ public class SonicShotgunItem extends GunItem {
             Vec3 tilted = rotate(forward, side, RING_ANGLE_DEGREES * ring * Mth.DEG_TO_RAD);
             for (int i = 0; i < count; i++) {
                 SonicShotgunProjectile segment = (SonicShotgunProjectile) createProjectile(level, shooter, stack, 0.0f,
-                        damageMultiplier, firePos);
+                        damageMultiplier, firePos, null);
                 segment.joinShot(hit, false);
                 segment.redirect(rotate(tilted, forward, step * (i + 1)));
                 level.addFreshEntity(segment);

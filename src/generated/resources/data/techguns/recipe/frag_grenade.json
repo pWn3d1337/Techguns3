@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "f": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "i": {
+      "tag": "c:ingots/steel"
+    },
+    "t": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    " if",
+    "iti",
+    " i "
+  ],
+  "result": {
+    "count": 16,
+    "id": "techguns:frag_grenade"
+  }
+}

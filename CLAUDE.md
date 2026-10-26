@@ -30,7 +30,7 @@ Use it to verify rendering, GUIs and gameplay after `runClient`; use GameTests f
 - Test world: `TestworldFlat` (creative, superflat, commands on) — join with `join_world` (`sp:TestworldFlat`) from the title screen.
 - "Pause on lost focus" is disabled in the dev client (F3+P), so the game keeps running while the window is in the background.
 - Call `get_status` first; screenshots need the player in a world with no screen open (`close_screen`).
-- Dev-only `/tgdebug` client commands help where MCP has no input: `fire <ticks>`, `zoom`, `view` (F5), `fx <name>`, `fxstats`, `projectiles`, `slowbeams <ticks>`, `alwaysdeath`, `geo` (geo/Java model), `exportgeo`, `reloadanim <ticks>`.
+- Dev-only `/tgdebug` client commands help where MCP has no input: `fire <ticks>`, `aim <ticks>` (hold use, lock-on), `zoom`, `view` (F5), `fx <name>`, `fxstats`, `projectiles`, `slowbeams <ticks>`, `alwaysdeath`, `geo` (geo/Java model), `exportgeo`, `reloadanim <ticks>`.
 - Dedicated server test: start `./gradlew runServer -Puse_mcpfabric=false` (the server must not take the client's bridge port), then `runClient` and `join_world` the `localhost` entry in `run/servers.dat`. Server and client share `run/` (offline mode; `Dev` is op via `run/ops.json`). MCP server-side tools don't reach a dedicated server — use chat commands as the op player.
 
 ## Code layout (package `techguns`)

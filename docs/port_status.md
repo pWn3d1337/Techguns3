@@ -11,7 +11,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns) |
+| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives) |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
@@ -78,3 +78,8 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 | 3c projectiles: NDR beam (15 damage ticks, follows the shooter, looped fire sound, muzzle beam FX), tesla beam (lightning damage, TeslaFlare), FX-only projectiles (de-atomizer, alien blaster, nether blaster: particle trail + impact FX, no sprite), sonic wave (centre + 2 rings, shared hit list, passes through entities, knockback) | F | logic | tesla no-knockback waits for the knockback multiplier; Fabric declares tesla chain-lightning constants but never uses them; not ported |
 | 3c ammo: redstone battery (+empty), nuclear power cell (+depleted), nether charge; recipes for all 3c guns (loaded + empty) and power sources | F | logic | alien blaster has no Fabric recipe |
 | Model part transforms match Techguns 2: rotation order Z, Y, X and children inherit the parent rotation (the Fabric port differed); NDR, LMG and MAC-10 geo models re-exported | 12 | rendered | checked in game, geo and Java identical |
+| 3d guns: grenade launcher, guided missile launcher, Grim Reaper; rocket launcher nuke and high velocity ammo | F + 12 | logic | rocket variants, guided missiles (incl. high velocity) and the Grim Reaper from Techguns 2 where Fabric had TODOs; awaiting in-game check |
+| 3d explosion system: `TGExplosion` port (falloff, no damage through walls, block breaking by blast resistance, drop chance) used by rockets, missiles and grenades | 12 | tested | nuke radiation area and nuke/tesla knockback multipliers follow with the radiation system / knockback multiplier |
+| 3d lock-on: hold use to lock (client `LockOnTracker`, beeps, HUD corners + target name), target sent with the shot and checked on the server; missiles turn up to 9 degrees per tick | F + 12 | logic | |
+| 3d grenades: 40 mm launcher grenade (3 bounces, OBJ mesh), stick grenade and frag grenade (wind-up throw, Techguns 2) | F + 12 | logic | OBJ guns/grenades use `ObjMesh` (no GeckoLib version) |
+| 3d recipes: 40 mm grenades, hand grenades, grenade launcher (empty), guided missile launcher (3), rocket launcher high velocity / nuke | F + 12 | logic | nuke rocket needs the tactical nuke warhead, high velocity rocket the chemical laboratory (Phase 5), Grim Reaper the ammo transfer recipe (3g) |

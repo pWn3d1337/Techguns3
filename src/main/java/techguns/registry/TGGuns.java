@@ -9,13 +9,17 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.entity.projectile.GenericBeamProjectile;
 import techguns.entity.projectile.GenericProjectile;
+import techguns.entity.projectile.GrenadeProjectile;
+import techguns.entity.projectile.GuidedMissileProjectile;
 import techguns.entity.projectile.RocketProjectile;
 import techguns.entity.projectile.SonicShotgunProjectile;
 import techguns.gun.GunHandType;
 import techguns.gun.GunItem;
 import techguns.gun.GunSounds;
+import techguns.gun.GrenadeItem;
 import techguns.gun.GunStats;
 import techguns.gun.HoldType;
+import techguns.gun.LockOnGunItem;
 import techguns.gun.ProjectileSelector;
 import techguns.gun.SonicShotgunItem;
 import techguns.gun.ammo.DamageModifier;
@@ -70,7 +74,14 @@ public final class TGGuns {
     private static final ProjectileSelector SONIC_SHOTGUN_PROJECTILES = new ProjectileSelector(TGAmmo.ENERGY_CELL_TYPE,
             new SonicShotgunProjectile.Factory());
     private static final ProjectileSelector LASERGUN_PROJECTILES = new ProjectileSelector(TGAmmo.ENERGY_CELL_TYPE, LASER_BEAM);
-    private static final ProjectileSelector ROCKET_PROJECTILES = new ProjectileSelector(TGAmmo.ROCKETS_TYPE, new RocketProjectile.Factory());
+    private static final ProjectileSelector ROCKET_PROJECTILES = new ProjectileSelector(TGAmmo.ROCKETS_TYPE, new RocketProjectile.Factory(),
+            new RocketProjectile.Factory(RocketProjectile.Variant.NUKE, DamageModifier.ROCKET_NUKE),
+            new RocketProjectile.Factory(RocketProjectile.Variant.HIGH_VELOCITY, DamageModifier.ROCKET_HIGH_VELOCITY));
+    // Techguns 2 guided missiles; Fabric left the high velocity one as a TODO
+    private static final ProjectileSelector GUIDED_MISSILE_PROJECTILES = new ProjectileSelector(TGAmmo.ROCKETS_NO_NUKES_TYPE,
+            new GuidedMissileProjectile.Factory(), new GuidedMissileProjectile.Factory(DamageModifier.ROCKET_HIGH_VELOCITY));
+    private static final ProjectileSelector GRENADE_40MM_PROJECTILES = new ProjectileSelector(TGAmmo.GRENADES_40MM_TYPE,
+            new GrenadeProjectile.Factory(GrenadeProjectile.Type.LAUNCHER_40MM));
 
     // --- Guns ---
     public static final DeferredItem<GunItem> M4 = gun("m4",
@@ -255,6 +266,30 @@ public final class TGGuns {
                     GunStats.builder(true, 12, 8, 40, 25.0f, 20, 0.0f)
                             .speed(0.75f).gravity(0.0).damageDrop(5, 15, 5.0f).penetration(PENETRATION_MED).build(),
                     GunSounds.of(TGSounds.SONIC_SHOTGUN_FIRE, TGSounds.SONIC_SHOTGUN_RELOAD), SONIC_SHOTGUN_PROJECTILES));
+
+    // --- Batch 3d: explosives ---
+    public static final DeferredItem<GunItem> GRENADE_LAUNCHER = gun("grenade_launcher",
+            GunStats.builder(true, 5, 6, 100, 30.0f, 160, 0.015f)
+                    .speed(1.0f).ammoPerReload(6).damageDrop(1.5f, 3.0f, 12.0f).gravity(0.02).build(),
+            GunSounds.of(TGSounds.GRENADE_LAUNCHER_FIRE, TGSounds.GRENADE_LAUNCHER_RELOAD), GRENADE_40MM_PROJECTILES);
+
+    public static final DeferredItem<GunItem> GUIDED_MISSILE_LAUNCHER = gun("guided_missile_launcher",
+            properties -> new LockOnGunItem(properties,
+                    GunStats.builder(true, 10, 1, 40, 50.0f, 100, 0.05f)
+                            .speed(1.0f).recoilTicks(10).damageDrop(2.0f, 4.0f, 20.0f).holdType(HoldType.BOW).build(),
+                    GunSounds.of(TGSounds.GUIDEDMISSILE_FIRE, TGSounds.ROCKET_RELOAD), GUIDED_MISSILE_PROJECTILES, 20, 80));
+
+    public static final DeferredItem<GunItem> GRIM_REAPER = gun("grim_reaper",
+            properties -> new LockOnGunItem(properties,
+                    GunStats.builder(false, 6, 4, 40, 50.0f, 200, 0.05f)
+                            .speed(1.0f).recoilTicks(10).ammoPerReload(4).damageDrop(3.0f, 5.0f, 10.0f).holdType(HoldType.BOW).build(),
+                    GunSounds.of(TGSounds.GUIDEDMISSILE_FIRE, TGSounds.ROCKET_RELOAD), GUIDED_MISSILE_PROJECTILES, 20, 80));
+
+    // Hand grenades (Techguns 2 only): damage, full-damage radius, minimum damage, outer radius
+    public static final DeferredItem<GrenadeItem> STIELGRANATE = TGItems.ITEMS.register("stielgranate",
+            () -> new GrenadeItem(new Item.Properties().stacksTo(16), GrenadeProjectile.Type.STIELGRANATE, 10.0f, 3.0f, 5.0f, 5.0f, null));
+    public static final DeferredItem<GrenadeItem> FRAG_GRENADE = TGItems.ITEMS.register("frag_grenade",
+            () -> new GrenadeItem(new Item.Properties().stacksTo(16), GrenadeProjectile.Type.FRAG, 12.0f, 3.5f, 6.0f, 7.0f, TGSounds.GRENADE_PIN));
 
     private TGGuns() {
     }

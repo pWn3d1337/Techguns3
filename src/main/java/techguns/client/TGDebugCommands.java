@@ -30,6 +30,8 @@ import techguns.client.model.gun.ModelAlienBlaster;
 import techguns.client.model.gun.ModelMibGun;
 import techguns.client.model.gun.ModelNetherBlaster;
 import techguns.client.model.gun.ModelSonicShotgun;
+import techguns.client.model.gun.ModelGrimReaper;
+import techguns.client.model.gun.ModelGuidedMissileLauncher;
 import techguns.client.model.gun.*;
 import techguns.client.model.gun.ModelM4;
 import techguns.client.model.gun.ModelRocketLauncher;
@@ -55,6 +57,15 @@ public final class TGDebugCommands {
                                 .executes(ctx -> {
                                     int ticks = IntegerArgumentType.getInteger(ctx, "ticks");
                                     ClientGunController.get().holdFireFor(ticks);                                    ctx.getSource().sendSystemMessage(Component.literal("Holding fire for " + ticks + " ticks"));
+                                    return ticks;
+                                })))
+                .then(Commands.literal("aim")
+                        .then(Commands.argument("ticks", IntegerArgumentType.integer(1, 400))
+                                .executes(ctx -> {
+                                    // holds the use key (lock-on guns lock while it is held)
+                                    int ticks = IntegerArgumentType.getInteger(ctx, "ticks");
+                                    ClientGunController.get().holdUseFor(ticks);
+                                    ctx.getSource().sendSystemMessage(Component.literal("Holding use for " + ticks + " ticks"));
                                     return ticks;
                                 })))
                 .then(Commands.literal("projectiles")
@@ -175,6 +186,10 @@ public final class TGDebugCommands {
                                 TGGeoExporter.export(new ModelMibGun(), "mib_gun", Map.of(), Set.of(), dir);
                                 TGGeoExporter.export(new ModelNetherBlaster(), "nether_blaster", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow4"), dir);
                                 TGGeoExporter.export(new ModelSonicShotgun(), "sonic_shotgun", Map.of(), Set.of("GLOW01"), dir);
+                                ModelGuidedMissileLauncher guidedMissile = new ModelGuidedMissileLauncher();
+                                TGGeoExporter.export(guidedMissile, "guided_missile_launcher", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(guidedMissile.partModel(1), "guided_missile_launcher_1", Map.of(), Set.of("Holo2", "Holo2_1"), dir);
+                                TGGeoExporter.export(new ModelGrimReaper(), "grim_reaper", Map.of(), Set.of(), dir);
                                 ctx.getSource().sendSystemMessage(Component.literal("Exported gun geo models to " + dir));
                             } catch (java.io.IOException e) {
                                 ctx.getSource().sendSystemMessage(Component.literal("Export failed: " + e));

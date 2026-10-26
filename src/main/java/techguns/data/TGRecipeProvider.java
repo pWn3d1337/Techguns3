@@ -371,6 +371,20 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" s ").pattern("sts").pattern("sgs")
                 .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER)
                 .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("rocket"));
+        // nuke rockets need the tactical nuke warhead, high velocity rockets the chemical laboratory (Phase 5)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.GRENADE_40MM.get(), 12)
+                .pattern(" i ").pattern("sts").pattern("sgs")
+                .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER).define('i', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("grenade_40mm"));
+        // hand grenades (Techguns 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGGuns.STIELGRANATE.get(), 16)
+                .pattern(" it").pattern(" wi").pattern("i  ")
+                .define('i', Tags.Items.INGOTS_IRON).define('w', ItemTags.PLANKS).define('t', Items.TNT)
+                .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("stielgranate"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGGuns.FRAG_GRENADE.get(), 16)
+                .pattern(" if").pattern("iti").pattern(" i ")
+                .define('i', steelIngot).define('f', Items.FLINT_AND_STEEL).define('t', Items.TNT)
+                .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("frag_grenade"));
     }
 
     /** Shapeless: empty magazine plus {@code rounds} loose rounds gives the filled magazine. */
@@ -518,6 +532,22 @@ public class TGRecipeProvider extends RecipeProvider {
         Consumer<StackShapedRecipeBuilder> pdwKeys = b -> b.define('b', carbonBarrel).define('r', carbonReceiver).define('s', carbonStock);
         gun(output, pdw, 40, AmmoType.DEFAULT, "pdw", TGAmmo.ADVANCED_MAGAZINE.get(), pdwKeys, "brs", " m ");
         gun(output, pdw, 0, AmmoType.DEFAULT, "pdw_empty", TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), pdwKeys, "brs", " m ");
+
+        // --- Batch 3d ---
+        gun(output, rocketLauncher, 1, AmmoType.HIGH_VELOCITY, "rocket_launcher_high_velocity", TGAmmo.ROCKET_HIGH_VELOCITY.get(), rocketKeys,
+                "mbb", "f");
+        gun(output, rocketLauncher, 1, AmmoType.NUKE, "rocket_launcher_nuke", TGAmmo.ROCKET_NUKE.get(), rocketKeys, "mbb", "f");
+        gun(output, TGGuns.GRENADE_LAUNCHER.get(), 0, AmmoType.DEFAULT, "grenade_launcher_empty", null,
+                b -> b.define('p', steelIngot).define('b', obsBarrel).define('r', steelReceiver).define('s', plasticStock),
+                "brs", " p ");
+        Item guided = TGGuns.GUIDED_MISSILE_LAUNCHER.get();
+        Consumer<StackShapedRecipeBuilder> guidedKeys = b -> b.define('b', obsBarrel).define('c', TGItems.CIRCUIT_BOARD_ADVANCED.get())
+                .define('f', obsReceiver).define('g', Tags.Items.GLASS_BLOCKS);
+        gun(output, guided, 1, AmmoType.DEFAULT, "guided_missile_launcher", TGAmmo.ROCKET.get(), guidedKeys, " gc", "mbb", " f ");
+        gun(output, guided, 1, AmmoType.HIGH_VELOCITY, "guided_missile_launcher_high_velocity", TGAmmo.ROCKET_HIGH_VELOCITY.get(), guidedKeys,
+                " gc", "mbb", " f ");
+        gun(output, guided, 0, AmmoType.DEFAULT, "guided_missile_launcher_empty", null, guidedKeys, "gc", "bb", "f ");
+        // the Grim Reaper is made from four guided missile launchers with the ammo transfer recipe (batch 3g)
 
         // --- Batch 3c ---
         Item laserPistol = TGGuns.LASER_PISTOL.get();

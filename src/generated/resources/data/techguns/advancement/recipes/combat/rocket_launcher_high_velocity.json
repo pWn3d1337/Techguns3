@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_rocket_launcher": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:rocket_launcher"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:rocket_launcher_high_velocity"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_rocket_launcher"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:rocket_launcher_high_velocity"
+    ]
+  }
+}

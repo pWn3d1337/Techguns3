@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "t": {
+      "item": "minecraft:tnt"
+    },
+    "w": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    " it",
+    " wi",
+    "i  "
+  ],
+  "result": {
+    "count": 16,
+    "id": "techguns:stielgranate"
+  }
+}

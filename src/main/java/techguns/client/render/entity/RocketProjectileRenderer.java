@@ -15,9 +15,11 @@ import techguns.client.model.item.ModelRocket;
 import techguns.client.render.TGMatrixOps;
 import techguns.entity.projectile.RocketProjectile;
 
-/** Renders a rocket with the shared rocket model (Techguns 2 {@code RenderRocketProjectile}). */
-public class RocketProjectileRenderer extends EntityRenderer<RocketProjectile> {
+/** Renders rockets and guided missiles with the shared rocket model (Techguns 2 {@code RenderRocketProjectile}). */
+public class RocketProjectileRenderer<T extends RocketProjectile> extends EntityRenderer<T> {
     private static final ResourceLocation TEXTURE = TGIds.id("textures/guns/rocket.png");
+    private static final ResourceLocation TEXTURE_NUKE = TGIds.id("textures/guns/rocket_nuke.png");
+    private static final ResourceLocation TEXTURE_HV = TGIds.id("textures/guns/rocket_hv.png");
 
     private final ModelRocket model = new ModelRocket();
 
@@ -26,12 +28,16 @@ public class RocketProjectileRenderer extends EntityRenderer<RocketProjectile> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(RocketProjectile entity) {
-        return TEXTURE;
+    public ResourceLocation getTextureLocation(T entity) {
+        return switch (entity.variant()) {
+            case NUKE -> TEXTURE_NUKE;
+            case HIGH_VELOCITY -> TEXTURE_HV;
+            default -> TEXTURE;
+        };
     }
 
     @Override
-    public void render(RocketProjectile entity, float entityYaw, float partialTick, PoseStack poseStack,
+    public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffers, int packedLight) {
         poseStack.pushPose();
         TGMatrixOps.rotate(poseStack, Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0f, 0f, 1f, 0f);
@@ -42,6 +48,5 @@ public class RocketProjectileRenderer extends EntityRenderer<RocketProjectile> {
         model.render(null, poseStack, consumer, 0, 0f, ItemDisplayContext.NONE, 0, 0f, 0f, packedLight,
                 OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
-        // TODO FX system: rocket smoke / flame trail (Techguns 2 spawned it from the entity tick)
     }
 }

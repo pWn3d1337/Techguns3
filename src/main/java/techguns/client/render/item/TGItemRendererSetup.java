@@ -17,6 +17,11 @@ import techguns.client.model.gun.ModelVector;
 import techguns.client.model.gun.ModelLasergun;
 import techguns.client.model.GeoGunModel;
 import techguns.client.model.gun.ModelAS50;
+import techguns.client.model.gun.ModelFragGrenade;
+import techguns.client.model.gun.ModelGrenadeLauncher;
+import techguns.client.model.gun.ModelGrimReaper;
+import techguns.client.model.gun.ModelGuidedMissileLauncher;
+import techguns.client.model.gun.ModelStielgranate;
 import techguns.client.model.gun.ModelBlasterRifle;
 import techguns.client.model.gun.ModelCombatShotgun;
 import techguns.client.model.gun.ModelGaussRifle;
@@ -324,6 +329,51 @@ public final class TGItemRendererSetup {
                         {-0.18f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.11f, -0.81f));
 
+        TGItemRenderers.register(TGGuns.GUIDED_MISSILE_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelGuidedMissileLauncher(), "guided_missile_launcher", "guided_missile_launcher_1"), 2, TGIds.id("textures/guns/guidedmissilelauncher.png")).setBaseTranslation(-0.4f, -0.2f, RenderItemBase.SCALE * 0.5f)
+                .setGUIScale(0.35f).setChargeTranslationAmount(0).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.39f, -0.6f, 0.87f, 0).setTransformTranslations(new float[][]{
+                        {-0.13f, 0.3f, 0.62f}, // First Person
+                        {0, 0.09f, 0.28f}, // Third Person
+                        {0.0f, 0.03f, 0.0f}, // GUI
+                        {0.0f, 0.0f, 0}, // Ground
+                        {0, 0, -0.04f} // frame
+                }).setMuzzleFXPos3P(0.09f, -0.26f));
+
+        TGItemRenderers.register(TGGuns.GRIM_REAPER, new RenderGunBase90(new GeoGunModel(new ModelGrimReaper(), "grim_reaper"), 1, TGIds.id("textures/guns/grimreaper.png")).setBaseTranslation(0.3f, -0.2f, RenderItemBase.SCALE * 0.5f)
+                .setGUIScale(0.3f).setChargeTranslationAmount(0.025f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.39f, -0.61f, 0.75f, 0).setTransformTranslations(new float[][]{
+                        {0f, 0.25f, 0.18f}, // First Person
+                        {0, 0.13f, 0.1f}, // Third Person
+                        {-0.02f, 0.01f, 0.0f}, // GUI
+                        {0.0f, 0.1f, 0}, // Ground
+                        {0, 0, 0f} // frame
+                }).setMuzzleFXPos3P(0.24f, -0.56f).setBaseScale(1.25f).setFirstPersonScale(0.4f).setGroundAndFrameScale(0.35f));
+
+        // OBJ mesh model, no geo version
+        TGItemRenderers.register(TGGuns.GRENADE_LAUNCHER, new RenderGunBaseObj(new ModelGrenadeLauncher(), 2, TGIds.id("textures/guns/grenadelauncher.png"), 90.0f)
+                .setBaseTranslation(0f, 0f, 0f)
+                .setBaseScale(0.125f).setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.22f, -0.63f, 0.5f, 0).setTransformTranslations(new float[][]{
+                        {0f, 0.19f, -0.09f}, // First Person
+                        {0f, 0.06f, -0.20f}, // Third Person
+                        {-0.05f, 0.08f, 0f}, // GUI
+                        {0f, 0.05f, -0.09f}, // Ground
+                        {0.11f, 0.01f, -0.05f} // frame
+                }).setMuzzleFXPos3P(0.07f, -0.61f));
+
+        TGItemRenderers.register(TGGuns.STIELGRANATE, new RenderGrenade(new ModelStielgranate(), TGIds.id("textures/guns/stielgranate.png")).setBaseScale(1f).setGUIScale(0.8f).setBaseTranslation(-RenderItemBase.SCALE * 0.5f, 0.48f, -RenderItemBase.SCALE).setTransformTranslations(new float[][]{
+                {0f, -0.06f, 0f}, // First Person
+                {0f, -0.15f, 0.06f}, // Third Person
+                {-0.05f, -0.49f, 0f}, // GUI
+                {0f, -0.15f, 0f}, // Ground
+                {0f, 0f, -0.05f} // frame
+        }));
+
+        TGItemRenderers.register(TGGuns.FRAG_GRENADE, new RenderGrenade(new ModelFragGrenade(true), TGIds.id("textures/guns/frag_grenade_texture.png"), 90.0f).setBaseScale(1.25f).setGUIScale(1.35f).setBaseTranslation(-0.02f, 0.65f, -RenderItemBase.SCALE + 0.02f).setTransformTranslations(new float[][]{
+                {0f, -0.06f, 0f}, // First Person
+                {0f, -0.11f, -0.01f}, // Third Person
+                {-0.05f, -0.49f, 0f}, // GUI
+                {0f, 0.f, 0f}, // Ground
+                {0f, 0f, -0.05f} // frame
+        }));
+
         registerAmmo();
     }
 
@@ -375,5 +425,7 @@ public final class TGItemRendererSetup {
         TGItemRenderers.register(TGAmmo.AS50_MAGAZINE_EXPLOSIVE, new RenderItemBase(new ModelAS50Mag(false), TGIds.id("textures/guns/as50_mag_exp.png")).setBaseScale(1.5f).setGUIScale(0.75f).setBaseTranslation(0.0325f, -0.2f, 0.33f).setTransformTranslations(as50magTranslations));
 
         TGItemRenderers.register(TGAmmo.ROCKET, new RenderItemBaseRocketItem(new ModelRocket(), TGIds.id("textures/guns/rocket.png")).setBaseScale(1.5f).setGUIScale(0.5f).setBaseTranslation(0, 0, 0.1f).setTransformTranslations(rocketTranslations).setFirstPersonScale(0.35f));
+        TGItemRenderers.register(TGAmmo.ROCKET_NUKE, new RenderItemBaseRocketItem(new ModelRocket(), TGIds.id("textures/guns/rocket_nuke.png")).setBaseScale(1.5f).setGUIScale(0.5f).setBaseTranslation(0, 0, 0.1f).setTransformTranslations(rocketTranslations).setFirstPersonScale(0.35f));
+        TGItemRenderers.register(TGAmmo.ROCKET_HIGH_VELOCITY, new RenderItemBaseRocketItem(new ModelRocket(), TGIds.id("textures/guns/rocket_hv.png")).setBaseScale(1.5f).setGUIScale(0.5f).setBaseTranslation(0, 0, 0.1f).setTransformTranslations(rocketTranslations).setFirstPersonScale(0.35f));
     }
 }

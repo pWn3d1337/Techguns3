@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "p": {
+      "tag": "c:ingots/steel"
+    },
+    "r": {
+      "item": "techguns:steel_receiver"
+    },
+    "s": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "brs",
+    " p "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:grenade_launcher"
+  }
+}

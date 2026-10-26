@@ -17,13 +17,11 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.minecraft.world.entity.LivingEntity;
 import techguns.client.deatheffects.DeathEffects;
 import techguns.core.damage.DeathType;
 import techguns.core.fx.EntityCondition;
 import techguns.client.render.entity.RenderLateEntityRenderer;
-import techguns.entity.projectile.RocketProjectile;
 import techguns.network.FxClientHandler;
 import techguns.registry.TGSounds;
 
@@ -53,7 +51,6 @@ public final class ClientFx implements FxClientHandler {
             RenderLateEntityRenderer.clearQueue();
         });
         gameBus.addListener(ClientFx::onRenderLevelStage);
-        gameBus.addListener(ClientFx::onEntityJoinLevel);
         DeathEffects.init(gameBus);
     }
 
@@ -74,15 +71,6 @@ public final class ClientFx implements FxClientHandler {
         var buffers = mc.renderBuffers().bufferSource();
         TGParticleManager.get().renderParticles(buffers, event.getCamera(), partialTick, event.getPoseStack());
         RenderLateEntityRenderer.renderQueued(buffers, event.getCamera(), partialTick, event.getPoseStack());
-    }
-
-    /** Attaches the exhaust trail to rockets that appear on the client (Fabric {@code RocketProjectile.createTrailFX}). */
-    private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide && event.getEntity() instanceof RocketProjectile rocket) {
-            createFXOnEntity("RocketLauncherExhaust", rocket, 0f, 0f, 0f, false, EntityCondition.ENTITY_ALIVE);
-        }
-        // trails that depend on spawn data (bullet kind, sonic main segment) start in readSpawnData: NeoForge applies
-        // the spawn data after the entity joined the client level
     }
 
     // --- FxClientHandler ---

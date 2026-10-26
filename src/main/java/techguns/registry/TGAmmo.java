@@ -60,6 +60,9 @@ public final class TGAmmo {
     public static final DeferredItem<Item> NUCLEAR_POWER_CELL = flat("nuclear_power_cell", 16);
     public static final DeferredItem<Item> NUCLEAR_POWER_CELL_EMPTY = flat("nuclear_power_cell_empty", 16);
     public static final DeferredItem<Item> NETHER_CHARGE = flat("nether_charge", 16);
+    public static final DeferredItem<Item> ROCKET_NUKE = model("rocket_nuke", 8);
+    public static final DeferredItem<Item> ROCKET_HIGH_VELOCITY = model("rocket_high_velocity", 8);
+    public static final DeferredItem<Item> GRENADE_40MM = flat("grenade_40mm", 16);
 
     // --- Ammo types ---
     public static final AmmoType PISTOL_ROUNDS_TYPE = AmmoType.simple(PISTOL_ROUNDS)
@@ -77,7 +80,13 @@ public final class TGAmmo {
     public static final AmmoType MINIGUN_DRUM_TYPE = AmmoType.withEmpty(MINIGUN_DRUM, MINIGUN_DRUM_EMPTY, RIFLE_ROUNDS, 16)
             .addVariant(AmmoType.INCENDIARY, MINIGUN_DRUM_INCENDIARY, RIFLE_ROUNDS_INCENDIARY);
     public static final AmmoType ENERGY_CELL_TYPE = AmmoType.withEmpty(ENERGY_CELL, ENERGY_CELL_EMPTY, null, 0);
-    public static final AmmoType ROCKETS_TYPE = AmmoType.simple(ROCKET);
+    public static final AmmoType ROCKETS_TYPE = AmmoType.simple(ROCKET)
+            .addVariant(AmmoType.NUKE, ROCKET_NUKE, ROCKET_NUKE)
+            .addVariant(AmmoType.HIGH_VELOCITY, ROCKET_HIGH_VELOCITY, ROCKET_HIGH_VELOCITY);
+    /** Guided missile launchers can't fire nukes. */
+    public static final AmmoType ROCKETS_NO_NUKES_TYPE = AmmoType.simple(ROCKET)
+            .addVariant(AmmoType.HIGH_VELOCITY, ROCKET_HIGH_VELOCITY, ROCKET_HIGH_VELOCITY);
+    public static final AmmoType GRENADES_40MM_TYPE = AmmoType.simple(GRENADE_40MM);
     public static final AmmoType SHOTGUN_ROUNDS_TYPE = AmmoType.simple(SHOTGUN_ROUNDS)
             .addVariant(AmmoType.INCENDIARY, SHOTGUN_ROUNDS_INCENDIARY, SHOTGUN_ROUNDS_INCENDIARY);
     public static final AmmoType AS50_MAGAZINE_TYPE = AmmoType.withEmpty(AS50_MAGAZINE, AS50_MAGAZINE_EMPTY, SNIPER_ROUNDS, 2)
@@ -109,7 +118,7 @@ public final class TGAmmo {
     /** Special ammo variants get a coloured name (Techguns 2 used a colour code in the lang file). */
     private static Item.Properties properties(String name, int stackSize) {
         Item.Properties properties = new Item.Properties().stacksTo(stackSize);
-        return name.endsWith("_" + AmmoType.INCENDIARY) || name.endsWith("_" + AmmoType.EXPLOSIVE)
+        return name.endsWith("_" + AmmoType.INCENDIARY) || name.endsWith("_" + AmmoType.EXPLOSIVE) || name.endsWith("_" + AmmoType.HIGH_VELOCITY)
                 ? properties.rarity(Rarity.UNCOMMON) : properties;
     }
 

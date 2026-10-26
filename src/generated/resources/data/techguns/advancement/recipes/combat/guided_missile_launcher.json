@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_guided_missile_launcher": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:guided_missile_launcher"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:guided_missile_launcher"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_guided_missile_launcher"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:guided_missile_launcher"
+    ]
+  }
+}

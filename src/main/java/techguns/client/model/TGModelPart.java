@@ -80,8 +80,9 @@ public class TGModelPart {
         this.expansionZ = expansionZ;
     }
 
+    /** Techguns 2 {@code addBox(..., scaleFactor)}: grows the box by {@code scale} on every side (the Fabric port ignored it). */
     public void addCuboid(float x, float y, float z, float w, float h, float l, float scale) {
-        this.addCuboid(x, y, z, w, h, l);
+        this.addCuboid(x, y, z, w, h, l, scale, scale, scale);
     }
 
     public void setPivot(float px, float py, float pz) {
@@ -147,7 +148,8 @@ public class TGModelPart {
 
     public void render(PoseStack poseStack, VertexConsumer vertices, int light, int overlay, float rx, float ry, float rz) {
         if (cuboid == null) {
-            this.cuboid = new ModelPart.Cube(u, v, x, y, z, width, height, length, 0, 0, 0, mirror, textureWidth, textureHeight, EnumSet.allOf(Direction.class));
+            // grow like Techguns 2 addBox(..., delta): every face moves out by the expansion, UVs keep the unexpanded size
+            this.cuboid = new ModelPart.Cube(u, v, x, y, z, width, height, length, expansionX, expansionY, expansionZ, mirror, textureWidth, textureHeight, EnumSet.allOf(Direction.class));
         }
         poseStack.pushPose();
 
@@ -166,14 +168,6 @@ public class TGModelPart {
         }
 
         poseStack.pushPose();
-        // Expansion
-        if (this.expansionX != 0 || this.expansionY != 0.0f || this.expansionZ != 0.0f) {
-            float scaleX = (this.width + (this.expansionX * 2.0f)) / this.width;
-            float scaleY = (this.height + (this.expansionY * 2.0f)) / this.height;
-            float scaleZ = (this.length + (this.expansionZ * 2.0f)) / this.length;
-            poseStack.scale(scaleX, scaleY, scaleZ);
-        }
-
         this.cuboid.compile(poseStack.last(), vertices, light, overlay, -1);
         poseStack.popPose();
         // children inherit the rotation, as in Techguns 2 (the Fabric port only applied the parent's pivot)

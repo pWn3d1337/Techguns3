@@ -41,8 +41,8 @@ public final class TGNetwork {
 
     // --- Send helpers ---
 
-    public static void sendShoot(InteractionHand hand, boolean zooming) {
-        PacketDistributor.sendToServer(new GunPayloads.Shoot(hand, zooming));
+    public static void sendShoot(InteractionHand hand, boolean zooming, int targetId) {
+        PacketDistributor.sendToServer(new GunPayloads.Shoot(hand, zooming, targetId));
     }
 
     public static void sendForceReload(InteractionHand hand) {
@@ -107,7 +107,8 @@ public final class TGNetwork {
         Player player = context.player();
         ItemStack stack = player.getItemInHand(payload.hand());
         if (stack.getItem() instanceof GunItem gun && !player.isSpectator()) {
-            gun.shoot(stack, player.level(), player, payload.hand(), payload.zooming());
+            Entity target = payload.targetId() >= 0 ? player.level().getEntity(payload.targetId()) : null;
+            gun.shoot(stack, player.level(), player, payload.hand(), payload.zooming(), gun.acceptTarget(player, target));
         }
     }
 

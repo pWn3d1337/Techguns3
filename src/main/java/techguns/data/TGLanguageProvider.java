@@ -86,7 +86,14 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("sonic_shotgun", "Sonic Rifle"),
             Map.entry("mib_gun", "De-Atomizer Pistol"),
             Map.entry("redstone_battery_empty", "Redstone Battery (Empty)"),
-            Map.entry("nuclear_power_cell_empty", "Nuclear Power Cell (Depleted)"));
+            Map.entry("nuclear_power_cell_empty", "Nuclear Power Cell (Depleted)"),
+            Map.entry("rocket_nuke", "Rocket (Tactical Nuke)"),
+            Map.entry("rocket_high_velocity", "Rocket (High Velocity)"),
+            Map.entry("stielgranate", "Stick Grenade"),
+            Map.entry("guided_missile_launcher", "Guided Missile Launcher"),
+            Map.entry("grenade_40mm", "40mm Grenade"),
+            Map.entry("grim_reaper", "Grim Reaper"),
+            Map.entry("frag_grenade", "Frag Grenade"));
 
     @Override
     protected void addTranslations() {
@@ -110,6 +117,10 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.gun.reload_time", "Reload time: %ss");
         add("tooltip.techguns.gun.penetration", "Armor penetration: %s");
         add("tooltip.techguns.shift_for_details", "Hold Shift for details");
+        add("tooltip.techguns.grenade.radius", "Radius: %s");
+        add("tooltip.techguns.grenade.bounces", "Bounces: %s");
+        add("techguns.lock_on.locking", "Locking... : %s");
+        add("techguns.lock_on.locked", "Locked On: %s");
     }
 
     /** Every block and item gets an English name; title-cased from its registry name unless overridden. */

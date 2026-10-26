@@ -11,6 +11,7 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import techguns.Techguns;
+import techguns.client.gui.LockOnOverlay;
 import techguns.client.gun.ClientGunController;
 import techguns.client.gun.GunAmmoDecorator;
 import techguns.client.model.TGGeoBridge;
@@ -18,6 +19,7 @@ import techguns.client.render.geo.GeckoLibGunRenderer;
 import techguns.client.particle.ClientFx;
 import techguns.client.render.entity.BeamProjectileRenderer;
 import techguns.client.render.entity.GenericProjectileRenderer;
+import techguns.client.render.entity.GrenadeProjectileRenderer;
 import techguns.client.render.entity.RocketProjectileRenderer;
 import techguns.client.render.TGRenderTypes;
 import techguns.client.render.item.RenderingEntityTracker;
@@ -37,6 +39,7 @@ public class TechgunsClient {
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
+        modEventBus.addListener(LockOnOverlay::register);
         TGGeoBridge.install(new GeckoLibGunRenderer());
         modEventBus.addListener((RegisterParticleProvidersEvent event) ->
                 event.registerSpecial(TGParticleTypes.NONE.get(), (options, level, x, y, z, dx, dy, dz) -> null));
@@ -51,6 +54,8 @@ public class TechgunsClient {
         event.registerEntityRenderer(TGEntities.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.GENERIC_BEAM_PROJECTILE.get(), BeamProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.ROCKET_PROJECTILE.get(), RocketProjectileRenderer::new);
+        event.registerEntityRenderer(TGEntities.GUIDED_MISSILE.get(), RocketProjectileRenderer::new);
+        event.registerEntityRenderer(TGEntities.GRENADE_PROJECTILE.get(), GrenadeProjectileRenderer::new);
         // invisible: only the main segment's particle trail is drawn
         event.registerEntityRenderer(TGEntities.SONIC_SHOTGUN_PROJECTILE.get(), NoopRenderer::new);
     }

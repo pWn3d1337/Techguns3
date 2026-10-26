@@ -75,6 +75,12 @@ public class GunItem extends Item {
         return projectiles.ammoType();
     }
 
+    /** Server: the target a client claims to have locked on, if this gun locks on and the claim is plausible; else null. */
+    @Nullable
+    public Entity acceptTarget(Player player, @Nullable Entity target) {
+        return null;
+    }
+
     /** Guns shoot with left click; tools like the chainsaw override this. */
     public boolean shootsWithLeftClick() {
         return true;
@@ -93,6 +99,11 @@ public class GunItem extends Item {
      * shoot payload.
      */
     public void shoot(ItemStack stack, Level level, Player player, InteractionHand hand, boolean zooming) {
+        shoot(stack, level, player, hand, zooming, null);
+    }
+
+    /** @param target locked-on target sent by the client (lock-on guns), or null */
+    public void shoot(ItemStack stack, Level level, Player player, InteractionHand hand, boolean zooming, @Nullable Entity target) {
         ShooterState state = ShooterState.of(player);
         if (state.fireDelay(hand) > 0) {
             return;
@@ -119,7 +130,7 @@ public class GunItem extends Item {
                 spreadMultiplier *= stats.zoom().get().spreadMultiplier();
                 firePos = FirePos.CENTER;
             }
-            fireProjectiles(level, player, stack, spreadMultiplier, 1.0f, firePos);
+            fireProjectiles(level, player, stack, spreadMultiplier, 1.0f, firePos, target);
             if (fireFx != null) {
                 float x = firePos == FirePos.RIGHT ? -fireFxX : fireFxX;
                 TGNetwork.sendFxOnEntityAndSelf(player, fireFx, x, fireFxY - 0.1f, fireFxZ, true, EntityCondition.ENTITY_ALIVE);
@@ -159,21 +170,23 @@ public class GunItem extends Item {
     }
 
     /** Spawns the projectile(s) of one shot. Server side only. */
-    protected void fireProjectiles(Level level, LivingEntity shooter, ItemStack stack, float spreadMultiplier, float damageMultiplier, FirePos firePos) {
+    protected void fireProjectiles(Level level, LivingEntity shooter, ItemStack stack, float spreadMultiplier, float damageMultiplier, FirePos firePos,
+                                   @Nullable Entity target) {
         GunStats.Projectile projectile = stats.projectile();
-        spawnProjectile(level, shooter, stack, projectile.spread() * spreadMultiplier, projectile.forwardOffset(), damageMultiplier, firePos);
+        spawnProjectile(level, shooter, stack, projectile.spread() * spreadMultiplier, projectile.forwardOffset(), damageMultiplier, firePos, target);
 
         if (projectile.pellets() > 0) {
             float burstOffset = projectile.burst() ? projectile.speed() / projectile.pellets() : 0.0f;
             for (int i = 0; i < projectile.pellets(); i++) {
                 spawnProjectile(level, shooter, stack, projectile.pelletSpread() * spreadMultiplier,
-                        projectile.forwardOffset() + burstOffset * (i + 1.0f), damageMultiplier, firePos);
+                        projectile.forwardOffset() + burstOffset * (i + 1.0f), damageMultiplier, firePos, target);
             }
         }
     }
 
-    protected void spawnProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float forwardOffset, float damageMultiplier, FirePos firePos) {
-        Projectile entity = createProjectile(level, shooter, stack, spread, damageMultiplier, firePos);
+    protected void spawnProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float forwardOffset, float damageMultiplier, FirePos firePos,
+                                   @Nullable Entity target) {
+        Projectile entity = createProjectile(level, shooter, stack, spread, damageMultiplier, firePos, target);
         if (forwardOffset > 0.0f) {
             float speed = projectiles.factory(GunData.variant(stack)).modifier().velocity(stats.projectile().speed());
             entity.setPos(entity.position().add(entity.getDeltaMovement().scale(forwardOffset / speed)));
@@ -182,7 +195,8 @@ public class GunItem extends Item {
     }
 
     /** Creates (but does not spawn) one projectile of the loaded ammo variant. */
-    protected Projectile createProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos) {
+    protected Projectile createProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos,
+                                          @Nullable Entity target) {
         ProjectileFactory<?> factory = projectiles.factory(GunData.variant(stack));
         DamageModifier mod = factory.modifier();
         GunStats.Damage damage = stats.damage();
@@ -194,13 +208,13 @@ public class GunItem extends Item {
                 mod.damage(damage.damage()) * damageMultiplier, mod.damage(damage.damageMin()) * damageMultiplier,
                 mod.range(damage.dropStart()), mod.range(damage.dropEnd()), damage.penetration(),
                 speed, lifetime, spread, projectile.gravity(), mod.radius(damage.radius()),
-                blockDamage(shooter), firePos);
+                blockDamage(shooter), firePos, target);
 
         return factory.create(params);
     }
 
     /** Players in safe mode never damage blocks. */
-    protected static boolean blockDamage(LivingEntity shooter) {
+    public static boolean blockDamage(LivingEntity shooter) {
         // TODO Phase 4: safe mode toggle in player data; until then guns never damage blocks
         return !(shooter instanceof Player);
     }

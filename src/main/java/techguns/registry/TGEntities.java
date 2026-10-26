@@ -9,6 +9,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 import techguns.entity.projectile.GenericBeamProjectile;
 import techguns.entity.projectile.GenericProjectile;
+import techguns.entity.projectile.GrenadeProjectile;
+import techguns.entity.projectile.GuidedMissileProjectile;
 import techguns.entity.projectile.RocketProjectile;
 import techguns.entity.projectile.SonicShotgunProjectile;
 
@@ -37,6 +39,17 @@ public final class TGEntities {
             () -> EntityType.Builder.<SonicShotgunProjectile>of(SonicShotgunProjectile::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(20)
                     .build("sonic_shotgun_projectile"));
+
+    public static final Supplier<EntityType<GuidedMissileProjectile>> GUIDED_MISSILE = ENTITY_TYPES.register("guided_missile",
+            () -> EntityType.Builder.<GuidedMissileProjectile>of(GuidedMissileProjectile::new, MobCategory.MISC)
+                    // missiles turn: sync position and motion every tick
+                    .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(1)
+                    .build("guided_missile"));
+
+    public static final Supplier<EntityType<GrenadeProjectile>> GRENADE_PROJECTILE = ENTITY_TYPES.register("grenade_projectile",
+            () -> EntityType.Builder.<GrenadeProjectile>of(GrenadeProjectile::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(5)
+                    .build("grenade_projectile"));
 
     private TGEntities() {
     }
