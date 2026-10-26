@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": {
+      "item": "techguns:compressed_air_tank"
+    },
+    "i": {
+      "tag": "c:plates/iron"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "pattern": [
+    "p p",
+    "aia",
+    "p p"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:scuba_tanks"
+  }
+}

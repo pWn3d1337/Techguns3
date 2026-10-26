@@ -34,6 +34,7 @@ import techguns.registry.TGArmors;
 import techguns.registry.TGBlocks;
 import techguns.registry.TGGuns;
 import techguns.registry.TGItems;
+import techguns.registry.TGSlotItems;
 import techguns.registry.TGTags;
 
 /**
@@ -64,6 +65,7 @@ public class TGRecipeProvider extends RecipeProvider {
         buildGunRecipes(output);
         buildArmorRecipes(output);
         buildShieldRecipes(output);
+        buildSlotItemRecipes(output);
     }
 
     /** Techguns 2 armor recipes. */
@@ -171,6 +173,94 @@ public class TGRecipeProvider extends RecipeProvider {
         exoSuit(output, TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_COMBAT_LEGGINGS.get(), 2);
         exoSuit(output, TGArmors.T3_EXO_BOOTS.get(), TGArmors.T3_COMBAT_BOOTS.get(), 1);
         // Techguns 2 has no crafting recipes for the T4 praetor and T4 power armor.
+    }
+
+    /** Techguns 2 recipes of the extra slot gear (face, back and hand items). */
+    private void buildSlotItemRecipes(RecipeOutput output) {
+        Item cloth = TGItems.HEAVY_CLOTH.get();
+        Item rubber = TGItems.RUBBER_BAR.get();
+        Item plastic = TGItems.PLASTIC_SHEET.get();
+        Item basicCircuit = TGItems.CIRCUIT_BOARD.get();
+        Item filter = TGSlotItems.GAS_MASK_FILTER.get();
+        Item backpack = TGSlotItems.GLIDER_BACKPACK.get();
+        Item wing = TGSlotItems.GLIDER_WING.get();
+        TagKey<Item> ironPlate = TGTags.Items.plate("iron");
+
+        // glider
+        slotShaped(output, backpack, cloth, "glider_backpack", Map.of('h', cloth, 's', Tags.Items.INGOTS_IRON), "hhh", "shs", "hhh");
+        slotShaped(output, wing, cloth, "glider_wing", Map.of('h', cloth, 's', Tags.Items.INGOTS_IRON), "sss", "hhh", "hhh");
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGSlotItems.GLIDER.get())
+                .requires(backpack).requires(wing, 2).unlockedBy(getHasName(wing), has(wing)).save(output, TGIds.id("glider"));
+
+        // gas mask; a filter refills a used mask
+        slotShaped(output, filter, Items.COAL, "gas_mask_filter", Map.of('i', Tags.Items.NUGGETS_IRON, 'c', Items.COAL), "iii", "ici", "iii");
+        slotShaped(output, TGSlotItems.GAS_MASK.get(), filter, "gas_mask", Map.of('r', rubber, 'f', filter, 'g', Tags.Items.GLASS_PANES),
+                "grg", "rrr", "rfr");
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGSlotItems.GAS_MASK.get())
+                .requires(TGSlotItems.GAS_MASK.get()).requires(filter).unlockedBy(getHasName(filter), has(filter))
+                .save(output, TGIds.id("gas_mask_refilter"));
+
+        // night vision goggles; with an empty battery they come out empty
+        Map<Character, Object> goggleKeys = Map.of('r', rubber, 'h', cloth, 'c', basicCircuit, 'e', TGAmmo.REDSTONE_BATTERY,
+                'g', Tags.Items.GLASS_BLOCKS, 's', Tags.Items.INGOTS_IRON);
+        slotShaped(output, TGSlotItems.NIGHT_VISION_GOGGLES.get(), basicCircuit, "night_vision_goggles", goggleKeys, "rhr", "cec", "gsg");
+        ItemStack emptyGoggles = new ItemStack(TGSlotItems.NIGHT_VISION_GOGGLES.get());
+        emptyGoggles.setDamageValue(emptyGoggles.getMaxDamage());
+        StackShapedRecipeBuilder emptyBuilder = StackShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, emptyGoggles, "rhr", "cec", "gsg")
+                .define('r', rubber).define('h', cloth).define('c', basicCircuit).define('e', TGAmmo.REDSTONE_BATTERY_EMPTY)
+                .define('g', Tags.Items.GLASS_BLOCKS).define('s', Tags.Items.INGOTS_IRON);
+        emptyBuilder.unlockedBy(getHasName(basicCircuit), has(basicCircuit)).save(output, TGIds.id("night_vision_goggles_empty"));
+
+        // jetpack from a glider or a jump pack
+        Map<Character, Object> jetpackKeys = Map.of('f', TGAmmo.FUEL_TANK, 'p', TGTags.Items.plate("obsidian_steel"),
+                'r', TGAmmo.ROCKET, 'm', TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL);
+        slotShaped(output, TGSlotItems.JETPACK.get(), TGAmmo.FUEL_TANK.get(), "jetpack_from_glider",
+                with(jetpackKeys, 'g', TGSlotItems.GLIDER), "f f", "pgp", "rmr");
+        slotShaped(output, TGSlotItems.JETPACK.get(), TGAmmo.FUEL_TANK.get(), "jetpack_from_jump_pack",
+                with(jetpackKeys, 'g', TGSlotItems.JUMP_PACK), "f f", "pgp", "rmr");
+
+        slotShaped(output, TGSlotItems.ANTIGRAV_PACK.get(), TGItems.ANTIGRAV_CORE.get(), "antigrav_pack",
+                Map.of('t', TGTags.Items.plate("titanium"), 'e', TGAmmo.NUCLEAR_POWER_CELL, 'b', backpack,
+                        'c', TGItems.CIRCUIT_BOARD_ELITE, 'm', TGItems.MECHANICAL_PARTS_CARBON, 'a', TGItems.ANTIGRAV_CORE),
+                "tet", "cac", "mbm");
+        slotShaped(output, TGSlotItems.SCUBA_TANKS.get(), TGAmmo.COMPRESSED_AIR_TANK.get(), "scuba_tanks",
+                Map.of('p', plastic, 'a', TGAmmo.COMPRESSED_AIR_TANK, 'i', ironPlate), "p p", "aia", "p p");
+        slotShaped(output, TGSlotItems.JUMP_PACK.get(), backpack, "jump_pack",
+                Map.of('p', ironPlate, 'c', TGAmmo.COMPRESSED_AIR_TANK, 'n', Tags.Items.NUGGETS_IRON, 'b', backpack), "n n", "pbp", "c c");
+        slotShaped(output, TGSlotItems.OXYGEN_MASK.get(), plastic, "oxygen_mask", Map.of('p', plastic, 'r', rubber), " p ", "rpr");
+
+        // tactical mask, both arrangements
+        Map<Character, Object> tacticalKeys = Map.of('p', plastic, 'n', TGSlotItems.NIGHT_VISION_GOGGLES, 'c', basicCircuit,
+                'g', TGSlotItems.GAS_MASK, 'o', TGSlotItems.OXYGEN_MASK, 'e', TGAmmo.ENERGY_CELL);
+        slotShaped(output, TGSlotItems.TACTICAL_MASK.get(), TGSlotItems.OXYGEN_MASK.get(), "tactical_mask", tacticalKeys, "ngo", "cpc", "pep");
+        slotShaped(output, TGSlotItems.TACTICAL_MASK.get(), TGSlotItems.OXYGEN_MASK.get(), "tactical_mask_mirrored", tacticalKeys,
+                "ogn", "cpc", "pep");
+
+        slotShaped(output, TGSlotItems.WORKING_GLOVES.get(), cloth, "working_gloves", Map.of('h', cloth), " h", "hh");
+    }
+
+    private static Map<Character, Object> with(Map<Character, Object> keys, char symbol, Object ingredient) {
+        Map<Character, Object> copy = new java.util.HashMap<>(keys);
+        copy.put(symbol, ingredient);
+        return copy;
+    }
+
+    /** Shaped recipe with an explicit id; keys are items, item holders or item tags. */
+    private static void slotShaped(RecipeOutput output, Item result, ItemLike unlock, String id, Map<Character, ?> keys, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        keys.forEach((symbol, ingredient) -> {
+            if (ingredient instanceof TagKey<?> tag) {
+                @SuppressWarnings("unchecked")
+                TagKey<Item> itemTag = (TagKey<Item>) tag;
+                builder.define(symbol, itemTag);
+            } else {
+                builder.define(symbol, (ItemLike) ingredient);
+            }
+        });
+        builder.unlockedBy(getHasName(unlock), has(unlock)).save(output, TGIds.id(id));
     }
 
     /** Shaped armor recipe that only defines the keys the pattern uses. */

@@ -12,7 +12,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
 | 3 — All guns, ammo, grenades, tools | done (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
-| 4 — Armor & player gear | in progress (planned batches 4a–4f, design doc Phase 4) |
+| 4 — Armor & player gear | done pending review (batches 4a–4f) |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
 | 7 — World generation | — |
@@ -117,3 +117,6 @@ Batches: design doc Phase 4. Source: Techguns 2 for all values; Fabric for the a
 | 4e shields: riot, ballistic, advanced (`TGShieldItem` on the vanilla shield API, durability, anvil repair); blocking Techguns damage lets part through by `ShieldStats` (block rate per category, flat threshold lowered by penetration, impact sound per material), also for the vanilla shield; vanilla damage blocked as vanilla | 12 | tested | GameTests: riot vs bullet, advanced threshold/penetration, vanilla shield; checked in game |
 | 4e shield models + renderer (1.12 riot/ballistic/advanced models, camo textures), blocking pose, recipes, camos | 12 | rendered | |
 | 4e heavy shield: 1.12 model + texture (no item in 1.12); new item with own stats (2800 durability, metal, 85% projectile / 80% explosion / 70% energy, threshold 2) and recipe (ballistic shield + steel plates + glass pane) | 12 + new | tested | GameTest: energy block; checked in game; stats and recipe are a design choice, not from a reference |
+| 4f extra slots framework: face/back/hand (`slot/`), Curios soft dependency (head/back/hands, `compat/curios`) or fallback attachment slots synced to trackers, bonuses as transient attribute modifiers, right click equips; toggles night vision (N) and jetpack (J) saved per player | 12 | tested | checked in game with Curios; fallback screen (inventory "TG" button) not checked in game (Curios is in the dev runtime) |
+| 4f gear: gas mask, oxygen mask, night vision goggles, tactical mask, glider, jump pack, jetpack, scuba tanks, antigrav pack, working gloves (+ gas mask filter, glider parts); recharge from refill items, recipes from 1.12 | 12 | tested | GameTests (8); jetpack boost, sounds and flames checked in game by the user; glider air control (`jumpMovementFactor`) not ported |
+| 4f gear rendering: 1.12 models on a player layer, armor hide flags, camos for jetpack/jump pack/antigrav/tactical mask, jetpack flames at the nozzles and start/loop/stop sounds (boost state synced to trackers) | 12 | rendered | first-person gloves not rendered (1.12 didn't either) |

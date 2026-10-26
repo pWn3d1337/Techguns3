@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fuel_tank": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:fuel_tank"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:jetpack_from_jump_pack"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fuel_tank"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:jetpack_from_jump_pack"
+    ]
+  }
+}

@@ -4,15 +4,20 @@ import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
+import techguns.TGIds;
 import techguns.Techguns;
+import techguns.slot.TGSlotType;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGItems;
+import techguns.registry.TGSlotItems;
 import techguns.registry.TGTags;
 
 public class TGItemTagsProvider extends ItemTagsProvider {
@@ -26,6 +31,8 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         // everything an Ammo Bag accepts: all ammo items, full and empty
         TGAmmo.flatAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
         TGAmmo.modelAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
+        // Curios slots of the extra slot gear (head = face items)
+        TGSlotItems.items().forEach(item -> tag(curiosSlot(item.get().slot())).add(item.get()));
         // Ore blocks: mirror the block tags
         for (String material : new String[] {"tin", "lead", "titanium", "uranium"}) {
             copy(TGTags.Blocks.ore(material), TGTags.Items.ore(material));
@@ -63,6 +70,10 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         plate("lead", TGItems.LEAD_PLATE);
         plate("carbon", TGItems.CARBON_PLATE);
         plate("titanium", TGItems.TITANIUM_PLATE);
+    }
+
+    private static TagKey<Item> curiosSlot(TGSlotType slot) {
+        return TagKey.create(Registries.ITEM, TGIds.of("curios", slot.curiosId()));
     }
 
     private void rawMaterial(String material, DeferredItem<Item> item) {

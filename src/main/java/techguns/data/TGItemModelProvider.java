@@ -11,6 +11,7 @@ import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
 import techguns.registry.TGGuns;
 import techguns.registry.TGItems;
+import techguns.registry.TGSlotItems;
 
 public class TGItemModelProvider extends ItemModelProvider {
     public TGItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
@@ -22,6 +23,8 @@ public class TGItemModelProvider extends ItemModelProvider {
         TGItems.simpleItems().forEach(item -> basicItem(item.get()));
         TGAmmo.flatAmmo().forEach(item -> basicItem(item.get()));
         TGArmors.armors().forEach(item -> basicItem(item.get()));
+        TGSlotItems.items().forEach(item -> basicItem(item.get()));
+        TGSlotItems.components().forEach(item -> basicItem(item.get()));
         // drawn by the shield renderer; vanilla shield display transforms and blocking pose
         TGArmors.shields().forEach(item -> withExistingParent(item.getId().getPath(), mcLoc("item/shield")));
 

@@ -1,8 +1,10 @@
 package techguns.network;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +19,9 @@ import techguns.core.fx.EntityCondition;
 import techguns.gun.GunClientEffects;
 import techguns.gun.GunItem;
 import techguns.player.TGPlayerData;
+import techguns.slot.ExtraSlots;
+import techguns.slot.FallbackSlots;
+import techguns.slot.menu.ExtraSlotsMenu;
 
 /**
  * Registers all Techguns payloads and offers typed send helpers. All payload types live in this package.
@@ -39,19 +44,51 @@ public final class TGNetwork {
         registrar.playToClient(FxPayloads.SpawnFxOnEntity.TYPE, FxPayloads.SpawnFxOnEntity.STREAM_CODEC, TGNetwork::handleSpawnFxOnEntity);
         registrar.playToClient(FxPayloads.GunImpactFx.TYPE, FxPayloads.GunImpactFx.STREAM_CODEC, TGNetwork::handleGunImpactFx);
         registrar.playToClient(FxPayloads.EntityDeathFx.TYPE, FxPayloads.EntityDeathFx.STREAM_CODEC, TGNetwork::handleEntityDeathFx);
-        registrar.playToServer(PlayerPayloads.SetStepAssist.TYPE, PlayerPayloads.SetStepAssist.STREAM_CODEC, TGNetwork::handleSetStepAssist);
+        registrar.playToServer(PlayerPayloads.SetToggle.TYPE, PlayerPayloads.SetToggle.STREAM_CODEC, TGNetwork::handleSetToggle);
+        registrar.playToServer(PlayerPayloads.JetpackBoost.TYPE, PlayerPayloads.JetpackBoost.STREAM_CODEC, TGNetwork::handleJetpackBoost);
+        registrar.playToServer(PlayerPayloads.OpenExtraSlots.TYPE, PlayerPayloads.OpenExtraSlots.STREAM_CODEC, TGNetwork::handleOpenExtraSlots);
+        registrar.playToClient(PlayerPayloads.JetpackBoostState.TYPE, PlayerPayloads.JetpackBoostState.STREAM_CODEC,
+                TGNetwork::handleJetpackBoostState);
         registrar.playToClient(PlayerPayloads.SyncPlayerData.TYPE, PlayerPayloads.SyncPlayerData.STREAM_CODEC, TGNetwork::handleSyncPlayerData);
+        registrar.playToClient(PlayerPayloads.SyncExtraSlots.TYPE, PlayerPayloads.SyncExtraSlots.STREAM_CODEC, TGNetwork::handleSyncExtraSlots);
     }
 
     /** Sends the saved player settings to their client (login, respawn, dimension change). */
     public static void syncPlayerData(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new PlayerPayloads.SyncPlayerData(TGPlayerData.of(player).stepAssist()));
+            TGPlayerData data = TGPlayerData.of(player);
+            PacketDistributor.sendToPlayer(serverPlayer, new PlayerPayloads.SyncPlayerData(data.get(TGPlayerData.Toggle.STEP_ASSIST),
+                    data.get(TGPlayerData.Toggle.NIGHT_VISION), data.get(TGPlayerData.Toggle.JETPACK)));
         }
     }
 
-    public static void sendSetStepAssist(boolean enabled) {
-        PacketDistributor.sendToServer(new PlayerPayloads.SetStepAssist(enabled));
+    public static void sendSetToggle(TGPlayerData.Toggle toggle, boolean enabled) {
+        PacketDistributor.sendToServer(new PlayerPayloads.SetToggle(toggle, enabled));
+    }
+
+    public static void sendJetpackBoost(boolean active) {
+        PacketDistributor.sendToServer(new PlayerPayloads.JetpackBoost(active));
+    }
+
+    public static void sendOpenExtraSlots() {
+        PacketDistributor.sendToServer(new PlayerPayloads.OpenExtraSlots());
+    }
+
+    /** Sends a player's fallback extra slots to them and everybody tracking them. */
+    public static void syncExtraSlots(Player player) {
+        if (!player.level().isClientSide) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, extraSlotsPayload(player));
+        }
+    }
+
+    /** Sends {@code tracked}'s fallback extra slots to {@code receiver} (start tracking). */
+    public static void syncExtraSlotsTo(Player tracked, ServerPlayer receiver) {
+        PacketDistributor.sendToPlayer(receiver, extraSlotsPayload(tracked));
+    }
+
+    private static PlayerPayloads.SyncExtraSlots extraSlotsPayload(Player player) {
+        return new PlayerPayloads.SyncExtraSlots(player.getId(),
+                FallbackSlots.inventory(player).stacks().stream().map(ItemStack::copy).toList());
     }
 
     // --- Send helpers ---
@@ -135,14 +172,45 @@ public final class TGNetwork {
         }
     }
 
-    private static void handleSetStepAssist(PlayerPayloads.SetStepAssist payload, IPayloadContext context) {
-        TGPlayerData.of(context.player()).setStepAssist(payload.enabled());
+    private static void handleSetToggle(PlayerPayloads.SetToggle payload, IPayloadContext context) {
+        TGPlayerData.of(context.player()).set(payload.toggle(), payload.enabled());
+    }
+
+    private static void handleJetpackBoost(PlayerPayloads.JetpackBoost payload, IPayloadContext context) {
+        Player player = context.player();
+        TGPlayerData.of(player).setJetpackBoost(payload.active());
+        PacketDistributor.sendToPlayersTrackingEntity(player, new PlayerPayloads.JetpackBoostState(player.getId(), payload.active()));
+    }
+
+    private static void handleJetpackBoostState(PlayerPayloads.JetpackBoostState payload, IPayloadContext context) {
+        if (clientEntity(context, payload.entityId()) instanceof Player player) {
+            TGPlayerData.of(player).setJetpackBoost(payload.active());
+        }
+    }
+
+    private static void handleOpenExtraSlots(PlayerPayloads.OpenExtraSlots payload, IPayloadContext context) {
+        if (!ExtraSlots.usesCurios() && context.player() instanceof ServerPlayer player && !player.isSpectator()) {
+            player.openMenu(new SimpleMenuProvider((id, inventory, ply) -> new ExtraSlotsMenu(id, inventory),
+                    Component.translatable("gui.techguns.extra_slots")));
+        }
     }
 
     // --- Client handlers (only invoked on the client) ---
 
     private static void handleSyncPlayerData(PlayerPayloads.SyncPlayerData payload, IPayloadContext context) {
-        TGPlayerData.of(context.player()).setStepAssist(payload.stepAssist());
+        TGPlayerData data = TGPlayerData.of(context.player());
+        data.set(TGPlayerData.Toggle.STEP_ASSIST, payload.stepAssist());
+        data.set(TGPlayerData.Toggle.NIGHT_VISION, payload.nightVision());
+        data.set(TGPlayerData.Toggle.JETPACK, payload.jetpack());
+    }
+
+    private static void handleSyncExtraSlots(PlayerPayloads.SyncExtraSlots payload, IPayloadContext context) {
+        if (clientEntity(context, payload.entityId()) instanceof Player player) {
+            FallbackSlots.Inventory inventory = FallbackSlots.inventory(player);
+            for (int i = 0; i < payload.stacks().size() && i < inventory.stacks().size(); i++) {
+                inventory.stacks().set(i, payload.stacks().get(i));
+            }
+        }
     }
 
     private static void handleGunFired(GunPayloads.GunFired payload, IPayloadContext context) {

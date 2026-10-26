@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "f": {
+      "item": "techguns:gas_mask_filter"
+    },
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "r": {
+      "item": "techguns:rubber_bar"
+    }
+  },
+  "pattern": [
+    "grg",
+    "rrr",
+    "rfr"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:gas_mask"
+  }
+}

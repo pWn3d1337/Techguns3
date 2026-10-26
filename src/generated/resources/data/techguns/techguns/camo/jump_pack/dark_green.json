@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark_green"
+  },
+  "item": "techguns:jump_pack",
+  "name": "dark_green",
+  "order": 3,
+  "texture": "techguns:textures/armors/jetpack_3.png"
+}

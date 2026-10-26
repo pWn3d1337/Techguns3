@@ -11,9 +11,13 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import techguns.client.render.armor.TGArmorClientExtensions;
+import techguns.client.render.slot.SlotGearFx;
+import techguns.client.render.slot.SlotGearLayer;
+import techguns.client.render.slot.SlotGearRegistry;
 import techguns.Techguns;
 import techguns.client.gui.ClientAmmoBagTooltip;
 import techguns.client.gui.ClientArmorTooltip;
+import techguns.client.gui.ExtraSlotsScreen;
 import techguns.client.gui.LockOnOverlay;
 import techguns.client.gun.ChargeEffects;
 import techguns.client.gun.ClientGunController;
@@ -47,12 +51,14 @@ public class TechgunsClient {
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGArmorClientExtensions::register);
         modEventBus.addListener(TGShieldRenderer::register);
+        modEventBus.addListener(SlotGearLayer::register);
         modEventBus.addListener(TGShieldBlocking::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);
         modEventBus.addListener(ClientAmmoBagTooltip::register);
         modEventBus.addListener(ClientArmorTooltip::register);
+        modEventBus.addListener(ExtraSlotsScreen::register);
         TGGeoBridge.install(new GeckoLibGunRenderer());
         modEventBus.addListener((RegisterParticleProvidersEvent event) ->
                 event.registerSpecial(TGParticleTypes.NONE.get(), (options, level, x, y, z, dx, dy, dz) -> null));
@@ -61,7 +67,10 @@ public class TechgunsClient {
         ClientFx.init(modEventBus, NeoForge.EVENT_BUS);
         ChargeEffects.init(NeoForge.EVENT_BUS);
         RenderingEntityTracker.init(NeoForge.EVENT_BUS);
+        SlotGearRegistry.init(NeoForge.EVENT_BUS);
+        SlotGearFx.init(NeoForge.EVENT_BUS);
         MiningPlaneOutline.init(NeoForge.EVENT_BUS);
+        NeoForge.EVENT_BUS.addListener(ExtraSlotsScreen::onInventoryScreenInit);
         NeoForge.EVENT_BUS.addListener(TGDebugCommands::register);
     }
 

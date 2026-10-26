@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.bronze"
+  },
+  "item": "techguns:antigrav_pack",
+  "name": "bronze",
+  "order": 1,
+  "texture": "techguns:textures/armors/antigravpack_1.png"
+}

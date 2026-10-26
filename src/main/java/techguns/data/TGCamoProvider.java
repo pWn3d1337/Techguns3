@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import techguns.TGIds;
 import techguns.camo.TGCamo;
@@ -36,7 +37,9 @@ public final class TGCamoProvider {
         /** one armor model texture {@code textures/models/armor/<texture>.png} */
         ARMOR_SINGLE,
         /** shield model texture {@code textures/armors/<texture>.png} */
-        SHIELD
+        SHIELD,
+        /** extra-slot gear model texture {@code textures/armors/<texture>.png} */
+        SLOT
     }
 
     /** One camo: id, English name, texture base name (without path and extension). */
@@ -176,7 +179,34 @@ public final class TGCamoProvider {
                 camo("black", "Black", "advanced_shield"),
                 camo("grey", "Grey", "advanced_shield_silver"),
                 camo("dark_green", "Dark Green", "advanced_shield_green"))));
+        // --- Extra-slot gear (Techguns 2 ClientProxy texture lists, camo names from its lang; index 0 has no 1.12 name) ---
+        groups.add(new Group(List.of(slotItem("jetpack")), Kind.SLOT, List.of(
+                camo("default", "Default", "jetpack"),
+                camo("black", "Black", "jetpack_1"),
+                camo("bronze", "Bronze", "jetpack_2"),
+                camo("dark_green", "Dark Green", "jetpack_3"))));
+        groups.add(new Group(List.of(slotItem("jump_pack")), Kind.SLOT, List.of(
+                camo("default", "Default", "jetpack"),
+                camo("black", "Black", "jetpack_1"),
+                camo("bronze", "Bronze", "jetpack_2"),
+                camo("dark_green", "Dark Green", "jetpack_3"))));
+        groups.add(new Group(List.of(slotItem("antigrav_pack")), Kind.SLOT, List.of(
+                camo("default", "Default", "antigravpack"),
+                camo("bronze", "Bronze", "antigravpack_1"),
+                camo("black", "Black", "antigravpack_2"),
+                camo("dark_green", "Dark Green", "antigravpack_3"),
+                camo("silver", "Silver", "antigravpack_4"))));
+        groups.add(new Group(List.of(slotItem("tactical_mask")), Kind.SLOT, List.of(
+                camo("black", "Black", "tacticalmask"),
+                camo("dark_green", "Dark Green", "tacticalmask_1"),
+                camo("green", "Green", "tacticalmask_2"),
+                camo("white", "White", "tacticalmask_3"))));
         return groups;
+    }
+
+    /** An extra-slot item by id (registered by {@code TGSlotItems}); {@link Items#AIR} if it does not exist (yet). */
+    private static ItemLike slotItem(String id) {
+        return BuiltInRegistries.ITEM.getOptional(TGIds.id(id)).orElse(Items.AIR);
     }
 
     /** Camo name -> English display name for the language provider ({@code camo.techguns.<name>}). */
@@ -190,12 +220,15 @@ public final class TGCamoProvider {
         for (Group group : groups()) {
             for (ItemLike itemLike : group.items()) {
                 Item item = itemLike.asItem();
+                if (item == Items.AIR) {
+                    continue;
+                }
                 for (int order = 0; order < group.camos().size(); order++) {
                     Camo camo = group.camos().get(order);
                     Optional<ResourceLocation> texture = switch (group.kind()) {
                         case GUN -> Optional.of(TGIds.id("textures/guns/" + camo.texture() + ".png"));
                         case ARMOR_SINGLE -> Optional.of(TGIds.id("textures/models/armor/" + camo.texture() + ".png"));
-                        case SHIELD -> Optional.of(TGIds.id("textures/armors/" + camo.texture() + ".png"));
+                        case SHIELD, SLOT -> Optional.of(TGIds.id("textures/armors/" + camo.texture() + ".png"));
                         case ARMOR_LAYERS -> Optional.empty();
                     };
                     Optional<ResourceLocation> layer = group.kind() == Kind.ARMOR_LAYERS ? Optional.of(TGIds.id(camo.texture())) : Optional.empty();

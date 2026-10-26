@@ -46,6 +46,10 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("power_plating", "Power Armor Plating"),
             Map.entry("power_plating_mk2", "Power Armor Plating Mk2"),
             Map.entry("antigrav_core", "Anti Gravity Core"),
+            Map.entry("night_vision_goggles", "Nightvision Goggles"),
+            Map.entry("jump_pack", "Jumppack"),
+            Map.entry("scuba_tanks", "Oxygen Tanks"),
+            Map.entry("antigrav_pack", "Anti Gravity Device"),
             Map.entry("m4", "M4"),
             Map.entry("ak47", "AKM"),
             Map.entry("m4_infiltrator", "The Infiltrator"),
@@ -214,7 +218,23 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.armor.power_type_battery", "Power type: %s (%s)");
         add("tooltip.techguns.armor.power_type.steam", "Steam");
         add("tooltip.techguns.armor.power_type.rf", "Electric");
-        add("message.techguns.step_assist", "Step Assist: %s");
+        add("message.techguns.toggle.step_assist", "Step Assist: %s");
+        add("message.techguns.toggle.night_vision", "Night Vision: %s");
+        add("message.techguns.toggle.jetpack", "Jetpack: %s");
+        add(TGKeyMappings.TOGGLE_NIGHT_VISION.getName(), "Toggle Night Vision");
+        add(TGKeyMappings.TOGGLE_JETPACK.getName(), "Toggle Jetpack");
+        add("tooltip.techguns.slot", "Slot: %s");
+        add("gui.techguns.extra_slots", "Techguns Gear");
+        add("gui.techguns.extra_slots.button", "TG");
+        add("gui.techguns.inventory", "<");
+        add("gui.techguns.inventory.tooltip", "Back to inventory");
+        add("tooltip.techguns.slot.face", "Face");
+        add("tooltip.techguns.slot.back", "Back");
+        add("tooltip.techguns.slot.hand", "Hand");
+        add("tooltip.techguns.slot.charge", "Charge: %s/%s");
+        add("tooltip.techguns.slot.refill", "Recharges with: %s");
+        add("attribute.name.techguns.night_vision", "Night Vision");
+        add("attribute.name.techguns.fly_speed_bonus", "Flying Speed");
         add("message.techguns.on", "On");
         add("message.techguns.camo_switch", "Switched camo to %s");
         add("tooltip.techguns.camo", "Camo: %s");

@@ -25,6 +25,9 @@ import techguns.network.TGNetwork;
 import techguns.player.TGPlayerData;
 import techguns.registry.TGAttributes;
 import techguns.registry.TGSounds;
+import techguns.slot.ExtraSlots;
+import techguns.slot.TGSlotItem;
+import techguns.slot.TGSlotType;
 
 /**
  * Powered armor upkeep (Techguns 2 {@code PoweredArmor.calculateConsumptionTick}) and step assist. Every tick the
@@ -131,6 +134,12 @@ public final class ArmorPowerEvents {
                                 SoundSource.PLAYERS, 1.0f, 1.0f);
                     }
                 }
+            }
+        }
+        for (TGSlotType slot : TGSlotType.values()) {
+            ItemStack stack = ExtraSlots.get(player, slot);
+            if (stack.getItem() instanceof TGSlotItem item && item.activeBonuses(player, stack).containsKey(bonus)) {
+                item.onBonusAction(player, stack, bonus);
             }
         }
     }

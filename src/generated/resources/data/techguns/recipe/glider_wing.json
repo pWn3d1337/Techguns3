@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "techguns:heavy_cloth"
+    },
+    "s": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "sss",
+    "hhh",
+    "hhh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:glider_wing"
+  }
+}

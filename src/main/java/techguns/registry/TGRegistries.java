@@ -14,6 +14,7 @@ public final class TGRegistries {
         TGAmmo.init();
         TGGuns.init();
         TGArmors.init();
+        TGSlotItems.init();
 
         TGBlocks.BLOCKS.register(modEventBus);
         TGArmors.MATERIALS.register(modEventBus);
@@ -26,6 +27,7 @@ public final class TGRegistries {
         TGSounds.SOUNDS.register(modEventBus);
         TGParticleTypes.PARTICLE_TYPES.register(modEventBus);
         TGRecipes.SERIALIZERS.register(modEventBus);
+        TGMenus.MENUS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
         modEventBus.addListener(TGCamos::register);

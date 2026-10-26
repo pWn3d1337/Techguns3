@@ -44,6 +44,7 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK)), lookup));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
 
         // Client assets
         generator.addProvider(event.includeClient(), new TGBlockStateProvider(output, fileHelper));

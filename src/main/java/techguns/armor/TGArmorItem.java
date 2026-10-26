@@ -66,6 +66,10 @@ public class TGArmorItem extends ArmorItem {
     /** Single texture for all layers (Techguns 2 armor models without double textures); null = material layers. */
     @Nullable
     private ResourceLocation armorTexture;
+    /** Extra slot gear this piece covers, so it is not drawn (Techguns 2 {@code setHideFaceslot/Backslot/Gloveslot}). */
+    private boolean hideFaceSlot;
+    private boolean hideBackSlot;
+    private boolean hideHandSlot;
 
     public TGArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties, TGArmorStats stats) {
         super(material, type, properties.durability(stats.durability(type)));
@@ -150,7 +154,37 @@ public class TGArmorItem extends ArmorItem {
         return this;
     }
 
+    /** Worn as helmet: hides the face slot gear (mask, goggles). */
+    public TGArmorItem hideFaceSlot() {
+        this.hideFaceSlot = true;
+        return this;
+    }
+
+    /** Worn as chestplate: hides the back slot gear (packs, glider). */
+    public TGArmorItem hideBackSlot() {
+        this.hideBackSlot = true;
+        return this;
+    }
+
+    /** Worn as chestplate: hides the hand slot gear (gloves). */
+    public TGArmorItem hideHandSlot() {
+        this.hideHandSlot = true;
+        return this;
+    }
+
     // --- State ---
+
+    public boolean hidesFaceSlot() {
+        return hideFaceSlot;
+    }
+
+    public boolean hidesBackSlot() {
+        return hideBackSlot;
+    }
+
+    public boolean hidesHandSlot() {
+        return hideHandSlot;
+    }
 
     @Nullable
     public ResourceLocation armorModel() {
