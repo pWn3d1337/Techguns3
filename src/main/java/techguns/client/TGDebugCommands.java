@@ -15,7 +15,34 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGGeoExporter;
-import techguns.client.model.gun.ModelLasergun;
+import techguns.client.model.gun.ModelSawedOff;
+import techguns.client.model.gun.ModelChainsaw;
+import techguns.client.model.gun.ModelGrapplingHook;
+import techguns.client.model.gun.ModelMiningDrill;
+import techguns.client.model.gun.ModelPowerHammer;
+import techguns.client.model.gun.ModelShishkebap;
+import techguns.client.model.gun.ModelCombatShotgun;
+import techguns.client.model.gun.ModelAS50;
+import techguns.client.model.gun.ModelGaussRifle;
+import techguns.client.model.gun.ModelBlasterRifle;
+import techguns.client.model.gun.ModelLasergun2;
+import techguns.client.model.gun.ModelPulseRifle;
+import techguns.client.model.gun.ModelPDW;
+import techguns.client.model.gun.ModelLaserPistol;
+import techguns.client.model.gun.ModelBiogun;
+import techguns.client.model.gun.ModelFlamethrower;
+import techguns.client.model.gun.ModelHandgun;
+import techguns.client.model.gun.ModelMagicRifle;
+import techguns.client.model.gun.ModelTFG;
+import techguns.client.model.gun.ModelNDR;
+import techguns.client.model.gun.ModelTeslaGun;
+import techguns.client.model.gun.ModelAlienBlaster;
+import techguns.client.model.gun.ModelMibGun;
+import techguns.client.model.gun.ModelNetherBlaster;
+import techguns.client.model.gun.ModelSonicShotgun;
+import techguns.client.model.gun.ModelGrimReaper;
+import techguns.client.model.gun.ModelGuidedMissileLauncher;
+import techguns.client.model.gun.*;
 import techguns.client.model.gun.ModelM4;
 import techguns.client.model.gun.ModelRocketLauncher;
 import techguns.client.particle.ClientFx;
@@ -40,6 +67,15 @@ public final class TGDebugCommands {
                                 .executes(ctx -> {
                                     int ticks = IntegerArgumentType.getInteger(ctx, "ticks");
                                     ClientGunController.get().holdFireFor(ticks);                                    ctx.getSource().sendSystemMessage(Component.literal("Holding fire for " + ticks + " ticks"));
+                                    return ticks;
+                                })))
+                .then(Commands.literal("aim")
+                        .then(Commands.argument("ticks", IntegerArgumentType.integer(1, 400))
+                                .executes(ctx -> {
+                                    // holds the use key (lock-on guns lock while it is held)
+                                    int ticks = IntegerArgumentType.getInteger(ctx, "ticks");
+                                    ClientGunController.get().holdUseFor(ticks);
+                                    ctx.getSource().sendSystemMessage(Component.literal("Holding use for " + ticks + " ticks"));
                                     return ticks;
                                 })))
                 .then(Commands.literal("projectiles")
@@ -114,10 +150,75 @@ public final class TGDebugCommands {
                                 TGGeoExporter.export(new ModelM4(), "m4",
                                         Map.of("magazine", List.of("Magazine01", "Magazine02"), "bolt", List.of("Bolt01", "Bolt02", "Bolt03")),
                                         Set.of("RedDot"), dir);
-                                TGGeoExporter.export(new ModelLasergun(), "lasergun", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelLasergun(), "lasergun", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow5"), dir);
                                 ModelRocketLauncher launcher = new ModelRocketLauncher();
                                 TGGeoExporter.export(launcher, "rocket_launcher", Map.of(), Set.of(), dir);
-                                TGGeoExporter.export(launcher.rocketModel(), "rocket_launcher_rocket", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(launcher.partModel(1), "rocket_launcher_rocket", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelRevolver(), "revolver", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelGoldenRevolver(), "golden_revolver", Map.of(), Set.of(), dir);
+                                ModelPistol pistol = new ModelPistol();
+                                TGGeoExporter.export(pistol, "pistol", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(pistol.partModel(1), "pistol_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelAK(), "ak47", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelM4Infiltrator(), "m4_infiltrator", Map.of(), Set.of(), dir);
+                                ModelAUG aug = new ModelAUG();
+                                TGGeoExporter.export(aug, "aug", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(aug.partModel(1), "aug_1", Map.of(), Set.of(), dir);
+                                ModelScar scar = new ModelScar();
+                                TGGeoExporter.export(scar, "scar", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(scar.partModel(1), "scar_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelThompson(), "thompson", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelMac10(), "mac10", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelVector(), "vector", Map.of(), Set.of("RedDot"), dir);
+                                TGGeoExporter.export(new ModelLMG(), "lmg", Map.of(), Set.of("RedDot"), dir);
+                                TGGeoExporter.export(new ModelBoltaction(), "bolt_action", Map.of(), Set.of(), dir);
+                                ModelMinigun minigun = new ModelMinigun();
+                                TGGeoExporter.export(minigun, "minigun", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(minigun.partModel(1), "minigun_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelSawedOff(), "sawed_off", Map.of(), Set.of(), dir);
+                                ModelCombatShotgun combatShotgun = new ModelCombatShotgun();
+                                TGGeoExporter.export(combatShotgun, "combat_shotgun", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(combatShotgun.partModel(1), "combat_shotgun_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelAS50(), "as50", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelGaussRifle(), "gauss_rifle", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelBlasterRifle(), "blaster_rifle", Map.of(), Set.of(), dir);
+                                ModelLasergun2 blasterShotgun = new ModelLasergun2();
+                                TGGeoExporter.export(blasterShotgun, "blaster_shotgun", Map.of(), Set.of("HoloPlane"), dir);
+                                TGGeoExporter.export(blasterShotgun.partModel(1), "blaster_shotgun_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelPulseRifle(), "pulse_rifle", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelPDW(), "pdw", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelLaserPistol(), "laser_pistol", Map.of(), Set.of(), dir);
+                                var ndr = new ModelNDR();
+                                TGGeoExporter.export(ndr, "nuclear_deathray", Map.of(), Set.of("GLOW"), dir);
+                                TGGeoExporter.export(ndr.partModel(1), "nuclear_deathray_1", Map.of(), Set.of("Ring1", "Ring2", "Ring3", "Ring4", "Ring5", "Ring6", "Ring7", "Ring8"), dir);
+                                TGGeoExporter.export(new ModelTeslaGun(), "tesla_gun", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow4", "Glow5", "Glow6", "Glow7", "Glow8", "RedDot"), dir);
+                                TGGeoExporter.export(new ModelHandgun(), "hand_cannon", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelBiogun(), "biogun", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow4", "Glow5"), dir);
+                                TGGeoExporter.export(new ModelTFG(), "tfg", Map.of(), Set.of("R03", "L03", "Glow01", "Glow02", "Glow03", "Glow_Barrel"), dir);
+                                TGGeoExporter.export(new ModelFlamethrower(), "flamethrower", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelMagicRifle(), "magic_rifle", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelAlienBlaster(), "alien_blaster", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelMibGun(), "mib_gun", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelNetherBlaster(), "nether_blaster", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow4"), dir);
+                                TGGeoExporter.export(new ModelSonicShotgun(), "sonic_shotgun", Map.of(), Set.of("GLOW01"), dir);
+                                ModelGuidedMissileLauncher guidedMissile = new ModelGuidedMissileLauncher();
+                                TGGeoExporter.export(guidedMissile, "guided_missile_launcher", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(guidedMissile.partModel(1), "guided_missile_launcher_1", Map.of(), Set.of("Holo2", "Holo2_1"), dir);
+                                TGGeoExporter.export(new ModelGrimReaper(), "grim_reaper", Map.of(), Set.of(), dir);
+                                ModelChainsaw chainsaw = new ModelChainsaw();
+                                TGGeoExporter.export(chainsaw, "chainsaw", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(chainsaw.partModel(1), "chainsaw_1", Map.of(), Set.of(), dir);
+                                ModelMiningDrill miningDrill = new ModelMiningDrill();
+                                TGGeoExporter.export(miningDrill, "mining_drill", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(miningDrill.partModel(1), "mining_drill_1", Map.of(), Set.of(), dir);
+                                ModelPowerHammer powerHammer = new ModelPowerHammer();
+                                TGGeoExporter.export(powerHammer, "power_hammer", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(powerHammer.partModel(1), "power_hammer_1", Map.of(), Set.of(), dir);
+                                ModelGrapplingHook grapplingHook = new ModelGrapplingHook();
+                                TGGeoExporter.export(grapplingHook, "grappling_hook", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(grapplingHook.partModel(1), "grappling_hook_1", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(grapplingHook.partModel(2), "grappling_hook_2", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(new ModelShishkebap(), "shishkebap", Map.of(), Set.of(), dir);
                                 ctx.getSource().sendSystemMessage(Component.literal("Exported gun geo models to " + dir));
                             } catch (java.io.IOException e) {
                                 ctx.getSource().sendSystemMessage(Component.literal("Export failed: " + e));

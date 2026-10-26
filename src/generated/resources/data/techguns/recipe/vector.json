@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "d": {
+      "item": "minecraft:redstone"
+    },
+    "g": {
+      "item": "minecraft:glass_pane"
+    },
+    "m": {
+      "item": "techguns:smg_magazine"
+    },
+    "r": {
+      "item": "techguns:obsidian_steel_receiver"
+    },
+    "s": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "gd ",
+    "brs",
+    "m  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:vector"
+  }
+}

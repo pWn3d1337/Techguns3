@@ -47,6 +47,11 @@ public class TGModelPart {
     int u;
     int v;
 
+    /** Static scale of this part (Tabula exports scaled parts in render code); 1 = none. */
+    float scaleX = 1.0f;
+    float scaleY = 1.0f;
+    float scaleZ = 1.0f;
+
     private ModelPart.Cube cuboid = null;
 
     private final List<TGModelPart> children = new ArrayList<>();
@@ -75,8 +80,9 @@ public class TGModelPart {
         this.expansionZ = expansionZ;
     }
 
+    /** Techguns 2 {@code addBox(..., scaleFactor)}: grows the box by {@code scale} on every side (the Fabric port ignored it). */
     public void addCuboid(float x, float y, float z, float w, float h, float l, float scale) {
-        this.addCuboid(x, y, z, w, h, l);
+        this.addCuboid(x, y, z, w, h, l, scale, scale, scale);
     }
 
     public void setPivot(float px, float py, float pz) {
@@ -98,40 +104,75 @@ public class TGModelPart {
     }
 
     public void render(PoseStack poseStack, VertexConsumer vertices, int light, int overlay) {
+        if (!hasRenderScale()) {
+            this.render(poseStack, vertices, light, overlay, 0f, 0f, 0f);
+            return;
+        }
+        // scaled around the Tabula scale origin, see scaleOrigin()
+        poseStack.pushPose();
+        poseStack.translate(scaleOriginX() * SCALE, scaleOriginY() * SCALE, scaleOriginZ() * SCALE);
+        poseStack.scale(scaleX, scaleY, scaleZ);
+        poseStack.translate(-scaleOriginX() * SCALE, -scaleOriginY() * SCALE, -scaleOriginZ() * SCALE);
         this.render(poseStack, vertices, light, overlay, 0f, 0f, 0f);
+        poseStack.popPose();
+    }
+
+    /**
+     * Scales this part (Tabula "scale" export, formerly written out as pose stack code in each model). The scale must
+     * commute with the part's rotation (uniform, no rotation, or rotation about the axis whose two other scales are
+     * equal) so the geo model can reproduce it with a bone scale.
+     */
+    public TGModelPart setRenderScale(float x, float y, float z) {
+        this.scaleX = x;
+        this.scaleY = y;
+        this.scaleZ = z;
+        return this;
+    }
+
+    public boolean hasRenderScale() {
+        return scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f;
+    }
+
+    // Tabula scales around pivot + rotation (radians read as pixels); kept as is so the models look unchanged
+    float scaleOriginX() {
+        return pivotX + pitch;
+    }
+
+    float scaleOriginY() {
+        return pivotY + yaw;
+    }
+
+    float scaleOriginZ() {
+        return pivotZ + roll;
     }
 
     public void render(PoseStack poseStack, VertexConsumer vertices, int light, int overlay, float rx, float ry, float rz) {
         if (cuboid == null) {
-            this.cuboid = new ModelPart.Cube(u, v, x, y, z, width, height, length, 0, 0, 0, mirror, textureWidth, textureHeight, EnumSet.allOf(Direction.class));
+            // grow like Techguns 2 addBox(..., delta): every face moves out by the expansion, UVs keep the unexpanded size
+            this.cuboid = new ModelPart.Cube(u, v, x, y, z, width, height, length, expansionX, expansionY, expansionZ, mirror, textureWidth, textureHeight, EnumSet.allOf(Direction.class));
         }
         poseStack.pushPose();
 
         poseStack.translate(pivotX * SCALE, pivotY * SCALE, pivotZ * SCALE);
 
-        poseStack.pushPose();
-        if (this.pitch != 0.0 || rx != 0.0f) {
-            TGMatrixOps.rotate(poseStack, this.pitch * RAD2DEG + rx, 1F, 0F, 0F);
+        // Techguns 2 ModelRenderer order: Z, then Y, then X (the Fabric port had X, Y, Z, which turned parts rotated
+        // on several axes, e.g. the LMG and MAC-10 stocks, away from the original models)
+        if (this.roll != 0.0 || rz != 0.0f) {
+            TGMatrixOps.rotate(poseStack, this.roll * RAD2DEG + rz, 0F, 0F, 1F);
         }
         if (this.yaw != 0.0 || ry != 0.0f) {
             TGMatrixOps.rotate(poseStack, this.yaw * RAD2DEG + ry, 0F, 1F, 0F);
         }
-        if (this.roll != 0.0 || rz != 0.0f) {
-            TGMatrixOps.rotate(poseStack, this.roll * RAD2DEG + rz, 0F, 0F, 1F);
+        if (this.pitch != 0.0 || rx != 0.0f) {
+            TGMatrixOps.rotate(poseStack, this.pitch * RAD2DEG + rx, 1F, 0F, 0F);
         }
 
-        // Expansion
-        if (this.expansionX != 0 || this.expansionY != 0.0f || this.expansionZ != 0.0f) {
-            float scaleX = (this.width + (this.expansionX * 2.0f)) / this.width;
-            float scaleY = (this.height + (this.expansionY * 2.0f)) / this.height;
-            float scaleZ = (this.length + (this.expansionZ * 2.0f)) / this.length;
-            poseStack.scale(scaleX, scaleY, scaleZ);
-        }
-
+        poseStack.pushPose();
         this.cuboid.compile(poseStack.last(), vertices, light, overlay, -1);
         poseStack.popPose();
+        // children inherit the rotation, as in Techguns 2 (the Fabric port only applied the parent's pivot)
         for (TGModelPart child : this.children) {
-            child.render(poseStack, vertices, light, overlay, rx, ry, rz);
+            child.render(poseStack, vertices, light, overlay, 0f, 0f, 0f);
         }
         poseStack.popPose();
     }

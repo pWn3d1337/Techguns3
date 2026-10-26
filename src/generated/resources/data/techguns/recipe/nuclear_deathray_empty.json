@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "e": {
+      "item": "techguns:rad_emitter"
+    },
+    "l": {
+      "tag": "c:ingots/lead"
+    },
+    "m": {
+      "item": "techguns:nuclear_power_cell_empty"
+    },
+    "r": {
+      "item": "techguns:carbon_receiver"
+    },
+    "s": {
+      "item": "techguns:carbon_stock"
+    },
+    "t": {
+      "tag": "c:ingots/titanium"
+    }
+  },
+  "pattern": [
+    "ltl",
+    "ers",
+    " m "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:nuclear_deathray"
+  }
+}

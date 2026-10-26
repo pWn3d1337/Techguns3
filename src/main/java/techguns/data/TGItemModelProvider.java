@@ -24,6 +24,8 @@ public class TGItemModelProvider extends ItemModelProvider {
         // drawn by code (TGItemRenderer); no display transforms, the renderer positions the model itself
         TGGuns.guns().forEach(this::codeRendered);
         TGAmmo.modelAmmo().forEach(this::codeRendered);
+        codeRendered(TGGuns.STIELGRANATE);
+        codeRendered(TGGuns.FRAG_GRENADE);
     }
 
     // MIGRATION(26.x): becomes an item model definition with a special model renderer (1.21.4+).

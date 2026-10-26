@@ -5,7 +5,9 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -32,9 +35,12 @@ import techguns.gun.FirePos;
 import techguns.gun.ProjectileFactory;
 import techguns.gun.ShotParams;
 import techguns.gun.ammo.DamageModifier;
+import techguns.core.fx.EntityCondition;
+import techguns.network.FxClientHandler;
 import techguns.network.FxPayloads;
 import techguns.network.TGNetwork;
 import techguns.registry.TGEntities;
+import techguns.registry.TGParticleTypes;
 
 /**
  * Standard bullet: moves in a straight line (plus optional gravity), hits the first entity or block in its
@@ -46,17 +52,59 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
     /** Spread is given as a fraction; this scales it to degrees. */
     private static final float SPREAD_TO_DEGREES = 40.0f;
 
-    /** What happens on hit for each bullet type. */
+    /** What happens on hit for each bullet type (Fabric {@code GenericProjectileType}). */
     public enum Kind {
-        DEFAULT(TGDamageCategory.PROJECTILE, DeathType.GORE),
-        INCENDIARY(TGDamageCategory.FIRE, DeathType.DEFAULT);
+        DEFAULT(TGDamageCategory.PROJECTILE, DeathType.GORE, false),
+        INCENDIARY(TGDamageCategory.FIRE, DeathType.DEFAULT, false),
+        /** Small blast on impact (Techguns 2 {@code GenericProjectileExplosive}; Fabric only changed the damage type). */
+        EXPLOSIVE(TGDamageCategory.EXPLOSION, DeathType.GORE, false),
+        /** Advanced rounds (PDW, pulse rifle): blue tracer and impacts. */
+        ADVANCED(TGDamageCategory.PROJECTILE, DeathType.GORE, true),
+        /** Blaster bolts: energy damage, laser impact. */
+        BLASTER(TGDamageCategory.ENERGY, DeathType.LASER, false),
+        /** Gauss slugs: blue impacts plus the gauss impact flash and trail. */
+        GAUSS(TGDamageCategory.PROJECTILE, DeathType.GORE, true, null, "GaussProjectileTrail", true),
+        // FX-only projectiles (Fabric GenericProjectileFX): no bullet sprite, a particle trail and an impact FX
+        /** MIB gun. */
+        DEATOMIZER(TGDamageCategory.ENERGY, DeathType.GORE, "BlueBlasterExplosion", "BlueBlasterTrail"),
+        /** Alien blaster; sets blocks on fire when the gun does block damage. */
+        ALIEN_BLASTER(TGDamageCategory.FIRE, DeathType.DEFAULT, "AlienExplosion", "AlienBlasterTrail"),
+        /** Nether blaster; sets targets on fire. */
+        NETHER_BLASTER(TGDamageCategory.FIRE, DeathType.DEFAULT, "CyberdemonBlasterImpact", "CyberDemonBlasterTrail"),
+        /** Flamethrower flame; sets targets on fire, may set blocks on fire, goes out in water. */
+        FLAME(TGDamageCategory.FIRE, DeathType.DEFAULT, "FlamethrowerImpact", "FlamethrowerTrail"),
+        /** Hand cannon stone ball. */
+        STONE(TGDamageCategory.PROJECTILE, DeathType.GORE, false);
 
         public final TGDamageCategory category;
         public final DeathType deathType;
+        /** Uses the blue bullet impact particles. */
+        public final boolean blueImpact;
+        /** Particle system played on any hit instead of the bullet impact; null = bullet impact by block sound. */
+        @Nullable
+        public final String impactFx;
+        /** Particle system attached to the projectile on the client; null = none. */
+        @Nullable
+        public final String trailFx;
+        /** Draws the bullet sprite. */
+        public final boolean visible;
 
-        Kind(TGDamageCategory category, DeathType deathType) {
+        Kind(TGDamageCategory category, DeathType deathType, boolean blueImpact) {
+            this(category, deathType, blueImpact, null, null, true);
+        }
+
+        Kind(TGDamageCategory category, DeathType deathType, String impactFx, String trailFx) {
+            this(category, deathType, false, impactFx, trailFx, false);
+        }
+
+        Kind(TGDamageCategory category, DeathType deathType, boolean blueImpact, @Nullable String impactFx, @Nullable String trailFx,
+             boolean visible) {
             this.category = category;
             this.deathType = deathType;
+            this.blueImpact = blueImpact;
+            this.impactFx = impactFx;
+            this.trailFx = trailFx;
+            this.visible = visible;
         }
     }
 
@@ -74,7 +122,7 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
     protected Vec3 start = Vec3.ZERO;
 
     /** Client side: keep the bullet a few ticks after impact so the trail can fade out. */
-    private boolean dying;
+    protected boolean dying;
     private int dyingTicks;
 
     public GenericProjectile(EntityType<? extends GenericProjectile> type, Level level) {
@@ -118,7 +166,7 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         this.xRotO = getXRot();
     }
 
-    private void updateRotationFromMotion() {
+    protected void updateRotationFromMotion() {
         Vec3 motion = getDeltaMovement();
         setYRot((float) (Mth.atan2(motion.x, motion.z) * Mth.RAD_TO_DEG));
         setXRot((float) (Mth.atan2(motion.y, motion.horizontalDistance()) * Mth.RAD_TO_DEG));
@@ -162,16 +210,25 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         Vec3 motion = getDeltaMovement();
         setPos(getX() + motion.x, getY() + motion.y, getZ() + motion.z);
         if (isInWater()) {
-            setDeltaMovement(motion.scale(0.85));
+            setDeltaMovement(motion.scale(waterDrag()));
         }
         if (gravity > 0.0) {
             setDeltaMovement(getDeltaMovement().add(0, -gravity, 0));
+        }
+        if (kind == Kind.FLAME && isInWater()) {
+            removeAfterHit();
+            return;
         }
         updateRotationFromMotion();
 
         if (tickCount >= lifetime) {
             removeAfterHit();
         }
+    }
+
+    /** Velocity factor per tick while in water. */
+    protected double waterDrag() {
+        return 0.85;
     }
 
     @Override
@@ -196,13 +253,31 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
             if (target.hurt(createDamageSource(), currentDamage()) && target instanceof LivingEntity living) {
                 onHitLiving(living);
             }
+            if (kind == Kind.EXPLOSIVE) {
+                explode(result.getLocation());
+            }
+            if (kind.impactFx != null && level() instanceof ServerLevel server) {
+                TGNetwork.sendFxNear(server, result.getLocation(), IMPACT_FX_RADIUS, kind.impactFx);
+            }
         }
         removeAfterHit();
     }
 
+    /** Explosive rounds: radius {@value #EXPLOSIVE_POWER} blast, blocks only when the gun does block damage. */
+    private static final float EXPLOSIVE_POWER = 1.5f;
+
+    protected void explode(Vec3 pos) {
+        if (level() instanceof ServerLevel server) {
+            TGNetwork.sendFxNear(server, pos, IMPACT_FX_RADIUS, "MiningChargeBlockExplosion");
+            Level.ExplosionInteraction interaction = blockDamage ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE;
+            server.explode(this, createDamageSource(), null, pos.x, pos.y, pos.z, EXPLOSIVE_POWER, false, interaction,
+                    TGParticleTypes.NONE.get(), TGParticleTypes.NONE.get(), SoundEvents.GENERIC_EXPLODE);
+        }
+    }
+
     /** Extra effects after a successful hit (burning etc.). */
     protected void onHitLiving(LivingEntity target) {
-        if (kind == Kind.INCENDIARY && !target.fireImmune()) {
+        if ((kind == Kind.INCENDIARY || kind == Kind.NETHER_BLASTER || kind == Kind.FLAME) && !target.fireImmune()) {
             target.igniteForSeconds(3);
         }
     }
@@ -212,8 +287,25 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         super.onHitBlock(result);
         if (level() instanceof ServerLevel server) {
             impactEffects(server, result);
+            if (kind == Kind.EXPLOSIVE) {
+                explode(result.getLocation());
+            }
+            if (blockDamage && (kind == Kind.ALIEN_BLASTER || kind == Kind.FLAME)) {
+                burnBlock(server, result, kind == Kind.FLAME ? 0.5 : 0.35);
+            }
         }
         removeAfterHit();
+    }
+
+    /** Sets the hit face on fire with the given chance (Fabric {@code burnBlocks}, which only lights the face in front). */
+    protected void burnBlock(ServerLevel level, BlockHitResult result, double chance) {
+        if (random.nextDouble() > chance) {
+            return;
+        }
+        BlockPos firePos = result.getBlockPos().relative(result.getDirection());
+        if (level.isEmptyBlock(firePos) && BaseFireBlock.canBePlacedAt(level, firePos, result.getDirection())) {
+            level.setBlockAndUpdate(firePos, BaseFireBlock.getState(level, firePos));
+        }
     }
 
     /** Radius (blocks) within which players get the impact sound and particles. */
@@ -234,8 +326,20 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         } else {
             yaw = face.toYRot();
         }
+        if (kind == Kind.BLASTER) {
+            TGNetwork.sendFxNear(level, pos, IMPACT_FX_RADIUS, "LaserGunImpact");
+            return;
+        }
+        if (kind.impactFx != null) {
+            TGNetwork.sendFxNear(level, pos, IMPACT_FX_RADIUS, kind.impactFx);
+            return;
+        }
         TGNetwork.sendGunImpactNear(level, new FxPayloads.GunImpactFx(impactSoundType(sound), pos.x, pos.y, pos.z, pitch, yaw,
-                kind == Kind.INCENDIARY), IMPACT_FX_RADIUS);
+                kind == Kind.INCENDIARY, kind.blueImpact), IMPACT_FX_RADIUS);
+        if (kind == Kind.GAUSS) {
+            TGNetwork.sendFxNear(level, pos.x, pos.y, pos.z, IMPACT_FX_RADIUS,
+                    new FxPayloads.SpawnFx("GaussRifleImpact_Block", pos.x, pos.y, pos.z, 0, 0, 0, pitch, yaw, 1.0f));
+        }
     }
 
     /**
@@ -260,6 +364,10 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
     protected TGDamageSource createDamageSource() {
         TGDamageSource source = switch (kind) {
             case INCENDIARY -> TGDamage.fire(level(), this, getOwner(), kind.deathType);
+            case EXPLOSIVE -> TGDamage.explosion(level(), this, getOwner(), kind.deathType);
+            case BLASTER -> TGDamage.energy(level(), this, getOwner(), kind.deathType);
+            case DEATOMIZER -> TGDamage.energy(level(), this, getOwner(), kind.deathType).setGoreChance(1.0f);
+            case ALIEN_BLASTER, NETHER_BLASTER -> TGDamage.fire(level(), this, getOwner(), kind.deathType);
             default -> TGDamage.bullet(level(), this, getOwner(), kind.deathType);
         };
         return source.setArmorPenetration(penetration);
@@ -326,6 +434,21 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         updateRotationFromMotion();
         yRotO = getYRot();
         xRotO = getXRot();
+        startTrail(kind.trailFx);
+    }
+
+    /** Client: attaches a particle trail; called once the spawn data (kind etc.) is known. */
+    protected void startTrail(@Nullable String trailFx) {
+        if (trailFx != null && level().isClientSide) {
+            FxClientHandler.get().spawnFxOnEntity(level(), trailFx, this, 0f, 0f, 0f, false, EntityCondition.ENTITY_ALIVE);
+        }
+    }
+
+    /** Client: attaches a scaled particle trail. */
+    protected void startTrail(String trailFx, float scale) {
+        if (level().isClientSide) {
+            FxClientHandler.get().spawnFxOnEntity(level(), trailFx, this, scale, EntityCondition.ENTITY_ALIVE);
+        }
     }
 
     @Override

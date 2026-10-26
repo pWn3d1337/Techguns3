@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "m": {
+      "item": "techguns:mechanical_parts_obsidian_steel"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "s": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "sss",
+    "pmp",
+    "sss"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:minigun_drum_empty"
+  }
+}

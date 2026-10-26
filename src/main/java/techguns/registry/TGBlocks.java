@@ -14,6 +14,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import techguns.block.BioBlobBlock;
 
 /**
  * Techguns blocks. Every block registered with {@link #withItem} also gets a block item.
@@ -41,6 +42,13 @@ public final class TGBlocks {
             () -> new DropExperienceBlock(UniformInt.of(0, 0), stoneOre(5.0f).lightLevel(state -> 4)));
     public static final DeferredBlock<DropExperienceBlock> DEEPSLATE_URANIUM_ORE = withItem("deepslate_uranium_ore",
             () -> new DropExperienceBlock(UniformInt.of(0, 0), deepslateOre(7.5f).lightLevel(state -> 4)));
+
+    // --- Bio gun ---
+    /** Drops nothing (see the block loot provider). Glows with its size. */
+    public static final DeferredBlock<BioBlobBlock> BIOBLOB = withItem("bioblob",
+            () -> new BioBlobBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GREEN).noOcclusion().strength(0.0f)
+                    .sound(SoundType.SLIME_BLOCK).emissiveRendering((state, level, pos) -> true)
+                    .lightLevel(state -> (state.getValue(BioBlobBlock.SIZE) + 1) * 2)));
 
     private TGBlocks() {
     }

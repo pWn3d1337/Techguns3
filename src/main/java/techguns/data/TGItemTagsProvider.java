@@ -11,6 +11,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.Techguns;
+import techguns.registry.TGAmmo;
 import techguns.registry.TGItems;
 import techguns.registry.TGTags;
 
@@ -22,6 +23,9 @@ public class TGItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        // everything an Ammo Bag accepts: all ammo items, full and empty
+        TGAmmo.flatAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
+        TGAmmo.modelAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
         // Ore blocks: mirror the block tags
         for (String material : new String[] {"tin", "lead", "titanium", "uranium"}) {
             copy(TGTags.Blocks.ore(material), TGTags.Items.ore(material));

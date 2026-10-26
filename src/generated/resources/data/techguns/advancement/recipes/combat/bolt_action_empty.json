@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_bolt_action": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:bolt_action"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:bolt_action_empty"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_bolt_action"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:bolt_action_empty"
+    ]
+  }
+}

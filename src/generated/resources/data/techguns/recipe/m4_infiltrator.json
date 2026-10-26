@@ -1,0 +1,38 @@
+{
+  "type": "techguns:transfer_ammo",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "i": {
+      "tag": "c:ingots/steel"
+    },
+    "m": {
+      "item": "techguns:m4"
+    },
+    "p": {
+      "tag": "c:ingots/steel"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "gpg",
+    "wwm",
+    "rri"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:m4_infiltrator"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_grim_reaper": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:grim_reaper"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:grim_reaper"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_grim_reaper"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:grim_reaper"
+    ]
+  }
+}

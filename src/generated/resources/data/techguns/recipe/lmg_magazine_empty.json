@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:ingots/steel"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_iron"
+    }
+  },
+  "pattern": [
+    "ii ",
+    "imi",
+    "iii"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:lmg_magazine_empty"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:vector"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vector": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:vector"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_vector"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:vector"
+    ]
+  }
+}

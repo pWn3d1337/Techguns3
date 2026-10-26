@@ -17,13 +17,11 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.minecraft.world.entity.LivingEntity;
 import techguns.client.deatheffects.DeathEffects;
 import techguns.core.damage.DeathType;
 import techguns.core.fx.EntityCondition;
 import techguns.client.render.entity.RenderLateEntityRenderer;
-import techguns.entity.projectile.RocketProjectile;
 import techguns.network.FxClientHandler;
 import techguns.registry.TGSounds;
 
@@ -53,7 +51,6 @@ public final class ClientFx implements FxClientHandler {
             RenderLateEntityRenderer.clearQueue();
         });
         gameBus.addListener(ClientFx::onRenderLevelStage);
-        gameBus.addListener(ClientFx::onEntityJoinLevel);
         DeathEffects.init(gameBus);
     }
 
@@ -76,13 +73,6 @@ public final class ClientFx implements FxClientHandler {
         RenderLateEntityRenderer.renderQueued(buffers, event.getCamera(), partialTick, event.getPoseStack());
     }
 
-    /** Attaches the exhaust trail to rockets that appear on the client (Fabric {@code RocketProjectile.createTrailFX}). */
-    private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide && event.getEntity() instanceof RocketProjectile rocket) {
-            createFXOnEntity("RocketLauncherExhaust", rocket, 0f, 0f, 0f, false, EntityCondition.ENTITY_ALIVE);
-        }
-    }
-
     // --- FxClientHandler ---
 
     @Override
@@ -100,12 +90,18 @@ public final class ClientFx implements FxClientHandler {
     }
 
     @Override
+    public void spawnFxOnEntity(Level level, String name, Entity entity, float scale, EntityCondition condition) {
+        createFXOnEntity(name, entity, 0f, 0f, 0f, false, condition, scale);
+    }
+
+    @Override
     public void entityDeath(LivingEntity entity, DeathType deathType, float motionX, float motionY, float motionZ) {
         DeathEffects.play(entity, deathType, motionX, motionY, motionZ);
     }
 
     @Override
-    public void gunImpact(Level level, short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary) {
+    public void gunImpact(Level level, short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary,
+                          boolean blue) {
         if (!(level instanceof ClientLevel clientLevel)) {
             return;
         }
@@ -147,7 +143,8 @@ public final class ClientFx implements FxClientHandler {
         }
         clientLevel.playLocalSound(x, y, z, sound, SoundSource.AMBIENT, 1.0f, 1.0f, true);
         if (fx != null) {
-            createFX(fx, clientLevel, x, y, z, 0, 0, 0, pitch, yaw, 1.0f);
+            // advanced and gauss rounds use the blue variants (Fabric handleBulletImpactBlue)
+            createFX(blue ? fx + "_Blue" : fx, clientLevel, x, y, z, 0, 0, 0, pitch, yaw, 1.0f);
         }
     }
 
@@ -170,6 +167,12 @@ public final class ClientFx implements FxClientHandler {
     /** Spawns a particle system attached to an entity. */
     public static void createFXOnEntity(String name, @Nullable Entity entity, float offsetX, float offsetY, float offsetZ,
                                         boolean attachToHead, EntityCondition condition) {
+        createFXOnEntity(name, entity, offsetX, offsetY, offsetZ, attachToHead, condition, 1.0f);
+    }
+
+    /** Spawns a scaled particle system attached to an entity. */
+    public static void createFXOnEntity(String name, @Nullable Entity entity, float offsetX, float offsetY, float offsetZ,
+                                        boolean attachToHead, EntityCondition condition, float scale) {
         if (entity == null) {
             return;
         }
@@ -179,6 +182,7 @@ public final class ClientFx implements FxClientHandler {
                 system.entityOffset = new Vec3(offsetX, offsetY, offsetZ);
                 system.attachToHead = attachToHead;
                 system.condition = condition;
+                system.scale = scale;
                 TGParticleManager.get().addEffect(system);
             }
         }

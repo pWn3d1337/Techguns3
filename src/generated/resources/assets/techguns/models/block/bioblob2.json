@@ -1,0 +1,66 @@
+{
+  "parent": "minecraft:block/thin_block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#particle"
+        },
+        "east": {
+          "texture": "#particle",
+          "uv": [
+            1.0,
+            10.0,
+            15.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#particle",
+          "uv": [
+            1.0,
+            10.0,
+            15.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#particle",
+          "uv": [
+            1.0,
+            10.0,
+            15.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#particle"
+        },
+        "west": {
+          "texture": "#particle",
+          "uv": [
+            1.0,
+            10.0,
+            15.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        5,
+        15
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "techguns:block/bioblob"
+  }
+}

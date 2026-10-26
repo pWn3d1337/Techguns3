@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_assault_rifle_magazine_empty": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:assault_rifle_magazine_empty"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:assault_rifle_magazine_incendiary"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_assault_rifle_magazine_empty"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:assault_rifle_magazine_incendiary"
+    ]
+  }
+}

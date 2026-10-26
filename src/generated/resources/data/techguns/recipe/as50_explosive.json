@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "f": {
+      "item": "techguns:obsidian_steel_receiver"
+    },
+    "m": {
+      "item": "techguns:as50_magazine_explosive"
+    },
+    "p": {
+      "tag": "c:ingots/obsidian_steel"
+    },
+    "t": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "dpd",
+    "bbf",
+    " mt"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 10,
+        "variant": "explosive"
+      }
+    },
+    "count": 1,
+    "id": "techguns:as50"
+  }
+}

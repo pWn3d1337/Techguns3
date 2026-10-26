@@ -21,6 +21,8 @@ public final class TGCreativeTabs {
                 TGGuns.guns().forEach(gun -> output.accept(gun.get()));
                 TGAmmo.flatAmmo().forEach(item -> output.accept(item.get()));
                 TGAmmo.modelAmmo().forEach(item -> output.accept(item.get()));
+                output.accept(TGItems.AMMO_BOX.get());
+                output.accept(TGItems.AMMO_BOX_LARGE.get());
                 TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
             })

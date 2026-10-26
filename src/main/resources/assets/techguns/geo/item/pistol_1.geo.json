@@ -1,0 +1,113 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.pistol_1",
+        "texture_width": 64,
+        "texture_height": 32,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "IS2",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            0.5333,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -0.4667,
+                -0.5
+              ],
+              "size": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                21
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "IS1",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            0.5,
+            9.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -0.5,
+                9.5
+              ],
+              "size": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                24
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Slide",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -2.0,
+                -2.0
+              ],
+              "size": [
+                3.0,
+                2.0,
+                14.0
+              ],
+              "uv": [
+                0,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

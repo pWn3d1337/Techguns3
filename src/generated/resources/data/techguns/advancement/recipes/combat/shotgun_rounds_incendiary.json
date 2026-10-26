@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_shotgun_rounds": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:shotgun_rounds"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:shotgun_rounds_incendiary"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_shotgun_rounds"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:shotgun_rounds_incendiary"
+    ]
+  }
+}

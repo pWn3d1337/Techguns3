@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "f": {
+      "item": "techguns:steel_receiver"
+    },
+    "m": {
+      "item": "techguns:rocket_nuke"
+    }
+  },
+  "pattern": [
+    "mbb",
+    "f  "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 1,
+        "variant": "nuke"
+      }
+    },
+    "count": 1,
+    "id": "techguns:rocket_launcher"
+  }
+}

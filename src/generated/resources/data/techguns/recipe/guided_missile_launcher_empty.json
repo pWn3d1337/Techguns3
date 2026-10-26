@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "c": {
+      "item": "techguns:circuit_board_advanced"
+    },
+    "f": {
+      "item": "techguns:obsidian_steel_receiver"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    }
+  },
+  "pattern": [
+    "gc",
+    "bb",
+    "f "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:guided_missile_launcher"
+  }
+}

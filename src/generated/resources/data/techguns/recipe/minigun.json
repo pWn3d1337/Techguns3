@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "m": {
+      "item": "techguns:minigun_drum"
+    },
+    "r": {
+      "item": "techguns:obsidian_steel_receiver"
+    }
+  },
+  "pattern": [
+    "bbe",
+    "bbr",
+    "bbm"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:minigun"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "f": {
+      "item": "techguns:pump_mechanism"
+    },
+    "m": {
+      "item": "techguns:fuel_tank_empty"
+    },
+    "p": {
+      "tag": "c:plates/obsidian_steel"
+    },
+    "s": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "pattern": [
+    "p ",
+    "pf",
+    "sm"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:shishkebap"
+  }
+}

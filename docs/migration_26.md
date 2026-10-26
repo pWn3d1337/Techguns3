@@ -13,3 +13,6 @@ Each entry matches a `// MIGRATION(26.x): ...` comment in the code. See design d
 | `src/main/java/techguns/client/deatheffects/DeathEffects.java` | Gore gibs read entity model parts (`ListModel`, `AgeableListModel` via reflection, `HierarchicalModel` root children); entity models are reworked in 1.21.2+. Corpse hiding via `RenderLivingEvent.Pre` moves to render states. |
 | `src/main/resources/META-INF/accesstransformer.cfg` | `ModelPart.children` made public for gore gibs. |
 | `src/main/java/techguns/client/render/geo/GeckoLibGunRenderer.java` | GeckoLib 4 `GeoObjectRenderer`/`AnimationController` API; GeckoLib 5 (1.21.2+) uses render states — rewrite the bridge. |
+| `src/main/java/techguns/client/gui/LockOnOverlay.java` | GUI layers (`RegisterGuiLayersEvent`) and `GuiGraphics.blit` change with the new GUI render pipeline. |
+| `src/main/java/techguns/client/render/MiningPlaneOutline.java` | Drill plane outline via `RenderHighlightEvent.Block` and `RenderType.lines()`; block highlight rendering moves to render states in 1.21.2+. |
+| `src/main/java/techguns/item/AmmoBagItem.java`, `AmmoBagContents.java`, `client/gui/ClientAmmoBagTooltip.java` | Bundle-like item (`overrideStackedOnOther`, `TooltipComponent`); bundles are reworked in 1.21.2+ (bundle selection, new tooltip). |

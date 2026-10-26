@@ -30,6 +30,9 @@ public final class TGTags {
         private Items() {
         }
 
+        /** Items that Ammo Bags accept: all ammo items, full and empty (magazines, cells, tanks, rounds, rockets). */
+        public static final TagKey<Item> AMMO = TagKey.create(Registries.ITEM, TGIds.id("ammo"));
+
         public static TagKey<Item> ore(String material) {
             return common("ores/" + material);
         }

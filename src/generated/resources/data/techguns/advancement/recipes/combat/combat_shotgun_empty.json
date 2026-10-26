@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_combat_shotgun": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:combat_shotgun"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:combat_shotgun_empty"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_combat_shotgun"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:combat_shotgun_empty"
+    ]
+  }
+}

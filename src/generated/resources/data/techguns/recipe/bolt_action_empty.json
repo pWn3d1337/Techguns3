@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "f": {
+      "item": "techguns:iron_receiver"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "s": {
+      "item": "techguns:wood_stock"
+    }
+  },
+  "pattern": [
+    "gi ",
+    "bfs"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:bolt_action"
+  }
+}

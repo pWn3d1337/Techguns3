@@ -47,7 +47,71 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("power_plating_mk2", "Power Armor Plating Mk2"),
             Map.entry("antigrav_core", "Anti Gravity Core"),
             Map.entry("m4", "M4"),
-            Map.entry("assault_rifle_magazine_empty", "Assault Rifle Magazine (Empty)"));
+            Map.entry("ak47", "AKM"),
+            Map.entry("m4_infiltrator", "The Infiltrator"),
+            Map.entry("aug", "AUG"),
+            Map.entry("scar", "SCAR"),
+            Map.entry("thompson", "Thompson SMG"),
+            Map.entry("mac10", "MAC-10"),
+            Map.entry("lmg", "Light Machine Gun"),
+            Map.entry("bolt_action", "Bolt Action Rifle"),
+            Map.entry("smg_magazine", "SMG Magazine"),
+            Map.entry("smg_magazine_empty", "SMG Magazine (Empty)"),
+            Map.entry("smg_magazine_incendiary", "SMG Magazine (Incendiary)"),
+            Map.entry("lmg_magazine", "LMG Magazine"),
+            Map.entry("lmg_magazine_empty", "LMG Magazine (Empty)"),
+            Map.entry("lmg_magazine_incendiary", "LMG Magazine (Incendiary)"),
+            Map.entry("pistol_magazine_empty", "Pistol Magazine (Empty)"),
+            Map.entry("pistol_magazine_incendiary", "Pistol Magazine (Incendiary)"),
+            Map.entry("pistol_rounds_incendiary", "Pistol Rounds (Incendiary)"),
+            Map.entry("rifle_rounds_incendiary", "Rifle Rounds (Incendiary)"),
+            Map.entry("ammo_box", "Ammo Box (Small)"),
+            Map.entry("ammo_box_large", "Ammo Box (Large)"),
+            Map.entry("rifle_rounds_stack_incendiary", "Rifle Rounds Stack (Incendiary)"),
+            Map.entry("assault_rifle_magazine_incendiary", "Assault Rifle Magazine (Incendiary)"),
+            Map.entry("minigun_drum", "Minigun Ammo Drum"),
+            Map.entry("minigun_drum_empty", "Minigun Ammo Drum (Empty)"),
+            Map.entry("minigun_drum_incendiary", "Minigun Ammo Drum (Incendiary)"),
+            Map.entry("assault_rifle_magazine_empty", "Assault Rifle Magazine (Empty)"),
+            Map.entry("sawed_off", "Double Barrel Shotgun"),
+            Map.entry("combat_shotgun", "Combat Shotgun"),
+            Map.entry("as50", "AS50 Sniper Rifle"),
+            Map.entry("pdw", "PDW"),
+            Map.entry("shotgun_rounds_incendiary", "Shotgun Rounds (Incendiary)"),
+            Map.entry("sniper_rounds_incendiary", "Sniper Rounds (Incendiary)"),
+            Map.entry("sniper_rounds_explosive", "Sniper Rounds (Explosive)"),
+            Map.entry("as50_magazine", "AS50 Magazine"),
+            Map.entry("as50_magazine_empty", "AS50 Magazine (Empty)"),
+            Map.entry("as50_magazine_incendiary", "AS50 Magazine (Incendiary)"),
+            Map.entry("as50_magazine_explosive", "AS50 Magazine (Explosive)"),
+            Map.entry("advanced_magazine_empty", "Advanced Magazine (Empty)"),
+            Map.entry("nuclear_deathray", "Nuclear Death Ray"),
+            Map.entry("sonic_shotgun", "Sonic Rifle"),
+            Map.entry("mib_gun", "De-Atomizer Pistol"),
+            Map.entry("redstone_battery_empty", "Redstone Battery (Empty)"),
+            Map.entry("nuclear_power_cell_empty", "Nuclear Power Cell (Depleted)"),
+            Map.entry("rocket_nuke", "Rocket (Tactical Nuke)"),
+            Map.entry("rocket_high_velocity", "Rocket (High Velocity)"),
+            Map.entry("stielgranate", "Stick Grenade"),
+            Map.entry("guided_missile_launcher", "Guided Missile Launcher"),
+            Map.entry("grenade_40mm", "40mm Grenade"),
+            Map.entry("grim_reaper", "Grim Reaper"),
+            Map.entry("frag_grenade", "Frag Grenade"),
+            Map.entry("tfg", "TFG 10K"),
+            Map.entry("bioblob", "Bio Blob"),
+            Map.entry("fuel_tank_empty", "Fuel Tank (Empty)"),
+            Map.entry("bio_tank_empty", "Bio Tank (Empty)"),
+            Map.entry("magic_bullet_fire", "Magic Bullet (Fire)"),
+            Map.entry("magic_bullet_lightning", "Magic Bullet (Lightning)"),
+            Map.entry("compressed_air_tank_empty", "Compressed Air Tank (Empty)"),
+            Map.entry("chainsaw_blades_steel", "Chainsaw Blades (Steel)"),
+            Map.entry("chainsaw_blades_obsidian", "Chainsaw Blades (Obsidian)"),
+            Map.entry("chainsaw_blades_carbon", "Chainsaw Blades (Carbon)"),
+            Map.entry("mining_drill_head_obsidian", "Mining Drill Head (Obsidian)"),
+            Map.entry("mining_drill_head_carbon", "Mining Drill Head (Carbon)"),
+            Map.entry("power_hammer_head_steel", "Power Hammer Head (Steel)"),
+            Map.entry("power_hammer_head_obsidian", "Power Hammer Head (Obsidian)"),
+            Map.entry("power_hammer_head_carbon", "Power Hammer Head (Carbon)"));
 
     @Override
     protected void addTranslations() {
@@ -71,6 +135,10 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.gun.reload_time", "Reload time: %ss");
         add("tooltip.techguns.gun.penetration", "Armor penetration: %s");
         add("tooltip.techguns.shift_for_details", "Hold Shift for details");
+        add("tooltip.techguns.grenade.radius", "Radius: %s");
+        add("tooltip.techguns.grenade.bounces", "Bounces: %s");
+        add("techguns.lock_on.locking", "Locking... : %s");
+        add("techguns.lock_on.locked", "Locked On: %s");
     }
 
     /** Every block and item gets an English name; title-cased from its registry name unless overridden. */

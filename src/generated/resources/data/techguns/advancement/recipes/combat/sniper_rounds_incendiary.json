@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sniper_rounds": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:sniper_rounds"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:sniper_rounds_incendiary"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sniper_rounds"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:sniper_rounds_incendiary"
+    ]
+  }
+}

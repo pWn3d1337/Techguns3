@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:carbon_barrel"
+    },
+    "m": {
+      "item": "techguns:advanced_magazine"
+    },
+    "r": {
+      "item": "techguns:carbon_receiver"
+    },
+    "s": {
+      "item": "techguns:carbon_stock"
+    }
+  },
+  "pattern": [
+    "brs",
+    " m "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:pdw"
+  }
+}

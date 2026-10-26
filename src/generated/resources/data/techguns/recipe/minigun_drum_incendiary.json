@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:minigun_drum_empty"
+    },
+    {
+      "item": "techguns:rifle_rounds_stack_incendiary"
+    },
+    {
+      "item": "techguns:rifle_rounds_stack_incendiary"
+    },
+    {
+      "item": "techguns:rifle_rounds_stack_incendiary"
+    },
+    {
+      "item": "techguns:rifle_rounds_stack_incendiary"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:minigun_drum_incendiary"
+  }
+}

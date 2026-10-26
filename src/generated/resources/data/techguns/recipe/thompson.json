@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:iron_barrel"
+    },
+    "f": {
+      "item": "techguns:iron_receiver"
+    },
+    "m": {
+      "item": "techguns:smg_magazine"
+    },
+    "s": {
+      "item": "techguns:wood_stock"
+    }
+  },
+  "pattern": [
+    "bfs",
+    "m  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:thompson"
+  }
+}

@@ -24,7 +24,7 @@
           ]
         },
         {
-          "name": "Glow5",
+          "name": "Glow5_glow",
           "parent": "root",
           "pivot": [
             -1.0,
@@ -43,10 +43,68 @@
                 0.1,
                 0.1
               ],
-              "uv": [
-                34,
-                0
-              ],
+              "uv": {
+                "north": {
+                  "uv": [
+                    34.35,
+                    0.35
+                  ],
+                  "uv_size": [
+                    0.5,
+                    0.5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    34.35,
+                    0.35
+                  ],
+                  "uv_size": [
+                    0.5,
+                    0.5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    34.35,
+                    0.35
+                  ],
+                  "uv_size": [
+                    0.5,
+                    0.5
+                  ]
+                },
+                "west": {
+                  "uv": [
+                    34.35,
+                    0.35
+                  ],
+                  "uv_size": [
+                    0.5,
+                    0.5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    34.35,
+                    0.35
+                  ],
+                  "uv_size": [
+                    0.5,
+                    0.5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    34.35,
+                    0.35
+                  ],
+                  "uv_size": [
+                    0.5,
+                    0.5
+                  ]
+                }
+              },
               "mirror": true
             }
           ]
@@ -533,7 +591,7 @@
           ]
         },
         {
-          "name": "Glow2",
+          "name": "Glow2_glow",
           "parent": "root",
           "pivot": [
             18.0,
@@ -701,7 +759,7 @@
           ]
         },
         {
-          "name": "Glow1",
+          "name": "Glow1_glow",
           "parent": "root",
           "pivot": [
             1.0,
@@ -953,7 +1011,7 @@
           ]
         },
         {
-          "name": "Glow3",
+          "name": "Glow3_glow",
           "parent": "root",
           "pivot": [
             9.0,

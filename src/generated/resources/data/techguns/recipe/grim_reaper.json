@@ -1,0 +1,25 @@
+{
+  "type": "techguns:transfer_ammo",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:carbon_receiver"
+    },
+    "r": {
+      "item": "techguns:guided_missile_launcher"
+    }
+  },
+  "pattern": [
+    "rr ",
+    "rrc"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:grim_reaper"
+  }
+}

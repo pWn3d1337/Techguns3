@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:ingots/obsidian_steel"
+    }
+  },
+  "pattern": [
+    " ii",
+    "iii",
+    " ii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:mining_drill_head_obsidian"
+  }
+}

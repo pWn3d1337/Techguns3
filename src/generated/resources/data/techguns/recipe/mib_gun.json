@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:laser_barrel"
+    },
+    "f": {
+      "item": "techguns:mechanical_parts_carbon"
+    },
+    "m": {
+      "item": "techguns:energy_cell"
+    },
+    "p": {
+      "tag": "c:ingots/titanium"
+    },
+    "s": {
+      "item": "techguns:sonic_emitter"
+    }
+  },
+  "pattern": [
+    "bsp",
+    " fp",
+    "  m"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:mib_gun"
+  }
+}

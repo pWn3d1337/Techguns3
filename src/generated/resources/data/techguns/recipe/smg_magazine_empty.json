@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:nuggets/iron"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_iron"
+    }
+  },
+  "pattern": [
+    "ii ",
+    "ii ",
+    "imi"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:smg_magazine_empty"
+  }
+}

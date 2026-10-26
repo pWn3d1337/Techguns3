@@ -35,20 +35,21 @@ public class GenericBeamProjectile extends GenericProjectile {
     public static final int BEAM_LIFETIME = 10;
     /** Dev testing only (/tgdebug slowbeams): keeps beams visible longer; 0 = normal. */
     public static int debugLifetimeOverride = 0;
-    /** Particle system played where the beam hits (Techguns 2 {@code impactFX} of the laser gun factory). */
-    private static final String IMPACT_FX = "LaserGunImpact";
     private static final float FORWARD_OFFSET = 0.35f;
     private static final float SIDE_OFFSET = 0.16f;
 
     public enum BeamType {
-        LASER(TGDamageCategory.ENERGY),
-        NDR(TGDamageCategory.RADIATION),
-        TESLA(TGDamageCategory.LIGHTNING);
+        LASER(TGDamageCategory.ENERGY, "LaserGunImpact"),
+        NDR(TGDamageCategory.RADIATION, "BeamGunImpactFX"),
+        TESLA(TGDamageCategory.LIGHTNING, "TeslaFlare");
 
         public final TGDamageCategory category;
+        /** Particle system played where the beam hits (Techguns 2 {@code impactFX} of the beam factory). */
+        public final String impactFx;
 
-        BeamType(TGDamageCategory category) {
+        BeamType(TGDamageCategory category, String impactFx) {
             this.category = category;
+            this.impactFx = impactFx;
         }
     }
 
@@ -163,14 +164,17 @@ public class GenericBeamProjectile extends GenericProjectile {
 
     private void sendImpactFx(ServerLevel server, Vec3 pos, Vec3 motion) {
         TGNetwork.sendFxNear(server, pos.x, pos.y, pos.z, IMPACT_FX_RADIUS,
-                new FxPayloads.SpawnFx(IMPACT_FX, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z));
+                new FxPayloads.SpawnFx(beamType.impactFx, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z));
     }
 
     @Override
     protected TGDamageSource createDamageSource() {
-        TGDamageSource source = beamType == BeamType.NDR
-                ? TGDamage.radiation(level(), this, getOwner(), DeathType.LASER)
-                : TGDamage.energy(level(), this, getOwner(), DeathType.LASER);
+        TGDamageSource source = switch (beamType) {
+            case NDR -> TGDamage.radiation(level(), this, getOwner(), DeathType.LASER);
+            // Fabric TeslaProjectile also disables knockback; follows with the knockback multiplier
+            case TESLA -> TGDamage.lightning(level(), this, getOwner(), DeathType.LASER);
+            default -> TGDamage.energy(level(), this, getOwner(), DeathType.LASER);
+        };
         return source.setArmorPenetration(penetration);
     }
 

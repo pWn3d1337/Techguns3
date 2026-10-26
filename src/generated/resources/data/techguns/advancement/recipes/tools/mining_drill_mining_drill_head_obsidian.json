@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mining_drill_head_obsidian": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:mining_drill_head_obsidian"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:mining_drill_mining_drill_head_obsidian"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mining_drill_head_obsidian"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:mining_drill_mining_drill_head_obsidian"
+    ]
+  }
+}

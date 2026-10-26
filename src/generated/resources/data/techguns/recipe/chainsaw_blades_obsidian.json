@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:ingots/obsidian_steel"
+    },
+    "p": {
+      "item": "techguns:mechanical_parts_obsidian_steel"
+    }
+  },
+  "pattern": [
+    " i",
+    "ip",
+    " i"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:chainsaw_blades_obsidian"
+  }
+}

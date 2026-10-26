@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "e": {
+      "item": "techguns:sonic_emitter"
+    },
+    "m": {
+      "item": "techguns:energy_cell_empty"
+    },
+    "p": {
+      "tag": "c:ingots/titanium"
+    },
+    "r": {
+      "item": "techguns:carbon_receiver"
+    },
+    "s": {
+      "item": "techguns:carbon_stock"
+    }
+  },
+  "pattern": [
+    " p ",
+    "ers",
+    " m "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:sonic_shotgun"
+  }
+}

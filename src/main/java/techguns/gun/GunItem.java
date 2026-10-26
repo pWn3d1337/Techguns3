@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import techguns.core.damage.TGDamageCategory;
 import techguns.gun.ammo.AmmoType;
 import techguns.gun.ammo.DamageModifier;
+import techguns.core.fx.EntityCondition;
 import techguns.network.TGNetwork;
 import techguns.registry.TGComponents;
 
@@ -43,6 +44,12 @@ public class GunItem extends Item {
     private final GunStats stats;
     private final GunSounds sounds;
     private final ProjectileSelector projectiles;
+    /** Particle system attached to the shooter on every shot (NDR muzzle beam); null = none. */
+    @Nullable
+    private String fireFx;
+    private float fireFxX;
+    private float fireFxY;
+    private float fireFxZ;
 
     public GunItem(Properties properties, GunStats stats, GunSounds sounds, ProjectileSelector projectiles) {
         super(properties.stacksTo(1).component(TGComponents.GUN_AMMO.get(), new GunAmmo(stats.firing().clipSize(), AmmoType.DEFAULT)));
@@ -51,12 +58,31 @@ public class GunItem extends Item {
         this.projectiles = projectiles;
     }
 
+    /** Fabric {@code setFireFX}: the x offset is mirrored for the right hand. */
+    public GunItem withFireFx(String name, float x, float y, float z) {
+        this.fireFx = name;
+        this.fireFxX = x;
+        this.fireFxY = y;
+        this.fireFxZ = z;
+        return this;
+    }
+
+    public GunSounds sounds() {
+        return sounds;
+    }
+
     public GunStats stats() {
         return stats;
     }
 
     public AmmoType ammoType() {
         return projectiles.ammoType();
+    }
+
+    /** Server: the target a client claims to have locked on, if this gun locks on and the claim is plausible; else null. */
+    @Nullable
+    public Entity acceptTarget(Player player, @Nullable Entity target) {
+        return null;
     }
 
     /** Guns shoot with left click; tools like the chainsaw override this. */
@@ -77,6 +103,11 @@ public class GunItem extends Item {
      * shoot payload.
      */
     public void shoot(ItemStack stack, Level level, Player player, InteractionHand hand, boolean zooming) {
+        shoot(stack, level, player, hand, zooming, null);
+    }
+
+    /** @param target locked-on target sent by the client (lock-on guns), or null */
+    public void shoot(ItemStack stack, Level level, Player player, InteractionHand hand, boolean zooming, @Nullable Entity target) {
         ShooterState state = ShooterState.of(player);
         if (state.fireDelay(hand) > 0) {
             return;
@@ -103,7 +134,11 @@ public class GunItem extends Item {
                 spreadMultiplier *= stats.zoom().get().spreadMultiplier();
                 firePos = FirePos.CENTER;
             }
-            fireProjectiles(level, player, stack, spreadMultiplier, 1.0f, firePos);
+            fireProjectiles(level, player, stack, spreadMultiplier, 1.0f, firePos, target);
+            if (fireFx != null) {
+                float x = firePos == FirePos.RIGHT ? -fireFxX : fireFxX;
+                TGNetwork.sendFxOnEntityAndSelf(player, fireFx, x, fireFxY - 0.1f, fireFxZ, true, EntityCondition.ENTITY_ALIVE);
+            }
             TGNetwork.sendGunFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks());
         } else {
             GunClientEffects.get().onFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks());
@@ -139,42 +174,59 @@ public class GunItem extends Item {
     }
 
     /** Spawns the projectile(s) of one shot. Server side only. */
-    protected void fireProjectiles(Level level, LivingEntity shooter, ItemStack stack, float spreadMultiplier, float damageMultiplier, FirePos firePos) {
+    protected void fireProjectiles(Level level, LivingEntity shooter, ItemStack stack, float spreadMultiplier, float damageMultiplier, FirePos firePos,
+                                   @Nullable Entity target) {
         GunStats.Projectile projectile = stats.projectile();
-        spawnProjectile(level, shooter, stack, projectile.spread() * spreadMultiplier, projectile.forwardOffset(), damageMultiplier, firePos);
+        spawnProjectile(level, shooter, stack, projectile.spread() * spreadMultiplier, projectile.forwardOffset(), damageMultiplier, firePos, target);
 
         if (projectile.pellets() > 0) {
             float burstOffset = projectile.burst() ? projectile.speed() / projectile.pellets() : 0.0f;
             for (int i = 0; i < projectile.pellets(); i++) {
                 spawnProjectile(level, shooter, stack, projectile.pelletSpread() * spreadMultiplier,
-                        projectile.forwardOffset() + burstOffset * (i + 1.0f), damageMultiplier, firePos);
+                        projectile.forwardOffset() + burstOffset * (i + 1.0f), damageMultiplier, firePos, target);
             }
         }
     }
 
-    protected void spawnProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float forwardOffset, float damageMultiplier, FirePos firePos) {
-        ProjectileFactory<?> factory = projectiles.factory(GunData.variant(stack));
-        DamageModifier mod = factory.modifier();
-        GunStats.Damage damage = stats.damage();
-        GunStats.Projectile projectile = stats.projectile();
-
-        float speed = mod.velocity(projectile.speed());
-        int lifetime = Math.round(projectile.lifetimeTicks() * mod.rangeMul() + mod.rangeAdd());
-        ShotParams params = new ShotParams(this, level, shooter,
-                mod.damage(damage.damage()) * damageMultiplier, mod.damage(damage.damageMin()) * damageMultiplier,
-                mod.range(damage.dropStart()), mod.range(damage.dropEnd()), damage.penetration(),
-                speed, lifetime, spread, projectile.gravity(), mod.radius(damage.radius()),
-                blockDamage(shooter), firePos);
-
-        Projectile entity = factory.create(params);
+    protected void spawnProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float forwardOffset, float damageMultiplier, FirePos firePos,
+                                   @Nullable Entity target) {
+        Projectile entity = createProjectile(level, shooter, stack, spread, damageMultiplier, firePos, target);
         if (forwardOffset > 0.0f) {
+            float speed = projectiles.factory(GunData.variant(stack)).modifier().velocity(stats.projectile().speed());
             entity.setPos(entity.position().add(entity.getDeltaMovement().scale(forwardOffset / speed)));
         }
         level.addFreshEntity(entity);
     }
 
+    /** Creates (but does not spawn) one projectile of the loaded ammo variant. */
+    protected Projectile createProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos,
+                                          @Nullable Entity target) {
+        return factory(stack).create(shotParams(level, shooter, stack, spread, damageMultiplier, firePos, target));
+    }
+
+    /** Projectile factory of the loaded ammo variant. */
+    protected ProjectileFactory<?> factory(ItemStack stack) {
+        return projectiles.factory(GunData.variant(stack));
+    }
+
+    /** Gun stats with the loaded ammo's damage modifier applied, for one projectile. */
+    protected ShotParams shotParams(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos,
+                                    @Nullable Entity target) {
+        DamageModifier mod = factory(stack).modifier();
+        GunStats.Damage damage = stats.damage();
+        GunStats.Projectile projectile = stats.projectile();
+
+        float speed = mod.velocity(projectile.speed());
+        int lifetime = Math.round(projectile.lifetimeTicks() * mod.rangeMul() + mod.rangeAdd());
+        return new ShotParams(this, level, shooter,
+                mod.damage(damage.damage()) * damageMultiplier, mod.damage(damage.damageMin()) * damageMultiplier,
+                mod.range(damage.dropStart()), mod.range(damage.dropEnd()), damage.penetration(),
+                speed, lifetime, spread, projectile.gravity(), mod.radius(damage.radius()),
+                blockDamage(shooter), firePos, target);
+    }
+
     /** Players in safe mode never damage blocks. */
-    protected static boolean blockDamage(LivingEntity shooter) {
+    public static boolean blockDamage(LivingEntity shooter) {
         // TODO Phase 4: safe mode toggle in player data; until then guns never damage blocks
         return !(shooter instanceof Player);
     }
@@ -255,6 +307,39 @@ public class GunItem extends Item {
             variant.bullet().stream().filter(java.util.Objects::nonNull)
                     .forEach(bullet -> AmmoInventory.give(player, new ItemStack(bullet, bullets)));
         }
+    }
+
+    /**
+     * Items an unloaded gun gives back (ammo change recipe, Fabric {@code AmmoChangeRecipe}): per ammo slot a full
+     * magazine if the rounds left fill one, else the loose rounds and the empty item.
+     */
+    public List<ItemStack> unloadedItems(GunAmmo current) {
+        List<ItemStack> items = new java.util.ArrayList<>();
+        AmmoType type = ammoType();
+        AmmoType.Variant variant = type.variant(current.variant());
+        GunStats.Firing firing = stats.firing();
+        float shotsPerBullet = techguns.core.gun.GunMath.shotsPerBullet(firing.clipSize(), firing.ammoPerReload(), type.bulletsPerMag());
+        int bullets = (int) Math.floor(current.loaded() / shotsPerBullet);
+        List<ItemStack> empties = type.emptyStacks();
+        for (int slot = 0; slot < variant.ammo().size(); slot++) {
+            ItemStack empty = slot < empties.size() ? empties.get(slot) : ItemStack.EMPTY;
+            net.minecraft.world.level.ItemLike bullet = slot < variant.bullet().size() ? variant.bullet().get(slot) : null;
+            if (!empty.isEmpty() && type.bulletsPerMag() > 0 && bullets == type.bulletsPerMag()) {
+                items.add(new ItemStack(variant.ammo().get(slot)));
+                continue;
+            }
+            if (bullets > 0 && bullet != null) {
+                // split into valid stack sizes
+                ItemStack rounds = new ItemStack(bullet);
+                for (int left = bullets; left > 0; left -= rounds.getMaxStackSize()) {
+                    items.add(rounds.copyWithCount(Math.min(left, rounds.getMaxStackSize())));
+                }
+            }
+            if (!empty.isEmpty()) {
+                items.add(empty);
+            }
+        }
+        return items;
     }
 
     // ------------------------------------------------------------------------------------------------

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_aug": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:aug"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:aug"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_aug"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:aug"
+    ]
+  }
+}

@@ -29,9 +29,10 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
      * @param recoilTicks      duration of the recoil animation
      * @param muzzleFlashTicks duration of the muzzle flash
      * @param silenced         no muzzle light, quieter
+     * @param continuousAnimation recoil and muzzle flash keep running instead of restarting on every shot (minigun)
      */
     public record Firing(boolean semiAuto, int fireDelay, int clipSize, int reloadTicks, int ammoPerReload,
-                         int recoilTicks, int muzzleFlashTicks, boolean silenced) {
+                         int recoilTicks, int muzzleFlashTicks, boolean silenced, boolean continuousAnimation) {
         public static final Codec<Firing> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.BOOL.optionalFieldOf("semi_auto", false).forGetter(Firing::semiAuto),
                 Codec.INT.fieldOf("fire_delay").forGetter(Firing::fireDelay),
@@ -40,7 +41,8 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
                 Codec.INT.optionalFieldOf("ammo_per_reload", 1).forGetter(Firing::ammoPerReload),
                 Codec.INT.optionalFieldOf("recoil_ticks", 5).forGetter(Firing::recoilTicks),
                 Codec.INT.optionalFieldOf("muzzle_flash_ticks", 5).forGetter(Firing::muzzleFlashTicks),
-                Codec.BOOL.optionalFieldOf("silenced", false).forGetter(Firing::silenced)
+                Codec.BOOL.optionalFieldOf("silenced", false).forGetter(Firing::silenced),
+                Codec.BOOL.optionalFieldOf("continuous_animation", false).forGetter(Firing::continuousAnimation)
         ).apply(i, Firing::new));
     }
 
@@ -125,6 +127,7 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
         private int recoilTicks = 5;
         private int muzzleFlashTicks = 5;
         private boolean silenced;
+        private boolean continuousAnimation;
 
         private final float damage;
         private float damageMin;
@@ -218,6 +221,12 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
             return this;
         }
 
+        /** Recoil and muzzle flash don't restart while still running (Techguns 2 {@code setCheckRecoil/MuzzleFlash}). */
+        public Builder continuousAnimation() {
+            this.continuousAnimation = true;
+            return this;
+        }
+
         public Builder zoom(float fovMultiplier, boolean toggle, float spreadMultiplier, boolean fireCentered) {
             this.zoom = new Zoom(fovMultiplier, toggle, spreadMultiplier, fireCentered);
             return this;
@@ -235,7 +244,7 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
 
         public GunStats build() {
             return new GunStats(
-                    new Firing(semiAuto, fireDelay, clipSize, reloadTicks, ammoPerReload, recoilTicks, muzzleFlashTicks, silenced),
+                    new Firing(semiAuto, fireDelay, clipSize, reloadTicks, ammoPerReload, recoilTicks, muzzleFlashTicks, silenced, continuousAnimation),
                     new Damage(damage, damageMin, dropStart, dropEnd, penetration, radius),
                     new Projectile(speed, range, spread, gravity, forwardOffset, pellets, pelletSpread, burst),
                     Optional.ofNullable(zoom), handType, holdType);

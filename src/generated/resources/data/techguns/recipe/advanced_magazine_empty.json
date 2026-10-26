@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:ingots/obsidian_steel"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_obsidian_steel"
+    }
+  },
+  "pattern": [
+    "i i",
+    "i i",
+    "imi"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:advanced_magazine_empty"
+  }
+}

@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import techguns.item.AmmoBagItem;
 
 /**
  * Techguns items. Plain material/component items are registered with {@link #simple} and get their
@@ -102,12 +103,25 @@ public final class TGItems {
     public static final DeferredItem<Item> SONIC_EMITTER = simple("sonic_emitter");
     public static final DeferredItem<Item> ANTIGRAV_CORE = simple("antigrav_core");
     public static final DeferredItem<Item> PLASMA_GENERATOR = simple("plasma_generator");
+    // Mining heads of the melee tools (batch 3f)
+    public static final DeferredItem<Item> CHAINSAW_BLADES_STEEL = simple("chainsaw_blades_steel");
+    public static final DeferredItem<Item> CHAINSAW_BLADES_OBSIDIAN = simple("chainsaw_blades_obsidian");
+    public static final DeferredItem<Item> CHAINSAW_BLADES_CARBON = simple("chainsaw_blades_carbon");
+    public static final DeferredItem<Item> POWER_HAMMER_HEAD_STEEL = simple("power_hammer_head_steel");
+    public static final DeferredItem<Item> POWER_HAMMER_HEAD_OBSIDIAN = simple("power_hammer_head_obsidian");
+    public static final DeferredItem<Item> POWER_HAMMER_HEAD_CARBON = simple("power_hammer_head_carbon");
+    public static final DeferredItem<Item> MINING_DRILL_HEAD_OBSIDIAN = simple("mining_drill_head_obsidian");
+    public static final DeferredItem<Item> MINING_DRILL_HEAD_CARBON = simple("mining_drill_head_carbon");
     public static final DeferredItem<Item> PROTECTIVE_FIBER = simple("protective_fiber");
     public static final DeferredItem<Item> HEAT_RAY_FOCUS = simple("heat_ray_focus");
     public static final DeferredItem<Item> UV_EMITTER = simple("uv_emitter");
 
     private TGItems() {
     }
+
+    // --- Ammo Bags (capacity in rounds; a full stack counts 64) ---
+    public static final DeferredItem<Item> AMMO_BOX = ITEMS.registerItem("ammo_box", props -> new AmmoBagItem(props, 64 * 4));
+    public static final DeferredItem<Item> AMMO_BOX_LARGE = ITEMS.registerItem("ammo_box_large", props -> new AmmoBagItem(props, 64 * 8));
 
     private static DeferredItem<Item> simple(String name) {
         DeferredItem<Item> item = ITEMS.registerSimpleItem(name);

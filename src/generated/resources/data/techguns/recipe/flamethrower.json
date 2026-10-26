@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "f": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "m": {
+      "item": "techguns:fuel_tank"
+    },
+    "p": {
+      "item": "techguns:pump_mechanism"
+    },
+    "r": {
+      "item": "techguns:iron_receiver"
+    },
+    "s": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "prs",
+    "fm "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:flamethrower"
+  }
+}

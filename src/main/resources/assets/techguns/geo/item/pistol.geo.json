@@ -1,0 +1,212 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.pistol",
+        "texture_width": 64,
+        "texture_height": 32,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "Top",
+          "parent": "root",
+          "pivot": [
+            -2.0,
+            -2.0,
+            -2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -3.0,
+                -2.0
+              ],
+              "size": [
+                3.0,
+                1.0,
+                14.0
+              ],
+              "uv": [
+                0,
+                17
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Grip3",
+          "parent": "root",
+          "pivot": [
+            -1.5,
+            -3.0,
+            7.0
+          ],
+          "rotation": [
+            12.5,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                -10.0,
+                7.0
+              ],
+              "size": [
+                2.0,
+                7.0,
+                3.0
+              ],
+              "uv": [
+                3,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Barrel",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            -0.25,
+            -3.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            45.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                -1.25,
+                -3.0
+              ],
+              "size": [
+                1.0,
+                1.0,
+                6.0
+              ],
+              "uv": [
+                0,
+                21
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Grip2",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            -5.0,
+            5.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -6.0,
+                5.0
+              ],
+              "size": [
+                1.0,
+                1.0,
+                3.0
+              ],
+              "uv": [
+                20,
+                5
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Trigger",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            -2.5,
+            6.5
+          ],
+          "rotation": [
+            -23.4319,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -4.5,
+                6.5
+              ],
+              "size": [
+                1.0,
+                2.0,
+                1.0
+              ],
+              "uv": [
+                25,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Grip1",
+          "parent": "root",
+          "pivot": [
+            -1.0,
+            -3.0,
+            4.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -6.0,
+                4.0
+              ],
+              "size": [
+                1.0,
+                3.0,
+                1.0
+              ],
+              "uv": [
+                20,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

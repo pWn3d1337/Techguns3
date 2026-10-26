@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:iron_barrel"
+    },
+    "f": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "w": {
+      "item": "techguns:wood_stock"
+    }
+  },
+  "pattern": [
+    "bfw",
+    "bf "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:sawed_off"
+  }
+}

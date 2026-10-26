@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "m": {
+      "item": "techguns:assault_rifle_magazine"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "r": {
+      "item": "techguns:obsidian_steel_receiver"
+    },
+    "s": {
+      "item": "techguns:plastic_stock"
+    }
+  },
+  "pattern": [
+    "gpd",
+    "brs",
+    "m  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:scar"
+  }
+}

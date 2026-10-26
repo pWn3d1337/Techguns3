@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pulse_rifle": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:pulse_rifle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:pulse_rifle_empty"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pulse_rifle"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:pulse_rifle_empty"
+    ]
+  }
+}

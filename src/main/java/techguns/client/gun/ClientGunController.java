@@ -14,6 +14,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import techguns.client.TGKeyMappings;
 import techguns.gun.GunClientEffects;
 import techguns.gun.GunItem;
+import techguns.gun.LockOnGunItem;
 import techguns.gun.GunStats;
 import techguns.gun.ShooterState;
 import techguns.network.TGNetwork;
@@ -34,6 +35,8 @@ public final class ClientGunController implements GunClientEffects {
     private boolean wasZooming;
     /** Dev testing: simulated held fire button (see TGDebugCommands). */
     private int forcedFireTicks;
+    /** Dev testing: ticks the use key counts as held (/tgdebug aim). */
+    private int forcedUseTicks;
 
     private ClientGunController() {
     }
@@ -45,6 +48,11 @@ public final class ClientGunController implements GunClientEffects {
     /** Dev testing: behave as if the attack key were held for {@code ticks} ticks. */
     public void holdFireFor(int ticks) {
         forcedFireTicks = ticks;
+    }
+
+    /** Dev testing: hold the use key for {@code ticks} ticks (MCP cannot press keys). */
+    public void holdUseFor(int ticks) {
+        forcedUseTicks = ticks;
     }
 
     /** Dev testing: toggle zoom of the main hand gun as a right click would. */
@@ -77,8 +85,18 @@ public final class ClientGunController implements GunClientEffects {
     @Override
     public void onFired(LivingEntity shooter, InteractionHand hand, int recoilTicks, int muzzleFlashTicks) {
         ShooterValues values = ShooterValues.of(shooter.getId());
-        values.startRecoil(hand, recoilTicks);
-        values.startMuzzleFlash(hand, muzzleFlashTicks);
+        boolean continuous = shooter.getItemInHand(hand).getItem() instanceof GunItem gun && gun.stats().firing().continuousAnimation();
+        if (!continuous || !values.recoil(hand).isActive()) {
+            values.startRecoil(hand, recoilTicks);
+        }
+        if (!continuous || !values.muzzleFlash(hand).isActive()) {
+            values.startMuzzleFlash(hand, muzzleFlashTicks);
+        }
+    }
+
+    @Override
+    public void onChargeReleased(LivingEntity shooter, InteractionHand hand, float charge) {
+        ShooterValues.of(shooter.getId()).setRecoilCharge(hand, charge);
     }
 
     @Override
@@ -134,7 +152,32 @@ public final class ClientGunController implements GunClientEffects {
         if (forcedFireTicks > 0) {
             forcedFireTicks--;
         }
-        boolean useDown = mc.options.keyUse.isDown();
+        // dev testing: start and release the item use directly (vanilla key handling ignores a background window),
+        // so charging and grenade wind-up run as with a held use key
+        boolean useDown = mc.options.keyUse.isDown() || forcedUseTicks > 0;
+        if (forcedUseTicks > 0 && mc.gameMode != null) {
+            // the key state keeps vanilla from releasing the use again
+            mc.options.keyUse.setDown(true);
+            if (!player.isUsingItem()) {
+                mc.gameMode.useItem(player, InteractionHand.MAIN_HAND);
+            }
+            if (--forcedUseTicks == 0) {
+                mc.options.keyUse.setDown(false);
+                if (player.isUsingItem()) {
+                    mc.gameMode.releaseUsingItem(player);
+                }
+            }
+        }
+
+        if (mainHand.getItem() instanceof LockOnGunItem lockOnGun && useDown) {
+            // a new press of the use key starts a new lock (Techguns 2 MouseMixin)
+            if (!useWasDown) {
+                LockOnTracker.reset();
+            }
+            LockOnTracker.tick(player, lockOnGun);
+        } else if (!(mainHand.getItem() instanceof LockOnGunItem)) {
+            LockOnTracker.reset();
+        }
 
         if (mainHand.getItem() instanceof GunItem gun) {
             GunStats stats = gun.stats();
@@ -172,7 +215,8 @@ public final class ClientGunController implements GunClientEffects {
             return;
         }
         boolean zooming = isZooming();
-        TGNetwork.sendShoot(hand, zooming);
+        int targetId = gun instanceof LockOnGunItem lockOnGun ? LockOnTracker.lockedTargetId(lockOnGun) : -1;
+        TGNetwork.sendShoot(hand, zooming, targetId);
         gun.shoot(stack, player.level(), player, hand, zooming);
     }
 

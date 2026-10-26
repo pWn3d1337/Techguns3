@@ -18,6 +18,9 @@ public final class AmmoType {
     public static final String EXPLOSIVE = "explosive";
     public static final String NUKE = "nuke";
     public static final String HIGH_VELOCITY = "high_velocity";
+    /** Magic rifle bullets. */
+    public static final String FIRE = "fire";
+    public static final String LIGHTNING = "lightning";
 
     /**
      * @param key    variant name stored on the gun
@@ -47,6 +50,11 @@ public final class AmmoType {
     /** Ammo item that leaves an empty item behind (magazines, energy cells). */
     public static AmmoType withEmpty(ItemLike ammo, ItemLike empty, ItemLike bullet, int bulletsPerMag) {
         return new AmmoType(List.of(ammo), Collections.singletonList(bullet), List.of(empty), bulletsPerMag);
+    }
+
+    /** Several items consumed together per reload (gauss rifle: slugs + energy cell); lists are per slot, null = nothing. */
+    public static AmmoType multi(List<ItemLike> ammo, List<ItemLike> emptyItems, List<ItemLike> bullet, int bulletsPerMag) {
+        return new AmmoType(List.copyOf(ammo), bullet, emptyItems, bulletsPerMag);
     }
 
     public AmmoType addVariant(String key, ItemLike ammo, ItemLike bullet) {

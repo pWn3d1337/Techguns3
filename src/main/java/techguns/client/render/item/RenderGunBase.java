@@ -210,6 +210,7 @@ public class RenderGunBase extends RenderItemBase {
         float reloadProgress = state.reloadProgress();
         float muzzleFlashProgress = state.muzzleFlashProgress();
         float chargeProgress = state.chargeProgress();
+        float chargeProgressFull = state.chargeProgressFull() > 0f ? state.chargeProgressFull() : chargeProgress;
         float zoomProgress = state.zoomProgress();
         String ammoVariant = state.ammoVariant();
 
@@ -257,7 +258,7 @@ public class RenderGunBase extends RenderItemBase {
             this.applyBaseTranslation(poseStack);
 
             for (int i = 0; i < parts; i++) {
-                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(texture, i, ammoVariant)), state.loadedAmmo(), reloadProgress,
+                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(this.partTexture(context, i), i, ammoVariant)), state.loadedAmmo(), reloadProgress,
                         transform, i, fireProgress, chargeProgress, light, overlay);
             }
             poseStack.popPose();
@@ -290,11 +291,11 @@ public class RenderGunBase extends RenderItemBase {
                 }
                 if (chargeProgress > 0.0f && this.chargeEffect != null) {
                     if (firstPerson) {
-                        this.drawChargeFx(poseStack, buffers, chargeProgress, leftHand, ammoVariant);
+                        this.drawChargeFx(poseStack, buffers, chargeProgressFull, leftHand, ammoVariant);
                     } else {
                         poseStack.pushPose();
                         this.transformThirdPersonArmPose(poseStack, entity, reloadProgress, armPose, leftHand);
-                        this.drawChargeFx3P(poseStack, buffers, chargeProgress, leftHand, ammoVariant);
+                        this.drawChargeFx3P(poseStack, buffers, chargeProgressFull, leftHand, ammoVariant);
                         poseStack.popPose();
                     }
                 }
@@ -310,6 +311,11 @@ public class RenderGunBase extends RenderItemBase {
         }
 
         poseStack.popPose();
+    }
+
+    /** Texture of one render part; overridden where it depends on the stack (mining heads). */
+    protected ResourceLocation partTexture(ItemRenderContext context, int part) {
+        return this.texture;
     }
 
     /** Re-rolls the muzzle flash jitter whenever a new flash starts. */

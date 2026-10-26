@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:laser_barrel"
+    },
+    "c": {
+      "item": "techguns:circuit_board_advanced"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "m": {
+      "item": "techguns:energy_cell_empty"
+    },
+    "p": {
+      "tag": "c:plates/carbon"
+    },
+    "r": {
+      "item": "techguns:carbon_receiver"
+    },
+    "s": {
+      "item": "techguns:carbon_stock"
+    }
+  },
+  "pattern": [
+    "pcg",
+    "brs",
+    " m "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:blaster_rifle"
+  }
+}

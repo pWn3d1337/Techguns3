@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mechanical_parts_iron": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:mechanical_parts_iron"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:as50_magazine_empty"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mechanical_parts_iron"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:as50_magazine_empty"
+    ]
+  }
+}

@@ -192,9 +192,10 @@ public class ModelRocketLauncher extends TGModel {
 		rocket = new ModelRocket();
 	}
 	
-	/** The loaded rocket (render part 1), exported as its own geo model. */
-	public TGModel rocketModel() {
-		return rocket;
+	/** Render part 1 is the loaded rocket, exported as its own geo model. */
+	@Override
+	public TGModel partModel(int part) {
+		return part == 1 ? rocket : this;
 	}
 
 	@Override

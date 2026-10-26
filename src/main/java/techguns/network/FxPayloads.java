@@ -135,7 +135,7 @@ public final class FxPayloads {
      * A bullet hit a block: {@code soundType} selects sound and particles (0 stone, 1 wood, 2 glass, 3 metal,
      * 4 gravel/sand, 5 other = sound only, -1 default), pitch and yaw orient the effect along the hit face.
      */
-    public record GunImpactFx(short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary)
+    public record GunImpactFx(short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary, boolean blue)
             implements CustomPacketPayload {
         public static final Type<GunImpactFx> TYPE = new Type<>(TGIds.id("gun_impact_fx"));
         public static final StreamCodec<ByteBuf, GunImpactFx> STREAM_CODEC = StreamCodec.of(GunImpactFx::write, GunImpactFx::read);
@@ -145,6 +145,7 @@ public final class FxPayloads {
             buf.writeDouble(p.x).writeDouble(p.y).writeDouble(p.z);
             buf.writeFloat(p.pitch).writeFloat(p.yaw);
             buf.writeBoolean(p.incendiary);
+            buf.writeBoolean(p.blue);
         }
 
         private static GunImpactFx read(ByteBuf buf) {
@@ -155,7 +156,8 @@ public final class FxPayloads {
             float pitch = buf.readFloat();
             float yaw = buf.readFloat();
             boolean incendiary = buf.readBoolean();
-            return new GunImpactFx(soundType, x, y, z, pitch, yaw, incendiary);
+            boolean blue = buf.readBoolean();
+            return new GunImpactFx(soundType, x, y, z, pitch, yaw, incendiary, blue);
         }
 
         @Override

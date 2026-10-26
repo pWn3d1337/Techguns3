@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_biogun": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:biogun"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:biogun"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_biogun"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:biogun"
+    ]
+  }
+}

@@ -6,14 +6,20 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import techguns.Techguns;
 
 /**
  * Dev tool (Q3 GeckoLib prototype): converts a Techguns Java model ({@link TGModel} with {@link TGModelPart} fields)
@@ -23,8 +29,8 @@ import com.google.gson.JsonObject;
  * GeckoLib mirrors Bedrock x on load. Together: cube origin = (px + x, -(py + y + h), pz + z), bone pivot =
  * (px, -py, pz), rotation unchanged. Box UV faces then line up with the Java faces except east/west, which the
  * inverted {@code mirror} flag swaps back (a turn about X would swap north/south instead, with no flag to undo it).
- * GeckoLib rotates Z, Y, X while Java models rotate X, Y, Z, so parts rotated on several axes become nested
- * single-axis bones.
+ * Java parts rotate Z, Y, X like GeckoLib bones, so each part is one bone; children are child bones and inherit
+ * the parent's rotation in both.
  */
 public final class TGGeoExporter {
     private static final float RAD2DEG = 180.0f / (float) Math.PI;
@@ -40,7 +46,13 @@ public final class TGGeoExporter {
      */
     public static Path export(TGModel model, String id, Map<String, List<String>> groups, Set<String> glowParts, Path dir)
             throws IOException {
+        groups = new TreeMap<>(groups); // stable bone order across runs (Map.of iterates randomly)
         Map<String, TGModelPart> parts = parts(model);
+        Map<TGModelPart, String> names = new IdentityHashMap<>();
+        parts.forEach((n, p) -> names.put(p, glowParts.contains(n) ? n + GLOW_SUFFIX : n));
+        // children are fields too, but are exported with (and positioned by) their parent
+        Set<TGModelPart> children = Collections.newSetFromMap(new IdentityHashMap<>());
+        parts.values().forEach(p -> children.addAll(p.children()));
         Map<String, String> parentOf = new LinkedHashMap<>();
         groups.forEach((group, members) -> members.forEach(m -> parentOf.put(m, group)));
 
@@ -51,8 +63,9 @@ public final class TGGeoExporter {
             bones.add(bone(group, "root", 0, 0, 0));
         }
         for (Map.Entry<String, TGModelPart> e : parts.entrySet()) {
-            String name = glowParts.contains(e.getKey()) ? e.getKey() + GLOW_SUFFIX : e.getKey();
-            addPart(bones, name, parentOf.getOrDefault(e.getKey(), "root"), e.getValue(), 0, 0, 0);
+            if (!children.contains(e.getValue())) {
+                addPart(bones, names, names.get(e.getValue()), parentOf.getOrDefault(e.getKey(), "root"), e.getValue(), 0, 0, 0);
+            }
         }
 
         JsonObject description = new JsonObject();
@@ -97,6 +110,44 @@ public final class TGGeoExporter {
         return size != null ? size : new int[] {model.textureWidth, model.textureHeight};
     }
 
+    private static final Map<Class<?>, Map<String, TGModelPart>> SCALED_PARTS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** Parts with a static render scale, by bone name (field name); their geo bones are scaled at render time. */
+    public static Map<String, TGModelPart> scaledParts(TGModel model) {
+        return SCALED_PARTS.computeIfAbsent(model.getClass(), c -> {
+            Map<String, TGModelPart> scaled = new LinkedHashMap<>();
+            parts(model).forEach((name, p) -> {
+                if (p.hasRenderScale()) {
+                    scaled.put(name, p);
+                    if (!Arrays.equals(geoScale(p), new float[] {p.scaleX, p.scaleY, p.scaleZ})) {
+                        Techguns.LOGGER.warn("{}.{}: render scale doesn't commute with its rotation (shear), geo model approximates it",
+                                c.getSimpleName(), name);
+                    }
+                }
+            });
+            return scaled;
+        });
+    }
+
+    /**
+     * Bone scale (in the part's rotated frame) for a part's static render scale. Exact when the scale commutes with the
+     * rotation; otherwise the Java render shears the box, which a bone can't, so each rotated pair of axes gets the
+     * geometric mean of its two scales.
+     */
+    public static float[] geoScale(TGModelPart p) {
+        float sx = p.scaleX, sy = p.scaleY, sz = p.scaleZ;
+        if (p.roll != 0 && sx != sy) {
+            sx = sy = (float) Math.sqrt(sx * sy);
+        }
+        if (p.yaw != 0 && sx != sz) {
+            sx = sz = (float) Math.sqrt(sx * sz);
+        }
+        if (p.pitch != 0 && sy != sz) {
+            sy = sz = (float) Math.sqrt(sy * sz);
+        }
+        return new float[] {sx, sy, sz};
+    }
+
     /** Part fields in declaration order. */
     private static Map<String, TGModelPart> parts(TGModel model) {
         Map<String, TGModelPart> parts = new LinkedHashMap<>();
@@ -119,50 +170,47 @@ public final class TGGeoExporter {
     }
 
     /**
-     * Adds a part (and, recursively, its children: Java children get the parent's pivot translation but not its
-     * rotation, so they are emitted as siblings with absolute pivots).
+     * Adds a part and, recursively, its children as child bones. Pivots are absolute: a child's Java pivot is relative to
+     * its parent's pivot, before the parent's rotation, which the child bone inherits.
      */
-    private static void addPart(JsonArray bones, String name, String parent, TGModelPart p, float ox, float oy, float oz) {
+    private static void addPart(JsonArray bones, Map<TGModelPart, String> names, String name, String parent, TGModelPart p,
+                                float ox, float oy, float oz) {
         float px = ox + p.pivotX;
         float py = oy + p.pivotY;
         float pz = oz + p.pivotZ;
-        float rx = p.pitch * RAD2DEG;
-        float ry = p.yaw * RAD2DEG;
-        float rz = p.roll * RAD2DEG;
-
-        // one bone per rotated axis, outermost X (Java order X, Y, Z)
-        List<float[]> rotations = new ArrayList<>();
-        if (rx != 0) {
-            rotations.add(new float[] {rx, 0, 0});
+        JsonObject innermost = bone(name, parent, px, -py, pz);
+        if (p.pitch != 0 || p.yaw != 0 || p.roll != 0) {
+            innermost.add("rotation", vec(p.pitch * RAD2DEG, p.yaw * RAD2DEG, p.roll * RAD2DEG));
         }
-        if (ry != 0) {
-            rotations.add(new float[] {0, ry, 0});
-        }
-        if (rz != 0) {
-            rotations.add(new float[] {0, 0, rz});
-        }
-        String current = parent;
-        String boneName = name;
-        for (int i = 0; i < Math.max(1, rotations.size()); i++) {
-            boneName = i == 0 ? name : name + "_r" + i;
-            JsonObject bone = bone(boneName, current, px, -py, pz);
-            if (i < rotations.size()) {
-                float[] r = rotations.get(i);
-                bone.add("rotation", vec(r[0], r[1], r[2]));
-            }
-            bones.add(bone);
-            current = boneName;
-        }
-        JsonObject innermost = bones.get(bones.size() - 1).getAsJsonObject();
+        bones.add(innermost);
 
         if (p.width != 0 || p.height != 0 || p.length != 0) {
             JsonObject cube = new JsonObject();
             cube.add("origin", vec(px + p.x, -(py + p.y + p.height), pz + p.z));
             cube.add("size", vec(p.width, p.height, p.length));
-            JsonArray uv = new JsonArray();
-            uv.add(p.u);
-            uv.add(p.v);
-            cube.add("uv", uv);
+            if (p.width < 1 && p.height < 1 && p.length < 1) {
+                // GeckoLib floors box UV sizes, so a sub-pixel cube (glow dots) would sample the corner of its
+                // texture area; vanilla samples inside it. Give every face the texel at the box UV origin.
+                JsonObject faces = new JsonObject();
+                for (String face : new String[] {"north", "east", "south", "west", "up", "down"}) {
+                    JsonObject f = new JsonObject();
+                    JsonArray faceUv = new JsonArray();
+                    faceUv.add(p.u + p.length + 0.25f);
+                    faceUv.add(p.v + p.length + 0.25f);
+                    f.add("uv", faceUv);
+                    JsonArray faceSize = new JsonArray();
+                    faceSize.add(0.5f);
+                    faceSize.add(0.5f);
+                    f.add("uv_size", faceSize);
+                    faces.add(face, f);
+                }
+                cube.add("uv", faces);
+            } else {
+                JsonArray uv = new JsonArray();
+                uv.add(p.u);
+                uv.add(p.v);
+                cube.add("uv", uv);
+            }
             if (p.mirror) {
                 cube.addProperty("mirror", true);
             }
@@ -176,7 +224,9 @@ public final class TGGeoExporter {
 
         int i = 0;
         for (TGModelPart child : p.children()) {
-            addPart(bones, name + "_c" + i++, parent, child, px, py, pz);
+            String childName = names.getOrDefault(child, name + "_c" + i);
+            i++;
+            addPart(bones, names, childName, name, child, px, py, pz);
         }
     }
 

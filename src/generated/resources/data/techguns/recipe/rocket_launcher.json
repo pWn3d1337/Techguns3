@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:obsidian_steel_barrel"
+    },
+    "f": {
+      "item": "techguns:steel_receiver"
+    },
+    "m": {
+      "item": "techguns:rocket"
+    }
+  },
+  "pattern": [
+    "mbb",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:rocket_launcher"
+  }
+}

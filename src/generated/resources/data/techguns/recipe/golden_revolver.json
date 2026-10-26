@@ -1,0 +1,26 @@
+{
+  "type": "techguns:transfer_ammo",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "tag": "c:ingots/gold"
+    },
+    "r": {
+      "item": "techguns:revolver"
+    }
+  },
+  "pattern": [
+    "ggg",
+    "grg",
+    "ggg"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:golden_revolver"
+  }
+}

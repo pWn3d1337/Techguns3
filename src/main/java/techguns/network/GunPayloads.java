@@ -17,11 +17,15 @@ public final class GunPayloads {
     static final StreamCodec<ByteBuf, InteractionHand> HAND = ByteBufCodecs.BOOL.map(
             offhand -> offhand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, hand -> hand == InteractionHand.OFF_HAND);
 
-    /** Client → server: the local player fired the gun in {@code hand}. */
-    public record Shoot(InteractionHand hand, boolean zooming) implements CustomPacketPayload {
+    /**
+     * Client → server: the local player fired the gun in {@code hand}.
+     *
+     * @param targetId entity id of the locked-on target (lock-on guns), -1 for none
+     */
+    public record Shoot(InteractionHand hand, boolean zooming, int targetId) implements CustomPacketPayload {
         public static final Type<Shoot> TYPE = new Type<>(TGIds.id("shoot"));
         public static final StreamCodec<ByteBuf, Shoot> STREAM_CODEC = StreamCodec.composite(
-                HAND, Shoot::hand, ByteBufCodecs.BOOL, Shoot::zooming, Shoot::new);
+                HAND, Shoot::hand, ByteBufCodecs.BOOL, Shoot::zooming, ByteBufCodecs.VAR_INT, Shoot::targetId, Shoot::new);
 
         @Override
         public Type<Shoot> type() {

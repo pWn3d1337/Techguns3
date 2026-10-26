@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_scar": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:scar"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:scar"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_scar"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:scar"
+    ]
+  }
+}
