@@ -216,6 +216,9 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.armor.power_type.rf", "Electric");
         add("message.techguns.step_assist", "Step Assist: %s");
         add("message.techguns.on", "On");
+        add("message.techguns.camo_switch", "Switched camo to %s");
+        add("tooltip.techguns.camo", "Camo: %s");
+        TGCamoProvider.englishNames().forEach((name, english) -> add("camo.techguns." + name, english));
         add("message.techguns.off", "Off");
         add("techguns.lock_on.locking", "Locking... : %s");
         add("techguns.lock_on.locked", "Locked On: %s");

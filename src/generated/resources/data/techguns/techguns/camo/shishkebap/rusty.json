@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.rusty"
+  },
+  "item": "techguns:shishkebap",
+  "name": "rusty",
+  "texture": "techguns:textures/guns/shishkebab_texture.png"
+}

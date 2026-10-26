@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.rusty"
+  },
+  "item": "techguns:steam_leggings",
+  "name": "rusty",
+  "order": 1,
+  "texture": "techguns:textures/models/armor/steam_armor_rusty.png"
+}

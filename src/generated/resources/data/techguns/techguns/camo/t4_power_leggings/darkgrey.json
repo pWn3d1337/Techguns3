@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.darkgrey"
+  },
+  "item": "techguns:t4_power_leggings",
+  "name": "darkgrey",
+  "texture": "techguns:textures/models/armor/powerarmor_mk2_darkgrey.png"
+}

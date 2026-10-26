@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:ak47",
+  "name": "default",
+  "texture": "techguns:textures/guns/ak47texture.png"
+}

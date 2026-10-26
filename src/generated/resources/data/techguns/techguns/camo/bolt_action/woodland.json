@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.woodland"
+  },
+  "item": "techguns:bolt_action",
+  "name": "woodland",
+  "order": 1,
+  "texture": "techguns:textures/guns/boltactionrifle_1.png"
+}

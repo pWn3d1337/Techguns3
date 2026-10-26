@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.desert"
+  },
+  "item": "techguns:t1_scout_helmet",
+  "layer": "techguns:t1_scout",
+  "name": "desert"
+}

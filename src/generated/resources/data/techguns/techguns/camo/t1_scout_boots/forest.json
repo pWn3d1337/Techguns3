@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.forest"
+  },
+  "item": "techguns:t1_scout_boots",
+  "layer": "techguns:t1_scout_forest",
+  "name": "forest",
+  "order": 1
+}

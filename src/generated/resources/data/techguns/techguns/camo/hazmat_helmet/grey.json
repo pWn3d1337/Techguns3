@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.grey"
+  },
+  "item": "techguns:hazmat_helmet",
+  "layer": "techguns:hazmatsuit_grey",
+  "name": "grey",
+  "order": 1
+}

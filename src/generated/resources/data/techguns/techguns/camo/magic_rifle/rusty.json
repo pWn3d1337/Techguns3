@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.rusty"
+  },
+  "item": "techguns:magic_rifle",
+  "name": "rusty",
+  "order": 2,
+  "texture": "techguns:textures/guns/magic_rifle_rusty.png"
+}

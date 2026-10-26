@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:steam_leggings",
+  "name": "default",
+  "texture": "techguns:textures/models/armor/steam_armor.png"
+}

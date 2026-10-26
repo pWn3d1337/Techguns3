@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.silver"
+  },
+  "item": "techguns:t3_combat_chestplate",
+  "layer": "techguns:t3_combat_silver",
+  "name": "silver",
+  "order": 1
+}

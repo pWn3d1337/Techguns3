@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:scar",
+  "name": "default",
+  "texture": "techguns:textures/guns/scar_texture.png"
+}

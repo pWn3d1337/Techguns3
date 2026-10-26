@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.swat"
+  },
+  "item": "techguns:t2_combat_chestplate",
+  "layer": "techguns:t2_combat_swat",
+  "name": "swat",
+  "order": 4
+}

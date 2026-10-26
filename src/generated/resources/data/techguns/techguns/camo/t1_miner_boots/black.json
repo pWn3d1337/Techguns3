@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:t1_miner_boots",
+  "layer": "techguns:t1_miner_black",
+  "name": "black",
+  "order": 3
+}

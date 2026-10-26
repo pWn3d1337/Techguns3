@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.hazard"
+  },
+  "item": "techguns:steam_helmet",
+  "name": "hazard",
+  "order": 3,
+  "texture": "techguns:textures/models/armor/steam_armor_hazard.png"
+}

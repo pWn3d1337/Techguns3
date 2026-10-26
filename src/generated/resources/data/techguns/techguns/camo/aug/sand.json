@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.sand"
+  },
+  "item": "techguns:aug",
+  "name": "sand",
+  "order": 3,
+  "texture": "techguns:textures/guns/augtexture_3.png"
+}

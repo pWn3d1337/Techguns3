@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:magic_rifle",
+  "name": "black",
+  "order": 3,
+  "texture": "techguns:textures/guns/magic_rifle_black.png"
+}

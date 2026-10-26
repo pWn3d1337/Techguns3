@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.blue"
+  },
+  "item": "techguns:ak47",
+  "name": "blue",
+  "order": 1,
+  "texture": "techguns:textures/guns/ak47texture_1.png"
+}

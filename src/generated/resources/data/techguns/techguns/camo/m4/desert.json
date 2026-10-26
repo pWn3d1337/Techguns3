@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.desert"
+  },
+  "item": "techguns:m4",
+  "name": "desert",
+  "order": 2,
+  "texture": "techguns:textures/guns/m4texture_2.png"
+}

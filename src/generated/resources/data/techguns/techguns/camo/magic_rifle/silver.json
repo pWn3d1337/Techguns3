@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.silver"
+  },
+  "item": "techguns:magic_rifle",
+  "name": "silver",
+  "order": 4,
+  "texture": "techguns:textures/guns/magic_rifle_silver.png"
+}

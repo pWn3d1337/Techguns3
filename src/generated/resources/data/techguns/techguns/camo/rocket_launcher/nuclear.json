@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.nuclear"
+  },
+  "item": "techguns:rocket_launcher",
+  "name": "nuclear",
+  "order": 1,
+  "texture": "techguns:textures/guns/rocketlauncher_1.png"
+}

@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark_green"
+  },
+  "item": "techguns:pdw",
+  "name": "dark_green",
+  "order": 2,
+  "texture": "techguns:textures/guns/pdw_2.png"
+}

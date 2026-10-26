@@ -28,5 +28,6 @@ public final class TGRegistries {
         TGRecipes.SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
+        modEventBus.addListener(TGCamos::register);
     }
 }

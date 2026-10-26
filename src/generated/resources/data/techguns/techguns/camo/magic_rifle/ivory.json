@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.ivory"
+  },
+  "item": "techguns:magic_rifle",
+  "name": "ivory",
+  "order": 5,
+  "texture": "techguns:textures/guns/magic_rifle_ivory.png"
+}

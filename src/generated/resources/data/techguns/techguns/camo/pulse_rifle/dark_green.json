@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark_green"
+  },
+  "item": "techguns:pulse_rifle",
+  "name": "dark_green",
+  "order": 2,
+  "texture": "techguns:textures/guns/pulserifle_2.png"
+}

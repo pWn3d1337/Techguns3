@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:t4_power_boots",
+  "name": "black",
+  "order": 2,
+  "texture": "techguns:textures/models/armor/powerarmor_mk2_black.png"
+}

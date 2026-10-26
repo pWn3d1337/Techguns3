@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.outcast_worn"
+  },
+  "item": "techguns:t3_power_helmet",
+  "name": "outcast_worn",
+  "order": 2,
+  "texture": "techguns:textures/models/armor/powerarmor_dark2.png"
+}

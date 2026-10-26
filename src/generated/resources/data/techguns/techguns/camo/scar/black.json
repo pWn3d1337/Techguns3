@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:scar",
+  "name": "black",
+  "order": 1,
+  "texture": "techguns:textures/guns/scar_texture_1.png"
+}

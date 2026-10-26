@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.woodland"
+  },
+  "item": "techguns:t2_combat_boots",
+  "layer": "techguns:t2_combat_wood",
+  "name": "woodland",
+  "order": 1
+}

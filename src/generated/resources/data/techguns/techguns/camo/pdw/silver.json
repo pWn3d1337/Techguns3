@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.silver"
+  },
+  "item": "techguns:pdw",
+  "name": "silver",
+  "order": 1,
+  "texture": "techguns:textures/guns/pdw_1.png"
+}

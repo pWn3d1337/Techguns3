@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:aug",
+  "name": "default",
+  "texture": "techguns:textures/guns/augtexture.png"
+}

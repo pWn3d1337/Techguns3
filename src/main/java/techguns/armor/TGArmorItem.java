@@ -1,5 +1,10 @@
 package techguns.armor;
 
+import net.minecraft.world.level.Level;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import techguns.camo.TGCamo;
+import techguns.camo.CamoData;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
@@ -152,10 +157,35 @@ public class TGArmorItem extends ArmorItem {
         return armorModel;
     }
 
+    /** The camo's texture (Techguns 2 {@code GenericArmorMultiCamo}), else the single texture, else the material layers. */
     @Override
     @Nullable
     public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
+        Optional<TGCamo> camo = CamoData.current(entity.level().registryAccess(), stack);
+        if (camo.isPresent()) {
+            if (camo.get().layer().isPresent()) {
+                ResourceLocation base = camo.get().layer().get();
+                return base.withPath(path -> "textures/models/armor/" + path + "_layer_" + (innerModel ? 2 : 1) + ".png");
+            }
+            if (camo.get().texture().isPresent()) {
+                return camo.get().texture().get();
+            }
+        }
         return armorTexture;
+    }
+
+    /** Sneak + use switches to the next camo (Techguns 2 {@code GenericArmorMultiCamo}); plain use equips. */
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.isShiftKeyDown() && !CamoData.camos(level.registryAccess(), stack).isEmpty()) {
+            Optional<TGCamo> camo = CamoData.cycle(level.registryAccess(), stack, false);
+            if (level.isClientSide && camo.isPresent()) {
+                player.displayClientMessage(Component.translatable("message.techguns.camo_switch", camo.get().display()), true);
+            }
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        }
+        return super.use(level, player, hand);
     }
 
     public TGArmorStats stats() {
@@ -235,6 +265,10 @@ public class TGArmorItem extends ArmorItem {
         super.appendHoverText(stack, context, tooltip, flag);
         tooltip.add(Component.translatable("tooltip.techguns.armor.durability", stack.getMaxDamage() - stack.getDamageValue(),
                 stack.getMaxDamage()).withStyle(isWornOut(stack) ? ChatFormatting.RED : ChatFormatting.GRAY));
+        if (context.registries() != null) {
+            CamoData.current(context.registries(), stack).ifPresent(camo ->
+                    tooltip.add(Component.translatable("tooltip.techguns.camo", camo.display()).withStyle(ChatFormatting.GRAY)));
+        }
         if (stats.toughness() > 0.0f) {
             tooltip.add(Component.translatable("tooltip.techguns.armor.toughness", FORMAT.format(stats.toughness())).withStyle(ChatFormatting.GRAY));
         }

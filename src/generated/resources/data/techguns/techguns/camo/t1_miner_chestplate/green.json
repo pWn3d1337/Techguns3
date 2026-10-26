@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.green"
+  },
+  "item": "techguns:t1_miner_chestplate",
+  "layer": "techguns:t1_miner_green",
+  "name": "green",
+  "order": 2
+}
