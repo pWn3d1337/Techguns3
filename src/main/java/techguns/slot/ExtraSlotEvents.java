@@ -35,8 +35,12 @@ public final class ExtraSlotEvents {
     private static final float DEFAULT_FLY_SPEED = 0.05f;
     /** Night vision effect length; refreshed while active (Techguns 2: 220). */
     private static final int NIGHT_VISION_TICKS = 220;
-    /** Modifiers currently applied per player: modifier id -> attribute. */
-    private static final Map<Player, Map<ResourceLocation, Holder<Attribute>>> APPLIED = new WeakHashMap<>();
+    /**
+     * Modifiers currently applied per player: modifier id -> attribute. One map per side: the tick runs on the client
+     * and the integrated server thread at the same time, and the maps are not thread-safe.
+     */
+    private static final Map<Player, Map<ResourceLocation, Holder<Attribute>>> APPLIED_SERVER = new WeakHashMap<>();
+    private static final Map<Player, Map<ResourceLocation, Holder<Attribute>>> APPLIED_CLIENT = new WeakHashMap<>();
 
     private ExtraSlotEvents() {
     }
@@ -69,7 +73,8 @@ public final class ExtraSlotEvents {
                 });
             }
         }
-        Map<ResourceLocation, Holder<Attribute>> applied = APPLIED.computeIfAbsent(player, p -> new HashMap<>());
+        Map<ResourceLocation, Holder<Attribute>> applied = (player.level().isClientSide ? APPLIED_CLIENT : APPLIED_SERVER)
+                .computeIfAbsent(player, p -> new HashMap<>());
         applied.forEach((id, attribute) -> {
             if (!wanted.containsKey(id)) {
                 AttributeInstance instance = player.getAttribute(attribute);
