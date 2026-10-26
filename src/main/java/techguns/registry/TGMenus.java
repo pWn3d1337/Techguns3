@@ -6,6 +6,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import techguns.machine.MetalPressMenu;
 import techguns.slot.menu.ExtraSlotsMenu;
 
 /** Container menu types. */
@@ -15,6 +17,9 @@ public final class TGMenus {
     // MIGRATION(26.x): MenuType constructor / registration may change in 1.21.2+.
     public static final DeferredHolder<MenuType<?>, MenuType<ExtraSlotsMenu>> EXTRA_SLOTS = MENUS.register("extra_slots",
             () -> new MenuType<>(ExtraSlotsMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MetalPressMenu>> METAL_PRESS = MENUS.register("metal_press",
+            () -> IMenuTypeExtension.create(MetalPressMenu::new));
 
     private TGMenus() {
     }

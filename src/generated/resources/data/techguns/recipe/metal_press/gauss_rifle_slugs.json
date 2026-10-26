@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:plates/obsidian_steel"
+  },
+  "result": {
+    "count": 4,
+    "id": "techguns:gauss_rifle_slugs"
+  },
+  "second": {
+    "tag": "c:plates/titanium"
+  }
+}

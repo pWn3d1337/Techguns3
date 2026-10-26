@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:plates/obsidian_steel"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:mechanical_parts_obsidian_steel"
+  },
+  "second": {
+    "tag": "c:gems/quartz"
+  }
+}

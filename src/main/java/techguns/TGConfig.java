@@ -33,6 +33,18 @@ public final class TGConfig {
         COMMON.pop();
     }
 
+    static {
+        COMMON.push("machines");
+    }
+
+    public static final ModConfigSpec.BooleanValue MACHINES_NEED_NO_POWER = COMMON
+            .comment("Machines don't need power. Activate this if you don't want to install a mod with generators and still use the machines.")
+            .define("machinesNeedNoPower", false);
+
+    static {
+        COMMON.pop();
+    }
+
     static final ModConfigSpec COMMON_SPEC = COMMON.build();
 
     private TGConfig() {

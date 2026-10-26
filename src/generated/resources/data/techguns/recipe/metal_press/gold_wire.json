@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:ingots/gold"
+  },
+  "result": {
+    "count": 2,
+    "id": "techguns:gold_wire"
+  },
+  "second": {
+    "tag": "c:ingots/gold"
+  }
+}

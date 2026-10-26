@@ -50,6 +50,7 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         crates();
         bunkerDoor();
         doors3x3();
+        machines();
     }
 
     private ModelFile existing(String name) {
@@ -299,6 +300,30 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
 
     private ResourceLocation crateTexture(String name) {
         return name.startsWith("minecraft:") ? mcLoc("block/" + name.substring("minecraft:".length())) : tex(name);
+    }
+
+    // --- machines ---
+
+    /** Machines are drawn by their block entity renderer; the block model only gives the particle texture. */
+    private void machines() {
+        machine(TGBlocks.METAL_PRESS, "metal_press");
+    }
+
+    private void machine(DeferredBlock<? extends Block> block, String particle) {
+        ModelFile model = models().getBuilder("block/" + path(block)).texture("particle", tex(particle));
+        getVariantBuilder(block.get()).partialState().setModels(new net.neoforged.neoforge.client.model.generators.ConfiguredModel(model));
+        // Techguns 2 machine item display (builtin/entity drawn by the machine item renderer)
+        itemModels().getBuilder(path(block)).parent(new ModelFile.UncheckedModelFile("builtin/entity"))
+                .transforms()
+                .transform(net.minecraft.world.item.ItemDisplayContext.GUI).rotation(30, 45, 0).scale(0.625f).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.GROUND).translation(0, 3, 0).scale(0.25f).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.HEAD).rotation(0, 180, 0).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.FIXED).rotation(0, 180, 0).scale(0.5f).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation(75, 315, 0).translation(0, 2.5f, 0).scale(0.375f).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(75, 315, 0).translation(0, 2.5f, 0).scale(0.375f).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(0, 315, 0).scale(0.4f).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(0, 315, 0).scale(0.4f).end()
+                .end();
     }
 
     // --- doors ---

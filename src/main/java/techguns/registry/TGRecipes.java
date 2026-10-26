@@ -4,15 +4,18 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import techguns.TGIds;
 import techguns.recipe.AmmoChangeRecipe;
+import techguns.recipe.MetalPressRecipe;
 import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.recipe.TransferAmmoRecipe;
 
 /**
- * Crafting recipe serializers. Machine recipe types (Ammo Bench, Camo Bench) come with their machines in Phase 5.
+ * Recipe serializers and the machine recipe types.
  */
 public final class TGRecipes {
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Techguns.MODID);
@@ -23,6 +26,17 @@ public final class TGRecipes {
             () -> new SimpleCraftingRecipeSerializer<>(MiningHeadUpgradeRecipe::new));
     public static final Supplier<RecipeSerializer<TransferAmmoRecipe>> TRANSFER_AMMO = SERIALIZERS.register("transfer_ammo",
             TransferAmmoRecipe.Serializer::new);
+
+    public static final DeferredRegister<RecipeType<?>> TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, Techguns.MODID);
+
+    // --- Machines ---
+    public static final Supplier<RecipeType<MetalPressRecipe>> METAL_PRESS = type("metal_press");
+    public static final Supplier<RecipeSerializer<MetalPressRecipe>> METAL_PRESS_SERIALIZER = SERIALIZERS.register("metal_press",
+            MetalPressRecipe.Serializer::new);
+
+    private static <T extends net.minecraft.world.item.crafting.Recipe<?>> Supplier<RecipeType<T>> type(String name) {
+        return TYPES.register(name, () -> RecipeType.simple(TGIds.id(name)));
+    }
 
     private TGRecipes() {
     }

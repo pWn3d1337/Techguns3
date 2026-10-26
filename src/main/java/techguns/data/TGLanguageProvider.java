@@ -105,6 +105,7 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("concrete_grey_dark", "Reinforced Concrete (Dark)"),
             Map.entry("concrete_brown_pipes", "Reinforced Concrete (Pipes)"),
             Map.entry("concrete_brown_light_scaff", "Reinforced Concrete (Steel Bars)"),
+            Map.entry("machine_upgrade_stack", "Machine Upgrade (Stack Operation)"),
             Map.entry("container_red", "Red Container"),
             Map.entry("container_green", "Green Container"),
             Map.entry("container_blue", "Blue Container"),
@@ -249,6 +250,36 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.TOGGLE_SAFE_MODE.getName(), "Toggle Safe Mode");
         add(TGKeyMappings.TOGGLE_STEP_ASSIST.getName(), "Toggle Step Assist");
         addGunTooltips();
+        addMachines();
+    }
+
+    /** Techguns 2 machine screen texts. */
+    private void addMachines() {
+        add("techguns.container.power", "Power");
+        add("techguns.container.power.amount", "Power: %s/%s FE");
+        add("techguns.container.redstone", "Redstone Info");
+        add("techguns.container.redstone.mode", "Required: %s");
+        add("techguns.container.redstone.signal", "Signal: %s");
+        add("techguns.redstonemode.ignore", "ignored");
+        add("techguns.redstonemode.high", "high");
+        add("techguns.redstonemode.low", "low");
+        add("techguns.redstonemode.signal.high", "high");
+        add("techguns.redstonemode.signal.low", "low");
+        add("techguns.container.security.owner", "Owned by: %s");
+        add("techguns.container.security.tooltip", "Security: %s");
+        add("techguns.container.security.tooltip.0", "Public");
+        add("techguns.container.security.tooltip.3", "Owner");
+        add("techguns.container.security.tooltip.description.0", "Anyone can access");
+        add("techguns.container.security.tooltip.description.3", "Only owner can access");
+        add("techguns.container.security.tooltip.descr2", "Only the owner can change this setting");
+        add("techguns.container.security.tooltip.unowned", "Unowned (Replace Block to set ownership)");
+        add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
+        add("techguns.container.metalpress.autosplit", "Stack split:");
+        add("techguns.container.info.on", "On");
+        add("techguns.container.info.off", "Off");
+        add("techguns.button.switch", "Switch");
+        add("techguns.configuration.machines", "Machines");
+        add("techguns.configuration.machinesNeedNoPower", "Machines Need No Power");
     }
 
     private void addGunTooltips() {

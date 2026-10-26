@@ -53,6 +53,7 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
         TGBlocks.CAMO_NETS.forEach(block -> dropSelf(block.get()));
         TGBlocks.CAMO_NETS_TOP.forEach(block -> dropSelf(block.get()));
         dropSelf(TGBlocks.SANDBAGS.get());
+        dropSelf(TGBlocks.METAL_PRESS.get());
         add(TGBlocks.BUNKER_DOOR.get(), this::createDoorTable);
         // a 3x3 door drops one item, from its centre block (breaking another part drops it through the centre, see Door3x3Block)
         TGBlocks.DOORS_3X3.forEach(door -> add(door.get(), this::doorMasterDrop));

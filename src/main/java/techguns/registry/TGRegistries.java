@@ -27,9 +27,12 @@ public final class TGRegistries {
         TGSounds.SOUNDS.register(modEventBus);
         TGParticleTypes.PARTICLE_TYPES.register(modEventBus);
         TGRecipes.SERIALIZERS.register(modEventBus);
+        TGRecipes.TYPES.register(modEventBus);
+        TGBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         TGMenus.MENUS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
         modEventBus.addListener(TGCamos::register);
+        TGBlockEntities.init(modEventBus);
     }
 }

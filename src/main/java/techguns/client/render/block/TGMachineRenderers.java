@@ -1,0 +1,50 @@
+package techguns.client.render.block;
+
+import java.util.function.Supplier;
+
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import techguns.TGIds;
+import techguns.client.model.machine.MachineModel;
+import techguns.client.model.machine.MetalPressModel;
+import techguns.registry.TGBlockEntities;
+import techguns.registry.TGBlocks;
+
+/** Block entity and item renderers of the machines. */
+public final class TGMachineRenderers {
+    private static final TGMachineRenderer<?> METAL_PRESS = new TGMachineRenderer<>(lazy(MetalPressModel::bake),
+            TGIds.id("textures/block/metal_press.png"));
+
+    private TGMachineRenderers() {
+    }
+
+    public static void init(IEventBus modEventBus) {
+        modEventBus.addListener(TGMachineRenderers::registerRenderers);
+        modEventBus.addListener(TGMachineRenderers::registerItems);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(TGBlockEntities.METAL_PRESS.get(), context -> (TGMachineRenderer<techguns.machine.MetalPressBlockEntity>) METAL_PRESS);
+    }
+
+    private static void registerItems(RegisterClientExtensionsEvent event) {
+        TGMachineItemRenderer.register(event, TGBlocks.METAL_PRESS.get(), METAL_PRESS);
+    }
+
+    /** Bakes on first use (after resource loading). */
+    private static <M extends MachineModel> Supplier<M> lazy(Supplier<M> bake) {
+        return new Supplier<>() {
+            private M baked;
+
+            @Override
+            public M get() {
+                if (baked == null) {
+                    baked = bake.get();
+                }
+                return baked;
+            }
+        };
+    }
+}

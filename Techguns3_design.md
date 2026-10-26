@@ -487,6 +487,9 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 5a1 (planned 2026-10-26): full cube variants, one block per 1.12 meta variant: concrete (6), metal panels (8), nether metal (10, border_lava glows), neon lights (5, glow), bug nest sand, bug nest eggs (slimy), metal/concrete stairs; 1.12 "camo changeable" groups become block lists the Camo Bench cycles through (Phase 5b).
   - 5a2: shaped blocks: lamps (4, facing), ladders (4), slimy ladder, camo nets (3 + top), sandbags, military crates (9, break into loot; not containers in 1.12), 2x1 bunker door, 3x3 doors (4, multiblock).
 - 5b: Single-block machines + screens + recipe types: Ammo Press/Bench, Metal Press, Chem Lab, Grinder, Blast Furnace, Charging Station, Repair Bench, Camo Bench, Upgrade/Armor Bench.
+  - 5b1: machine framework (block entity base with inventory, FE energy, redstone mode, owner/security, progress, machine upgrade stack slot; menu + screen base with power bar, redstone and security buttons; data-driven recipe types) + Metal Press end to end + the machine upgrade item.
+  - 5b2: powered machines: Ammo Press, Chem Lab (fluids), Grinder, Blast Furnace, Charging Station.
+  - 5b3: benches: Repair Bench, Camo Bench, Upgrade Bench (armor upgrades), Ammo Bench (Q6).
   - From Phase 4: the 9 armor upgrade items (protection / projectile / blast protection, tiers 1-3) applied by the Upgrade Bench; Repair Bench repair costs for armor and shields (1.12 `repairMat` counts); gun camo changes at the Camo Bench (armor already cycles with sneak + use); the Ammo Bench and Camo Bench recipe types from Fabric.
 - 5c: Multiblocks: Fabricator, Reaction Chamber, Ore Drill (+ ore clusters).
 - 5d: Turrets (incl. the 4 turret armor plates: iron, steel, obsidian steel, carbon), explosive charges, camp flag.
@@ -566,7 +569,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q3 | ~~Gun models: Java vs GeckoLib?~~ **Decided 2026-10-25: full GeckoLib.** All gun models are GeckoLib geo models (exported from the ported Java models by `TGGeoExporter`, then edited in Blockbench), with keyframed animations. GeckoLib is a required dependency. See §9.1. | ✔ Decided |
 | Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. | ✔ Decided |
 | Q5 | Extra slots: Curios dependency vs own system? | **Decided 2026-10-26:** Curios as a soft dependency; built-in fallback slots (attachment + small screen tab) when Curios is absent. |
-| Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | Discuss. |
+| Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | **Decided 2026-10-26: both.** Ammo Press (powered, 1.12 build plans) and the unpowered Fabric Ammo Bench. Camo Bench: 1.12 scope (blocks, guns, armor) with a Fabric-style list to pick the named camo. |
 | Q7 | Energy: plain FE only? | FE only. |
 | Q8 | Structures: faithful 1.12 rebuilds vs redesign with jigsaw variety? | Faithful first via converter, jigsaw where it adds value. |
 | Q9 | Recipe viewer priority: JEI vs EMI? | JEI first. |

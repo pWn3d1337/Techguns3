@@ -116,6 +116,10 @@ public final class TGItems {
     public static final DeferredItem<Item> HEAT_RAY_FOCUS = simple("heat_ray_focus");
     public static final DeferredItem<Item> UV_EMITTER = simple("uv_emitter");
 
+    // --- Machines ---
+    /** Techguns 2 {@code machinestackupgrade}: each one lets a machine run one more operation at once (stack of 7). */
+    public static final DeferredItem<Item> MACHINE_UPGRADE_STACK = simple("machine_upgrade_stack", new Item.Properties().stacksTo(7));
+
     private TGItems() {
     }
 
@@ -124,7 +128,11 @@ public final class TGItems {
     public static final DeferredItem<Item> AMMO_BOX_LARGE = ITEMS.registerItem("ammo_box_large", props -> new AmmoBagItem(props, 64 * 8));
 
     private static DeferredItem<Item> simple(String name) {
-        DeferredItem<Item> item = ITEMS.registerSimpleItem(name);
+        return simple(name, new Item.Properties());
+    }
+
+    private static DeferredItem<Item> simple(String name, Item.Properties properties) {
+        DeferredItem<Item> item = ITEMS.registerSimpleItem(name, properties);
         SIMPLE_ITEMS.add(item);
         return item;
     }

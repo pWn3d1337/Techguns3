@@ -28,6 +28,7 @@ import techguns.gun.GunData;
 import techguns.gun.MeleeToolItem;
 import techguns.gun.ammo.AmmoType;
 import techguns.recipe.AmmoChangeRecipe;
+import techguns.recipe.MetalPressRecipe;
 import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
@@ -66,6 +67,7 @@ public class TGRecipeProvider extends RecipeProvider {
         buildArmorRecipes(output);
         buildShieldRecipes(output);
         buildBlockRecipes(output);
+        buildMachineRecipes(output);
         buildSlotItemRecipes(output);
     }
 
@@ -288,6 +290,62 @@ public class TGRecipeProvider extends RecipeProvider {
             builder.requires(TGTags.Items.ingot("titanium"));
         }
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
+    }
+
+    /** Techguns 2 machines, the machine upgrade and the machine recipes. */
+    private void buildMachineRecipes(RecipeOutput output) {
+        // Metal Press: Techguns 2 has a block-of-iron and an iron-plate version
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.METAL_PRESS.get())
+                .pattern("ibi").pattern("iei").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('b', Tags.Items.STORAGE_BLOCKS_IRON)
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.METAL_PRESS.get())
+                .pattern("ibi").pattern("iei").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('b', TGTags.Items.plate("iron"))
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get()))
+                .save(output, TGIds.id("metal_press_alt"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.MACHINE_UPGRADE_STACK.get())
+                .pattern("pgp").pattern("ncn").pattern("pnp")
+                .define('p', TGTags.Items.plate("iron")).define('n', Tags.Items.INGOTS_GOLD).define('g', Tags.Items.DYES_GREEN)
+                .define('c', Items.CHEST)
+                .unlockedBy(getHasName(TGBlocks.METAL_PRESS.get()), has(TGBlocks.METAL_PRESS.get())).save(output);
+
+        // Techguns 2 TGMachineRecipes, in order; all allow swapped inputs
+        metalPress(output, "tin_plate", ingot("tin"), ingot("tin"), TGItems.TIN_PLATE.get(), 2);
+        metalPress(output, "copper_plate", Ingredient.of(Tags.Items.INGOTS_COPPER), Ingredient.of(Tags.Items.INGOTS_COPPER), TGItems.COPPER_PLATE.get(), 2);
+        metalPress(output, "bronze_plate", ingot("bronze"), ingot("bronze"), TGItems.BRONZE_PLATE.get(), 2);
+        metalPress(output, "iron_plate", Ingredient.of(Tags.Items.INGOTS_IRON), Ingredient.of(Tags.Items.INGOTS_IRON), TGItems.IRON_PLATE.get(), 2);
+        metalPress(output, "steel_plate", ingot("steel"), ingot("steel"), TGItems.STEEL_PLATE.get(), 2);
+        metalPress(output, "lead_plate", ingot("lead"), ingot("lead"), TGItems.LEAD_PLATE.get(), 2);
+        metalPress(output, "mechanical_parts_iron", plate("iron"), Ingredient.of(Items.FLINT), TGItems.MECHANICAL_PARTS_IRON.get(), 1);
+        metalPress(output, "mechanical_parts_obsidian_steel", plate("obsidian_steel"), Ingredient.of(Tags.Items.GEMS_QUARTZ),
+                TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get(), 1);
+        metalPress(output, "mechanical_parts_carbon", plate("carbon"), Ingredient.of(Items.BLAZE_ROD), TGItems.MECHANICAL_PARTS_CARBON.get(), 2);
+        metalPress(output, "copper_wire", plate("copper"), plate("copper"), TGItems.COPPER_WIRE.get(), 8);
+        metalPress(output, "carbon_plate", Ingredient.of(TGItems.CARBON_FIBERS.get()), Ingredient.of(TGItems.CARBON_FIBERS.get()), TGItems.CARBON_PLATE.get(), 2);
+        metalPress(output, "advanced_rounds", plate("obsidian_steel"), Ingredient.of(TGItems.TGX.get()), TGAmmo.ADVANCED_ROUNDS.get(), 16);
+        metalPress(output, "obsidian_steel_plate", ingot("obsidian_steel"), ingot("obsidian_steel"), TGItems.OBSIDIAN_STEEL_PLATE.get(), 2);
+        metalPress(output, "steam_armor_plate", plate("steel"), plate("bronze"), TGItems.STEAM_ARMOR_PLATE.get(), 1);
+        metalPress(output, "gold_wire", Ingredient.of(Tags.Items.INGOTS_GOLD), Ingredient.of(Tags.Items.INGOTS_GOLD), TGItems.GOLD_WIRE.get(), 2);
+        metalPress(output, "grenade_40mm", plate("iron"), Ingredient.of(Items.TNT), TGAmmo.GRENADE_40MM.get(), 16);
+        metalPress(output, "titanium_plate", ingot("titanium"), ingot("titanium"), TGItems.TITANIUM_PLATE.get(), 2);
+        metalPress(output, "gauss_rifle_slugs", plate("obsidian_steel"), plate("titanium"), TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4);
+        metalPress(output, "sniper_rounds_explosive", Ingredient.of(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), Ingredient.of(TGItems.TGX.get()),
+                TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 1);
+    }
+
+    private static Ingredient ingot(String material) {
+        return Ingredient.of(TGTags.Items.ingot(material));
+    }
+
+    private static Ingredient plate(String material) {
+        return Ingredient.of(TGTags.Items.plate(material));
+    }
+
+    private static void metalPress(RecipeOutput output, String name, Ingredient first, Ingredient second, ItemLike result, int count) {
+        output.accept(TGIds.id("metal_press/" + name), new MetalPressRecipe(first, second, true, new ItemStack(result, count)), null);
     }
 
     /** Techguns 2 decorative blocks; other variants of a group come from the Camo Bench. */

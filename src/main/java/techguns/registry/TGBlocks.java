@@ -32,6 +32,7 @@ import techguns.block.SandbagsBlock;
 import techguns.block.TGLadderBlock;
 import techguns.block.TGLampBlock;
 import techguns.block.TGLanternBlock;
+import techguns.machine.TGMachineBlock;
 
 /**
  * Techguns blocks. Every block registered with {@link #withItem} also gets a block item.
@@ -76,6 +77,12 @@ public final class TGBlocks {
     public static final DeferredBlock<Block> CONCRETE_GREY_DARK = decorative("concrete_grey_dark", concrete());
     public static final DeferredBlock<Block> CONCRETE_BROWN_PIPES = decorative("concrete_brown_pipes", concrete());
     public static final DeferredBlock<Block> CONCRETE_BROWN_LIGHT_SCAFF = decorative("concrete_brown_light_scaff", concrete());
+    /** Techguns 2 machines: iron material, hardness 4, metal sound; drawn by their block entity renderer. */
+    private static BlockBehaviour.Properties machine() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(4.0f, 20.0f)
+                .sound(SoundType.METAL).noOcclusion();
+    }
+
     /** Techguns 2 {@code concrete} variants, in meta order; the Camo Bench cycles through them. */
     public static final List<DeferredBlock<Block>> CONCRETE = List.of(CONCRETE_BROWN, CONCRETE_BROWN_LIGHT, CONCRETE_GREY, CONCRETE_GREY_DARK,
             CONCRETE_BROWN_PIPES, CONCRETE_BROWN_LIGHT_SCAFF);
@@ -204,6 +211,10 @@ public final class TGBlocks {
     /** Techguns 2 {@code door3x3} types in meta order. */
     public static final List<DeferredBlock<Door3x3Block>> DOORS_3X3 = List.of(DOOR_METAL_3X3, DOOR_HANGAR_UP_3X3, DOOR_HANGAR_DOWN_3X3,
             DOOR_NETHER_3X3);
+
+    // --- Machines (Phase 5b; one block per Techguns 2 machine type) ---
+    public static final DeferredBlock<TGMachineBlock> METAL_PRESS = withItem("metal_press",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.METAL_PRESS));
 
     private TGBlocks() {
     }
