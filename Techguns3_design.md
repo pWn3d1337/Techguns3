@@ -503,6 +503,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 ### Phase 8 — Remaining systems & integrations
 - Radiation system (attachment, mob effects, rad-away/pills, radiation sources, armor resistance).
 - Guide book, advancements.
+- Gun posing during elytra flight: third-person arm/gun poses and first-person gun transforms while fall-flying (open `TODO: Elytra Flying` in Techguns 2 and Fabric `RenderItemBase`). The glider stays the Techguns 2 non-elytra glide (decided 2026-10-26).
 - Mod compat per §5.4: tier 2 conditional recipes (Create, Mekanism, IE, MI, Oritech) and tier 3 code compat (Mekanism radiation bridge, fuels, Create Big Cannons, team mods, scripting if requested).
 - **Exit:** feature parity with Techguns 2.
 
