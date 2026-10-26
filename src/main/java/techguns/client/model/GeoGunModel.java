@@ -56,7 +56,7 @@ public class GeoGunModel extends TGModel {
             fallback.transformPart(poseStack, part, ammoLeft, reloadProgress, fireProgress);
             boolean drawn = TGGeoBridge.get().render(geoIds[part], animationKey, poseStack,
                     Minecraft.getInstance().renderBuffers().bufferSource(), vertices, light, overlay, reloadProgress, fireProgress,
-                    bones -> partModel(part).animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context));
+                    bones -> partModel(part).animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, chargeProgress, context));
             poseStack.popPose();
             if (drawn) {
                 return;

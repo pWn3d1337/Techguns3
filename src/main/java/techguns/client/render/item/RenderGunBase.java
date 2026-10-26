@@ -210,6 +210,7 @@ public class RenderGunBase extends RenderItemBase {
         float reloadProgress = state.reloadProgress();
         float muzzleFlashProgress = state.muzzleFlashProgress();
         float chargeProgress = state.chargeProgress();
+        float chargeProgressFull = state.chargeProgressFull() > 0f ? state.chargeProgressFull() : chargeProgress;
         float zoomProgress = state.zoomProgress();
         String ammoVariant = state.ammoVariant();
 
@@ -290,11 +291,11 @@ public class RenderGunBase extends RenderItemBase {
                 }
                 if (chargeProgress > 0.0f && this.chargeEffect != null) {
                     if (firstPerson) {
-                        this.drawChargeFx(poseStack, buffers, chargeProgress, leftHand, ammoVariant);
+                        this.drawChargeFx(poseStack, buffers, chargeProgressFull, leftHand, ammoVariant);
                     } else {
                         poseStack.pushPose();
                         this.transformThirdPersonArmPose(poseStack, entity, reloadProgress, armPose, leftHand);
-                        this.drawChargeFx3P(poseStack, buffers, chargeProgress, leftHand, ammoVariant);
+                        this.drawChargeFx3P(poseStack, buffers, chargeProgressFull, leftHand, ammoVariant);
                         poseStack.popPose();
                     }
                 }

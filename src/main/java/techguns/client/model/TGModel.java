@@ -60,6 +60,15 @@ public abstract class TGModel extends Model {
         });
     }
 
+    /**
+     * Same as the variant without charge progress, for charge guns whose geo bones follow the charge
+     * (the charge progress is only known to the renderer, not to the plain hook).
+     */
+    public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress, float chargeProgress,
+                                ItemDisplayContext context) {
+        this.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
+    }
+
     /** Java model of render part {@code part} (> 0) when it is a separate nested model; this model otherwise. */
     public TGModel partModel(int part) {
         return this;

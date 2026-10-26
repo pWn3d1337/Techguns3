@@ -8,14 +8,18 @@ import java.util.function.Function;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.entity.projectile.GenericBeamProjectile;
+import techguns.entity.projectile.BioGunProjectile;
 import techguns.entity.projectile.GenericProjectile;
 import techguns.entity.projectile.GrenadeProjectile;
 import techguns.entity.projectile.GuidedMissileProjectile;
+import techguns.entity.projectile.MagicRifleProjectile;
 import techguns.entity.projectile.RocketProjectile;
 import techguns.entity.projectile.SonicShotgunProjectile;
+import techguns.entity.projectile.TFGProjectile;
 import techguns.gun.GunHandType;
 import techguns.gun.GunItem;
 import techguns.gun.GunSounds;
+import techguns.gun.ChargeGunItem;
 import techguns.gun.GrenadeItem;
 import techguns.gun.GunStats;
 import techguns.gun.HoldType;
@@ -80,6 +84,15 @@ public final class TGGuns {
     // Techguns 2 guided missiles; Fabric left the high velocity one as a TODO
     private static final ProjectileSelector GUIDED_MISSILE_PROJECTILES = new ProjectileSelector(TGAmmo.ROCKETS_NO_NUKES_TYPE,
             new GuidedMissileProjectile.Factory(), new GuidedMissileProjectile.Factory(DamageModifier.ROCKET_HIGH_VELOCITY));
+    private static final ProjectileSelector FLAMETHROWER_PROJECTILES = new ProjectileSelector(TGAmmo.FUEL_TANK_TYPE,
+            new GenericProjectile.Factory(GenericProjectile.Kind.FLAME));
+    private static final ProjectileSelector STONE_BULLET_PROJECTILES = new ProjectileSelector(TGAmmo.STONE_BULLETS_TYPE,
+            new GenericProjectile.Factory(GenericProjectile.Kind.STONE));
+    private static final ProjectileSelector BIOGUN_PROJECTILES = new ProjectileSelector(TGAmmo.BIO_TANK_TYPE, new BioGunProjectile.Factory());
+    private static final ProjectileSelector TFG_PROJECTILES = new ProjectileSelector(TGAmmo.NUCLEAR_POWER_CELL_TYPE, new TFGProjectile.Factory());
+    private static final ProjectileSelector MAGIC_RIFLE_PROJECTILES = new ProjectileSelector(TGAmmo.MAGIC_BULLETS_TYPE,
+            new MagicRifleProjectile.Factory(MagicRifleProjectile.Type.ARCANE), new MagicRifleProjectile.Factory(MagicRifleProjectile.Type.FIRE),
+            new MagicRifleProjectile.Factory(MagicRifleProjectile.Type.LIGHTNING));
     private static final ProjectileSelector GRENADE_40MM_PROJECTILES = new ProjectileSelector(TGAmmo.GRENADES_40MM_TYPE,
             new GrenadeProjectile.Factory(GrenadeProjectile.Type.LAUNCHER_40MM));
 
@@ -284,6 +297,44 @@ public final class TGGuns {
                     GunStats.builder(false, 6, 4, 40, 50.0f, 200, 0.05f)
                             .speed(1.0f).recoilTicks(10).ammoPerReload(4).damageDrop(3.0f, 5.0f, 10.0f).holdType(HoldType.BOW).build(),
                     GunSounds.of(TGSounds.GUIDEDMISSILE_FIRE, TGSounds.ROCKET_RELOAD), GUIDED_MISSILE_PROJECTILES, 20, 80));
+
+    // --- Batch 3e: charge and fuel weapons ---
+    public static final DeferredItem<GunItem> FLAMETHROWER = gun("flamethrower",
+            properties -> new GunItem(properties,
+                    GunStats.builder(false, 2, 100, 45, 5.0f, 16, 0.05f)
+                            .speed(0.5f).gravity(0.01).damageDrop(4, 16, 2.0f).recoilTicks(10).muzzleFlashTicks(10).continuousAnimation()
+                            .forwardOffset(0.35f).build(),
+                    GunSounds.of(TGSounds.FLAMETHROWER_FIRE, TGSounds.FLAMETHROWER_RELOAD).withLoop(TGSounds.FLAMETHROWER_START, 10),
+                    FLAMETHROWER_PROJECTILES)
+                    .withFireFx("FlamethrowerFireFX", 0.15f, 0.05f, 0.5f));
+
+    public static final DeferredItem<GunItem> BIOGUN = gun("biogun",
+            properties -> new ChargeGunItem(properties,
+                    GunStats.builder(false, 6, 30, 45, 10.0f, MAX_RANGE_PISTOL, 0.015f)
+                            .speed(0.75f).gravity(0.01).penetration(PENETRATION_LOW).damageDrop(8, 15, 8.0f).forwardOffset(0.40f).build(),
+                    GunSounds.of(TGSounds.BIOGUN_FIRE, TGSounds.BIOGUN_RELOAD), BIOGUN_PROJECTILES, 30.0f, 3)
+                    .withChargeSound(TGSounds.BIOGUN_CHARGE).withChargeFx("biogunCharge", -0.12f, -0.07f, 0.27f));
+
+    public static final DeferredItem<GunItem> TFG = gun("tfg",
+            properties -> new ChargeGunItem(properties,
+                    GunStats.builder(false, 5, 20, 45, 50.0f, 100, 0.015f)
+                            .speed(2.0f).penetration(PENETRATION_MED_HIGH).damageDrop(8, 15, 15.0f).muzzleFlashTicks(10).recoilTicks(10)
+                            .forwardOffset(0.40f).build(),
+                    GunSounds.of(TGSounds.TFG_FIRE, TGSounds.BIOGUN_RELOAD), TFG_PROJECTILES, 60.0f, 10)
+                    .withChargeSound(TGSounds.TFG_CHARGE).withChargeFx("TFGChargeStart", -0.14f, -0.10f, 0.42f));
+
+    // Fabric only; its charge FX "tfgcharge" does not exist in any FX file, so there is none
+    public static final DeferredItem<GunItem> MAGIC_RIFLE = gun("magic_rifle",
+            properties -> new ChargeGunItem(properties,
+                    GunStats.builder(true, 6, 1, 2, 25.0f, MAX_RANGE_RIFLE, 0.05f)
+                            .speed(2.5f).damageDrop(40, 60, 10.0f).penetration(PENETRATION_LOW).build(),
+                    GunSounds.of(TGSounds.HANDGUN_FIRE, TGSounds.HANDGUN_RELOAD), MAGIC_RIFLE_PROJECTILES, 60.0f, 1)
+                    .withChargeSound(TGSounds.TFG_CHARGE));
+
+    public static final DeferredItem<GunItem> HAND_CANNON = gun("hand_cannon",
+            GunStats.builder(true, 12, 1, 30, 8.0f, 25, 0.035f)
+                    .speed(1.0f).gravity(0.015).damageDrop(10, 25, 5.0f).recoilTicks(12).build(),
+            GunSounds.of(TGSounds.HANDGUN_FIRE, TGSounds.HANDGUN_RELOAD), STONE_BULLET_PROJECTILES);
 
     // Hand grenades (Techguns 2 only): damage, full-damage radius, minimum damage, outer radius
     public static final DeferredItem<GrenadeItem> STIELGRANATE = TGItems.ITEMS.register("stielgranate",

@@ -2,6 +2,11 @@ package techguns.client.render.item;
 
 import techguns.TGIds;
 import techguns.client.model.gun.ModelAK;
+import techguns.client.model.gun.ModelBiogun;
+import techguns.client.model.gun.ModelFlamethrower;
+import techguns.client.model.gun.ModelHandgun;
+import techguns.client.model.gun.ModelMagicRifle;
+import techguns.client.model.gun.ModelTFG;
 import techguns.client.model.gun.ModelAUG;
 import techguns.client.model.gun.ModelBoltaction;
 import techguns.client.model.gun.ModelGoldenRevolver;
@@ -409,6 +414,53 @@ public final class TGItemRendererSetup {
                 {0.0f, 0.0f, 0}, // Ground
                 {0, 0, 0f} // frame
         };
+
+        TGItemRenderers.register(TGGuns.HAND_CANNON, new RenderGunBase90(new GeoGunModel(new ModelHandgun(), "hand_cannon"), 1, TGIds.id("textures/guns/handgun.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
+                .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.16f, -0.75f, 0.9f, 0).setReloadAnim(GunAnimation.breechReload, -0.15f, 55.0f).setReloadAnim3p(GunAnimation.breechReload, 0f, 55.0f).setTransformTranslations(new float[][]{
+                        {0, 0.03f, -0.12f}, // First Person
+                        {0.0f, -0.05f, -0.09f}, // Third Person
+                        {0.0f, 0.0f, 0}, // GUI
+                        {0.0f, 0.0f, 0}, // Ground
+                        {0, 0, 0f} // frame
+                }).setMuzzleFXPos3P(0.03f, -0.59f).setRecoilAnim(GunAnimation.genericRecoil, 0.2f, 25.0f));
+
+        TGItemRenderers.register(TGGuns.BIOGUN, new RenderGunBase90(new GeoGunModel(new ModelBiogun(), "biogun"), 1, TGIds.id("textures/guns/biogun.png")).setBaseTranslation(0.35f, -0.2f, RenderItemBase.SCALE - 0.1f)
+                .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleGreenFlare, 0, 0.23f, -0.51f, 0.55f, 0).setTransformTranslations(new float[][]{
+                        {0f, 0.16f, 0.05f}, // First Person
+                        {0f, 0.07f, -0.05f}, // Third Person
+                        {0f, 0f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {0f, 0f, -0.05f} // frame
+                }).setMuzzleFXPos3P(0.1f, -0.51f).setChargeTranslationAmount(0.05f));
+
+        // Techguns 2 values (the Fabric port dropped the charge translation and first person scale and moved the frame/3P muzzle offsets)
+        TGItemRenderers.register(TGGuns.TFG, new RenderGunBase90(new GeoGunModel(new ModelTFG(), "tfg"), 1, TGIds.id("textures/guns/tfg.png")).setBaseTranslation(-0.46f, -0.38f, RenderItemBase.SCALE - 0.125f)
+                .setBaseScale(1.20f).setGUIScale(0.30f).setMuzzleFx(ScreenEffect.muzzleFlashTFG, 0.0f, 0.18f, -0.87f, 0.9f, 0).setTransformTranslations(new float[][]{
+                        {0f, -0.03f, 0.16f}, // First Person
+                        {0f, -0.09f, -0.26f}, // Third Person
+                        {0.04f, -0.04f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {-0.07f, 0f, -0.05f} // frame
+                }).setMuzzleFXPos3P(0.09f, -1.14f).setChargeTranslationAmount(0.05f).setFirstPersonScale(0.45f));
+
+        TGItemRenderers.register(TGGuns.FLAMETHROWER, new RenderFlamethrower(new GeoGunModel(new ModelFlamethrower(), "flamethrower"), 1, TGIds.id("textures/guns/flamethrower.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
+                .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.FlamethrowerMuzzleFlash, 0, 0.16f, -0.9f, 0.45f, 0).setTransformTranslations(new float[][]{
+                        {0f, 0f, 0f}, // First Person
+                        {0f, 0f, -0.08f}, // Third Person
+                        {0.05f, 0f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {0f, 0f, -0.05f} // frame
+                }).setMuzzleFXPos3P(0.1f, -0.63f).setRecoilAnim(GunAnimation.swayRecoil, 0.025f, 2.5f));
+
+        TGItemRenderers.register(TGGuns.MAGIC_RIFLE, new RenderGunBase90(new GeoGunModel(new ModelMagicRifle(), "magic_rifle"), 1, TGIds.id("textures/guns/magic_rifle.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
+                .setGUIScale(0.40f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.16f, -1.5f, 1.1f, 0).setReloadAnim(GunAnimation.breechReload, -0.15f, 55.0f).setReloadAnim3p(GunAnimation.breechReload, 0f, 55.0f).setTransformTranslations(new float[][]{
+                        {-0.1f, 0.13f, -0.02f}, // First Person
+                        {0.0f, -0.05f, -0.09f}, // Third Person
+                        {0.05f, 0.0f, 0}, // GUI
+                        {0.0f, 0.0f, 0}, // Ground
+                        {0, 0, 0f} // frame
+                }).setMuzzleFXPos3P(0.03f, -0.69f).setRecoilAnim(GunAnimation.genericRecoil, 0.2f, 25.0f)
+                .setChargeFx(ScreenEffect.magicRifleCharge, 0f, 0.16f, -1.5f, 2.5f, 0f).setChargeFXPos3P(0.03f, -3.f, 3.0f));
 
         TGItemRenderers.register(TGAmmo.ASSAULT_RIFLE_MAGAZINE, new RenderItemBase(new ModelARMagazine(false), TGIds.id("textures/guns/ar_mag.png")).setBaseScale(1.25f).setGUIScale(0.85f).setBaseTranslation(0, -0.2f, 0).setTransformTranslations(m4magTranslations));
         TGItemRenderers.register(TGAmmo.ASSAULT_RIFLE_MAGAZINE_EMPTY, new RenderItemBase(new ModelARMagazine(true), TGIds.id("textures/guns/ar_mag.png")).setBaseScale(1.25f).setGUIScale(0.85f).setBaseTranslation(0, -0.2f, 0).setTransformTranslations(m4magTranslations));

@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:shielded_titanium_barrel"
+    },
+    "m": {
+      "item": "techguns:nuclear_power_cell_empty"
+    },
+    "p": {
+      "item": "techguns:plasma_generator"
+    },
+    "r": {
+      "item": "techguns:titanium_receiver"
+    },
+    "t": {
+      "tag": "c:ingots/titanium"
+    }
+  },
+  "pattern": [
+    "t  ",
+    "bpr",
+    "tm "
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      }
+    },
+    "count": 1,
+    "id": "techguns:tfg"
+  }
+}

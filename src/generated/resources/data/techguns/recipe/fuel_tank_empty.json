@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "pattern": [
+    "p",
+    "g",
+    "p"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:fuel_tank_empty"
+  }
+}

@@ -24,6 +24,9 @@ public class GenericProjectileRenderer extends RenderLateEntityRenderer<GenericP
     private static final ResourceLocation BULLET_TEXTURE = TGIds.id("textures/entity/bullet1.png");
     private static final ResourceLocation ADVANCED_TEXTURE = TGIds.id("textures/entity/bullet_blue.png");
     private static final ResourceLocation BLASTER_TEXTURE = TGIds.id("textures/fx/laser3.png");
+    private static final ResourceLocation STONE_TEXTURE = TGIds.id("textures/entity/handgunbullet.png");
+    /** Size (blocks) of the stone ball sprite. */
+    private static final float STONE_SIZE = 0.1f;
     private static final int FULL_BRIGHT = 0xF000F0;
     private static final float HALF_LENGTH = 10f;
     private static final float HALF_WIDTH = 1.25f;
@@ -37,6 +40,7 @@ public class GenericProjectileRenderer extends RenderLateEntityRenderer<GenericP
         return switch (entity.kind()) {
             case BLASTER -> BLASTER_TEXTURE;
             case ADVANCED, GAUSS -> ADVANCED_TEXTURE;
+            case STONE -> STONE_TEXTURE;
             default -> BULLET_TEXTURE;
         };
     }
@@ -50,6 +54,11 @@ public class GenericProjectileRenderer extends RenderLateEntityRenderer<GenericP
         }
         // hide the bullet for its first moments so it does not pop up inside the muzzle
         if (!(entity.tickCount >= 2 || (entity.tickCount == 1 && partialTick > 0.35f))) {
+            return;
+        }
+        if (entity.kind() == GenericProjectile.Kind.STONE) {
+            // textured ball instead of a tracer (Fabric RenderStoneBulletProjectile)
+            ProjectileSprite.draw(poseStack, buffers.getBuffer(TGRenderTypes.projectileCutout(STONE_TEXTURE)), STONE_SIZE, packedLight);
             return;
         }
         float angleX = (float) new Random(entity.getId()).nextGaussian();

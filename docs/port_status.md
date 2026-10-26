@@ -11,7 +11,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives) |
+| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons) |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
@@ -83,3 +83,7 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 | 3d lock-on: hold use to lock (client `LockOnTracker`, beeps, HUD corners + target name), target sent with the shot and checked on the server; missiles turn up to 9 degrees per tick | F + 12 | logic | |
 | 3d grenades: 40 mm launcher grenade (3 bounces, OBJ mesh), stick grenade and frag grenade (wind-up throw, Techguns 2) | F + 12 | logic | OBJ guns/grenades use `ObjMesh` (no GeckoLib version) |
 | 3d recipes: 40 mm grenades, hand grenades, grenade launcher (empty), guided missile launcher (3), rocket launcher high velocity / nuke | F + 12 | logic | nuke rocket needs the tactical nuke warhead, high velocity rocket the chemical laboratory (Phase 5), Grim Reaper the ammo transfer recipe (3g) |
+| 3e guns: flamethrower, biogun, TFG, magic rifle (Fabric only), hand cannon | F + 12 | logic | awaiting in-game check |
+| 3e charge guns (`ChargeGunItem`): left click = normal shot, hold use = charge, release = charged shot using ammo in proportion to the charge; charge sound and charge FX run on every client from the synced using-item state; charge progress drives the gun renderer | F | tested | GameTests: full/partial charge ammo use, ammo-limited charge, charged TFG shot, normal shot |
+| 3e projectiles: flame (fire, ignites, may light blocks, goes out in water), stone ball, bio blob shot (+ bio blob block), TFG plasma ball (charge-sized blast), magic rifle bullets (arcane / fire / lightning) | F | logic | magic rifle charge FX "tfgcharge" exists in no FX file (Fabric typo), so it has none |
+| 3e ammo and recipes: fuel tank, bio tank (+empty), stone bullets, magic bullets (fire, lightning); flamethrower, biogun, TFG (loaded + empty), hand cannon (empty) | F | logic | magic rifle and magic bullets have no recipe in Fabric |

@@ -18,6 +18,9 @@ public final class AmmoType {
     public static final String EXPLOSIVE = "explosive";
     public static final String NUKE = "nuke";
     public static final String HIGH_VELOCITY = "high_velocity";
+    /** Magic rifle bullets. */
+    public static final String FIRE = "fire";
+    public static final String LIGHTNING = "lightning";
 
     /**
      * @param key    variant name stored on the gun

@@ -63,6 +63,14 @@ public final class TGAmmo {
     public static final DeferredItem<Item> ROCKET_NUKE = model("rocket_nuke", 8);
     public static final DeferredItem<Item> ROCKET_HIGH_VELOCITY = model("rocket_high_velocity", 8);
     public static final DeferredItem<Item> GRENADE_40MM = flat("grenade_40mm", 16);
+    public static final DeferredItem<Item> FUEL_TANK = flat("fuel_tank", 16);
+    public static final DeferredItem<Item> FUEL_TANK_EMPTY = flat("fuel_tank_empty", 16);
+    public static final DeferredItem<Item> BIO_TANK = flat("bio_tank", 16);
+    public static final DeferredItem<Item> BIO_TANK_EMPTY = flat("bio_tank_empty", 16);
+    public static final DeferredItem<Item> STONE_BULLETS = flat("stone_bullets", 64);
+    public static final DeferredItem<Item> MAGIC_BULLET = flat("magic_bullet", 64);
+    public static final DeferredItem<Item> MAGIC_BULLET_FIRE = flat("magic_bullet_fire", 64);
+    public static final DeferredItem<Item> MAGIC_BULLET_LIGHTNING = flat("magic_bullet_lightning", 64);
 
     // --- Ammo types ---
     public static final AmmoType PISTOL_ROUNDS_TYPE = AmmoType.simple(PISTOL_ROUNDS)
@@ -87,6 +95,12 @@ public final class TGAmmo {
     public static final AmmoType ROCKETS_NO_NUKES_TYPE = AmmoType.simple(ROCKET)
             .addVariant(AmmoType.HIGH_VELOCITY, ROCKET_HIGH_VELOCITY, ROCKET_HIGH_VELOCITY);
     public static final AmmoType GRENADES_40MM_TYPE = AmmoType.simple(GRENADE_40MM);
+    public static final AmmoType FUEL_TANK_TYPE = AmmoType.withEmpty(FUEL_TANK, FUEL_TANK_EMPTY, null, 0);
+    public static final AmmoType BIO_TANK_TYPE = AmmoType.withEmpty(BIO_TANK, BIO_TANK_EMPTY, null, 0);
+    public static final AmmoType STONE_BULLETS_TYPE = AmmoType.simple(STONE_BULLETS);
+    public static final AmmoType MAGIC_BULLETS_TYPE = AmmoType.simple(MAGIC_BULLET)
+            .addVariant(AmmoType.FIRE, MAGIC_BULLET_FIRE, MAGIC_BULLET_FIRE)
+            .addVariant(AmmoType.LIGHTNING, MAGIC_BULLET_LIGHTNING, MAGIC_BULLET_LIGHTNING);
     public static final AmmoType SHOTGUN_ROUNDS_TYPE = AmmoType.simple(SHOTGUN_ROUNDS)
             .addVariant(AmmoType.INCENDIARY, SHOTGUN_ROUNDS_INCENDIARY, SHOTGUN_ROUNDS_INCENDIARY);
     public static final AmmoType AS50_MAGAZINE_TYPE = AmmoType.withEmpty(AS50_MAGAZINE, AS50_MAGAZINE_EMPTY, SNIPER_ROUNDS, 2)

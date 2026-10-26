@@ -15,6 +15,7 @@ public final class ShooterValues {
     private final Timer[] recoil = {new Timer(), new Timer()};
     private final Timer[] muzzleFlash = {new Timer(), new Timer()};
     private final Timer[] reload = {new Timer(), new Timer()};
+    private final float[] recoilCharge = new float[2];
 
     /** A running animation: ends at {@code end} (ms), lasts {@code duration} ms. */
     public static final class Timer {
@@ -58,6 +59,15 @@ public final class ShooterValues {
 
     public Timer reload(InteractionHand hand) {
         return reload[hand.ordinal()];
+    }
+
+    /** Charge a charge gun was released with; its charge animation fades out during the recoil. */
+    public float recoilCharge(InteractionHand hand) {
+        return recoilCharge[hand.ordinal()];
+    }
+
+    void setRecoilCharge(InteractionHand hand, float charge) {
+        recoilCharge[hand.ordinal()] = charge;
     }
 
     void startRecoil(InteractionHand hand, int ticks) {

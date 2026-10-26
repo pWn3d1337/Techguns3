@@ -67,6 +67,10 @@ public class GunItem extends Item {
         return this;
     }
 
+    public GunSounds sounds() {
+        return sounds;
+    }
+
     public GunStats stats() {
         return stats;
     }
@@ -197,20 +201,28 @@ public class GunItem extends Item {
     /** Creates (but does not spawn) one projectile of the loaded ammo variant. */
     protected Projectile createProjectile(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos,
                                           @Nullable Entity target) {
-        ProjectileFactory<?> factory = projectiles.factory(GunData.variant(stack));
-        DamageModifier mod = factory.modifier();
+        return factory(stack).create(shotParams(level, shooter, stack, spread, damageMultiplier, firePos, target));
+    }
+
+    /** Projectile factory of the loaded ammo variant. */
+    protected ProjectileFactory<?> factory(ItemStack stack) {
+        return projectiles.factory(GunData.variant(stack));
+    }
+
+    /** Gun stats with the loaded ammo's damage modifier applied, for one projectile. */
+    protected ShotParams shotParams(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos,
+                                    @Nullable Entity target) {
+        DamageModifier mod = factory(stack).modifier();
         GunStats.Damage damage = stats.damage();
         GunStats.Projectile projectile = stats.projectile();
 
         float speed = mod.velocity(projectile.speed());
         int lifetime = Math.round(projectile.lifetimeTicks() * mod.rangeMul() + mod.rangeAdd());
-        ShotParams params = new ShotParams(this, level, shooter,
+        return new ShotParams(this, level, shooter,
                 mod.damage(damage.damage()) * damageMultiplier, mod.damage(damage.damageMin()) * damageMultiplier,
                 mod.range(damage.dropStart()), mod.range(damage.dropEnd()), damage.penetration(),
                 speed, lifetime, spread, projectile.gravity(), mod.radius(damage.radius()),
                 blockDamage(shooter), firePos, target);
-
-        return factory.create(params);
     }
 
     /** Players in safe mode never damage blocks. */

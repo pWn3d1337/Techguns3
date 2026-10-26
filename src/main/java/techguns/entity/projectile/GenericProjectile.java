@@ -70,7 +70,11 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         /** Alien blaster; sets blocks on fire when the gun does block damage. */
         ALIEN_BLASTER(TGDamageCategory.FIRE, DeathType.DEFAULT, "AlienExplosion", "AlienBlasterTrail"),
         /** Nether blaster; sets targets on fire. */
-        NETHER_BLASTER(TGDamageCategory.FIRE, DeathType.DEFAULT, "CyberdemonBlasterImpact", "CyberDemonBlasterTrail");
+        NETHER_BLASTER(TGDamageCategory.FIRE, DeathType.DEFAULT, "CyberdemonBlasterImpact", "CyberDemonBlasterTrail"),
+        /** Flamethrower flame; sets targets on fire, may set blocks on fire, goes out in water. */
+        FLAME(TGDamageCategory.FIRE, DeathType.DEFAULT, "FlamethrowerImpact", "FlamethrowerTrail"),
+        /** Hand cannon stone ball. */
+        STONE(TGDamageCategory.PROJECTILE, DeathType.GORE, false);
 
         public final TGDamageCategory category;
         public final DeathType deathType;
@@ -211,6 +215,10 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         if (gravity > 0.0) {
             setDeltaMovement(getDeltaMovement().add(0, -gravity, 0));
         }
+        if (kind == Kind.FLAME && isInWater()) {
+            removeAfterHit();
+            return;
+        }
         updateRotationFromMotion();
 
         if (tickCount >= lifetime) {
@@ -264,7 +272,7 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
 
     /** Extra effects after a successful hit (burning etc.). */
     protected void onHitLiving(LivingEntity target) {
-        if ((kind == Kind.INCENDIARY || kind == Kind.NETHER_BLASTER) && !target.fireImmune()) {
+        if ((kind == Kind.INCENDIARY || kind == Kind.NETHER_BLASTER || kind == Kind.FLAME) && !target.fireImmune()) {
             target.igniteForSeconds(3);
         }
     }
@@ -277,15 +285,18 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
             if (kind == Kind.EXPLOSIVE) {
                 explode(result.getLocation());
             }
-            if (kind == Kind.ALIEN_BLASTER && blockDamage) {
-                burnBlock(server, result);
+            if (blockDamage && (kind == Kind.ALIEN_BLASTER || kind == Kind.FLAME)) {
+                burnBlock(server, result, kind == Kind.FLAME ? 0.5 : 0.35);
             }
         }
         removeAfterHit();
     }
 
-    /** Alien blaster: sets the hit face on fire (Fabric burnBlocks, which only lights the face in front). */
-    private void burnBlock(ServerLevel level, BlockHitResult result) {
+    /** Sets the hit face on fire with the given chance (Fabric {@code burnBlocks}, which only lights the face in front). */
+    protected void burnBlock(ServerLevel level, BlockHitResult result, double chance) {
+        if (random.nextDouble() > chance) {
+            return;
+        }
         BlockPos firePos = result.getBlockPos().relative(result.getDirection());
         if (level.isEmptyBlock(firePos) && BaseFireBlock.canBePlacedAt(level, firePos, result.getDirection())) {
             level.setBlockAndUpdate(firePos, BaseFireBlock.getState(level, firePos));
@@ -425,6 +436,13 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
     protected void startTrail(@Nullable String trailFx) {
         if (trailFx != null && level().isClientSide) {
             FxClientHandler.get().spawnFxOnEntity(level(), trailFx, this, 0f, 0f, 0f, false, EntityCondition.ENTITY_ALIVE);
+        }
+    }
+
+    /** Client: attaches a scaled particle trail. */
+    protected void startTrail(String trailFx, float scale) {
+        if (level().isClientSide) {
+            FxClientHandler.get().spawnFxOnEntity(level(), trailFx, this, scale, EntityCondition.ENTITY_ALIVE);
         }
     }
 

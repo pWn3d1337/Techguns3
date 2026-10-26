@@ -376,6 +376,25 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" i ").pattern("sts").pattern("sgs")
                 .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER).define('i', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("grenade_40mm"));
+        // Batch 3e ammo (the magic rifle's bullets have no recipe in Fabric)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.FUEL_TANK_EMPTY.get(), 4)
+                .pattern("p").pattern("g").pattern("p")
+                .define('p', TGItems.PLASTIC_SHEET.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy("has_plastic_sheet", has(TGItems.PLASTIC_SHEET.get())).save(output, TGIds.id("fuel_tank_empty"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.FUEL_TANK.get(), 2)
+                .requires(TGAmmo.FUEL_TANK_EMPTY.get(), 2).requires(Items.LAVA_BUCKET)
+                .unlockedBy("has_fuel_tank_empty", has(TGAmmo.FUEL_TANK_EMPTY.get())).save(output, TGIds.id("fuel_tank"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.BIO_TANK_EMPTY.get())
+                .pattern("sss").pattern("sgs").pattern("sgs")
+                .define('s', steelNugget).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy("has_steel_nugget", has(steelNugget)).save(output, TGIds.id("bio_tank_empty"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.BIO_TANK.get())
+                .requires(TGAmmo.BIO_TANK_EMPTY.get()).requires(TGItems.BIOMASS.get())
+                .unlockedBy("has_bio_tank_empty", has(TGAmmo.BIO_TANK_EMPTY.get())).save(output, TGIds.id("bio_tank"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.STONE_BULLETS.get(), 16)
+                .requires(Items.COBBLESTONE, 3).requires(Items.GUNPOWDER)
+                .unlockedBy("has_gunpowder", has(Items.GUNPOWDER)).save(output, TGIds.id("stone_bullets"));
+
         // hand grenades (Techguns 2)
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGGuns.STIELGRANATE.get(), 16)
                 .pattern(" it").pattern(" wi").pattern("i  ")
@@ -532,6 +551,26 @@ public class TGRecipeProvider extends RecipeProvider {
         Consumer<StackShapedRecipeBuilder> pdwKeys = b -> b.define('b', carbonBarrel).define('r', carbonReceiver).define('s', carbonStock);
         gun(output, pdw, 40, AmmoType.DEFAULT, "pdw", TGAmmo.ADVANCED_MAGAZINE.get(), pdwKeys, "brs", " m ");
         gun(output, pdw, 0, AmmoType.DEFAULT, "pdw_empty", TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), pdwKeys, "brs", " m ");
+
+        // --- Batch 3e (the magic rifle has no recipe in Fabric) ---
+        Item flamethrower = TGGuns.FLAMETHROWER.get();
+        Consumer<StackShapedRecipeBuilder> flamethrowerKeys = b -> b.define('p', TGItems.PUMP_MECHANISM.get()).define('r', ironReceiver)
+                .define('s', plasticStock).define('f', Items.FLINT_AND_STEEL);
+        gun(output, flamethrower, 100, AmmoType.DEFAULT, "flamethrower", TGAmmo.FUEL_TANK.get(), flamethrowerKeys, "prs", "fm ");
+        gun(output, flamethrower, 0, AmmoType.DEFAULT, "flamethrower_empty", TGAmmo.FUEL_TANK_EMPTY.get(), flamethrowerKeys, "prs", "fm ");
+        Item biogun = TGGuns.BIOGUN.get();
+        Consumer<StackShapedRecipeBuilder> biogunKeys = b -> b.define('r', steelReceiver).define('s', plasticStock)
+                .define('f', TGItems.PUMP_MECHANISM.get());
+        gun(output, biogun, 30, AmmoType.DEFAULT, "biogun", TGAmmo.BIO_TANK.get(), biogunKeys, "frs", " m ");
+        gun(output, biogun, 0, AmmoType.DEFAULT, "biogun_empty", TGAmmo.BIO_TANK_EMPTY.get(), biogunKeys, "frs", " m ");
+        Item tfg = TGGuns.TFG.get();
+        Consumer<StackShapedRecipeBuilder> tfgKeys = b -> b.define('p', TGItems.PLASMA_GENERATOR.get())
+                .define('b', TGItems.SHIELDED_TITANIUM_BARREL.get()).define('r', TGItems.TITANIUM_RECEIVER.get())
+                .define('t', TGTags.Items.ingot("titanium"));
+        gun(output, tfg, 20, AmmoType.DEFAULT, "tfg", TGAmmo.NUCLEAR_POWER_CELL.get(), tfgKeys, "t  ", "bpr", "tm ");
+        gun(output, tfg, 0, AmmoType.DEFAULT, "tfg_empty", TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get(), tfgKeys, "t  ", "bpr", "tm ");
+        gun(output, TGGuns.HAND_CANNON.get(), 0, AmmoType.DEFAULT, "hand_cannon_empty", null,
+                b -> b.define('b', TGItems.STONE_BARREL.get()).define('s', woodStock).define('f', Items.FLINT_AND_STEEL), "bfs");
 
         // --- Batch 3d ---
         gun(output, rocketLauncher, 1, AmmoType.HIGH_VELOCITY, "rocket_launcher_high_velocity", TGAmmo.ROCKET_HIGH_VELOCITY.get(), rocketKeys,

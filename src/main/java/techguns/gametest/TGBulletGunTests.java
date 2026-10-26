@@ -28,7 +28,7 @@ import techguns.gun.ammo.AmmoType;
 import techguns.registry.TGGuns;
 
 /**
- * The same checks for every projectile and beam gun (Phase 3 batches 3a-3d): a shot uses one round and hits, an empty gun
+ * The same checks for every projectile and beam gun (Phase 3 batches 3a-3e): a shot uses one round and hits, an empty gun
  * reloads from its own ammo items and gives back the empty ones, incendiary ammo sets the target on fire, explosive
  * ammo also hurts what stands next to the target.
  */
@@ -42,7 +42,8 @@ public class TGBulletGunTests {
             TGGuns.SAWED_OFF, TGGuns.COMBAT_SHOTGUN, TGGuns.AS50, TGGuns.GAUSS_RIFLE, TGGuns.BLASTER_RIFLE, TGGuns.BLASTER_SHOTGUN,
             TGGuns.PULSE_RIFLE, TGGuns.PDW,
             TGGuns.LASER_PISTOL, TGGuns.NUCLEAR_DEATHRAY, TGGuns.TESLA_GUN, TGGuns.ALIEN_BLASTER, TGGuns.MIB_GUN, TGGuns.NETHER_BLASTER,
-            TGGuns.SONIC_SHOTGUN, TGGuns.GRENADE_LAUNCHER, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.GRIM_REAPER);
+            TGGuns.SONIC_SHOTGUN, TGGuns.GRENADE_LAUNCHER, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.GRIM_REAPER,
+            TGGuns.FLAMETHROWER, TGGuns.BIOGUN, TGGuns.TFG, TGGuns.MAGIC_RIFLE, TGGuns.HAND_CANNON);
 
     @GameTestGenerator
     public static Collection<TestFunction> bulletGunTests() {

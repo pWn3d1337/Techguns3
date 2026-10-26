@@ -1,6 +1,8 @@
 package techguns.core.fx;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import techguns.gun.ChargeGunItem;
 
 /**
  * Condition under which an entity-attached particle system keeps running (Techguns 2 {@code EntityCondition}).
@@ -28,8 +30,8 @@ public enum EntityCondition {
 
     public boolean evaluate(Entity entity) {
         return switch (this) {
-            // TODO charge-up weapons: needs the player's weapon charge state (Phase 3); until then the system stops at once
-            case CHARGING_WEAPON -> false;
+            case CHARGING_WEAPON -> entity instanceof LivingEntity living && living.isUsingItem()
+                    && living.getUseItem().getItem() instanceof ChargeGunItem;
             case ENTITY_ALIVE -> entity.isAlive();
             default -> true;
         };

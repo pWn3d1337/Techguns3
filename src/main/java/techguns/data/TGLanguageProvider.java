@@ -93,7 +93,13 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("guided_missile_launcher", "Guided Missile Launcher"),
             Map.entry("grenade_40mm", "40mm Grenade"),
             Map.entry("grim_reaper", "Grim Reaper"),
-            Map.entry("frag_grenade", "Frag Grenade"));
+            Map.entry("frag_grenade", "Frag Grenade"),
+            Map.entry("tfg", "TFG 10K"),
+            Map.entry("bioblob", "Bio Blob"),
+            Map.entry("fuel_tank_empty", "Fuel Tank (Empty)"),
+            Map.entry("bio_tank_empty", "Bio Tank (Empty)"),
+            Map.entry("magic_bullet_fire", "Magic Bullet (Fire)"),
+            Map.entry("magic_bullet_lightning", "Magic Bullet (Lightning)"));
 
     @Override
     protected void addTranslations() {

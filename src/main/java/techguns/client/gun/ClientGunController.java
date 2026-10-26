@@ -95,6 +95,11 @@ public final class ClientGunController implements GunClientEffects {
     }
 
     @Override
+    public void onChargeReleased(LivingEntity shooter, InteractionHand hand, float charge) {
+        ShooterValues.of(shooter.getId()).setRecoilCharge(hand, charge);
+    }
+
+    @Override
     public void onReloadStarted(LivingEntity shooter, InteractionHand hand, int reloadTicks) {
         ShooterValues.of(shooter.getId()).startReload(hand, reloadTicks);
     }
@@ -147,9 +152,21 @@ public final class ClientGunController implements GunClientEffects {
         if (forcedFireTicks > 0) {
             forcedFireTicks--;
         }
+        // dev testing: start and release the item use directly (vanilla key handling ignores a background window),
+        // so charging and grenade wind-up run as with a held use key
         boolean useDown = mc.options.keyUse.isDown() || forcedUseTicks > 0;
-        if (forcedUseTicks > 0) {
-            forcedUseTicks--;
+        if (forcedUseTicks > 0 && mc.gameMode != null) {
+            // the key state keeps vanilla from releasing the use again
+            mc.options.keyUse.setDown(true);
+            if (!player.isUsingItem()) {
+                mc.gameMode.useItem(player, InteractionHand.MAIN_HAND);
+            }
+            if (--forcedUseTicks == 0) {
+                mc.options.keyUse.setDown(false);
+                if (player.isUsingItem()) {
+                    mc.gameMode.releaseUsingItem(player);
+                }
+            }
         }
 
         if (mainHand.getItem() instanceof LockOnGunItem lockOnGun && useDown) {

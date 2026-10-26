@@ -96,6 +96,16 @@ public final class TGRenderTypes {
                     .setCullState(RenderStateShard.NO_CULL)
                     .createCompositeState(true)));
 
+    /** Sprite projectiles (stone ball): opaque with alpha cutout, lit by the world light. */
+    private static final Function<ResourceLocation, RenderType> PROJECTILE_CUTOUT = Util.memoize(texture -> RenderType.create(
+            "techguns_projectile_cutout", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
+            RenderType.CompositeState.builder()
+                    .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                    .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                    .setLightmapState(RenderStateShard.LIGHTMAP)
+                    .setCullState(RenderStateShard.NO_CULL)
+                    .createCompositeState(true)));
+
     public static RenderType fxAdditive(ResourceLocation texture) {
         return FX_ADDITIVE.apply(texture);
     }
@@ -110,5 +120,9 @@ public final class TGRenderTypes {
 
     public static RenderType projectileAdditive(ResourceLocation texture) {
         return PROJECTILE_ADDITIVE.apply(texture);
+    }
+
+    public static RenderType projectileCutout(ResourceLocation texture) {
+        return PROJECTILE_CUTOUT.apply(texture);
     }
 }

@@ -44,6 +44,11 @@ public class TGExplosion {
     /** Chance (scaled by distance beyond the primary radius) that a destroyed block drops itself. */
     private float blockDropChance = 0.25f;
     private final Explosion explosionDummy;
+    /** Entity that takes no damage (the target a projectile already hit directly); may be null. */
+    @Nullable
+    private Entity excluded;
+    /** Seconds entities hit are set on fire for; 0 = none. */
+    private int entityFireSeconds;
 
     public TGExplosion(ServerLevel level, @Nullable Entity exploder, @Nullable Entity projectile, Vec3 position, double primaryDamage,
                        double secondaryDamage, double primaryRadius, double secondaryRadius, double blockDamageFactor) {
@@ -64,6 +69,18 @@ public class TGExplosion {
 
     public TGExplosion setBlockDropChance(float chance) {
         this.blockDropChance = chance;
+        return this;
+    }
+
+    /** The entity takes no damage from this explosion (Fabric {@code TGExplosionIgnoreBlocks} excluded entities). */
+    public TGExplosion setExcludedEntity(@Nullable Entity excluded) {
+        this.excluded = excluded;
+        return this;
+    }
+
+    /** Entities damaged by the blast are set on fire (Fabric {@code setIncendiary}, entity part only). */
+    public TGExplosion setEntityFire(int seconds) {
+        this.entityFireSeconds = seconds;
         return this;
     }
 
@@ -144,7 +161,7 @@ public class TGExplosion {
         AABB box = new AABB(position, position).inflate(total + 1.0);
         List<Entity> entities = level.getEntities(projectile, box);
         for (Entity entity : entities) {
-            if (entity.ignoreExplosion(explosionDummy) || !entity.isAlive() || !isTarget(entity)) {
+            if (entity == excluded || entity.ignoreExplosion(explosionDummy) || !entity.isAlive() || !isTarget(entity)) {
                 continue;
             }
             double distance = position.distanceTo(entity.position().add(0, entity.getEyeHeight(), 0));
@@ -159,6 +176,9 @@ public class TGExplosion {
                 continue;
             }
             entity.hurt(source, (float) Math.max(0, damage));
+            if (entityFireSeconds > 0 && !entity.fireImmune()) {
+                entity.igniteForSeconds(entityFireSeconds);
+            }
         }
     }
 

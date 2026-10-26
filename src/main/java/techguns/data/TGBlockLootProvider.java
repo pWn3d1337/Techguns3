@@ -17,6 +17,7 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        add(TGBlocks.BIOBLOB.get(), noDrop());
         add(TGBlocks.TIN_ORE.get(), block -> createOreDrop(block, TGItems.RAW_TIN.get()));
         add(TGBlocks.DEEPSLATE_TIN_ORE.get(), block -> createOreDrop(block, TGItems.RAW_TIN.get()));
         add(TGBlocks.LEAD_ORE.get(), block -> createOreDrop(block, TGItems.RAW_LEAD.get()));

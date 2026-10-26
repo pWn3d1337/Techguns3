@@ -24,6 +24,10 @@ public interface FxClientHandler {
                                  boolean attachToHead, EntityCondition condition) {
     }
 
+    /** Spawns the particle system {@code name} attached to an entity, scaled. */
+    default void spawnFxOnEntity(Level level, String name, Entity entity, float scale, EntityCondition condition) {
+    }
+
     /** Bullet impact on a block: sound and particles depending on the block's sound type. */
     default void gunImpact(Level level, short soundType, double x, double y, double z, float pitch, float yaw, boolean incendiary,
                            boolean blue) {

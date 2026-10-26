@@ -90,6 +90,11 @@ public final class ClientFx implements FxClientHandler {
     }
 
     @Override
+    public void spawnFxOnEntity(Level level, String name, Entity entity, float scale, EntityCondition condition) {
+        createFXOnEntity(name, entity, 0f, 0f, 0f, false, condition, scale);
+    }
+
+    @Override
     public void entityDeath(LivingEntity entity, DeathType deathType, float motionX, float motionY, float motionZ) {
         DeathEffects.play(entity, deathType, motionX, motionY, motionZ);
     }
@@ -162,6 +167,12 @@ public final class ClientFx implements FxClientHandler {
     /** Spawns a particle system attached to an entity. */
     public static void createFXOnEntity(String name, @Nullable Entity entity, float offsetX, float offsetY, float offsetZ,
                                         boolean attachToHead, EntityCondition condition) {
+        createFXOnEntity(name, entity, offsetX, offsetY, offsetZ, attachToHead, condition, 1.0f);
+    }
+
+    /** Spawns a scaled particle system attached to an entity. */
+    public static void createFXOnEntity(String name, @Nullable Entity entity, float offsetX, float offsetY, float offsetZ,
+                                        boolean attachToHead, EntityCondition condition, float scale) {
         if (entity == null) {
             return;
         }
@@ -171,6 +182,7 @@ public final class ClientFx implements FxClientHandler {
                 system.entityOffset = new Vec3(offsetX, offsetY, offsetZ);
                 system.attachToHead = attachToHead;
                 system.condition = condition;
+                system.scale = scale;
                 TGParticleManager.get().addEffect(system);
             }
         }

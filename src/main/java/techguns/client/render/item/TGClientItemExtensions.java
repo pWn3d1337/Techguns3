@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import techguns.gun.ChargeGunItem;
 import techguns.gun.GrenadeItem;
 import techguns.gun.GunItem;
 import techguns.gun.HoldType;
@@ -37,13 +38,14 @@ public final class TGClientItemExtensions implements IClientItemExtensions {
     }
 
     /**
-     * Hand grenades: vanilla drops the hand like a re-equip when a use starts ({@code ItemInHandRenderer.itemUsed}); while
-     * winding up, draw the grenade fully raised instead (vanilla {@code applyItemArmTransform} with no equip offset).
+     * Hand grenades and charge guns: vanilla drops the hand like a re-equip when a use starts ({@code ItemInHandRenderer.itemUsed}); while
+     * winding up or charging, draw the item fully raised instead (vanilla {@code applyItemArmTransform} with no equip offset).
      */
     @Override
     public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack stack, float partialTick,
                                            float equipProcess, float swingProcess) {
-        if (!(stack.getItem() instanceof GrenadeItem) || !player.isUsingItem() || !ItemStack.isSameItem(player.getUseItem(), stack)) {
+        if (!(stack.getItem() instanceof GrenadeItem || stack.getItem() instanceof ChargeGunItem) || !player.isUsingItem()
+                || !ItemStack.isSameItem(player.getUseItem(), stack)) {
             return false;
         }
         int side = arm == HumanoidArm.RIGHT ? 1 : -1;

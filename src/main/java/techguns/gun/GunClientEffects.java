@@ -15,6 +15,10 @@ public interface GunClientEffects {
     default void onFired(LivingEntity shooter, InteractionHand hand, int recoilTicks, int muzzleFlashTicks) {
     }
 
+    /** A charge gun was released with {@code charge} (0..1); the charge animation fades out during the recoil. */
+    default void onChargeReleased(LivingEntity shooter, InteractionHand hand, float charge) {
+    }
+
     /** A reload started. */
     default void onReloadStarted(LivingEntity shooter, InteractionHand hand, int reloadTicks) {
     }
