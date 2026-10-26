@@ -31,6 +31,8 @@ public class Techguns {
 
     public Techguns(IEventBus modEventBus, ModContainer modContainer) {
         TGRegistries.register(modEventBus);
+        // Techguns 2 Chem Lab: milk + raw rubber + green dye make slime balls
+        net.neoforged.neoforge.common.NeoForgeMod.enableMilkFluid();
         modEventBus.addListener(TGNetwork::registerPayloads);
         modEventBus.addListener(TGDataGenerators::gatherData);
 

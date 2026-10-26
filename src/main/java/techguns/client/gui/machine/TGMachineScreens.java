@@ -13,5 +13,7 @@ public final class TGMachineScreens {
         event.register(TGMenus.AMMO_PRESS.get(), AmmoPressScreen::new);
         event.register(TGMenus.BLAST_FURNACE.get(), BlastFurnaceScreen::new);
         event.register(TGMenus.GRINDER.get(), GrinderScreen::new);
+        event.register(TGMenus.CHEM_LAB.get(), ChemLabScreen::new);
+        event.register(TGMenus.CHARGING_STATION.get(), ChargingStationScreen::new);
     }
 }

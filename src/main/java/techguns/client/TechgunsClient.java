@@ -61,6 +61,7 @@ public class TechgunsClient {
         modEventBus.addListener(ExtraSlotsScreen::register);
         modEventBus.addListener(techguns.client.gui.machine.TGMachineScreens::register);
         techguns.client.render.block.TGMachineRenderers.init(modEventBus);
+        techguns.client.render.block.TGFluidClient.init(modEventBus);
         TGGeoBridge.install(new GeckoLibGunRenderer());
         modEventBus.addListener((RegisterParticleProvidersEvent event) ->
                 event.registerSpecial(TGParticleTypes.NONE.get(), (options, level, x, y, z, dx, dy, dz) -> null));

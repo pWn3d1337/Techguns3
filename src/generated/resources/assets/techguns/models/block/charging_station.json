@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "techguns:models/block/charging_station_centered.obj",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "techguns:block/charging_station"
+  }
+}

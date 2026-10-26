@@ -9,6 +9,8 @@ import techguns.Techguns;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import techguns.machine.AmmoPressMenu;
 import techguns.machine.BlastFurnaceMenu;
+import techguns.machine.ChargingStationMenu;
+import techguns.machine.ChemLabMenu;
 import techguns.machine.GrinderMenu;
 import techguns.machine.MetalPressMenu;
 import techguns.slot.menu.ExtraSlotsMenu;
@@ -30,6 +32,11 @@ public final class TGMenus {
             () -> IMenuTypeExtension.create(BlastFurnaceMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<GrinderMenu>> GRINDER = MENUS.register("grinder",
             () -> IMenuTypeExtension.create(GrinderMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ChemLabMenu>> CHEM_LAB = MENUS.register("chem_lab",
+            () -> IMenuTypeExtension.create(ChemLabMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<ChargingStationMenu>> CHARGING_STATION = MENUS.register("charging_station",
+            () -> IMenuTypeExtension.create(ChargingStationMenu::new));
 
     private TGMenus() {
     }

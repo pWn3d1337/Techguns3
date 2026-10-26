@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "techguns:raw_rubber"
+  },
+  "fluid": {
+    "amount": 1000,
+    "tag": "minecraft:water"
+  },
+  "power_per_tick": 25,
+  "result": {
+    "count": 1,
+    "id": "techguns:raw_plastic"
+  },
+  "second": {
+    "count": 1,
+    "item": "minecraft:coal"
+  }
+}

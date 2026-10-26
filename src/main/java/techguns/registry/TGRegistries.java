@@ -15,6 +15,7 @@ public final class TGRegistries {
         TGGuns.init();
         TGArmors.init();
         TGSlotItems.init();
+        TGFluids.init(modEventBus);
 
         TGBlocks.BLOCKS.register(modEventBus);
         TGArmors.MATERIALS.register(modEventBus);

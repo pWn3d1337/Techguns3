@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "techguns:enriched_uranium"
+  },
+  "flask": {
+    "count": 1,
+    "item": "techguns:nuclear_power_cell_empty"
+  },
+  "fluid": {
+    "amount": 1000,
+    "tag": "minecraft:water"
+  },
+  "power_per_tick": 40,
+  "result": {
+    "count": 1,
+    "id": "techguns:nuclear_power_cell"
+  }
+}

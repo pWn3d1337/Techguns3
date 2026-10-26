@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "minecraft:green_dye"
+  },
+  "fluid": {
+    "amount": 500,
+    "tag": "c:milk"
+  },
+  "power_per_tick": 25,
+  "result": {
+    "count": 1,
+    "id": "minecraft:slime_ball"
+  },
+  "second": {
+    "count": 1,
+    "item": "techguns:raw_rubber"
+  }
+}

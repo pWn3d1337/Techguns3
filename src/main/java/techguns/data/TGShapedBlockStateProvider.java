@@ -310,6 +310,29 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         machine(TGBlocks.AMMO_PRESS, "ammo_press");
         modelMachine(TGBlocks.BLAST_FURNACE, "blast_furnace_base", "blast_furnace_base");
         modelMachine(TGBlocks.GRINDER, "grinder_base", "grinder_inventory_base");
+        machine(TGBlocks.CHEM_LAB, "chem_lab");
+        chargingStation();
+        acid();
+    }
+
+    /** Techguns 2 OBJ model (flipped v like the 1.12 blockstate), turned by facing; item uses the vanilla block display. */
+    private void chargingStation() {
+        ModelFile model = models().getBuilder("block/charging_station").parent(new ModelFile.UncheckedModelFile(mcLoc("block/block")))
+                .customLoader(net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder::begin)
+                .modelLocation(modLoc("models/block/charging_station_centered.obj")).flipV(true).end()
+                .texture("particle", tex("charging_station")).renderType(CUTOUT);
+        horizontalBlock(TGBlocks.CHARGING_STATION.get(), model, 180);
+        itemModels().withExistingParent("charging_station", modLoc("block/charging_station"));
+    }
+
+    /** Creeper acid: the fluid renderer draws it; the block model only gives the particle texture. */
+    private void acid() {
+        ModelFile model = models().getBuilder("block/creeper_acid").texture("particle", tex("acid_still"));
+        getVariantBuilder(techguns.registry.TGFluids.ACID_BLOCK.get()).partialState().setModels(
+                new net.neoforged.neoforge.client.model.generators.ConfiguredModel(model));
+        itemModels().withExistingParent("creeper_acid_bucket", ResourceLocation.fromNamespaceAndPath("neoforge", "item/bucket"))
+                .customLoader(net.neoforged.neoforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder::begin)
+                .fluid(techguns.registry.TGFluids.ACID.get()).end();
     }
 
     /**

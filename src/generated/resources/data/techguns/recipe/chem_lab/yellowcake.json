@@ -1,0 +1,24 @@
+{
+  "type": "techguns:chem_lab",
+  "first": {
+    "type": "neoforge:compound",
+    "children": [
+      {
+        "tag": "c:ores/uranium"
+      },
+      {
+        "tag": "c:raw_materials/uranium"
+      }
+    ],
+    "count": 1
+  },
+  "fluid": {
+    "amount": 250,
+    "fluid": "techguns:creeper_acid"
+  },
+  "power_per_tick": 20,
+  "result": {
+    "count": 3,
+    "id": "techguns:yellowcake"
+  }
+}

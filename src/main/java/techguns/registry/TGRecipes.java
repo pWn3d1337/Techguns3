@@ -45,6 +45,12 @@ public final class TGRecipes {
     public static final Supplier<RecipeType<GrinderRecipe>> GRINDER = type("grinder");
     public static final Supplier<RecipeSerializer<GrinderRecipe>> GRINDER_SERIALIZER = SERIALIZERS.register("grinder",
             GrinderRecipe.Serializer::new);
+    public static final Supplier<RecipeType<techguns.recipe.ChemLabRecipe>> CHEM_LAB = type("chem_lab");
+    public static final Supplier<RecipeSerializer<techguns.recipe.ChemLabRecipe>> CHEM_LAB_SERIALIZER = SERIALIZERS.register("chem_lab",
+            techguns.recipe.ChemLabRecipe.Serializer::new);
+    public static final Supplier<RecipeType<techguns.recipe.ChargingRecipe>> CHARGING = type("charging");
+    public static final Supplier<RecipeSerializer<techguns.recipe.ChargingRecipe>> CHARGING_SERIALIZER = SERIALIZERS.register("charging",
+            techguns.recipe.ChargingRecipe.Serializer::new);
 
     private static <T extends net.minecraft.world.item.crafting.Recipe<?>> Supplier<RecipeType<T>> type(String name) {
         return TYPES.register(name, () -> RecipeType.simple(TGIds.id(name)));

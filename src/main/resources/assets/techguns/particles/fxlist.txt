@@ -4398,3 +4398,35 @@ VelocityType = NONE
 VolumeType = POINT
 groundAligned = true
 }
+
+// Techguns 2 charging station flare
+ChargeFlare2 {
+Texture = techguns:textures/fx/teslaflare01.png
+RenderType = ADDITIVE
+Rows = 4
+Columns = 4
+Frames = 14
+RandomRotation = true
+Lifetime = 3 3
+SystemLifetime = 1 1
+Size = 0.7 0.8
+SizeRate = 2 2
+SizeRateDamping = 0.8 0.9
+Alpha = 0.0 0
+Alpha = 1.0 0.25
+Alpha = 0 1.0
+//Alpha = 1 1 0
+Color = 255 255 255 0
+Color = 0 0 0 1
+ParticleCount = 1 1
+InitialDelay = 0 0
+SpawnDelay = 1 1
+VelocityType = OUTWARD
+Velocity1 = 0 0
+Velocity2 = 0 0
+VelocityDamping = 0.85 0.88
+Gravity = 0.0
+VolumeType = CYLINDER
+Volume1 = 0.05
+Volume2 = 0.05
+}

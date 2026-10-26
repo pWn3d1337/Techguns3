@@ -116,6 +116,17 @@ public class TGMachineBlock extends BaseEntityBlock {
         }
     }
 
+    /** Fluid containers go into / out of the machine's tanks (Techguns 2 {@code onFluidContainerInteract}). */
+    @Override
+    protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                                                 net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        if (level.getBlockEntity(pos) instanceof TGMachineBlockEntity machine && machine.mayAccess(player)
+                && (level.isClientSide ? machine.canUseItem(stack) : machine.useItem(player, hand))) {
+            return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof TGMachineBlockEntity machine)) {

@@ -40,11 +40,11 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(new IconButton(leftPos - 22, topPos + 10, TGMachineBlockEntity.BUTTON_REDSTONE,
-                () -> 10 + 16 * menu.redstoneMode().ordinal()));
+        addRenderableWidget(new IconButton(leftPos - 22, topPos + 10, 20, TGMachineBlockEntity.BUTTON_REDSTONE, WIDGETS, 234,
+                () -> 10 + 16 * menu.redstoneMode().ordinal(), 16));
         // Techguns 2 security icons: 0 public ... 3 owner only
-        addRenderableWidget(new IconButton(leftPos - 22, topPos + SECURITY_BUTTON_Y, TGMachineBlockEntity.BUTTON_SECURITY,
-                () -> 58 + 16 * (menu.isOwnerOnly() ? 3 : 0)));
+        addRenderableWidget(new IconButton(leftPos - 22, topPos + SECURITY_BUTTON_Y, 20, TGMachineBlockEntity.BUTTON_SECURITY, WIDGETS, 234,
+                () -> 58 + 16 * (menu.isOwnerOnly() ? 3 : 0), 16));
     }
 
     /** Sends a machine button press to the server menu ({@link TGMachineMenu#clickMenuButton}). */
@@ -138,19 +138,57 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
 
-    /** Vanilla button with a 16x16 Techguns 2 icon from {@link #WIDGETS} (redstone and security states). */
-    private final class IconButton extends Button {
+    /**
+     * Square vanilla button with a Techguns 2 state icon ({@code iconSize} pixels at {@code u, v()} of {@code texture},
+     * centred), e.g. the redstone and security states.
+     */
+    protected final class IconButton extends Button {
+        private final ResourceLocation iconTexture;
+        private final int iconU;
         private final java.util.function.IntSupplier iconV;
+        private final int iconSize;
 
-        IconButton(int x, int y, int id, java.util.function.IntSupplier iconV) {
-            super(x, y, 20, 20, Component.empty(), button -> pressButton(id), DEFAULT_NARRATION);
+        public IconButton(int x, int y, int size, int id, ResourceLocation iconTexture, int iconU, java.util.function.IntSupplier iconV, int iconSize) {
+            super(x, y, size, size, Component.empty(), button -> pressButton(id), DEFAULT_NARRATION);
+            this.iconTexture = iconTexture;
+            this.iconU = iconU;
             this.iconV = iconV;
+            this.iconSize = iconSize;
         }
 
         @Override
         protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             super.renderWidget(graphics, mouseX, mouseY, partialTick);
-            graphics.blit(WIDGETS, getX() + 2, getY() + 2, 234, iconV.getAsInt(), 16, 16);
+            int offset = (getWidth() - iconSize) / 2;
+            graphics.blit(iconTexture, getX() + offset, getY() + offset, iconU, iconV.getAsInt(), iconSize, iconSize);
         }
+    }
+
+    /**
+     * Draws a tank's fluid filling {@code amount / capacity} of the area from the bottom, tiled with the fluid's still
+     * texture and tint (Techguns 2 {@code drawFluidWithTesselator}).
+     */
+    protected void drawFluid(GuiGraphics graphics, net.neoforged.neoforge.fluids.FluidStack fluid, int capacity, int x, int y, int width, int height) {
+        if (fluid.isEmpty() || capacity <= 0) {
+            return;
+        }
+        var extensions = net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions.of(fluid.getFluid());
+        var sprite = net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS)
+                .apply(extensions.getStillTexture(fluid));
+        int tint = extensions.getTintColor(fluid);
+        float r = (tint >> 16 & 0xFF) / 255.0f;
+        float g = (tint >> 8 & 0xFF) / 255.0f;
+        float b = (tint & 0xFF) / 255.0f;
+        int filled = Math.min(height, fluid.getAmount() * height / capacity);
+        for (int drawn = 0; drawn < filled; drawn += 16) {
+            int h = Math.min(16, filled - drawn);
+            graphics.blit(x, y + height - drawn - h, 0, width, h, sprite, r, g, b, 1.0f);
+        }
+    }
+
+    /** Tooltip lines of a tank: fluid name (or empty) and amount. */
+    protected static List<Component> tankTooltip(net.neoforged.neoforge.fluids.FluidStack fluid, int capacity) {
+        return List.of(fluid.isEmpty() ? Component.translatable("techguns.gui.empty") : fluid.getHoverName(),
+                Component.literal(fluid.getAmount() + "/" + capacity + " mB"));
     }
 }

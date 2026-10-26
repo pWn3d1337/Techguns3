@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "techguns:circuit_board"
+    },
+    "c": {
+      "item": "techguns:coil"
+    },
+    "g": {
+      "item": "techguns:gold_wire"
+    },
+    "s": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    "sgs",
+    "cbc",
+    "sgs"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:charging_station"
+  }
+}

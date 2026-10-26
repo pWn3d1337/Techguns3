@@ -17,6 +17,8 @@ public final class TGMachineRenderers {
             TGIds.id("textures/block/metal_press.png"));
     private static final TGMachineRenderer<?> AMMO_PRESS = new TGMachineRenderer<>(lazy(techguns.client.model.machine.AmmoPressModel::bake),
             TGIds.id("textures/block/ammo_press.png"));
+    private static final TGMachineRenderer<?> CHEM_LAB = new TGMachineRenderer<>(lazy(techguns.client.model.machine.ChemLabModel::bake),
+            TGIds.id("textures/block/chem_lab.png"));
 
     private TGMachineRenderers() {
     }
@@ -31,12 +33,15 @@ public final class TGMachineRenderers {
         event.registerBlockEntityRenderer(TGBlockEntities.METAL_PRESS.get(), context -> (TGMachineRenderer<techguns.machine.MetalPressBlockEntity>) METAL_PRESS);
         event.registerBlockEntityRenderer(TGBlockEntities.AMMO_PRESS.get(), context -> (TGMachineRenderer<techguns.machine.AmmoPressBlockEntity>) AMMO_PRESS);
         event.registerBlockEntityRenderer(TGBlockEntities.GRINDER.get(), GrinderRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.CHEM_LAB.get(), context -> (TGMachineRenderer<techguns.machine.ChemLabBlockEntity>) CHEM_LAB);
+        event.registerBlockEntityRenderer(TGBlockEntities.CHARGING_STATION.get(), ChargingStationRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.BLAST_FURNACE.get(), BlastFurnaceRenderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {
         TGMachineItemRenderer.register(event, TGBlocks.METAL_PRESS.get(), METAL_PRESS);
         TGMachineItemRenderer.register(event, TGBlocks.AMMO_PRESS.get(), AMMO_PRESS);
+        TGMachineItemRenderer.register(event, TGBlocks.CHEM_LAB.get(), CHEM_LAB);
     }
 
     /** Bakes on first use (after resource loading). */

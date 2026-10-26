@@ -30,6 +30,8 @@ import techguns.gun.ammo.AmmoType;
 import techguns.recipe.AmmoChangeRecipe;
 import techguns.recipe.AmmoPressRecipe;
 import techguns.recipe.BlastFurnaceRecipe;
+import techguns.recipe.ChargingRecipe;
+import techguns.recipe.ChemLabRecipe;
 import techguns.recipe.GrinderRecipe;
 import techguns.recipe.MetalPressRecipe;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -332,6 +334,19 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
                 .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CHEM_LAB.get())
+                .pattern("igi").pattern("geg").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('g', Items.GLASS_BOTTLE).define('e', TGItems.ELECTRIC_ENGINE.get())
+                .define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CHARGING_STATION.get())
+                .pattern("sgs").pattern("cbc").pattern("sgs")
+                .define('s', TGTags.Items.plate("steel")).define('g', TGItems.GOLD_WIRE.get()).define('c', TGItems.COIL.get())
+                .define('b', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(TGItems.COIL.get()), has(TGItems.COIL.get())).save(output);
+
+        chemLabRecipes(output);
+        chargingRecipes(output);
         ammoPressRecipes(output);
         blastFurnaceRecipes(output);
         grinderRecipes(output);
@@ -358,6 +373,81 @@ public class TGRecipeProvider extends RecipeProvider {
         metalPress(output, "gauss_rifle_slugs", plate("obsidian_steel"), plate("titanium"), TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4);
         metalPress(output, "sniper_rounds_explosive", Ingredient.of(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), Ingredient.of(TGItems.TGX.get()),
                 TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 1);
+    }
+
+    /**
+     * Techguns 2 Chem Lab recipes without fluid mods (lava where Techguns 2 preferred fuel or oil). Uranium ore as in
+     * Techguns 2, and raw uranium, which ores drop since 1.17.
+     */
+    private static void chemLabRecipes(RecipeOutput output) {
+        var water = net.minecraft.tags.FluidTags.WATER;
+        var lava = net.minecraft.tags.FluidTags.LAVA;
+        var acid = techguns.registry.TGFluids.ACID.get();
+        chemLab(output, "gunpowder", sized(Items.REDSTONE, 1), sized(Items.COAL, 1), null, fluid(water, 250),
+                new ItemStack(Items.GUNPOWDER), true, 5);
+        chemLab(output, "raw_plastic", sized(TGItems.RAW_RUBBER.get(), 1), sized(Items.COAL, 1), null, fluid(water, 1000),
+                new ItemStack(TGItems.RAW_PLASTIC.get()), true, 25);
+        chemLabFluid(output, "creeper_acid", sized(TGItems.BIOMASS.get(), 1), sized(Items.GUNPOWDER, 1), fluid(water, 1000),
+                new net.neoforged.neoforge.fluids.FluidStack(acid, 1000), 20);
+        chemLab(output, "tgx", sized(Items.GUNPOWDER, 1), new SizedIngredient(Ingredient.of(Tags.Items.GEMS_LAPIS), 1), null, fluid(lava, 500),
+                new ItemStack(TGItems.TGX.get()), true, 20);
+        chemLab(output, "fuel_tank", null, null, sized(TGAmmo.FUEL_TANK_EMPTY.get(), 1), fluid(lava, 500),
+                new ItemStack(TGAmmo.FUEL_TANK.get()), false, 1);
+        chemLab(output, "rocket_high_velocity", sized(TGAmmo.ROCKET.get(), 1), null, null, fluid(lava, 250),
+                new ItemStack(TGAmmo.ROCKET_HIGH_VELOCITY.get()), false, 5);
+        chemLab(output, "carbon_fibers", new SizedIngredient(Ingredient.of(Tags.Items.GEMS_DIAMOND), 1), sized(Items.BLAZE_POWDER, 1), null,
+                fluid(lava, 1000), new ItemStack(TGItems.CARBON_FIBERS.get(), 2), true, 25);
+        chemLab(output, "raw_rubber", new SizedIngredient(Ingredient.of(ItemTags.LOGS), 1), null, null, fluid(water, 1000),
+                new ItemStack(TGItems.RAW_RUBBER.get()), false, 20);
+        chemLab(output, "bio_tank", sized(TGItems.BIOMASS.get(), 1), null, sized(TGAmmo.BIO_TANK_EMPTY.get(), 1), fluid(water, 500),
+                new ItemStack(TGAmmo.BIO_TANK.get()), false, 1);
+        chemLab(output, "compressed_air_tank", sized(Items.COAL, 1), null, sized(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get(), 1), fluid(water, 250),
+                new ItemStack(TGAmmo.COMPRESSED_AIR_TANK.get()), true, 5);
+        chemLab(output, "nether_charge", sized(Items.NETHERRACK, 1), sized(Items.SOUL_SAND, 1), null, fluid(lava, 1000),
+                new ItemStack(TGAmmo.NETHER_CHARGE.get(), 4), true, 20);
+        chemLab(output, "yellowcake", new SizedIngredient(Ingredient.fromValues(java.util.stream.Stream.of(
+                        new Ingredient.TagValue(TGTags.Items.ore("uranium")), new Ingredient.TagValue(TGTags.Items.rawMaterial("uranium")))), 1),
+                null, null, net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(acid, 250), new ItemStack(TGItems.YELLOWCAKE.get(), 3), false, 20);
+        chemLab(output, "nuclear_power_cell", sized(TGItems.ENRICHED_URANIUM.get(), 1), null, sized(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get(), 1),
+                fluid(water, 1000), new ItemStack(TGAmmo.NUCLEAR_POWER_CELL.get()), true, 40);
+        chemLab(output, "slime_ball", sized(Items.GREEN_DYE, 1), sized(TGItems.RAW_RUBBER.get(), 1), null,
+                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(Tags.Fluids.MILK, 500), new ItemStack(Items.SLIME_BALL), true, 25);
+        chemLab(output, "treated_leather", sized(Items.LEATHER, 2), new SizedIngredient(Ingredient.of(Tags.Items.SLIME_BALLS), 1), null,
+                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(acid, 500), new ItemStack(TGItems.TREATED_LEATHER.get(), 2), true, 20);
+        chemLab(output, "leather", sized(Items.ROTTEN_FLESH, 1), null, null, fluid(water, 500), new ItemStack(Items.LEATHER), false, 15);
+        chemLab(output, "light_gray_concrete", sized(Items.GRAVEL, 1), sized(Items.SAND, 1), null, fluid(water, 250),
+                new ItemStack(Items.LIGHT_GRAY_CONCRETE, 2), false, 5);
+        chemLab(output, "clay", sized(Items.GRAVEL, 1), sized(Items.DIRT, 1), null, fluid(water, 250), new ItemStack(Items.CLAY, 2), false, 5);
+    }
+
+    private static SizedIngredient sized(ItemLike item, int count) {
+        return new SizedIngredient(Ingredient.of(item), count);
+    }
+
+    private static net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient fluid(TagKey<net.minecraft.world.level.material.Fluid> tag, int amount) {
+        return net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(tag, amount);
+    }
+
+    private static void chemLab(RecipeOutput output, String name, SizedIngredient first, SizedIngredient second, SizedIngredient flask,
+                                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient fluid, ItemStack result, boolean swap, int power) {
+        output.accept(TGIds.id("chem_lab/" + name), new ChemLabRecipe(java.util.Optional.ofNullable(first), java.util.Optional.ofNullable(second),
+                java.util.Optional.ofNullable(flask), java.util.Optional.ofNullable(fluid), result, net.neoforged.neoforge.fluids.FluidStack.EMPTY,
+                swap, power), null);
+    }
+
+    private static void chemLabFluid(RecipeOutput output, String name, SizedIngredient first, SizedIngredient second,
+                                     net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient fluid,
+                                     net.neoforged.neoforge.fluids.FluidStack result, int power) {
+        output.accept(TGIds.id("chem_lab/" + name), new ChemLabRecipe(java.util.Optional.ofNullable(first), java.util.Optional.ofNullable(second),
+                java.util.Optional.empty(), java.util.Optional.ofNullable(fluid), ItemStack.EMPTY, result, true, power), null);
+    }
+
+    /** Techguns 2 {@code ChargingStationRecipe}: energy cell 50000 FE, redstone battery 20000 FE. */
+    private static void chargingRecipes(RecipeOutput output) {
+        output.accept(TGIds.id("charging/energy_cell"), new ChargingRecipe(Ingredient.of(TGAmmo.ENERGY_CELL_EMPTY.get()),
+                new ItemStack(TGAmmo.ENERGY_CELL.get()), 50000), null);
+        output.accept(TGIds.id("charging/redstone_battery"), new ChargingRecipe(Ingredient.of(TGAmmo.REDSTONE_BATTERY_EMPTY.get()),
+                new ItemStack(TGAmmo.REDSTONE_BATTERY.get()), 20000), null);
     }
 
     /** Techguns 2 {@code AmmoPressBuildPlans}: bullet metal steel/lead, casing metal copper/tin/iron/bronze, gunpowder. */

@@ -11,6 +11,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 import techguns.machine.AmmoPressBlockEntity;
 import techguns.machine.BlastFurnaceBlockEntity;
+import techguns.machine.ChargingStationBlockEntity;
+import techguns.machine.ChemLabBlockEntity;
 import techguns.machine.GrinderBlockEntity;
 import techguns.machine.MetalPressBlockEntity;
 import techguns.machine.TGMachineBlockEntity;
@@ -34,6 +36,13 @@ public final class TGBlockEntities {
     public static final Supplier<BlockEntityType<GrinderBlockEntity>> GRINDER = BLOCK_ENTITY_TYPES.register("grinder",
             () -> BlockEntityType.Builder.of(GrinderBlockEntity::new, TGBlocks.GRINDER.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<ChemLabBlockEntity>> CHEM_LAB = BLOCK_ENTITY_TYPES.register("chem_lab",
+            () -> BlockEntityType.Builder.of(ChemLabBlockEntity::new, TGBlocks.CHEM_LAB.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<ChargingStationBlockEntity>> CHARGING_STATION = BLOCK_ENTITY_TYPES.register("charging_station",
+            () -> BlockEntityType.Builder.of(ChargingStationBlockEntity::new, TGBlocks.CHARGING_STATION.get()).build(null));
+
     private TGBlockEntities() {
     }
 
@@ -46,6 +55,9 @@ public final class TGBlockEntities {
         machine(event, AMMO_PRESS.get());
         machine(event, BLAST_FURNACE.get());
         machine(event, GRINDER.get());
+        machine(event, CHEM_LAB.get());
+        machine(event, CHARGING_STATION.get());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CHEM_LAB.get(), (lab, side) -> lab.getFluidHandler());
     }
 
     private static <T extends TGMachineBlockEntity> void machine(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

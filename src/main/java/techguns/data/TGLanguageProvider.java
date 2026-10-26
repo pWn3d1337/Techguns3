@@ -276,6 +276,14 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
         add("techguns.container.metalpress.autosplit", "Stack split:");
         add("techguns.container.ammopress.build", "Building:");
+        add("techguns.gui.empty", "Empty");
+        add("techguns.chemlab.dumpinput", "Dump Input Tank");
+        add("techguns.chemlab.dumpoutput", "Dump Output Tank");
+        add("techguns.chemlab.dump.tooltip", "Content will be lost");
+        add("techguns.chemlab.toggledrain", "Toggle drained Tank");
+        add("techguns.chemlab.toggledrain.tooltip.0", "Fluids are drained from Output Tank");
+        add("techguns.chemlab.toggledrain.tooltip.1", "Fluids are drained from Input Tank");
+        add("block.techguns.creeper_acid", "Creeper Acid");
         add("techguns.container.info.on", "On");
         add("techguns.container.info.off", "Off");
         add("techguns.button.switch", "Switch");

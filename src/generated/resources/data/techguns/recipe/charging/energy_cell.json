@@ -1,0 +1,11 @@
+{
+  "type": "techguns:charging",
+  "charge": 50000,
+  "input": {
+    "item": "techguns:energy_cell_empty"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:energy_cell"
+  }
+}

@@ -223,6 +223,11 @@ public final class TGBlocks {
             () -> new TGMachineBlock(machine(), TGBlockEntities.BLAST_FURNACE, Shapes.block(), RenderShape.MODEL));
     public static final DeferredBlock<TGMachineBlock> GRINDER = withItem("grinder",
             () -> new TGMachineBlock(machine(), TGBlockEntities.GRINDER, Shapes.block(), RenderShape.MODEL));
+    public static final DeferredBlock<TGMachineBlock> CHEM_LAB = withItem("chem_lab",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.CHEM_LAB));
+    /** Techguns 2 OBJ model; the item on top is drawn by the renderer. */
+    public static final DeferredBlock<TGMachineBlock> CHARGING_STATION = withItem("charging_station",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.CHARGING_STATION, Shapes.block(), RenderShape.MODEL));
 
     private TGBlocks() {
     }

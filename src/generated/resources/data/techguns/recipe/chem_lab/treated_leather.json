@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 2,
+    "item": "minecraft:leather"
+  },
+  "fluid": {
+    "amount": 500,
+    "fluid": "techguns:creeper_acid"
+  },
+  "power_per_tick": 20,
+  "result": {
+    "count": 2,
+    "id": "techguns:treated_leather"
+  },
+  "second": {
+    "count": 1,
+    "tag": "c:slime_balls"
+  }
+}

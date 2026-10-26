@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "minecraft:gunpowder"
+  },
+  "fluid": {
+    "amount": 500,
+    "tag": "minecraft:lava"
+  },
+  "power_per_tick": 20,
+  "result": {
+    "count": 1,
+    "id": "techguns:tgx"
+  },
+  "second": {
+    "count": 1,
+    "tag": "c:gems/lapis"
+  }
+}

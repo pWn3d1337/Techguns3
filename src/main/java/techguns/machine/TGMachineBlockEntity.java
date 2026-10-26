@@ -142,6 +142,25 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     /** Delivers the results of a finished job. Server only. */
     protected abstract void finishOperation(MachineOperation operation);
 
+    /** Server, no job running and redstone allows work: per-tick work besides jobs; true skips looking for a job. */
+    protected boolean idleTick() {
+        return false;
+    }
+
+    /** A player used a held item on the machine; true if the machine handled it (fluid containers). Server only. */
+    public boolean useItem(Player player, net.minecraft.world.InteractionHand hand) {
+        return false;
+    }
+
+    /** Client guess for {@link #useItem}: whether the item could be used on the machine at all. */
+    public boolean canUseItem(ItemStack stack) {
+        return false;
+    }
+
+    /** Client, no job running: effects of work besides jobs. */
+    protected void clientIdleTick() {
+    }
+
     /** Client: work sounds while the job advances. */
     protected void playWorkSound() {
     }
@@ -170,6 +189,8 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         if (machine.working && !machine.stalled && machine.redstoneMode.allows(machine.signal) && machine.progress < machine.totalTime) {
             machine.progress++;
             machine.playWorkSound();
+        } else if (!machine.working) {
+            machine.clientIdleTick();
         }
     }
 
@@ -194,7 +215,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
             } else {
                 setStalled(true);
             }
-        } else if (contentsChanged) {
+        } else if (!idleTick() && contentsChanged) {
             contentsChanged = false;
             checkAndStartOperation();
         }

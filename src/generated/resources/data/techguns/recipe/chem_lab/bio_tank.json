@@ -1,0 +1,20 @@
+{
+  "type": "techguns:chem_lab",
+  "first": {
+    "count": 1,
+    "item": "techguns:biomass"
+  },
+  "flask": {
+    "count": 1,
+    "item": "techguns:bio_tank_empty"
+  },
+  "fluid": {
+    "amount": 500,
+    "tag": "minecraft:water"
+  },
+  "power_per_tick": 1,
+  "result": {
+    "count": 1,
+    "id": "techguns:bio_tank"
+  }
+}
