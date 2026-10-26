@@ -14,6 +14,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -21,7 +23,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.TGIds;
 import techguns.Techguns;
 import techguns.armor.TGArmorItem;
+import techguns.armor.ShieldStats;
 import techguns.armor.TGArmorStats;
+import techguns.armor.TGShieldItem;
 import techguns.armor.TGPoweredArmorItem;
 import techguns.armor.TGPoweredArmorItem.PowerType;
 import techguns.core.damage.TGDamageCategory;
@@ -301,6 +305,27 @@ public final class TGArmors {
     public static final DeferredItem<TGArmorItem> T2_BERET_ITEM = armorNamed("t2_beret", T2_BERET, ArmorItem.Type.HELMET, T2_BERET_STATS,
             item -> item.speed(0.1f, 0.0f).repairItem(() -> TGItems.HEAVY_CLOTH.get())
                     .armorModel(MODEL_BERET).armorTexture(TGIds.id("textures/models/armor/beret_texture.png")));
+
+    // --- Shields (Techguns 2 GenericShield: durability, stats, repair material) ---
+    private static final List<DeferredItem<TGShieldItem>> SHIELDS = new ArrayList<>();
+    public static final DeferredItem<TGShieldItem> RIOT_SHIELD = shield("riot_shield", 1200, ShieldStats.RIOT_SHIELD, TGTags.Items.ingot("steel"));
+    public static final DeferredItem<TGShieldItem> BALLISTIC_SHIELD = shield("ballistic_shield", 2400, ShieldStats.BALLISTIC_SHIELD,
+            TGTags.Items.plate("obsidian_steel"));
+    /** Not in Techguns 2 (model only); stats and recipe are new, see ShieldStats.HEAVY_SHIELD. */
+    public static final DeferredItem<TGShieldItem> HEAVY_SHIELD = shield("heavy_shield", 2800, ShieldStats.HEAVY_SHIELD,
+            TGTags.Items.plate("steel"));
+    public static final DeferredItem<TGShieldItem> ADVANCED_SHIELD = shield("advanced_shield", 3200, ShieldStats.ADVANCED_SHIELD,
+            TGTags.Items.plate("carbon"));
+
+    public static List<DeferredItem<TGShieldItem>> shields() {
+        return Collections.unmodifiableList(SHIELDS);
+    }
+
+    private static DeferredItem<TGShieldItem> shield(String name, int durability, ShieldStats stats, TagKey<Item> repair) {
+        DeferredItem<TGShieldItem> item = TGItems.ITEMS.registerItem(name, properties -> new TGShieldItem(properties, durability, stats, repair));
+        SHIELDS.add(item);
+        return item;
+    }
 
     private TGArmors() {
     }

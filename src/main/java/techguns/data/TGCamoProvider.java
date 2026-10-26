@@ -34,7 +34,9 @@ public final class TGCamoProvider {
         /** armor layer textures {@code textures/models/armor/<texture>_layer_1/_2.png} */
         ARMOR_LAYERS,
         /** one armor model texture {@code textures/models/armor/<texture>.png} */
-        ARMOR_SINGLE
+        ARMOR_SINGLE,
+        /** shield model texture {@code textures/armors/<texture>.png} */
+        SHIELD
     }
 
     /** One camo: id, English name, texture base name (without path and extension). */
@@ -159,6 +161,21 @@ public final class TGCamoProvider {
                 camo("red", "Red", "beret_texture"),
                 camo("black", "Black", "beret_texture_black"),
                 camo("green", "Green", "beret_texture_green"))));
+        // --- Shields (Techguns 2 ClientProxy texture arrays, camo names from its lang) ---
+        groups.add(new Group(List.of(TGArmors.RIOT_SHIELD.get()), Kind.SHIELD, List.of(
+                camo("swat", "SWAT", "riot_shield"),
+                camo("black", "Black", "riot_shield_black"),
+                camo("dark_green", "Dark Green", "riot_shield_darkgreen"),
+                camo("grey", "Grey", "riot_shield_grey"))));
+        groups.add(new Group(List.of(TGArmors.BALLISTIC_SHIELD.get()), Kind.SHIELD, List.of(
+                camo("swat", "SWAT", "ballistic_shield"),
+                camo("black", "Black", "ballistic_shield_black"),
+                camo("dark_green", "Dark Green", "ballistic_shield_green"),
+                camo("grey", "Grey", "ballistic_shield_grey"))));
+        groups.add(new Group(List.of(TGArmors.ADVANCED_SHIELD.get()), Kind.SHIELD, List.of(
+                camo("black", "Black", "advanced_shield"),
+                camo("grey", "Grey", "advanced_shield_silver"),
+                camo("dark_green", "Dark Green", "advanced_shield_green"))));
         return groups;
     }
 
@@ -178,6 +195,7 @@ public final class TGCamoProvider {
                     Optional<ResourceLocation> texture = switch (group.kind()) {
                         case GUN -> Optional.of(TGIds.id("textures/guns/" + camo.texture() + ".png"));
                         case ARMOR_SINGLE -> Optional.of(TGIds.id("textures/models/armor/" + camo.texture() + ".png"));
+                        case SHIELD -> Optional.of(TGIds.id("textures/armors/" + camo.texture() + ".png"));
                         case ARMOR_LAYERS -> Optional.empty();
                     };
                     Optional<ResourceLocation> layer = group.kind() == Kind.ARMOR_LAYERS ? Optional.of(TGIds.id(camo.texture())) : Optional.empty();

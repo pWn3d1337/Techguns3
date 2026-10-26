@@ -218,6 +218,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("message.techguns.on", "On");
         add("message.techguns.camo_switch", "Switched camo to %s");
         add("tooltip.techguns.camo", "Camo: %s");
+        add("tooltip.techguns.shield.blocks", "Blocks (Techguns damage):");
         TGCamoProvider.englishNames().forEach((name, english) -> add("camo.techguns." + name, english));
         add("message.techguns.off", "Off");
         add("techguns.lock_on.locking", "Locking... : %s");

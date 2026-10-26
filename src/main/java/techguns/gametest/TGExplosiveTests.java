@@ -68,7 +68,8 @@ public class TGExplosiveTests {
         helper.succeedWhen(() -> helper.assertTrue(bystander.getHealth() < bystander.getMaxHealth(), "Nuke blast should reach the far zombie"));
     }
 
-    @GameTest(template = ARENA)
+    // own batch: blasts of explosive tests running next to it would reach its far bystander
+    @GameTest(template = ARENA, batch = "rocket_bystander")
     public static void plainRocketSparesFarBystander(GameTestHelper helper) {
         Player player = shooter(helper);
         ItemStack gun = hold(player, TGGuns.ROCKET_LAUNCHER.get(), 1, AmmoType.DEFAULT);

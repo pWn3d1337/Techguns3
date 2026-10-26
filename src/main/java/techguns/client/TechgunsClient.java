@@ -31,6 +31,7 @@ import techguns.client.render.MiningPlaneOutline;
 import techguns.client.render.TGRenderTypes;
 import techguns.client.render.item.RenderingEntityTracker;
 import techguns.client.render.item.TGClientItemExtensions;
+import techguns.client.render.item.TGShieldRenderer;
 import techguns.registry.TGEntities;
 import techguns.registry.TGParticleTypes;
 
@@ -45,6 +46,8 @@ public class TechgunsClient {
         modEventBus.addListener(TechgunsClient::registerEntityRenderers);
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGArmorClientExtensions::register);
+        modEventBus.addListener(TGShieldRenderer::register);
+        modEventBus.addListener(TGShieldBlocking::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);

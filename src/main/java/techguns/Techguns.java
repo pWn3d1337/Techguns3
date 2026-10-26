@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import techguns.armor.ArmorBonusEvents;
 import techguns.armor.ArmorPowerEvents;
+import techguns.armor.ShieldEvents;
 import techguns.gun.ShooterState;
 import org.slf4j.Logger;
 import techguns.damage.TGDamageEvents;
@@ -36,6 +37,7 @@ public class Techguns {
         MeleeToolEvents.init(NeoForge.EVENT_BUS);
         ArmorBonusEvents.init(NeoForge.EVENT_BUS);
         ArmorPowerEvents.init(NeoForge.EVENT_BUS);
+        ShieldEvents.init(NeoForge.EVENT_BUS);
         AmmoBagEvents.init(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener((PlayerTickEvent.Post event) -> ShooterState.of(event.getEntity()).tick());
 

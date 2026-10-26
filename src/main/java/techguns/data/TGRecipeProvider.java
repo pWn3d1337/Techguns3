@@ -63,6 +63,7 @@ public class TGRecipeProvider extends RecipeProvider {
         buildAmmoRecipes(output);
         buildGunRecipes(output);
         buildArmorRecipes(output);
+        buildShieldRecipes(output);
     }
 
     /** Techguns 2 armor recipes. */
@@ -196,6 +197,27 @@ public class TGRecipeProvider extends RecipeProvider {
             builder.requires(TGTags.Items.ingot("titanium"));
         }
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
+    }
+
+    /** Techguns 2 shields: a vanilla shield framed by the material, with glass panes. */
+    private void buildShieldRecipes(RecipeOutput output) {
+        shield(output, TGArmors.RIOT_SHIELD.get(), TGTags.Items.ingot("steel"), "igi", "isi", "igi");
+        shield(output, TGArmors.BALLISTIC_SHIELD.get(), TGTags.Items.plate("obsidian_steel"), "igi", "isi", "iii");
+        shield(output, TGArmors.ADVANCED_SHIELD.get(), TGTags.Items.plate("carbon"), "igi", "isi", "iii");
+        // not in Techguns 2: a ballistic shield plated with steel
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGArmors.HEAVY_SHIELD.get())
+                .pattern("pgp").pattern("psp").pattern("ppp")
+                .define('p', TGTags.Items.plate("steel")).define('g', Tags.Items.GLASS_PANES).define('s', TGArmors.BALLISTIC_SHIELD.get())
+                .unlockedBy("has_ballistic_shield", has(TGArmors.BALLISTIC_SHIELD.get())).save(output, TGIds.id("heavy_shield"));
+    }
+
+    private static void shield(RecipeOutput output, Item shield, TagKey<Item> material, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, shield);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        builder.define('i', material).define('g', Tags.Items.GLASS_PANES).define('s', Items.SHIELD)
+                .unlockedBy("has_shield", has(Items.SHIELD)).save(output, TGIds.id(getItemName(shield)));
     }
 
     private static void armor(RecipeOutput output, Item armor, ItemLike unlock, Consumer<ShapedRecipeBuilder> keys, String... pattern) {

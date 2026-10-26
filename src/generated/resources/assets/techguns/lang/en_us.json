@@ -93,6 +93,7 @@
   "item.techguns.advanced_magazine": "Advanced Magazine",
   "item.techguns.advanced_magazine_empty": "Advanced Magazine (Empty)",
   "item.techguns.advanced_rounds": "Advanced Rounds",
+  "item.techguns.advanced_shield": "Advanced Shield",
   "item.techguns.ak47": "AKM",
   "item.techguns.alien_blaster": "Alien Blaster",
   "item.techguns.ammo_box": "Ammo Box (Small)",
@@ -107,6 +108,7 @@
   "item.techguns.assault_rifle_magazine_empty": "Assault Rifle Magazine (Empty)",
   "item.techguns.assault_rifle_magazine_incendiary": "Assault Rifle Magazine (Incendiary)",
   "item.techguns.aug": "AUG",
+  "item.techguns.ballistic_shield": "Ballistic Shield",
   "item.techguns.bio_tank": "Bio Tank",
   "item.techguns.bio_tank_empty": "Bio Tank (Empty)",
   "item.techguns.biogun": "Biogun",
@@ -161,6 +163,7 @@
   "item.techguns.hazmat_leggings": "Hazmat Suit Leggings",
   "item.techguns.heat_ray_focus": "Reaction Chamber Heat Ray Focus",
   "item.techguns.heavy_cloth": "Heavy Cloth",
+  "item.techguns.heavy_shield": "Heavy Shield",
   "item.techguns.iron_barrel": "Iron Barrel",
   "item.techguns.iron_plate": "Iron Plate",
   "item.techguns.iron_receiver": "Iron Receiver",
@@ -239,6 +242,7 @@
   "item.techguns.rifle_rounds_incendiary": "Rifle Rounds (Incendiary)",
   "item.techguns.rifle_rounds_stack": "Rifle Rounds Stack",
   "item.techguns.rifle_rounds_stack_incendiary": "Rifle Rounds Stack (Incendiary)",
+  "item.techguns.riot_shield": "Riot Shield",
   "item.techguns.rocket": "Rocket",
   "item.techguns.rocket_high_velocity": "Rocket (High Velocity)",
   "item.techguns.rocket_launcher": "Rocket Launcher",
@@ -380,5 +384,6 @@
   "tooltip.techguns.gun.penetration": "Armor penetration: %s",
   "tooltip.techguns.gun.range": "Range: %s",
   "tooltip.techguns.gun.reload_time": "Reload time: %ss",
+  "tooltip.techguns.shield.blocks": "Blocks (Techguns damage):",
   "tooltip.techguns.shift_for_details": "Hold Shift for details"
 }

@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.swat"
+  },
+  "item": "techguns:ballistic_shield",
+  "name": "swat",
+  "texture": "techguns:textures/armors/ballistic_shield.png"
+}

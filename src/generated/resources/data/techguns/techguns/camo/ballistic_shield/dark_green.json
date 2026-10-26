@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark_green"
+  },
+  "item": "techguns:ballistic_shield",
+  "name": "dark_green",
+  "order": 2,
+  "texture": "techguns:textures/armors/ballistic_shield_green.png"
+}

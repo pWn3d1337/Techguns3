@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.grey"
+  },
+  "item": "techguns:riot_shield",
+  "name": "grey",
+  "order": 3,
+  "texture": "techguns:textures/armors/riot_shield_grey.png"
+}
