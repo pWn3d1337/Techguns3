@@ -480,16 +480,20 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 4e Shields (1.12 `GenericShield`: riot shield, etc.) on the vanilla shield/blocking API.
   - 4f Extra slots via Curios (Q5): face (gas mask, oxygen mask, night vision goggles, tactical mask), back (jetpack, jump pack, glider, antigrav pack, scuba tanks), hand (working gloves); behaviour from 1.12 `items/additionalslots`.
 
+- **Open after Phase 4 (2026-10-26):** check the fallback extra-slot screen in a client without Curios; check the armor tooltip in game; 3D inventory icons for steam/T3 power/T4 power armor (1.12 render hack, currently plate icons); glider air control (1.12 `jumpMovementFactor`, no direct 1.21 equivalent); review invented values: heavy shield stats/recipe, camo names of T1 scout and T4 power mk2.
+
 ### Phase 5 — Blocks & machines
 - 5a: Simple decorative blocks (flattened): concrete, metal panels, lamps, neon, ladders, camo nets, sandbags, stairs, slimy blocks, military crates, doors (2x1, 3x3 bunker).
 - 5b: Single-block machines + screens + recipe types: Ammo Press/Bench, Metal Press, Chem Lab, Grinder, Blast Furnace, Charging Station, Repair Bench, Camo Bench, Upgrade/Armor Bench.
+  - From Phase 4: the 9 armor upgrade items (protection / projectile / blast protection, tiers 1-3) applied by the Upgrade Bench; Repair Bench repair costs for armor and shields (1.12 `repairMat` counts); gun camo changes at the Camo Bench (armor already cycles with sneak + use); the Ammo Bench and Camo Bench recipe types from Fabric.
 - 5c: Multiblocks: Fabricator, Reaction Chamber, Ore Drill (+ ore clusters).
-- 5d: Turrets, explosive charges, camp flag.
+- 5d: Turrets (incl. the 4 turret armor plates: iron, steel, obsidian steel, carbon), explosive charges, camp flag.
 - 5e: JEI (and later EMI) plugins.
 - **Exit:** full tech progression craftable in survival.
 
 ### Phase 6 — NPCs & factions
 - Base NPC with gun AI (ranged goals, strafing, reload), loadout system, factions.
+- NPCs wear Techguns armor, slot gear and camos (1.12 `GenericArmorMultiCamo.getRandomCamoIndexFor`), with NPC armor stats (`INpcTGDamageSystem`).
 - Port NPCs in families: zombies → humans (soldiers, bandits, commando, outcast) → mutants → nether/bosses (cyber demon, dictator dave, attack helicopter) → alien bugs. GeckoLib for complex ones (Q3).
 - Spawning via biome modifiers + spawn placement; TG spawner block.
 - **Exit:** all NPCs spawn naturally and in structures, use guns correctly.
@@ -501,7 +505,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 
 ### Phase 8 — Remaining systems & integrations
-- Radiation system (attachment, mob effects, rad-away/pills, radiation sources, armor resistance).
+- Radiation system (attachment, mob effects, rad-away/pills, radiation sources, armor resistance). The `techguns:radiation_resistance` attribute is already set by armor and gear (Phase 4) and waits for this.
 - Guide book, advancements.
 - Gun posing during elytra flight: third-person arm/gun poses and first-person gun transforms while fall-flying (open `TODO: Elytra Flying` in Techguns 2 and Fabric `RenderItemBase`). The glider stays the Techguns 2 non-elytra glide (decided 2026-10-26).
 - Mod compat per §5.4: tier 2 conditional recipes (Create, Mekanism, IE, MI, Oritech) and tier 3 code compat (Mekanism radiation bridge, fuels, Create Big Cannons, team mods, scripting if requested).
