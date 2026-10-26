@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.lime"
+  },
+  "item": "techguns:t1_miner_helmet",
+  "layer": "techguns:t1_miner_red",
+  "name": "lime",
+  "order": 1
+}

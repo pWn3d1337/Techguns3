@@ -470,17 +470,30 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - Armor materials, all armor sets, powered armor + energy, armor bonuses (night vision, step assist, jump, etc.), camo, shields.
 - Extra slots via Curios (Q5): face (masks, goggles), back (jetpack, glider, backpacks), hand (gloves).
 - **Exit:** armor parity; stats visible as attributes.
+- **Source (decided 2026-10-26):** Techguns 2 is the source for armor, gear and all non-gun features; Fabric only for what 1.12 lacks (Fabric implemented guns properly, its armor values are untuned/buggy).
+- **Fabric parts that take priority (reviewed 2026-10-26):** (1) the armor model code (`ModelSteamArmor`, `ModelT3PowerArmor`, `ModelT4PowerArmorMk2`, `ModelExoSuit` + `_Layer2`, `ModelArmorCoat`, `ModelBeret`, `ModelMultiPartArmor`) is already on the modern `ModelPart` API and is the code base for 4b/4c, checked against the 1.12 models like the gun models (the `*Old` classes are superseded); (2) the camo design: named, id-keyed camos per item (`TGCamos`) instead of 1.12 integer indices, same textures; (3) optionally the compact armor tooltip (one row of damage-type icons, `textures/gui/armor_value_icons.png`). Everything else (stats, bonuses, power values, NPC list, extra-slot items, shields) comes from 1.12; Fabric has no armor textures 1.12 lacks.
+- **Batches (planned 2026-10-26):**
+  - 4a Armor framework + first set (T1 combat): `ArmorMaterial` registry entries, `TGArmorItem` with per-category armor as attribute modifiers (vanilla armor = physical; `techguns:*_armor` bonus attributes = category armor minus physical, see `TGArmorFormula`), durability/repair, Fabric slot factors, armor bonuses mapped to vanilla attributes where they exist (`movement_speed`, `jump_strength`, `step_height`, `safe_fall_distance`, `oxygen_bonus`, `block_break_speed`, `submerged_mining_speed`, `water_movement_efficiency`, `knockback_resistance`, `max_health`) and own attributes/effects otherwise (night vision, gun accuracy, radiation resistance, cooling).
+  - 4b Remaining plain sets: T1 scout/miner/steam, T2 hazmat/combat/commando/riot/beret, T3 combat/miner, T4 praetor; custom armor models (steam, beret, coat, exo) via `IClientItemExtensions#getHumanoidArmorModel`, exported to GeckoLib where useful.
+  - 4c Powered armor: T3 exo, T3 power, T4 power; energy as a data component, bonuses only while powered, recharge from power cells (charging station follows in Phase 5), creative flight/fly speed, step assist toggle key.
+  - 4d Camo: Fabric's named camo design (id-keyed camos per item, `TGCamos`) instead of 1.12 integer indices, for guns and armor; textures from 1.12. Store the camo as a data component (`techguns:camo` = ResourceLocation, absent = default) and define the per-item camo lists data-driven (a datapack registry `techguns:camo` with item, id, texture/asset, lang key) so packs can add camos. Check newer vanilla first and design so it maps onto them on 26.x: armor trims (1.20, data-driven pattern/material registries; an alternative or complement for armor camo), the `equippable` component's `asset_id` (1.21.2+, armor texture swap = component change), item model definitions with `minecraft:select` on a component (1.21.4+, per-camo gun textures without code). The Camo Bench that changes it comes in Phase 5.
+  - 4e Shields (1.12 `GenericShield`: riot shield, etc.) on the vanilla shield/blocking API.
+  - 4f Extra slots via Curios (Q5): face (gas mask, oxygen mask, night vision goggles, tactical mask), back (jetpack, jump pack, glider, antigrav pack, scuba tanks), hand (working gloves); behaviour from 1.12 `items/additionalslots`.
+
+- **Open after Phase 4 (2026-10-26):** check the fallback extra-slot screen in a client without Curios; check the armor tooltip in game; 3D inventory icons for steam/T3 power/T4 power armor (1.12 render hack, currently plate icons); glider air control (1.12 `jumpMovementFactor`, no direct 1.21 equivalent); review invented values: heavy shield stats/recipe, camo names of T1 scout and T4 power mk2.
 
 ### Phase 5 — Blocks & machines
 - 5a: Simple decorative blocks (flattened): concrete, metal panels, lamps, neon, ladders, camo nets, sandbags, stairs, slimy blocks, military crates, doors (2x1, 3x3 bunker).
 - 5b: Single-block machines + screens + recipe types: Ammo Press/Bench, Metal Press, Chem Lab, Grinder, Blast Furnace, Charging Station, Repair Bench, Camo Bench, Upgrade/Armor Bench.
+  - From Phase 4: the 9 armor upgrade items (protection / projectile / blast protection, tiers 1-3) applied by the Upgrade Bench; Repair Bench repair costs for armor and shields (1.12 `repairMat` counts); gun camo changes at the Camo Bench (armor already cycles with sneak + use); the Ammo Bench and Camo Bench recipe types from Fabric.
 - 5c: Multiblocks: Fabricator, Reaction Chamber, Ore Drill (+ ore clusters).
-- 5d: Turrets, explosive charges, camp flag.
+- 5d: Turrets (incl. the 4 turret armor plates: iron, steel, obsidian steel, carbon), explosive charges, camp flag.
 - 5e: JEI (and later EMI) plugins.
 - **Exit:** full tech progression craftable in survival.
 
 ### Phase 6 — NPCs & factions
 - Base NPC with gun AI (ranged goals, strafing, reload), loadout system, factions.
+- NPCs wear Techguns armor, slot gear and camos (1.12 `GenericArmorMultiCamo.getRandomCamoIndexFor`), with NPC armor stats (`INpcTGDamageSystem`).
 - Port NPCs in families: zombies → humans (soldiers, bandits, commando, outcast) → mutants → nether/bosses (cyber demon, dictator dave, attack helicopter) → alien bugs. GeckoLib for complex ones (Q3).
 - Spawning via biome modifiers + spawn placement; TG spawner block.
 - **Exit:** all NPCs spawn naturally and in structures, use guns correctly.
@@ -492,8 +505,9 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 
 ### Phase 8 — Remaining systems & integrations
-- Radiation system (attachment, mob effects, rad-away/pills, radiation sources, armor resistance).
+- Radiation system (attachment, mob effects, rad-away/pills, radiation sources, armor resistance). The `techguns:radiation_resistance` attribute is already set by armor and gear (Phase 4) and waits for this.
 - Guide book, advancements.
+- Gun posing during elytra flight: third-person arm/gun poses and first-person gun transforms while fall-flying (open `TODO: Elytra Flying` in Techguns 2 and Fabric `RenderItemBase`). The glider stays the Techguns 2 non-elytra glide (decided 2026-10-26).
 - Mod compat per §5.4: tier 2 conditional recipes (Create, Mekanism, IE, MI, Oritech) and tier 3 code compat (Mekanism radiation bridge, fuels, Create Big Cannons, team mods, scripting if requested).
 - **Exit:** feature parity with Techguns 2.
 
@@ -549,7 +563,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q2 | Keep mod id `techguns` and asset paths? | Yes. |
 | Q3 | ~~Gun models: Java vs GeckoLib?~~ **Decided 2026-10-25: full GeckoLib.** All gun models are GeckoLib geo models (exported from the ported Java models by `TGGeoExporter`, then edited in Blockbench), with keyframed animations. GeckoLib is a required dependency. See §9.1. | ✔ Decided |
 | Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. | ✔ Decided |
-| Q5 | Extra slots: Curios dependency vs own system? | Curios (soft or hard dependency — decide). |
+| Q5 | Extra slots: Curios dependency vs own system? | **Decided 2026-10-26:** Curios as a soft dependency; built-in fallback slots (attachment + small screen tab) when Curios is absent. |
 | Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | Discuss. |
 | Q7 | Energy: plain FE only? | FE only. |
 | Q8 | Structures: faithful 1.12 rebuilds vs redesign with jigsaw variety? | Faithful first via converter, jigsaw where it adds value. |

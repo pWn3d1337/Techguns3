@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.grey"
+  },
+  "item": "techguns:advanced_shield",
+  "name": "grey",
+  "order": 1,
+  "texture": "techguns:textures/armors/advanced_shield_silver.png"
+}

@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:vector",
+  "name": "black",
+  "order": 1,
+  "texture": "techguns:textures/guns/vector_texture_1.png"
+}

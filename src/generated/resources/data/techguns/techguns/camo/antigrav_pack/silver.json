@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.silver"
+  },
+  "item": "techguns:antigrav_pack",
+  "name": "silver",
+  "order": 4,
+  "texture": "techguns:textures/armors/antigravpack_4.png"
+}

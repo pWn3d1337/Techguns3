@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "s": {
+      "item": "techguns:steam_armor_plate"
+    }
+  },
+  "pattern": [
+    "sss",
+    "s s",
+    "s s"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:steam_leggings"
+  }
+}

@@ -1,6 +1,7 @@
 package techguns.data;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -29,9 +30,11 @@ import techguns.gun.ammo.AmmoType;
 import techguns.recipe.AmmoChangeRecipe;
 import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.registry.TGAmmo;
+import techguns.registry.TGArmors;
 import techguns.registry.TGBlocks;
 import techguns.registry.TGGuns;
 import techguns.registry.TGItems;
+import techguns.registry.TGSlotItems;
 import techguns.registry.TGTags;
 
 /**
@@ -60,6 +63,260 @@ public class TGRecipeProvider extends RecipeProvider {
         buildComponentRecipes(output);
         buildAmmoRecipes(output);
         buildGunRecipes(output);
+        buildArmorRecipes(output);
+        buildShieldRecipes(output);
+        buildSlotItemRecipes(output);
+    }
+
+    /** Techguns 2 armor recipes. */
+    private void buildArmorRecipes(RecipeOutput output) {
+        Item cloth = TGItems.HEAVY_CLOTH.get();
+        armor(output, TGArmors.T1_COMBAT_HELMET.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth), "iii", "c c");
+        armor(output, TGArmors.T1_COMBAT_CHESTPLATE.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth),
+                "c c", "iii", "ccc");
+        armor(output, TGArmors.T1_COMBAT_LEGGINGS.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth),
+                "iii", "c c", "c c");
+        armor(output, TGArmors.T1_COMBAT_BOOTS.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth), "c c", "i i");
+
+        // T1 miner (dyeYellow helmet, nuggetIron boots)
+        Consumer<ShapedRecipeBuilder> minerKeys = b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth);
+        armor(output, TGArmors.T1_MINER_HELMET.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth)
+                .define('y', Tags.Items.DYES_YELLOW), "iyi", "c c");
+        armor(output, TGArmors.T1_MINER_CHESTPLATE.get(), cloth, minerKeys, "c c", "ccc", "ici");
+        armor(output, TGArmors.T1_MINER_LEGGINGS.get(), cloth, minerKeys, "ici", "c c", "c c");
+        armor(output, TGArmors.T1_MINER_BOOTS.get(), cloth, b -> b.define('i', Tags.Items.NUGGETS_IRON).define('c', cloth), "c c", "i i");
+
+        // T1 scout
+        Consumer<ShapedRecipeBuilder> clothOnly = b -> b.define('c', cloth);
+        armor(output, TGArmors.T1_SCOUT_HELMET.get(), cloth, clothOnly, "ccc", "c c");
+        armor(output, TGArmors.T1_SCOUT_CHESTPLATE.get(), cloth, clothOnly, "c c", "ccc", "ccc");
+        armor(output, TGArmors.T1_SCOUT_LEGGINGS.get(), cloth, clothOnly, "ccc", "c c", "c c");
+        armor(output, TGArmors.T1_SCOUT_BOOTS.get(), cloth, clothOnly, "c c", "c c");
+
+        // T2 combat
+        TagKey<Item> obsidianSteel = TGTags.Items.ingot("obsidian_steel");
+        Consumer<ShapedRecipeBuilder> combatKeys = b -> b.define('i', obsidianSteel).define('h', cloth);
+        armor(output, TGArmors.T2_COMBAT_HELMET.get(), cloth, combatKeys, "iii", "h h");
+        armor(output, TGArmors.T2_COMBAT_CHESTPLATE.get(), cloth, combatKeys, "h h", "iii", "iii");
+        armor(output, TGArmors.T2_COMBAT_LEGGINGS.get(), cloth, combatKeys, "ihi", "i i", "h h");
+        armor(output, TGArmors.T2_COMBAT_BOOTS.get(), cloth, combatKeys, "h h", "i i");
+
+        // T2 commando
+        Item rubber = TGItems.RUBBER_BAR.get();
+        Consumer<ShapedRecipeBuilder> commandoKeys = b -> b.define('i', obsidianSteel).define('h', rubber);
+        armor(output, TGArmors.T2_COMMANDO_HELMET.get(), rubber, b -> b.define('i', obsidianSteel).define('h', rubber)
+                .define('g', Tags.Items.GLASS_PANES), "ihi", "hgh");
+        armor(output, TGArmors.T2_COMMANDO_CHESTPLATE.get(), rubber, commandoKeys, "h h", "hih", "iii");
+        armor(output, TGArmors.T2_COMMANDO_LEGGINGS.get(), rubber, commandoKeys, "hih", "i i", "h h");
+        armor(output, TGArmors.T2_COMMANDO_BOOTS.get(), rubber, commandoKeys, "i i", "h h");
+
+        // T3 combat
+        Item fibers = TGItems.CARBON_FIBERS.get();
+        Consumer<ShapedRecipeBuilder> t3Keys = b -> b.define('p', TGTags.Items.plate("carbon")).define('f', fibers);
+        armor(output, TGArmors.T3_COMBAT_HELMET.get(), fibers, t3Keys, "ppp", "f f");
+        armor(output, TGArmors.T3_COMBAT_CHESTPLATE.get(), fibers, t3Keys, "p p", "ppp", "fpf");
+        armor(output, TGArmors.T3_COMBAT_LEGGINGS.get(), fibers, t3Keys, "pfp", "p p", "f f");
+        armor(output, TGArmors.T3_COMBAT_BOOTS.get(), fibers, t3Keys, "f f", "p p");
+
+        // T2 riot: upgrade of the matching T2 combat piece
+        Item treated = TGItems.TREATED_LEATHER.get();
+        Consumer<ShapedRecipeBuilder> riotKeys = b -> b.define('p', TGTags.Items.plate("lead")).define('l', treated);
+        armor(output, TGArmors.T2_RIOT_HELMET.get(), treated,
+                b -> riotKeys.accept(b.define('h', TGArmors.T2_COMBAT_HELMET.get())), "php", "l l");
+        armor(output, TGArmors.T2_RIOT_CHESTPLATE.get(), treated,
+                b -> riotKeys.accept(b.define('c', TGArmors.T2_COMBAT_CHESTPLATE.get())), "p p", "lcl", "lpl");
+        armor(output, TGArmors.T2_RIOT_LEGGINGS.get(), treated,
+                b -> riotKeys.accept(b.define('h', TGArmors.T2_COMBAT_LEGGINGS.get())), "lhl", "p p", "l l");
+        armor(output, TGArmors.T2_RIOT_BOOTS.get(), treated,
+                b -> riotKeys.accept(b.define('h', TGArmors.T2_COMBAT_BOOTS.get())), "lhl", "p p");
+
+        // Beret
+        armor(output, TGArmors.T2_BERET_ITEM.get(), cloth, clothOnly, " cc", "c c");
+
+        // Hazmat suit
+        Item fiber = TGItems.PROTECTIVE_FIBER.get();
+        Consumer<ShapedRecipeBuilder> hazmatKeys = b -> b.define('f', fiber);
+        armor(output, TGArmors.HAZMAT_HELMET.get(), fiber, hazmatKeys, "fff", "f f");
+        armor(output, TGArmors.HAZMAT_CHESTPLATE.get(), fiber, hazmatKeys, "f f", "fff", "fff");
+        armor(output, TGArmors.HAZMAT_LEGGINGS.get(), fiber, hazmatKeys, "fff", "f f", "f f");
+        armor(output, TGArmors.HAZMAT_BOOTS.get(), fiber, hazmatKeys, "f f", "f f");
+
+        // Steam armor
+        Item steamPlate = TGItems.STEAM_ARMOR_PLATE.get();
+        Consumer<ShapedRecipeBuilder> steamKeys = b -> b.define('s', steamPlate);
+        armor(output, TGArmors.STEAM_HELMET.get(), steamPlate, steamKeys, "sss", "s s");
+        armor(output, TGArmors.STEAM_CHESTPLATE.get(), steamPlate, steamKeys, "s s", "sss", "sss");
+        armor(output, TGArmors.STEAM_LEGGINGS.get(), steamPlate, steamKeys, "sss", "s s", "s s");
+        armor(output, TGArmors.STEAM_BOOTS.get(), steamPlate, steamKeys, "s s", "s s");
+
+        // T3 power armor
+        Item powerPlating = TGItems.POWER_PLATING.get();
+        Item elite = TGItems.CIRCUIT_BOARD_ELITE.get();
+        Item engine = TGItems.ELECTRIC_ENGINE.get();
+        Map<Character, Object> powerKeys = Map.of('p', powerPlating, 'c', elite, 'e', engine, 'g', Tags.Items.GLASS_PANES);
+        usedKeys(output, TGArmors.T3_POWER_HELMET.get(), powerPlating, powerKeys, "cpc", "pgp");
+        usedKeys(output, TGArmors.T3_POWER_CHESTPLATE.get(), powerPlating, powerKeys, "p p", "ece", "ppp");
+        usedKeys(output, TGArmors.T3_POWER_LEGGINGS.get(), powerPlating, powerKeys, "pcp", "e e", "p p");
+        usedKeys(output, TGArmors.T3_POWER_BOOTS.get(), powerPlating, powerKeys, "e e", "p p");
+
+        // T3 miner (HEV suit)
+        Map<Character, Object> hevKeys = Map.of('p', TGTags.Items.plate("carbon"), 'c', elite,
+                'l', TGTags.Items.plate("titanium"), 'g', Tags.Items.GLASS_PANES);
+        usedKeys(output, TGArmors.T3_MINER_HELMET.get(), elite, hevKeys, "pcp", "lgl");
+        usedKeys(output, TGArmors.T3_MINER_CHESTPLATE.get(), elite, hevKeys, "p p", "lcl", "lpl");
+        usedKeys(output, TGArmors.T3_MINER_LEGGINGS.get(), elite, hevKeys, "ppp", "c c", "l l");
+        usedKeys(output, TGArmors.T3_MINER_BOOTS.get(), elite, hevKeys, "l l", "p p");
+
+        // T3 exo suit: upgrade of the matching T3 combat piece
+        exoSuit(output, TGArmors.T3_EXO_HELMET.get(), TGArmors.T3_COMBAT_HELMET.get(), 1);
+        exoSuit(output, TGArmors.T3_EXO_CHESTPLATE.get(), TGArmors.T3_COMBAT_CHESTPLATE.get(), 2);
+        exoSuit(output, TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_COMBAT_LEGGINGS.get(), 2);
+        exoSuit(output, TGArmors.T3_EXO_BOOTS.get(), TGArmors.T3_COMBAT_BOOTS.get(), 1);
+        // Techguns 2 has no crafting recipes for the T4 praetor and T4 power armor.
+    }
+
+    /** Techguns 2 recipes of the extra slot gear (face, back and hand items). */
+    private void buildSlotItemRecipes(RecipeOutput output) {
+        Item cloth = TGItems.HEAVY_CLOTH.get();
+        Item rubber = TGItems.RUBBER_BAR.get();
+        Item plastic = TGItems.PLASTIC_SHEET.get();
+        Item basicCircuit = TGItems.CIRCUIT_BOARD.get();
+        Item filter = TGSlotItems.GAS_MASK_FILTER.get();
+        Item backpack = TGSlotItems.GLIDER_BACKPACK.get();
+        Item wing = TGSlotItems.GLIDER_WING.get();
+        TagKey<Item> ironPlate = TGTags.Items.plate("iron");
+
+        // glider
+        slotShaped(output, backpack, cloth, "glider_backpack", Map.of('h', cloth, 's', Tags.Items.INGOTS_IRON), "hhh", "shs", "hhh");
+        slotShaped(output, wing, cloth, "glider_wing", Map.of('h', cloth, 's', Tags.Items.INGOTS_IRON), "sss", "hhh", "hhh");
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGSlotItems.GLIDER.get())
+                .requires(backpack).requires(wing, 2).unlockedBy(getHasName(wing), has(wing)).save(output, TGIds.id("glider"));
+
+        // gas mask; a filter refills a used mask
+        slotShaped(output, filter, Items.COAL, "gas_mask_filter", Map.of('i', Tags.Items.NUGGETS_IRON, 'c', Items.COAL), "iii", "ici", "iii");
+        slotShaped(output, TGSlotItems.GAS_MASK.get(), filter, "gas_mask", Map.of('r', rubber, 'f', filter, 'g', Tags.Items.GLASS_PANES),
+                "grg", "rrr", "rfr");
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGSlotItems.GAS_MASK.get())
+                .requires(TGSlotItems.GAS_MASK.get()).requires(filter).unlockedBy(getHasName(filter), has(filter))
+                .save(output, TGIds.id("gas_mask_refilter"));
+
+        // night vision goggles; with an empty battery they come out empty
+        Map<Character, Object> goggleKeys = Map.of('r', rubber, 'h', cloth, 'c', basicCircuit, 'e', TGAmmo.REDSTONE_BATTERY,
+                'g', Tags.Items.GLASS_BLOCKS, 's', Tags.Items.INGOTS_IRON);
+        slotShaped(output, TGSlotItems.NIGHT_VISION_GOGGLES.get(), basicCircuit, "night_vision_goggles", goggleKeys, "rhr", "cec", "gsg");
+        ItemStack emptyGoggles = new ItemStack(TGSlotItems.NIGHT_VISION_GOGGLES.get());
+        emptyGoggles.setDamageValue(emptyGoggles.getMaxDamage());
+        StackShapedRecipeBuilder emptyBuilder = StackShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, emptyGoggles, "rhr", "cec", "gsg")
+                .define('r', rubber).define('h', cloth).define('c', basicCircuit).define('e', TGAmmo.REDSTONE_BATTERY_EMPTY)
+                .define('g', Tags.Items.GLASS_BLOCKS).define('s', Tags.Items.INGOTS_IRON);
+        emptyBuilder.unlockedBy(getHasName(basicCircuit), has(basicCircuit)).save(output, TGIds.id("night_vision_goggles_empty"));
+
+        // jetpack from a glider or a jump pack
+        Map<Character, Object> jetpackKeys = Map.of('f', TGAmmo.FUEL_TANK, 'p', TGTags.Items.plate("obsidian_steel"),
+                'r', TGAmmo.ROCKET, 'm', TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL);
+        slotShaped(output, TGSlotItems.JETPACK.get(), TGAmmo.FUEL_TANK.get(), "jetpack_from_glider",
+                with(jetpackKeys, 'g', TGSlotItems.GLIDER), "f f", "pgp", "rmr");
+        slotShaped(output, TGSlotItems.JETPACK.get(), TGAmmo.FUEL_TANK.get(), "jetpack_from_jump_pack",
+                with(jetpackKeys, 'g', TGSlotItems.JUMP_PACK), "f f", "pgp", "rmr");
+
+        slotShaped(output, TGSlotItems.ANTIGRAV_PACK.get(), TGItems.ANTIGRAV_CORE.get(), "antigrav_pack",
+                Map.of('t', TGTags.Items.plate("titanium"), 'e', TGAmmo.NUCLEAR_POWER_CELL, 'b', backpack,
+                        'c', TGItems.CIRCUIT_BOARD_ELITE, 'm', TGItems.MECHANICAL_PARTS_CARBON, 'a', TGItems.ANTIGRAV_CORE),
+                "tet", "cac", "mbm");
+        slotShaped(output, TGSlotItems.SCUBA_TANKS.get(), TGAmmo.COMPRESSED_AIR_TANK.get(), "scuba_tanks",
+                Map.of('p', plastic, 'a', TGAmmo.COMPRESSED_AIR_TANK, 'i', ironPlate), "p p", "aia", "p p");
+        slotShaped(output, TGSlotItems.JUMP_PACK.get(), backpack, "jump_pack",
+                Map.of('p', ironPlate, 'c', TGAmmo.COMPRESSED_AIR_TANK, 'n', Tags.Items.NUGGETS_IRON, 'b', backpack), "n n", "pbp", "c c");
+        slotShaped(output, TGSlotItems.OXYGEN_MASK.get(), plastic, "oxygen_mask", Map.of('p', plastic, 'r', rubber), " p ", "rpr");
+
+        // tactical mask, both arrangements
+        Map<Character, Object> tacticalKeys = Map.of('p', plastic, 'n', TGSlotItems.NIGHT_VISION_GOGGLES, 'c', basicCircuit,
+                'g', TGSlotItems.GAS_MASK, 'o', TGSlotItems.OXYGEN_MASK, 'e', TGAmmo.ENERGY_CELL);
+        slotShaped(output, TGSlotItems.TACTICAL_MASK.get(), TGSlotItems.OXYGEN_MASK.get(), "tactical_mask", tacticalKeys, "ngo", "cpc", "pep");
+        slotShaped(output, TGSlotItems.TACTICAL_MASK.get(), TGSlotItems.OXYGEN_MASK.get(), "tactical_mask_mirrored", tacticalKeys,
+                "ogn", "cpc", "pep");
+
+        slotShaped(output, TGSlotItems.WORKING_GLOVES.get(), cloth, "working_gloves", Map.of('h', cloth), " h", "hh");
+    }
+
+    private static Map<Character, Object> with(Map<Character, Object> keys, char symbol, Object ingredient) {
+        Map<Character, Object> copy = new java.util.HashMap<>(keys);
+        copy.put(symbol, ingredient);
+        return copy;
+    }
+
+    /** Shaped recipe with an explicit id; keys are items, item holders or item tags. */
+    private static void slotShaped(RecipeOutput output, Item result, ItemLike unlock, String id, Map<Character, ?> keys, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        keys.forEach((symbol, ingredient) -> {
+            if (ingredient instanceof TagKey<?> tag) {
+                @SuppressWarnings("unchecked")
+                TagKey<Item> itemTag = (TagKey<Item>) tag;
+                builder.define(symbol, itemTag);
+            } else {
+                builder.define(symbol, (ItemLike) ingredient);
+            }
+        });
+        builder.unlockedBy(getHasName(unlock), has(unlock)).save(output, TGIds.id(id));
+    }
+
+    /** Shaped armor recipe that only defines the keys the pattern uses. */
+    private static void usedKeys(RecipeOutput output, Item armor, ItemLike unlock, Map<Character, Object> keys, String... pattern) {
+        String joined = String.join("", pattern);
+        armor(output, armor, unlock, b -> keys.forEach((symbol, ingredient) -> {
+            if (joined.indexOf(symbol) >= 0) {
+                if (ingredient instanceof TagKey<?> tag) {
+                    @SuppressWarnings("unchecked")
+                    TagKey<Item> itemTag = (TagKey<Item>) tag;
+                    b.define(symbol, itemTag);
+                } else {
+                    b.define(symbol, (ItemLike) ingredient);
+                }
+            }
+        }), pattern);
+    }
+
+    private static void exoSuit(RecipeOutput output, Item exo, Item combat, int titaniumIngots) {
+        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, exo)
+                .requires(combat).requires(TGItems.MECHANICAL_PARTS_CARBON.get()).requires(TGItems.CIRCUIT_BOARD_ELITE.get())
+                .requires(TGItems.ELECTRIC_ENGINE.get());
+        for (int i = 0; i < titaniumIngots; i++) {
+            builder.requires(TGTags.Items.ingot("titanium"));
+        }
+        builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
+    }
+
+    /** Techguns 2 shields: a vanilla shield framed by the material, with glass panes. */
+    private void buildShieldRecipes(RecipeOutput output) {
+        shield(output, TGArmors.RIOT_SHIELD.get(), TGTags.Items.ingot("steel"), "igi", "isi", "igi");
+        shield(output, TGArmors.BALLISTIC_SHIELD.get(), TGTags.Items.plate("obsidian_steel"), "igi", "isi", "iii");
+        shield(output, TGArmors.ADVANCED_SHIELD.get(), TGTags.Items.plate("carbon"), "igi", "isi", "iii");
+        // not in Techguns 2: a ballistic shield plated with steel
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGArmors.HEAVY_SHIELD.get())
+                .pattern("pgp").pattern("psp").pattern("ppp")
+                .define('p', TGTags.Items.plate("steel")).define('g', Tags.Items.GLASS_PANES).define('s', TGArmors.BALLISTIC_SHIELD.get())
+                .unlockedBy("has_ballistic_shield", has(TGArmors.BALLISTIC_SHIELD.get())).save(output, TGIds.id("heavy_shield"));
+    }
+
+    private static void shield(RecipeOutput output, Item shield, TagKey<Item> material, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, shield);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        builder.define('i', material).define('g', Tags.Items.GLASS_PANES).define('s', Items.SHIELD)
+                .unlockedBy("has_shield", has(Items.SHIELD)).save(output, TGIds.id(getItemName(shield)));
+    }
+
+    private static void armor(RecipeOutput output, Item armor, ItemLike unlock, Consumer<ShapedRecipeBuilder> keys, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, armor);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        keys.accept(builder);
+        builder.unlockedBy(getHasName(unlock), has(unlock)).save(output, TGIds.id(getItemName(armor)));
     }
 
     /** 9 nuggets and 1 ingot, both ways. */

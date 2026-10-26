@@ -15,6 +15,7 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import techguns.Techguns;
+import techguns.registry.TGCamos;
 import techguns.damage.TGDamageTypes;
 
 /**
@@ -30,7 +31,8 @@ public final class TGDataGenerators {
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
 
         RegistrySetBuilder datapackEntries = new RegistrySetBuilder()
-                .add(Registries.DAMAGE_TYPE, TGDamageTypes::bootstrap);
+                .add(Registries.DAMAGE_TYPE, TGDamageTypes::bootstrap)
+                .add(TGCamos.KEY, TGCamoProvider::bootstrap);
         DatapackBuiltinEntriesProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), datapackEntries, Set.of(Techguns.MODID)));
         CompletableFuture<HolderLookup.Provider> lookup = datapackProvider.getRegistryProvider();
@@ -42,6 +44,7 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK)), lookup));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
 
         // Client assets
         generator.addProvider(event.includeClient(), new TGBlockStateProvider(output, fileHelper));

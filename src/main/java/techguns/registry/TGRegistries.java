@@ -13,8 +13,11 @@ public final class TGRegistries {
         // load item holders defined outside TGItems before the item register is attached
         TGAmmo.init();
         TGGuns.init();
+        TGArmors.init();
+        TGSlotItems.init();
 
         TGBlocks.BLOCKS.register(modEventBus);
+        TGArmors.MATERIALS.register(modEventBus);
         TGItems.ITEMS.register(modEventBus);
         TGEntities.ENTITY_TYPES.register(modEventBus);
         TGCreativeTabs.TABS.register(modEventBus);
@@ -24,7 +27,9 @@ public final class TGRegistries {
         TGSounds.SOUNDS.register(modEventBus);
         TGParticleTypes.PARTICLE_TYPES.register(modEventBus);
         TGRecipes.SERIALIZERS.register(modEventBus);
+        TGMenus.MENUS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
+        modEventBus.addListener(TGCamos::register);
     }
 }

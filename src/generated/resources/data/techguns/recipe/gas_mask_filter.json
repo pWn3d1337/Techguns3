@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "minecraft:coal"
+    },
+    "i": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "pattern": [
+    "iii",
+    "ici",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:gas_mask_filter"
+  }
+}

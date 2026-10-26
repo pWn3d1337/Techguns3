@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:t3_combat_boots"
+    },
+    {
+      "item": "techguns:mechanical_parts_carbon"
+    },
+    {
+      "item": "techguns:circuit_board_elite"
+    },
+    {
+      "item": "techguns:electric_engine"
+    },
+    {
+      "tag": "c:ingots/titanium"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t3_exo_boots"
+  }
+}

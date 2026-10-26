@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:pdw",
+  "name": "default",
+  "texture": "techguns:textures/guns/pdw.png"
+}

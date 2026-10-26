@@ -1,5 +1,12 @@
 package techguns.client.gun;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import techguns.TGIds;
+import techguns.player.TGPlayerData;
+import techguns.slot.ExtraSlots;
+import techguns.slot.TGSlotItem;
+import techguns.slot.TGSlotType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -29,6 +36,7 @@ public final class ClientGunController implements GunClientEffects {
     private float zoom = 1.0f;
     private boolean attackWasDown;
     private boolean useWasDown;
+    private boolean jetpackBoosting;
     private ItemStack lastMainHand = ItemStack.EMPTY;
     /** Ticks since the zoom state last changed, for the aim-down-sights animation. */
     private int zoomTicks;
@@ -77,6 +85,7 @@ public final class ClientGunController implements GunClientEffects {
         gameBus.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
             ShooterValues.clear();
             INSTANCE.zoom = 1.0f;
+            INSTANCE.jetpackBoosting = false;
         });
     }
 
@@ -123,7 +132,33 @@ public final class ClientGunController implements GunClientEffects {
         return zoom != 1.0f;
     }
 
+    /** Flips a player toggle locally, tells the server and shows the new state. */
+    private static void toggle(LocalPlayer player, TGPlayerData.Toggle toggle) {
+        TGPlayerData data = TGPlayerData.of(player);
+        data.set(toggle, !data.get(toggle));
+        TGNetwork.sendSetToggle(toggle, data.get(toggle));
+        player.displayClientMessage(Component.translatable("message.techguns.toggle." + toggle.id(),
+                Component.translatable(data.get(toggle) ? "message.techguns.on" : "message.techguns.off")), true);
+    }
+
     // --- Events ---
+
+    /** Jetpack boost: while the jetpack is worn, charged and switched on, the jump key is the boost key (Techguns 2 ItemJetpack). */
+    private void tickJetpack(Minecraft mc, LocalPlayer player) {
+        boolean down = false;
+        if (player != null && mc.screen == null && !player.isSpectator() && TGPlayerData.of(player).get(TGPlayerData.Toggle.JETPACK)) {
+            ItemStack worn = ExtraSlots.get(player, TGSlotType.BACK);
+            down = !worn.isEmpty() && worn.is(BuiltInRegistries.ITEM.get(TGIds.id("jetpack"))) && TGSlotItem.isCharged(worn)
+                    && mc.options.keyJump.isDown();
+        }
+        if (down != jetpackBoosting) {
+            jetpackBoosting = down;
+            if (player != null) {
+                TGPlayerData.of(player).setJetpackBoost(down);
+                TGNetwork.sendJetpackBoost(down);
+            }
+        }
+    }
 
     private void onClientTick(ClientTickEvent.Post event) {
         // animation timing runs even while input is ignored (menus, unfocused window)
@@ -136,6 +171,7 @@ public final class ClientGunController implements GunClientEffects {
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
+        tickJetpack(mc, player);
         if (player == null || mc.screen != null || player.isSpectator()) {
             attackWasDown = false;
             useWasDown = false;
@@ -195,6 +231,15 @@ public final class ClientGunController implements GunClientEffects {
             tryShoot(player, gun, offHand, InteractionHand.OFF_HAND);
         }
 
+        while (TGKeyMappings.TOGGLE_STEP_ASSIST.consumeClick()) {
+            toggle(player, TGPlayerData.Toggle.STEP_ASSIST);
+        }
+        while (TGKeyMappings.TOGGLE_NIGHT_VISION.consumeClick()) {
+            toggle(player, TGPlayerData.Toggle.NIGHT_VISION);
+        }
+        while (TGKeyMappings.TOGGLE_JETPACK.consumeClick()) {
+            toggle(player, TGPlayerData.Toggle.JETPACK);
+        }
         while (TGKeyMappings.FORCE_RELOAD.consumeClick()) {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack stack = player.getItemInHand(hand);

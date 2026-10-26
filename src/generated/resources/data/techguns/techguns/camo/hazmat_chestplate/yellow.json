@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.yellow"
+  },
+  "item": "techguns:hazmat_chestplate",
+  "layer": "techguns:hazmatsuit",
+  "name": "yellow"
+}

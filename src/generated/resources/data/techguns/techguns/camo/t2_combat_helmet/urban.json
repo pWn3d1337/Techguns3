@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.urban"
+  },
+  "item": "techguns:t2_combat_helmet",
+  "layer": "techguns:t2_combat",
+  "name": "urban"
+}

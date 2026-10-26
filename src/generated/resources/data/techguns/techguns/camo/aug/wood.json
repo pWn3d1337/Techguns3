@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.wood"
+  },
+  "item": "techguns:aug",
+  "name": "wood",
+  "order": 2,
+  "texture": "techguns:textures/guns/augtexture_2.png"
+}

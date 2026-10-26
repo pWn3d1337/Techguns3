@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "f": {
+      "item": "techguns:fuel_tank"
+    },
+    "g": {
+      "item": "techguns:glider"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_obsidian_steel"
+    },
+    "p": {
+      "tag": "c:plates/obsidian_steel"
+    },
+    "r": {
+      "item": "techguns:rocket"
+    }
+  },
+  "pattern": [
+    "f f",
+    "pgp",
+    "rmr"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:jetpack"
+  }
+}

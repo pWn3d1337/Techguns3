@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.swat"
+  },
+  "item": "techguns:riot_shield",
+  "name": "swat",
+  "texture": "techguns:textures/armors/riot_shield.png"
+}

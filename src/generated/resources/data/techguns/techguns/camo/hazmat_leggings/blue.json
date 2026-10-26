@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.blue"
+  },
+  "item": "techguns:hazmat_leggings",
+  "layer": "techguns:hazmatsuit_blue",
+  "name": "blue",
+  "order": 3
+}

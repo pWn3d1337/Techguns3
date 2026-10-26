@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_rubber_bar": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:rubber_bar"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:t2_commando_boots"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_rubber_bar"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:t2_commando_boots"
+    ]
+  }
+}

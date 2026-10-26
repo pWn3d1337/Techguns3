@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:jetpack",
+  "name": "black",
+  "order": 1,
+  "texture": "techguns:textures/armors/jetpack_1.png"
+}

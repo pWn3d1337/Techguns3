@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.silver"
+  },
+  "item": "techguns:shishkebap",
+  "name": "silver",
+  "order": 1,
+  "texture": "techguns:textures/guns/shishkebab_texture_1.png"
+}

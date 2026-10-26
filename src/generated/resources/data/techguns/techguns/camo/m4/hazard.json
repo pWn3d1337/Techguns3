@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.hazard"
+  },
+  "item": "techguns:m4",
+  "name": "hazard",
+  "order": 4,
+  "texture": "techguns:textures/guns/m4texture_4.png"
+}

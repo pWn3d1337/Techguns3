@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:heavy_cloth"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "y": {
+      "tag": "c:dyes/yellow"
+    }
+  },
+  "pattern": [
+    "iyi",
+    "c c"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t1_miner_helmet"
+  }
+}

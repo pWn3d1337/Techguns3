@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.outcast"
+  },
+  "item": "techguns:t3_power_leggings",
+  "name": "outcast",
+  "order": 1,
+  "texture": "techguns:textures/models/armor/powerarmor_dark.png"
+}

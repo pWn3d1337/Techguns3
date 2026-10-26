@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_heavy_cloth": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:heavy_cloth"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:t1_combat_boots"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_heavy_cloth"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:t1_combat_boots"
+    ]
+  }
+}

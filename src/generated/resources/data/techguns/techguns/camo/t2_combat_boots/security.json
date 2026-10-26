@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.security"
+  },
+  "item": "techguns:t2_combat_boots",
+  "layer": "techguns:t2_combat_security",
+  "name": "security",
+  "order": 5
+}

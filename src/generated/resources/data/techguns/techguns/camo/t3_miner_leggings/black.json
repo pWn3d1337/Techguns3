@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:t3_miner_leggings",
+  "layer": "techguns:hevsuit_black",
+  "name": "black",
+  "order": 2
+}

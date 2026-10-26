@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:t1_scout_helmet",
+  "layer": "techguns:t1_scout_black",
+  "name": "black",
+  "order": 3
+}

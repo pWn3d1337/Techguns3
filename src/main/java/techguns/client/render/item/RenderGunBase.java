@@ -1,5 +1,11 @@
 package techguns.client.render.item;
 
+import techguns.camo.TGCamo;
+import techguns.camo.CamoData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -315,7 +321,16 @@ public class RenderGunBase extends RenderItemBase {
 
     /** Texture of one render part; overridden where it depends on the stack (mining heads). */
     protected ResourceLocation partTexture(ItemRenderContext context, int part) {
-        return this.texture;
+        return camoTexture(context.stack()).orElse(this.texture);
+    }
+
+    /** Texture of the stack's camo, if its item has camos (datapack registry {@code techguns:camo}). */
+    protected static Optional<ResourceLocation> camoTexture(ItemStack stack) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) {
+            return Optional.empty();
+        }
+        return CamoData.current(level.registryAccess(), stack).flatMap(TGCamo::texture);
     }
 
     /** Re-rolls the muzzle flash jitter whenever a new flash starts. */

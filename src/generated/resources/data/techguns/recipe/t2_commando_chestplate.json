@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "techguns:rubber_bar"
+    },
+    "i": {
+      "tag": "c:ingots/obsidian_steel"
+    }
+  },
+  "pattern": [
+    "h h",
+    "hih",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t2_commando_chestplate"
+  }
+}

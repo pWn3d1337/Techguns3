@@ -44,6 +44,17 @@ repositories {
             includeGroup 'software.bernie.geckolib'
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Curios'
+                url = 'https://maven.theillusivec4.top/'
+            }
+        }
+        filter {
+            includeGroup 'top.theillusivec4.curios'
+        }
+    }
 }
 
 base {
@@ -112,6 +123,10 @@ dependencies {
     // Gun (and later NPC/machine) models and animations, design doc Q3
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 
+    // Extra slots (face/back/hand), optional (design doc Q5): compiled against, present in dev runs, not required
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }
     }
@@ -130,6 +145,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_version            : mod_version,
             mod_authors            : mod_authors,
             geckolib_version       : geckolib_version,
+            curios_version         : curios_version,
     ]
     inputs.properties replaceProperties
     expand replaceProperties

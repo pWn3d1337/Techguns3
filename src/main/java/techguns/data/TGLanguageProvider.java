@@ -46,6 +46,10 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("power_plating", "Power Armor Plating"),
             Map.entry("power_plating_mk2", "Power Armor Plating Mk2"),
             Map.entry("antigrav_core", "Anti Gravity Core"),
+            Map.entry("night_vision_goggles", "Nightvision Goggles"),
+            Map.entry("jump_pack", "Jumppack"),
+            Map.entry("scuba_tanks", "Oxygen Tanks"),
+            Map.entry("antigrav_pack", "Anti Gravity Device"),
             Map.entry("m4", "M4"),
             Map.entry("ak47", "AKM"),
             Map.entry("m4_infiltrator", "The Infiltrator"),
@@ -66,6 +70,63 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("pistol_rounds_incendiary", "Pistol Rounds (Incendiary)"),
             Map.entry("rifle_rounds_incendiary", "Rifle Rounds (Incendiary)"),
             Map.entry("ammo_box", "Ammo Box (Small)"),
+            Map.entry("t1_combat_helmet", "Soldier's Helmet"),
+            Map.entry("t1_combat_chestplate", "Soldier's Vest"),
+            Map.entry("t1_combat_leggings", "Soldier's Pants"),
+            Map.entry("t1_combat_boots", "Soldier's Boots"),
+            Map.entry("t1_scout_helmet", "Bandit Mask"),
+            Map.entry("t1_scout_chestplate", "Bandit Vest"),
+            Map.entry("t1_scout_leggings", "Bandit Pants"),
+            Map.entry("t1_scout_boots", "Bandit Boots"),
+            Map.entry("t1_miner_helmet", "Miner's Helmet"),
+            Map.entry("t1_miner_chestplate", "Miner's Jacket"),
+            Map.entry("t1_miner_leggings", "Miner's Pants"),
+            Map.entry("t1_miner_boots", "Miner's Boots"),
+            Map.entry("steam_helmet", "Steam Helmet"),
+            Map.entry("steam_chestplate", "Steam Chestplate"),
+            Map.entry("steam_leggings", "Steam Legplates"),
+            Map.entry("steam_boots", "Steam Boots"),
+            Map.entry("t3_power_helmet", "Power Armor Helmet"),
+            Map.entry("t3_power_chestplate", "Power Armor Chestplate"),
+            Map.entry("t3_power_leggings", "Power Armor Leggings"),
+            Map.entry("t3_power_boots", "Power Armor Boots"),
+            Map.entry("t3_miner_helmet", "HEV Suit Helmet"),
+            Map.entry("t3_miner_chestplate", "HEV Suit Chestplate"),
+            Map.entry("t3_miner_leggings", "HEV Suit Leggings"),
+            Map.entry("t3_miner_boots", "HEV Suit Boots"),
+            Map.entry("t3_exo_helmet", "Exo Suit Helmet"),
+            Map.entry("t3_exo_chestplate", "Exo Suit Chestplate"),
+            Map.entry("t3_exo_leggings", "Exo Suit Leggings"),
+            Map.entry("t3_exo_boots", "Exo Suit Boots"),
+            Map.entry("t4_praetor_helmet", "Nether Combat Helmet"),
+            Map.entry("t4_praetor_chestplate", "Nether Combat Chestplate"),
+            Map.entry("t4_praetor_leggings", "Nether Combat Leggings"),
+            Map.entry("t4_praetor_boots", "Nether Combat Boots"),
+            Map.entry("t4_power_helmet", "Power Armor Mk2 Helmet"),
+            Map.entry("t4_power_chestplate", "Power Armor Mk2 Chestplate"),
+            Map.entry("t4_power_leggings", "Power Armor Mk2 Leggings"),
+            Map.entry("t4_power_boots", "Power Armor Mk2 Boots"),
+            Map.entry("hazmat_helmet", "Hazmat Suit Helmet"),
+            Map.entry("hazmat_chestplate", "Hazmat Suit Chestplate"),
+            Map.entry("hazmat_leggings", "Hazmat Suit Leggings"),
+            Map.entry("hazmat_boots", "Hazmat Suit Boots"),
+            Map.entry("t2_combat_helmet", "Combat Helmet"),
+            Map.entry("t2_combat_chestplate", "Combat Vest"),
+            Map.entry("t2_combat_leggings", "Combat Pants"),
+            Map.entry("t2_combat_boots", "Combat Boots"),
+            Map.entry("t2_commando_helmet", "Commando Headgear"),
+            Map.entry("t2_commando_chestplate", "Commando Vest"),
+            Map.entry("t2_commando_leggings", "Commando Pants"),
+            Map.entry("t2_commando_boots", "Commando Boots"),
+            Map.entry("t2_riot_helmet", "Ranger Veteran Helmet"),
+            Map.entry("t2_riot_chestplate", "Ranger Veteran Jacket"),
+            Map.entry("t2_riot_leggings", "Ranger Veteran Pants"),
+            Map.entry("t2_riot_boots", "Ranger Veteran Boots"),
+            Map.entry("t3_combat_helmet", "Advanced Combat Helmet"),
+            Map.entry("t3_combat_chestplate", "Advanced Combat Chestplate"),
+            Map.entry("t3_combat_leggings", "Advanced Combat Leggings"),
+            Map.entry("t3_combat_boots", "Advanced Combat Boots"),
+            Map.entry("t2_beret", "Beret"),
             Map.entry("ammo_box_large", "Ammo Box (Large)"),
             Map.entry("rifle_rounds_stack_incendiary", "Rifle Rounds Stack (Incendiary)"),
             Map.entry("assault_rifle_magazine_incendiary", "Assault Rifle Magazine (Incendiary)"),
@@ -137,6 +198,49 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.shift_for_details", "Hold Shift for details");
         add("tooltip.techguns.grenade.radius", "Radius: %s");
         add("tooltip.techguns.grenade.bounces", "Bounces: %s");
+        add("tooltip.techguns.armor.durability", "Durability: %s/%s");
+        add("tooltip.techguns.armor.toughness", "Toughness: %s");
+        // armor bonus attributes (Techguns 2 armor tooltip names)
+        add("attribute.name.techguns.speed_bonus", "Move Speed");
+        add("attribute.name.techguns.water_speed_bonus", "Swim Speed");
+        add("attribute.name.techguns.jump_bonus", "Jump Height");
+        add("attribute.name.techguns.fall_damage_reduction", "Fall Damage Reduction");
+        add("attribute.name.techguns.fall_free_height", "Safe Fall Height");
+        add("attribute.name.techguns.mining_speed_bonus", "Mining Speed");
+        add("attribute.name.techguns.water_mining_speed_bonus", "Underwater Mining Speed");
+        add("attribute.name.techguns.gun_accuracy", "Gun Accuracy");
+        add("attribute.name.techguns.cooling_system", "Cooling System");
+        add("attribute.name.techguns.radiation_resistance", "Radiation Resistance");
+        add("attribute.name.techguns.oxygen_gear", "Oxygen Gear");
+        add("attribute.name.techguns.step_assist", "Step Assist");
+        add("tooltip.techguns.armor.power", "Power: %s/%s");
+        add("tooltip.techguns.armor.power_type", "Power type: %s");
+        add("tooltip.techguns.armor.power_type_battery", "Power type: %s (%s)");
+        add("tooltip.techguns.armor.power_type.steam", "Steam");
+        add("tooltip.techguns.armor.power_type.rf", "Electric");
+        add("message.techguns.toggle.step_assist", "Step Assist: %s");
+        add("message.techguns.toggle.night_vision", "Night Vision: %s");
+        add("message.techguns.toggle.jetpack", "Jetpack: %s");
+        add(TGKeyMappings.TOGGLE_NIGHT_VISION.getName(), "Toggle Night Vision");
+        add(TGKeyMappings.TOGGLE_JETPACK.getName(), "Toggle Jetpack");
+        add("tooltip.techguns.slot", "Slot: %s");
+        add("gui.techguns.extra_slots", "Techguns Gear");
+        add("gui.techguns.extra_slots.button", "TG");
+        add("gui.techguns.inventory", "<");
+        add("gui.techguns.inventory.tooltip", "Back to inventory");
+        add("tooltip.techguns.slot.face", "Face");
+        add("tooltip.techguns.slot.back", "Back");
+        add("tooltip.techguns.slot.hand", "Hand");
+        add("tooltip.techguns.slot.charge", "Charge: %s/%s");
+        add("tooltip.techguns.slot.refill", "Recharges with: %s");
+        add("attribute.name.techguns.night_vision", "Night Vision");
+        add("attribute.name.techguns.fly_speed_bonus", "Flying Speed");
+        add("message.techguns.on", "On");
+        add("message.techguns.camo_switch", "Switched camo to %s");
+        add("tooltip.techguns.camo", "Camo: %s");
+        add("tooltip.techguns.shield.blocks", "Blocks (Techguns damage):");
+        TGCamoProvider.englishNames().forEach((name, english) -> add("camo.techguns." + name, english));
+        add("message.techguns.off", "Off");
         add("techguns.lock_on.locking", "Locking... : %s");
         add("techguns.lock_on.locked", "Locked On: %s");
     }

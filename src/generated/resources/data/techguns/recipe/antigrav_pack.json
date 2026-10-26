@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": {
+      "item": "techguns:antigrav_core"
+    },
+    "b": {
+      "item": "techguns:glider_backpack"
+    },
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "e": {
+      "item": "techguns:nuclear_power_cell"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_carbon"
+    },
+    "t": {
+      "tag": "c:plates/titanium"
+    }
+  },
+  "pattern": [
+    "tet",
+    "cac",
+    "mbm"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:antigrav_pack"
+  }
+}

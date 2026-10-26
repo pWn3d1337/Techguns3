@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": {
+      "item": "techguns:glider_backpack"
+    },
+    "c": {
+      "item": "techguns:compressed_air_tank"
+    },
+    "n": {
+      "tag": "c:nuggets/iron"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "n n",
+    "pbp",
+    "c c"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:jump_pack"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.grey"
+  },
+  "item": "techguns:aug",
+  "name": "grey",
+  "order": 1,
+  "texture": "techguns:textures/guns/augtexture_1.png"
+}

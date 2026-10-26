@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board"
+    },
+    "e": {
+      "item": "techguns:energy_cell"
+    },
+    "g": {
+      "item": "techguns:gas_mask"
+    },
+    "n": {
+      "item": "techguns:night_vision_goggles"
+    },
+    "o": {
+      "item": "techguns:oxygen_mask"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "pattern": [
+    "ogn",
+    "cpc",
+    "pep"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:tactical_mask"
+  }
+}

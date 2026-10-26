@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:advanced_shield",
+  "name": "black",
+  "texture": "techguns:textures/armors/advanced_shield.png"
+}

@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.swamp"
+  },
+  "item": "techguns:m4",
+  "name": "swamp",
+  "order": 1,
+  "texture": "techguns:textures/guns/m4texture_1.png"
+}

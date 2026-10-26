@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.bronze"
+  },
+  "item": "techguns:jump_pack",
+  "name": "bronze",
+  "order": 2,
+  "texture": "techguns:textures/armors/jetpack_2.png"
+}

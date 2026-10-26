@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark_green"
+  },
+  "item": "techguns:tactical_mask",
+  "name": "dark_green",
+  "order": 1,
+  "texture": "techguns:textures/armors/tacticalmask_1.png"
+}

@@ -23,6 +23,10 @@ public final class TGCreativeTabs {
                 TGAmmo.modelAmmo().forEach(item -> output.accept(item.get()));
                 output.accept(TGItems.AMMO_BOX.get());
                 output.accept(TGItems.AMMO_BOX_LARGE.get());
+                TGArmors.armors().forEach(item -> output.accept(item.get()));
+                TGArmors.shields().forEach(item -> output.accept(item.get()));
+                TGSlotItems.items().forEach(item -> output.accept(item.get()));
+                TGSlotItems.components().forEach(item -> output.accept(item.get()));
                 TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
             })

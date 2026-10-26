@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark"
+  },
+  "item": "techguns:shishkebap",
+  "name": "dark",
+  "order": 2,
+  "texture": "techguns:textures/guns/shishkebab_texture_2.png"
+}

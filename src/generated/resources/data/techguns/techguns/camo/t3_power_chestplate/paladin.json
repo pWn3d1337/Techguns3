@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.paladin"
+  },
+  "item": "techguns:t3_power_chestplate",
+  "name": "paladin",
+  "texture": "techguns:textures/models/armor/powerarmor.png"
+}

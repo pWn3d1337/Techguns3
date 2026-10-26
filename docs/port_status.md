@@ -11,8 +11,8 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
-| 4 — Armor & player gear | — |
+| 3 — All guns, ammo, grenades, tools | done (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
+| 4 — Armor & player gear | done pending review (batches 4a–4f) |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
 | 7 — World generation | — |
@@ -95,3 +95,28 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 | 3g recipe types: `ammo_change` (gun + ammo of another variant, old rounds come back), `mining_head_upgrade` (tool + head, old head comes back), `transfer_ammo` (shaped, result keeps the input guns' rounds: golden revolver, Infiltrator, Grim Reaper); Fabric `crafting_shaped_nbt` = vanilla shaped results with components | F | tested | GameTests: variant change + returned rounds/full magazine, head swap, golden revolver keeps rounds. `camo_change` (Camo Bench) and `ammobench_crafting` move to Phase 5 with their machines |
 | 3g rifle rounds stack (+incendiary), minigun drum refill | F | logic | |
 | Per-gun GameTests (exit criterion): every gun and tool fires and hits (tools at close range), reloads from its own ammo and returns the empties; incendiary/explosive variants; both hand grenades explode | — | tested | `TGBulletGunTests` generator + `TGExplosiveTests`; 149 GameTests |
+
+### Phase 4 — armor & player gear
+
+Batches: design doc Phase 4. Source: Techguns 2 for all values; Fabric for the armor tooltip, model code reference and the camo design.
+
+| Unit | Source | Status | Notes |
+|---|---|---|---|
+| 4a armor framework (`TGArmorItem`, `TGArmorStats`): per-category armor as attributes (regular armor = physical, `techguns:armor.<category>` = the rest), toughness, 1.12 slot split and durability, worn-out pieces give nothing and never break, anvil repair item | 12 | tested | GameTests: category values, durability/repair, worn-out |
+| 4a armor bonus attributes (speed x2 sprinting, water speed, jump, fall reduction/free height, mining, water mining, gun accuracy, cooling, oxygen gear, radiation resistance) applied like Techguns 2 | 12 | tested | night vision and step assist (toggle keys) follow with the items that have them; oxygen gear acts with scuba tanks (4f), radiation resistance with the radiation system |
+| 4a armor tooltip: durability, toughness, bonuses + Fabric icon row of category values | 12 + F | logic | not checked in game (MCP cannot hover) |
+| 4a T1 combat set | 12 | rendered | |
+| 4b plain sets: T1 scout/miner, hazmat, T2 combat/commando/riot, T3 combat, beret (29 items, recipes, lang) | 12 | rendered | default camo textures only (variants in 4d) |
+| 4b custom armor models: riot coat (`coat_0..3`), beret (`IClientItemExtensions#getHumanoidArmorModel`) | 12 | rendered | |
+| 4c powered armor framework (`TGPoweredArmorItem`, `armor_power` component): powered/unpowered bonuses, chest refills from a battery item and tops up the other pieces of its power type, 1 power per piece per second of movement, action costs (jump 5 legs + steam jump sound, fall >3 blocks 5 boots, cooling 1 chest); radiation resistance independent of power | 12 | tested | GameTests: bonuses by power, battery swap/sharing, per-second use; checked in game |
+| 4c step assist: `step_assist` bonus + toggle key (V) + saved player setting (`techguns:player_data` attachment, synced on login/respawn/dimension change) | 12 | rendered | step height 1.1 checked in game |
+| 4c powered sets: steam, T3 power, T3 miner (HEV), T3 exo, T4 praetor, T4 power (24 items, recipes from 1.12 where they exist) | 12 | rendered | T4 sets have no 1.12 recipe; 1.12 3D inventory icons (render hack) replaced by plate icons; hide face/back/glove slot flags follow with 4f |
+| 4c armor models: steam, T3 power, exo suit, T4 power mk2 (`TGArmorModels`, 1.12 values incl. its mirror-flag order) | 12 | rendered | |
+| 4d camo system: datapack registry `techguns:camo` (named ids per item, synced to clients, datagen `TGCamoProvider`), `techguns:camo` component, gun renderer and armor textures use the current camo, sneak + use cycles armor camo (Techguns 2), tooltip shows the camo | F + 12 | tested | GameTests: cycling/wrap, unknown name falls back, armor sneak-use + texture; checked in game. Gun camo changes need the Camo Bench (Phase 5) |
+| 4d camo lists: 11 guns (incl. Fabric-only magic rifle camos) and 14 armor groups, 1.12 textures and names, Fabric ids where they agree | 12 + F | rendered | T1 scout and T4 mk2 camo names invented (no 1.12/Fabric names); camo item icons do not change (1.12 had none) |
+| 4e shields: riot, ballistic, advanced (`TGShieldItem` on the vanilla shield API, durability, anvil repair); blocking Techguns damage lets part through by `ShieldStats` (block rate per category, flat threshold lowered by penetration, impact sound per material), also for the vanilla shield; vanilla damage blocked as vanilla | 12 | tested | GameTests: riot vs bullet, advanced threshold/penetration, vanilla shield; checked in game |
+| 4e shield models + renderer (1.12 riot/ballistic/advanced models, camo textures), blocking pose, recipes, camos | 12 | rendered | |
+| 4e heavy shield: 1.12 model + texture (no item in 1.12); new item with own stats (2800 durability, metal, 85% projectile / 80% explosion / 70% energy, threshold 2) and recipe (ballistic shield + steel plates + glass pane) | 12 + new | tested | GameTest: energy block; checked in game; stats and recipe are a design choice, not from a reference |
+| 4f extra slots framework: face/back/hand (`slot/`), Curios soft dependency (head/back/hands, `compat/curios`) or fallback attachment slots synced to trackers, bonuses as transient attribute modifiers, right click equips; toggles night vision (N) and jetpack (J) saved per player | 12 | tested | checked in game with Curios; fallback screen (inventory "TG" button) not checked in game (Curios is in the dev runtime) |
+| 4f gear: gas mask, oxygen mask, night vision goggles, tactical mask, glider, jump pack, jetpack, scuba tanks, antigrav pack, working gloves (+ gas mask filter, glider parts); recharge from refill items, recipes from 1.12 | 12 | tested | GameTests (8); jetpack boost, sounds and flames checked in game by the user; glider air control (`jumpMovementFactor`) not ported |
+| 4f gear rendering: 1.12 models on a player layer, armor hide flags, camos for jetpack/jump pack/antigrav/tactical mask, jetpack flames at the nozzles and start/loop/stop sounds (boost state synced to trackers) | 12 | rendered | first-person gloves not rendered (1.12 didn't either) |

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board"
+    },
+    "e": {
+      "item": "techguns:redstone_battery"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "h": {
+      "item": "techguns:heavy_cloth"
+    },
+    "r": {
+      "item": "techguns:rubber_bar"
+    },
+    "s": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "rhr",
+    "cec",
+    "gsg"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:night_vision_goggles"
+  }
+}

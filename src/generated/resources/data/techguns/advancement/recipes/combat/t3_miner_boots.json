@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_circuit_board_elite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:circuit_board_elite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:t3_miner_boots"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_circuit_board_elite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:t3_miner_boots"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.night"
+  },
+  "item": "techguns:bolt_action",
+  "name": "night",
+  "order": 2,
+  "texture": "techguns:textures/guns/boltactionrifle_2.png"
+}

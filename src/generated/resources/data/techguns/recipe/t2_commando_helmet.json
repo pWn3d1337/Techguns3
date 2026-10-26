@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "h": {
+      "item": "techguns:rubber_bar"
+    },
+    "i": {
+      "tag": "c:ingots/obsidian_steel"
+    }
+  },
+  "pattern": [
+    "ihi",
+    "hgh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t2_commando_helmet"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:magic_rifle",
+  "name": "default",
+  "texture": "techguns:textures/guns/magic_rifle.png"
+}

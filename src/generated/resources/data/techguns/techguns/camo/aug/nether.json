@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.nether"
+  },
+  "item": "techguns:aug",
+  "name": "nether",
+  "order": 4,
+  "texture": "techguns:textures/guns/augtexture_4.png"
+}

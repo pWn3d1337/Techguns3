@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.desert"
+  },
+  "item": "techguns:t2_combat_helmet",
+  "layer": "techguns:t2_combat_desert",
+  "name": "desert",
+  "order": 2
+}

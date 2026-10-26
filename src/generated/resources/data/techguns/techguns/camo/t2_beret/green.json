@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.green"
+  },
+  "item": "techguns:t2_beret",
+  "name": "green",
+  "order": 2,
+  "texture": "techguns:textures/models/armor/beret_texture_green.png"
+}

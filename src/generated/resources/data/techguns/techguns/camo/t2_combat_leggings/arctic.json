@@ -1,0 +1,9 @@
+{
+  "display": {
+    "translate": "camo.techguns.arctic"
+  },
+  "item": "techguns:t2_combat_leggings",
+  "layer": "techguns:t2_combat_arctic",
+  "name": "arctic",
+  "order": 3
+}

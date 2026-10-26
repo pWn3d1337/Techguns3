@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:antigrav_pack",
+  "name": "default",
+  "texture": "techguns:textures/armors/antigravpack.png"
+}

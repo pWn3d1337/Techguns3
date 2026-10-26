@@ -28,6 +28,7 @@ import techguns.gun.ammo.AmmoType;
 import techguns.gun.ammo.DamageModifier;
 import techguns.core.fx.EntityCondition;
 import techguns.network.TGNetwork;
+import techguns.registry.TGAttributes;
 import techguns.registry.TGComponents;
 
 /**
@@ -129,6 +130,8 @@ public class GunItem extends Item {
             if (hand == InteractionHand.MAIN_HAND && player.isBlocking()) {
                 spreadMultiplier *= stats.handType() == GunHandType.ONE_HANDED ? 4.0f : 8.0f;
             }
+            // armor gun accuracy bonus (Techguns 2 GUN_ACCURACY)
+            spreadMultiplier *= (float) Math.clamp(1.0 - player.getAttributeValue(TGAttributes.GUN_ACCURACY), 0.0, 1.0);
             FirePos firePos = firePos(player, hand);
             if (zooming && stats.zoom().isPresent()) {
                 spreadMultiplier *= stats.zoom().get().spreadMultiplier();

@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.white"
+  },
+  "item": "techguns:t3_combat_boots",
+  "layer": "techguns:t3_combat",
+  "name": "white"
+}

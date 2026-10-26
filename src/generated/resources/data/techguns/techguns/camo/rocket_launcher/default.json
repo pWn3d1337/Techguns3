@@ -1,0 +1,8 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:rocket_launcher",
+  "name": "default",
+  "texture": "techguns:textures/guns/rocketlauncher.png"
+}

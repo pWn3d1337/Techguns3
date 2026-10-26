@@ -25,6 +25,14 @@ public final class TGComponents {
     public static final Supplier<DataComponentType<Integer>> MINING_HEAD = COMPONENTS.registerComponentType("mining_head",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /** Camo name of a camo-able item (see {@code CamoData}); absent = default camo. */
+    public static final Supplier<DataComponentType<String>> CAMO = COMPONENTS.registerComponentType("camo",
+            builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
+
+    /** Power stored in a powered armor piece; access through {@code TGPoweredArmorItem}. */
+    public static final Supplier<DataComponentType<Integer>> ARMOR_POWER = COMPONENTS.registerComponentType("armor_power",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     /** Stacks stored in an Ammo Bag; access through {@code AmmoBagData}. */
     public static final Supplier<DataComponentType<AmmoBagContents>> AMMO_BAG_CONTENTS = COMPONENTS.registerComponentType("ammo_bag_contents",
             builder -> builder.persistent(AmmoBagContents.CODEC).networkSynchronized(AmmoBagContents.STREAM_CODEC));
