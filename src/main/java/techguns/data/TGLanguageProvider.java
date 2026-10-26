@@ -66,6 +66,10 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("pistol_rounds_incendiary", "Pistol Rounds (Incendiary)"),
             Map.entry("rifle_rounds_incendiary", "Rifle Rounds (Incendiary)"),
             Map.entry("ammo_box", "Ammo Box (Small)"),
+            Map.entry("t1_combat_helmet", "Soldier's Helmet"),
+            Map.entry("t1_combat_chestplate", "Soldier's Vest"),
+            Map.entry("t1_combat_leggings", "Soldier's Pants"),
+            Map.entry("t1_combat_boots", "Soldier's Boots"),
             Map.entry("ammo_box_large", "Ammo Box (Large)"),
             Map.entry("rifle_rounds_stack_incendiary", "Rifle Rounds Stack (Incendiary)"),
             Map.entry("assault_rifle_magazine_incendiary", "Assault Rifle Magazine (Incendiary)"),
@@ -137,6 +141,19 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.shift_for_details", "Hold Shift for details");
         add("tooltip.techguns.grenade.radius", "Radius: %s");
         add("tooltip.techguns.grenade.bounces", "Bounces: %s");
+        add("tooltip.techguns.armor.durability", "Durability: %s/%s");
+        add("tooltip.techguns.armor.toughness", "Toughness: %s");
+        // armor bonus attributes (Techguns 2 armor tooltip names)
+        add("attribute.name.techguns.speed_bonus", "Move Speed");
+        add("attribute.name.techguns.water_speed_bonus", "Swim Speed");
+        add("attribute.name.techguns.jump_bonus", "Jump Height");
+        add("attribute.name.techguns.fall_damage_reduction", "Fall Damage Reduction");
+        add("attribute.name.techguns.fall_free_height", "Safe Fall Height");
+        add("attribute.name.techguns.mining_speed_bonus", "Mining Speed");
+        add("attribute.name.techguns.water_mining_speed_bonus", "Underwater Mining Speed");
+        add("attribute.name.techguns.gun_accuracy", "Gun Accuracy");
+        add("attribute.name.techguns.cooling_system", "Cooling System");
+        add("attribute.name.techguns.radiation_resistance", "Radiation Resistance");
         add("techguns.lock_on.locking", "Locking... : %s");
         add("techguns.lock_on.locked", "Locked On: %s");
     }

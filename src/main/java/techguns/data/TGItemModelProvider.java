@@ -8,6 +8,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.Techguns;
 import techguns.registry.TGAmmo;
+import techguns.registry.TGArmors;
 import techguns.registry.TGGuns;
 import techguns.registry.TGItems;
 
@@ -20,6 +21,7 @@ public class TGItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         TGItems.simpleItems().forEach(item -> basicItem(item.get()));
         TGAmmo.flatAmmo().forEach(item -> basicItem(item.get()));
+        TGArmors.armors().forEach(item -> basicItem(item.get()));
 
         // drawn by code (TGItemRenderer); no display transforms, the renderer positions the model itself
         TGGuns.guns().forEach(this::codeRendered);

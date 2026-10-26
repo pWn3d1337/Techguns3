@@ -13,8 +13,10 @@ public final class TGRegistries {
         // load item holders defined outside TGItems before the item register is attached
         TGAmmo.init();
         TGGuns.init();
+        TGArmors.init();
 
         TGBlocks.BLOCKS.register(modEventBus);
+        TGArmors.MATERIALS.register(modEventBus);
         TGItems.ITEMS.register(modEventBus);
         TGEntities.ENTITY_TYPES.register(modEventBus);
         TGCreativeTabs.TABS.register(modEventBus);

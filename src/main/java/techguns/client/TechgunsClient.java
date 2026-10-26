@@ -12,6 +12,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import techguns.Techguns;
 import techguns.client.gui.ClientAmmoBagTooltip;
+import techguns.client.gui.ClientArmorTooltip;
 import techguns.client.gui.LockOnOverlay;
 import techguns.client.gun.ChargeEffects;
 import techguns.client.gun.ClientGunController;
@@ -46,6 +47,7 @@ public class TechgunsClient {
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);
         modEventBus.addListener(ClientAmmoBagTooltip::register);
+        modEventBus.addListener(ClientArmorTooltip::register);
         TGGeoBridge.install(new GeckoLibGunRenderer());
         modEventBus.addListener((RegisterParticleProvidersEvent event) ->
                 event.registerSpecial(TGParticleTypes.NONE.get(), (options, level, x, y, z, dx, dy, dz) -> null));

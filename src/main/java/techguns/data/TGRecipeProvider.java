@@ -29,6 +29,7 @@ import techguns.gun.ammo.AmmoType;
 import techguns.recipe.AmmoChangeRecipe;
 import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.registry.TGAmmo;
+import techguns.registry.TGArmors;
 import techguns.registry.TGBlocks;
 import techguns.registry.TGGuns;
 import techguns.registry.TGItems;
@@ -60,6 +61,27 @@ public class TGRecipeProvider extends RecipeProvider {
         buildComponentRecipes(output);
         buildAmmoRecipes(output);
         buildGunRecipes(output);
+        buildArmorRecipes(output);
+    }
+
+    /** Techguns 2 armor recipes. */
+    private void buildArmorRecipes(RecipeOutput output) {
+        Item cloth = TGItems.HEAVY_CLOTH.get();
+        armor(output, TGArmors.T1_COMBAT_HELMET.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth), "iii", "c c");
+        armor(output, TGArmors.T1_COMBAT_CHESTPLATE.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth),
+                "c c", "iii", "ccc");
+        armor(output, TGArmors.T1_COMBAT_LEGGINGS.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth),
+                "iii", "c c", "c c");
+        armor(output, TGArmors.T1_COMBAT_BOOTS.get(), cloth, b -> b.define('i', Tags.Items.INGOTS_IRON).define('c', cloth), "c c", "i i");
+    }
+
+    private static void armor(RecipeOutput output, Item armor, ItemLike unlock, Consumer<ShapedRecipeBuilder> keys, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, armor);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        keys.accept(builder);
+        builder.unlockedBy(getHasName(unlock), has(unlock)).save(output, TGIds.id(getItemName(armor)));
     }
 
     /** 9 nuggets and 1 ingot, both ways. */

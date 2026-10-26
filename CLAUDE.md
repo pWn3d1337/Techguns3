@@ -9,7 +9,7 @@ Everything is English: code, comments, commit messages, docs, replies.
 ## Reference sources
 - 1.12.2 Forge (complete feature set, MCP names): `F:\Techguns3Work\Techguns2`
 - 1.19.4 Fabric port (gun mechanics + rendering, Yarn names): `F:\Techguns3Work\Techguns-Fabric`
-- Rule: use the Fabric port if the feature exists there, else 1.12. Translate names via Appendix A of the design doc.
+- Rule: the Fabric port is the source for gun mechanics and effects only. For everything else (armor, gear, machines, NPCs, worldgen, ...) Techguns 2 (1.12) is the source; Fabric only for features 1.12 lacks. Translate names via Appendix A of the design doc.
 
 ## Build & run (Java 21, Gradle wrapper)
 | Task | Command |

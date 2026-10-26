@@ -11,8 +11,8 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
-| 4 — Armor & player gear | — |
+| 3 — All guns, ammo, grenades, tools | done (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
+| 4 — Armor & player gear | in progress (planned batches 4a–4f, design doc Phase 4) |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
 | 7 — World generation | — |
