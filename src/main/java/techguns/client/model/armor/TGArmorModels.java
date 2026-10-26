@@ -33,6 +33,19 @@ public final class TGArmorModels {
         DEFINITIONS.put(TGArmors.MODEL_COAT_2, () -> coat(2, 0.49f));
         DEFINITIONS.put(TGArmors.MODEL_COAT_3, () -> plain(0.75f));
         DEFINITIONS.put(TGArmors.MODEL_BERET, TGArmorModels::beret);
+        // Registration values from Techguns 2 ClientProxy: (type, scale) per armor slot group.
+        DEFINITIONS.put(TGArmors.MODEL_STEAM_0, () -> SteamArmorModel.create(0, 0.0f));
+        DEFINITIONS.put(TGArmors.MODEL_STEAM_1, () -> SteamArmorModel.create(1, 0.0f));
+        DEFINITIONS.put(TGArmors.MODEL_STEAM_2, () -> SteamArmorModel.create(0, 0.01f));
+        DEFINITIONS.put(TGArmors.MODEL_POWER_0, () -> PowerArmorModel.create(0, 0.0f));
+        DEFINITIONS.put(TGArmors.MODEL_POWER_1, () -> PowerArmorModel.create(1, 0.0f));
+        DEFINITIONS.put(TGArmors.MODEL_POWER_2, () -> PowerArmorModel.create(0, 0.01f));
+        DEFINITIONS.put(TGArmors.MODEL_EXO_0, () -> ExoSuitModel.create(0, 1.0f));
+        DEFINITIONS.put(TGArmors.MODEL_EXO_1, () -> ExoSuitModel.create(1, 0.5f));
+        DEFINITIONS.put(TGArmors.MODEL_EXO_2, () -> ExoSuitModel.create(0, 0.75f));
+        DEFINITIONS.put(TGArmors.MODEL_POWER_MK2_0, () -> PowerArmorMk2Model.create(0, 0.0f));
+        DEFINITIONS.put(TGArmors.MODEL_POWER_MK2_1, () -> PowerArmorMk2Model.create(1, 0.0f));
+        DEFINITIONS.put(TGArmors.MODEL_POWER_MK2_2, () -> PowerArmorMk2Model.create(0, 0.01f));
     }
 
     private TGArmorModels() {

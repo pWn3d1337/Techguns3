@@ -3,6 +3,7 @@ package techguns.gametest;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,10 +18,14 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import techguns.TGIds;
 import techguns.Techguns;
 import techguns.armor.ArmorBonusEvents;
+import techguns.armor.ArmorPowerEvents;
 import techguns.armor.TGArmorItem;
+import techguns.armor.TGPoweredArmorItem;
 import techguns.core.damage.TGDamageCategory;
+import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
 import techguns.registry.TGAttributes;
+import techguns.registry.TGComponents;
 
 /**
  * Techguns armor (Phase 4 batch 4a): per-category armor as attributes, toughness and bonuses, worn-out pieces give
@@ -164,6 +169,73 @@ public class TGArmorTests {
         // radiation 20 * 30% = 6, poison 20 * 30% = 6; regular armor does not count against either
         helper.assertTrue(near(modifier(chest, TGAttributes.bonusArmor(TGDamageCategory.RADIATION)), 6.0), "Hazmat chest radiation armor should be 6");
         helper.assertTrue(near(modifier(chest, TGAttributes.bonusArmor(TGDamageCategory.POISON)), 6.0), "Hazmat chest poison armor should be 6");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void poweredChestplateBonusesDependOnPower(GameTestHelper helper) {
+        ItemStack empty = new ItemStack(TGArmors.T3_POWER_CHESTPLATE.get());
+        ItemStack powered = new ItemStack(TGArmors.T3_POWER_CHESTPLATE.get());
+        powered.set(TGComponents.ARMOR_POWER.get(), TGArmors.T3_POWER_CHESTPLATE.get().maxPower());
+
+        helper.assertTrue(near(modifier(powered, TGAttributes.SPEED_BONUS), 0.05), "Powered speed bonus should be 0.05");
+        helper.assertTrue(near(modifier(powered, TGAttributes.MINING_SPEED_BONUS), 0.05), "Powered mining bonus should be 0.05");
+        helper.assertTrue(near(modifier(powered, Attributes.MAX_HEALTH), 2.0), "Powered health bonus should be 2");
+        helper.assertTrue(near(modifier(powered, Attributes.KNOCKBACK_RESISTANCE), 0.35), "Powered knockback resistance should be 0.35");
+        helper.assertTrue(near(modifier(powered, TGAttributes.RADIATION_RESISTANCE), 0.75), "Powered radiation resistance should be 0.75");
+        // unpowered values of the two-value setters are all 0, single-value setters are powered only
+        helper.assertTrue(near(modifier(empty, TGAttributes.SPEED_BONUS), 0.0), "Unpowered speed bonus should be 0");
+        helper.assertTrue(near(modifier(empty, TGAttributes.MINING_SPEED_BONUS), 0.0), "Unpowered mining bonus should be 0");
+        helper.assertTrue(near(modifier(empty, Attributes.MAX_HEALTH), 0.0), "Unpowered health bonus should be 0");
+        helper.assertTrue(near(modifier(empty, Attributes.KNOCKBACK_RESISTANCE), 0.0), "Unpowered knockback resistance should be 0");
+        helper.assertTrue(near(modifier(empty, TGAttributes.RADIATION_RESISTANCE), 0.75), "Radiation resistance should not depend on power");
+        // armor values do not depend on power
+        helper.assertTrue(near(modifier(powered, Attributes.ARMOR), modifier(empty, Attributes.ARMOR)), "Armor should not depend on power");
+        helper.assertTrue(modifier(empty, Attributes.ARMOR) > 0.0, "Unpowered chestplate should still give armor");
+        helper.assertTrue(near(modifier(powered, TGAttributes.bonusArmor(TGDamageCategory.FIRE)),
+                modifier(empty, TGAttributes.bonusArmor(TGDamageCategory.FIRE))), "Elemental armor should not depend on power");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void consumptionTickRefillsFromBatteryAndSharesPower(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack chest = new ItemStack(TGArmors.STEAM_CHESTPLATE.get());
+        ItemStack boots = new ItemStack(TGArmors.STEAM_BOOTS.get());
+        player.setItemSlot(EquipmentSlot.CHEST, chest);
+        player.setItemSlot(EquipmentSlot.FEET, boots);
+        player.getInventory().add(new ItemStack(TGAmmo.COMPRESSED_AIR_TANK.get()));
+
+        ArmorPowerEvents.consumptionTick(player, false);
+
+        int bootsMax = TGArmors.STEAM_BOOTS.get().maxPower();
+        int chestMax = TGArmors.STEAM_CHESTPLATE.get().maxPower();
+        helper.assertTrue(TGPoweredArmorItem.power(boots) == bootsMax, "Boots should be topped up to " + bootsMax + ", was " + TGPoweredArmorItem.power(boots));
+        helper.assertTrue(TGPoweredArmorItem.power(chest) == chestMax - bootsMax,
+                "Chestplate should hold " + (chestMax - bootsMax) + ", was " + TGPoweredArmorItem.power(chest));
+        helper.assertFalse(player.getInventory().contains(new ItemStack(TGAmmo.COMPRESSED_AIR_TANK.get())), "The full tank should be used up");
+        helper.assertTrue(player.getInventory().contains(new ItemStack(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get())), "An empty tank should be given back");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void consumptionTickUsesOnePowerPerWornPiece(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack chest = new ItemStack(TGArmors.T3_POWER_CHESTPLATE.get());
+        ItemStack helmet = new ItemStack(TGArmors.T3_POWER_HELMET.get());
+        ItemStack steamBoots = new ItemStack(TGArmors.STEAM_BOOTS.get());
+        chest.set(TGComponents.ARMOR_POWER.get(), 100);
+        helmet.set(TGComponents.ARMOR_POWER.get(), 10);
+        steamBoots.set(TGComponents.ARMOR_POWER.get(), 10);
+        player.setItemSlot(EquipmentSlot.CHEST, chest);
+        player.setItemSlot(EquipmentSlot.HEAD, helmet);
+        player.setItemSlot(EquipmentSlot.FEET, steamBoots);
+
+        ArmorPowerEvents.consumptionTick(player, true);
+
+        helper.assertTrue(TGPoweredArmorItem.power(chest) == 99, "Chestplate should lose 1, was " + TGPoweredArmorItem.power(chest));
+        helper.assertTrue(TGPoweredArmorItem.power(helmet) == 9, "Helmet should lose 1, was " + TGPoweredArmorItem.power(helmet));
+        helper.assertTrue(TGPoweredArmorItem.power(steamBoots) == 9, "Boots should lose 1, was " + TGPoweredArmorItem.power(steamBoots));
         helper.succeed();
     }
 }

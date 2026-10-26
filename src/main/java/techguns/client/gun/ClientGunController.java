@@ -1,5 +1,7 @@
 package techguns.client.gun;
 
+import techguns.player.TGPlayerData;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -195,6 +197,13 @@ public final class ClientGunController implements GunClientEffects {
             tryShoot(player, gun, offHand, InteractionHand.OFF_HAND);
         }
 
+        while (TGKeyMappings.TOGGLE_STEP_ASSIST.consumeClick()) {
+            TGPlayerData data = TGPlayerData.of(player);
+            data.setStepAssist(!data.stepAssist());
+            TGNetwork.sendSetStepAssist(data.stepAssist());
+            player.displayClientMessage(Component.translatable("message.techguns.step_assist",
+                    Component.translatable(data.stepAssist() ? "message.techguns.on" : "message.techguns.off")), true);
+        }
         while (TGKeyMappings.FORCE_RELOAD.consumeClick()) {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack stack = player.getItemInHand(hand);

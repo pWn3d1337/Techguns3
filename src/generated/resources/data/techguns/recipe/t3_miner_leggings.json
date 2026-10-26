@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "l": {
+      "tag": "c:plates/titanium"
+    },
+    "p": {
+      "tag": "c:plates/carbon"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "c c",
+    "l l"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t3_miner_leggings"
+  }
+}

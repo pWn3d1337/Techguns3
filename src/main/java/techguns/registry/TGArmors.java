@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.minecraft.core.Holder;
@@ -21,6 +22,8 @@ import techguns.TGIds;
 import techguns.Techguns;
 import techguns.armor.TGArmorItem;
 import techguns.armor.TGArmorStats;
+import techguns.armor.TGPoweredArmorItem;
+import techguns.armor.TGPoweredArmorItem.PowerType;
 import techguns.core.damage.TGDamageCategory;
 
 /**
@@ -38,6 +41,18 @@ public final class TGArmors {
     public static final ResourceLocation MODEL_COAT_2 = TGIds.id("coat_2");
     public static final ResourceLocation MODEL_COAT_3 = TGIds.id("coat_3");
     public static final ResourceLocation MODEL_BERET = TGIds.id("beret_0");
+    public static final ResourceLocation MODEL_STEAM_0 = TGIds.id("steam_armor_0");
+    public static final ResourceLocation MODEL_STEAM_1 = TGIds.id("steam_armor_1");
+    public static final ResourceLocation MODEL_STEAM_2 = TGIds.id("steam_armor_2");
+    public static final ResourceLocation MODEL_POWER_0 = TGIds.id("power_armor_0");
+    public static final ResourceLocation MODEL_POWER_1 = TGIds.id("power_armor_1");
+    public static final ResourceLocation MODEL_POWER_2 = TGIds.id("power_armor_2");
+    public static final ResourceLocation MODEL_EXO_0 = TGIds.id("exo_suit_0");
+    public static final ResourceLocation MODEL_EXO_1 = TGIds.id("exo_suit_1");
+    public static final ResourceLocation MODEL_EXO_2 = TGIds.id("exo_suit_2");
+    public static final ResourceLocation MODEL_POWER_MK2_0 = TGIds.id("power_armor_mk2_0");
+    public static final ResourceLocation MODEL_POWER_MK2_1 = TGIds.id("power_armor_mk2_1");
+    public static final ResourceLocation MODEL_POWER_MK2_2 = TGIds.id("power_armor_mk2_2");
 
     // --- T1 ---
     public static final TGArmorStats T1_COMBAT_STATS = new TGArmorStats("t1_combat", 60, 15.0f, 0.5f);
@@ -151,6 +166,134 @@ public final class TGArmors {
     public static final DeferredItem<TGArmorItem> T3_COMBAT_BOOTS = armor(T3_COMBAT, ArmorItem.Type.BOOTS, T3_COMBAT_STATS, "t3_combat",
             item -> item.speed(0.1f, 0.1f).repairItem(() -> TGItems.CARBON_PLATE.get()).radiationResistance(0.25f).knockbackResistance(0.15f));
 
+    // --- T1 steam armor ---
+    public static final TGArmorStats T1_STEAM_STATS = new TGArmorStats("steam_armor", 200, 19.0f, 1.0f).elemental(17.0f)
+            .set(TGDamageCategory.EXPLOSION, 18.0f).set(TGDamageCategory.POISON, 10.0f).set(TGDamageCategory.RADIATION, 6.0f);
+    private static final Holder<ArmorMaterial> T1_STEAM = material(T1_STEAM_STATS, 0, SoundEvents.ARMOR_EQUIP_IRON);
+
+    public static final DeferredItem<TGPoweredArmorItem> STEAM_HELMET = powered(T1_STEAM, ArmorItem.Type.HELMET, T1_STEAM_STATS, "steam",
+            PowerType.STEAM, 10, item -> item.mining(0.05f, 0.0f).health(1, 0).speed(0.05f, 0.03f, 0.0f, 0.0f)
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.STEAM_ARMOR_PLATE.get()).armorModel(MODEL_STEAM_2).armorTexture(TGIds.id("textures/models/armor/steam_armor.png")).knockbackResistance(0.15f));
+    public static final DeferredItem<TGPoweredArmorItem> STEAM_CHESTPLATE = powered(T1_STEAM, ArmorItem.Type.CHESTPLATE, T1_STEAM_STATS, "steam",
+            PowerType.STEAM, 3600, item -> item.speed(0.05f, 0.03f, 0.0f, 0.0f).mining(0.05f, 0.0f).health(2, 0)
+                    .battery(() -> TGAmmo.COMPRESSED_AIR_TANK.get(), () -> TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get())
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.STEAM_ARMOR_PLATE.get()).armorModel(MODEL_STEAM_0).armorTexture(TGIds.id("textures/models/armor/steam_armor.png")).knockbackResistance(0.30f));
+    public static final DeferredItem<TGPoweredArmorItem> STEAM_LEGGINGS = powered(T1_STEAM, ArmorItem.Type.LEGGINGS, T1_STEAM_STATS, "steam",
+            PowerType.STEAM, 10, item -> item.speed(0.05f, 0.03f, 0.0f, 0.0f).mining(0.05f, 0.0f).health(1, 0)
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.STEAM_ARMOR_PLATE.get()).armorModel(MODEL_STEAM_1).armorTexture(TGIds.id("textures/models/armor/steam_armor.png")).knockbackResistance(0.20f));
+    public static final DeferredItem<TGPoweredArmorItem> STEAM_BOOTS = powered(T1_STEAM, ArmorItem.Type.BOOTS, T1_STEAM_STATS, "steam",
+            PowerType.STEAM, 10, item -> item.speed(0.05f, 0.15f, 0.0f, 0.0f).mining(0.05f, 0.0f).fallProtection(0.2f, 1.0f, 0.0f, 0.0f).health(1, 0)
+                    .stepAssist(1.0f, 0.0f)
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.STEAM_ARMOR_PLATE.get()).armorModel(MODEL_STEAM_0).armorTexture(TGIds.id("textures/models/armor/steam_armor.png")).knockbackResistance(0.15f));
+
+    // --- T3 power armor ---
+    public static final TGArmorStats T3_POWER_STATS = new TGArmorStats("powerarmor", 360, 22.0f, 2.5f)
+            .set(TGDamageCategory.FIRE, 19.0f).set(TGDamageCategory.EXPLOSION, 21.0f).set(TGDamageCategory.ENERGY, 20.0f)
+            .set(TGDamageCategory.ICE, 19.0f).set(TGDamageCategory.LIGHTNING, 19.0f).set(TGDamageCategory.POISON, 15.0f)
+            .set(TGDamageCategory.RADIATION, 17.0f);
+    private static final Holder<ArmorMaterial> T3_POWER = material(T3_POWER_STATS, 0, SoundEvents.ARMOR_EQUIP_IRON);
+
+    public static final DeferredItem<TGPoweredArmorItem> T3_POWER_HELMET = powered(T3_POWER, ArmorItem.Type.HELMET, T3_POWER_STATS, "t3_power",
+            PowerType.RF, 10, item -> item.mining(0.05f, 0.0f).health(1, 0).speed(0.05f, 0.03f, 0.0f, 0.0f)
+                    .radiationResistance(0.75f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_2).armorTexture(TGIds.id("textures/models/armor/powerarmor.png")).knockbackResistance(0.20f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_POWER_CHESTPLATE = powered(T3_POWER, ArmorItem.Type.CHESTPLATE, T3_POWER_STATS, "t3_power",
+            PowerType.RF, 3600, item -> item.speed(0.05f, 0.03f, 0.0f, 0.0f).mining(0.05f, 0.0f).health(2, 0)
+                    .battery(() -> TGAmmo.ENERGY_CELL.get(), () -> TGAmmo.ENERGY_CELL_EMPTY.get())
+                    .radiationResistance(0.75f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_0).armorTexture(TGIds.id("textures/models/armor/powerarmor.png")).knockbackResistance(0.35f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_POWER_LEGGINGS = powered(T3_POWER, ArmorItem.Type.LEGGINGS, T3_POWER_STATS, "t3_power",
+            PowerType.RF, 10, item -> item.speed(0.05f, 0.03f, 0.0f, 0.0f).mining(0.05f, 0.0f).health(1, 0)
+                    .radiationResistance(0.75f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_1).armorTexture(TGIds.id("textures/models/armor/powerarmor.png")).knockbackResistance(0.25f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_POWER_BOOTS = powered(T3_POWER, ArmorItem.Type.BOOTS, T3_POWER_STATS, "t3_power",
+            PowerType.RF, 10, item -> item.speed(0.05f, 0.15f, 0.0f, 0.0f).mining(0.05f, 0.0f).fallProtection(0.2f, 1.0f, 0.0f, 0.0f).health(1, 0)
+                    .stepAssist(1.0f, 0.0f)
+                    .radiationResistance(0.75f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_0).armorTexture(TGIds.id("textures/models/armor/powerarmor.png")).knockbackResistance(0.20f));
+
+    // --- T3 miner (HEV suit) ---
+    public static final TGArmorStats T3_MINER_STATS = new TGArmorStats("hevsuit", 300, 20.0f, 2.0f).elemental(20.0f)
+            .set(TGDamageCategory.EXPLOSION, 20.0f).set(TGDamageCategory.POISON, 20.0f).set(TGDamageCategory.RADIATION, 20.0f);
+    private static final Holder<ArmorMaterial> T3_MINER = material(T3_MINER_STATS, 0, SoundEvents.ARMOR_EQUIP_IRON);
+
+    public static final DeferredItem<TGPoweredArmorItem> T3_MINER_HELMET = powered(T3_MINER, ArmorItem.Type.HELMET, T3_MINER_STATS, "t3_miner",
+            PowerType.RF, 10, item -> item.speed(0.1f, 0.3f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.1f, 0.0f).waterMining(1.25f, 0.0f)
+                    .oxygenGear(1.0f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.10f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_MINER_CHESTPLATE = powered(T3_MINER, ArmorItem.Type.CHESTPLATE, T3_MINER_STATS, "t3_miner",
+            PowerType.RF, 10000, item -> item.battery(() -> TGAmmo.ENERGY_CELL.get(), () -> TGAmmo.ENERGY_CELL_EMPTY.get())
+                    .speed(0.1f, 0.03f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.1f, 0.0f).waterMining(1.25f, 0.0f)
+                    .cooling(1.0f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.25f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_MINER_LEGGINGS = powered(T3_MINER, ArmorItem.Type.LEGGINGS, T3_MINER_STATS, "t3_miner",
+            PowerType.RF, 10, item -> item.speed(0.1f, 0.03f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.1f, 0.0f).waterMining(1.25f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.15f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_MINER_BOOTS = powered(T3_MINER, ArmorItem.Type.BOOTS, T3_MINER_STATS, "t3_miner",
+            PowerType.RF, 10, item -> item.speed(0.1f, 0.15f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.1f, 0.0f).waterMining(1.25f, 0.0f)
+                    .stepAssist(1.0f, 0.0f).fallProtection(0.5f, 3.0f, 0.0f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.10f));
+
+    // --- T3 exo suit ---
+    public static final TGArmorStats T3_EXO_STATS = new TGArmorStats("t3_exo", 300, 21.0f, 2.0f)
+            .set(TGDamageCategory.FIRE, 18.5f).set(TGDamageCategory.EXPLOSION, 18.5f).set(TGDamageCategory.ENERGY, 19.0f)
+            .set(TGDamageCategory.ICE, 18.5f).set(TGDamageCategory.LIGHTNING, 18.5f).set(TGDamageCategory.POISON, 10.0f)
+            .set(TGDamageCategory.RADIATION, 12.0f);
+    private static final Holder<ArmorMaterial> T3_EXO = material(T3_EXO_STATS, 0, SoundEvents.ARMOR_EQUIP_CHAIN);
+
+    public static final DeferredItem<TGPoweredArmorItem> T3_EXO_HELMET = powered(T3_EXO, ArmorItem.Type.HELMET, T3_EXO_STATS, "t3_exo",
+            PowerType.RF, 10, item -> item.speed(0.2f, 0.1f, 0.0f, 0.0f).mining(0.075f, 0.0f)
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.CARBON_PLATE.get()).armorModel(MODEL_EXO_0).knockbackResistance(0.15f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_EXO_CHESTPLATE = powered(T3_EXO, ArmorItem.Type.CHESTPLATE, T3_EXO_STATS, "t3_exo",
+            PowerType.RF, 7200, item -> item.speed(0.2f, 0.1f, 0.0f, 0.0f).mining(0.075f, 0.0f)
+                    .battery(() -> TGAmmo.ENERGY_CELL.get(), () -> TGAmmo.ENERGY_CELL_EMPTY.get())
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.CARBON_PLATE.get()).armorModel(MODEL_EXO_2).knockbackResistance(0.30f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_EXO_LEGGINGS = powered(T3_EXO, ArmorItem.Type.LEGGINGS, T3_EXO_STATS, "t3_exo",
+            PowerType.RF, 10, item -> item.speed(0.2f, 0.1f, 0.0f, 0.0f).mining(0.075f, 0.0f)
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.CARBON_PLATE.get()).armorModel(MODEL_EXO_1).knockbackResistance(0.20f));
+    public static final DeferredItem<TGPoweredArmorItem> T3_EXO_BOOTS = powered(T3_EXO, ArmorItem.Type.BOOTS, T3_EXO_STATS, "t3_exo",
+            PowerType.RF, 10, item -> item.speed(0.2f, 0.3f, 0.0f, 0.0f).mining(0.075f, 0.0f).fallProtection(0.5f, 5.0f, 0.0f, 0.0f)
+                    .stepAssist(1.0f, 0.0f)
+                    .radiationResistance(0.5f).repairItem(() -> TGItems.CARBON_PLATE.get()).armorModel(MODEL_EXO_2).knockbackResistance(0.15f));
+
+    // --- T4 praetor (Nether combat) ---
+    public static final TGArmorStats T4_PRAETOR_STATS = new TGArmorStats("t4_praetor", 360, 22.0f, 3.0f).elemental(21.0f)
+            .set(TGDamageCategory.EXPLOSION, 21.0f).set(TGDamageCategory.POISON, 21.0f).set(TGDamageCategory.RADIATION, 20.0f);
+    private static final Holder<ArmorMaterial> T4_PRAETOR = material(T4_PRAETOR_STATS, 0, SoundEvents.ARMOR_EQUIP_IRON);
+
+    public static final DeferredItem<TGPoweredArmorItem> T4_PRAETOR_HELMET = powered(T4_PRAETOR, ArmorItem.Type.HELMET, T4_PRAETOR_STATS, "t4_praetor",
+            PowerType.RF, 10, item -> item.speed(0.15f, 0.3f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.15f, 0.0f).waterMining(1.25f, 0.0f)
+                    .oxygenGear(1.0f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.20f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_PRAETOR_CHESTPLATE = powered(T4_PRAETOR, ArmorItem.Type.CHESTPLATE, T4_PRAETOR_STATS, "t4_praetor",
+            PowerType.RF, 10000, item -> item.battery(() -> TGAmmo.ENERGY_CELL.get(), () -> TGAmmo.ENERGY_CELL_EMPTY.get())
+                    .speed(0.15f, 0.03f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.15f, 0.0f).waterMining(1.25f, 0.0f)
+                    .cooling(1.0f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.35f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_PRAETOR_LEGGINGS = powered(T4_PRAETOR, ArmorItem.Type.LEGGINGS, T4_PRAETOR_STATS, "t4_praetor",
+            PowerType.RF, 10, item -> item.speed(0.15f, 0.03f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.15f, 0.0f).waterMining(1.25f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.25f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_PRAETOR_BOOTS = powered(T4_PRAETOR, ArmorItem.Type.BOOTS, T4_PRAETOR_STATS, "t4_praetor",
+            PowerType.RF, 10, item -> item.speed(0.15f, 0.15f, 0.0f, 0.0f).waterSpeed(1.25f, 0.0f).mining(0.15f, 0.0f).waterMining(1.25f, 0.0f)
+                    .stepAssist(1.0f, 0.0f).fallProtection(0.5f, 3.0f, 0.0f, 0.0f)
+                    .radiationResistance(1.0f).repairItem(() -> TGItems.CARBON_PLATE.get()).knockbackResistance(0.20f));
+
+    // --- T4 power armor Mk2 ---
+    public static final TGArmorStats T4_POWER_STATS = new TGArmorStats("powerarmor_mk2_darkgrey", 460, 23.0f, 3.5f).elemental(21.0f)
+            .set(TGDamageCategory.EXPLOSION, 22.0f).set(TGDamageCategory.POISON, 19.0f).set(TGDamageCategory.RADIATION, 20.0f);
+    private static final Holder<ArmorMaterial> T4_POWER = material(T4_POWER_STATS, 0, SoundEvents.ARMOR_EQUIP_IRON);
+
+    public static final DeferredItem<TGPoweredArmorItem> T4_POWER_HELMET = powered(T4_POWER, ArmorItem.Type.HELMET, T4_POWER_STATS, "t4_power",
+            PowerType.RF, 10, item -> item.mining(0.1f, 0.0f).health(2, 0).speed(0.05f, 0.03f, 0.0f, 0.0f)
+                    .radiationResistance(1.25f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_MK2_2).armorTexture(TGIds.id("textures/models/armor/powerarmor_mk2_darkgrey.png")).knockbackResistance(0.20f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_POWER_CHESTPLATE = powered(T4_POWER, ArmorItem.Type.CHESTPLATE, T4_POWER_STATS, "t4_power",
+            PowerType.RF, 3600, item -> item.speed(0.05f, 0.03f, 0.0f, 0.0f).mining(0.1f, 0.0f).health(3, 0)
+                    .battery(() -> TGAmmo.ENERGY_CELL.get(), () -> TGAmmo.ENERGY_CELL_EMPTY.get())
+                    .radiationResistance(1.25f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_MK2_0).armorTexture(TGIds.id("textures/models/armor/powerarmor_mk2_darkgrey.png")).knockbackResistance(0.35f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_POWER_LEGGINGS = powered(T4_POWER, ArmorItem.Type.LEGGINGS, T4_POWER_STATS, "t4_power",
+            PowerType.RF, 10, item -> item.speed(0.05f, 0.03f, 0.0f, 0.0f).mining(0.1f, 0.0f).health(2, 0)
+                    .radiationResistance(1.25f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_MK2_1).armorTexture(TGIds.id("textures/models/armor/powerarmor_mk2_darkgrey.png")).knockbackResistance(0.25f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_POWER_BOOTS = powered(T4_POWER, ArmorItem.Type.BOOTS, T4_POWER_STATS, "t4_power",
+            PowerType.RF, 10, item -> item.speed(0.05f, 0.15f, 0.0f, 0.0f).mining(0.1f, 0.0f).fallProtection(0.4f, 1.0f, 0.0f, 0.0f).health(2, 0)
+                    .stepAssist(1.0f, 0.0f)
+                    .radiationResistance(1.25f).repairItem(() -> TGItems.POWER_PLATING.get()).armorModel(MODEL_POWER_MK2_0).armorTexture(TGIds.id("textures/models/armor/powerarmor_mk2_darkgrey.png")).knockbackResistance(0.20f));
+
     // --- T2 beret (helmet only) ---
     public static final TGArmorStats T2_BERET_STATS = new TGArmorStats("t2_beret", 60, 8.0f, 0.0f);
     private static final Holder<ArmorMaterial> T2_BERET = material(T2_BERET_STATS, 0, SoundEvents.ARMOR_EQUIP_LEATHER);
@@ -204,5 +347,30 @@ public final class TGArmors {
                 properties -> setup.apply(new TGArmorItem(material, type, properties, stats)));
         ARMORS.add(item);
         return item;
+    }
+
+    /** @param prefix item id prefix, differs from the texture name ({@code stats.name()}) for powered sets */
+    private static DeferredItem<TGPoweredArmorItem> powered(Holder<ArmorMaterial> material, ArmorItem.Type type, TGArmorStats stats,
+                                                            String prefix, PowerType powerType, int maxPower,
+                                                            Consumer<TGPoweredArmorItem> setup) {
+        String name = prefix + "_" + switch (type) {
+            case HELMET -> "helmet";
+            case CHESTPLATE -> "chestplate";
+            case LEGGINGS -> "leggings";
+            case BOOTS -> "boots";
+            case BODY -> "body";
+        };
+        DeferredItem<TGPoweredArmorItem> item = TGItems.ITEMS.registerItem(name, properties -> {
+            TGPoweredArmorItem armor = new TGPoweredArmorItem(material, type, properties, stats, powerType, maxPower);
+            setup.accept(armor);
+            return armor;
+        });
+        registerArmor(item);
+        return item;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void registerArmor(DeferredItem<? extends TGArmorItem> item) {
+        ARMORS.add((DeferredItem<TGArmorItem>) item);
     }
 }

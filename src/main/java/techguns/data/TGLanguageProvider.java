@@ -78,6 +78,30 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("t1_miner_chestplate", "Miner's Jacket"),
             Map.entry("t1_miner_leggings", "Miner's Pants"),
             Map.entry("t1_miner_boots", "Miner's Boots"),
+            Map.entry("steam_helmet", "Steam Helmet"),
+            Map.entry("steam_chestplate", "Steam Chestplate"),
+            Map.entry("steam_leggings", "Steam Legplates"),
+            Map.entry("steam_boots", "Steam Boots"),
+            Map.entry("t3_power_helmet", "Power Armor Helmet"),
+            Map.entry("t3_power_chestplate", "Power Armor Chestplate"),
+            Map.entry("t3_power_leggings", "Power Armor Leggings"),
+            Map.entry("t3_power_boots", "Power Armor Boots"),
+            Map.entry("t3_miner_helmet", "HEV Suit Helmet"),
+            Map.entry("t3_miner_chestplate", "HEV Suit Chestplate"),
+            Map.entry("t3_miner_leggings", "HEV Suit Leggings"),
+            Map.entry("t3_miner_boots", "HEV Suit Boots"),
+            Map.entry("t3_exo_helmet", "Exo Suit Helmet"),
+            Map.entry("t3_exo_chestplate", "Exo Suit Chestplate"),
+            Map.entry("t3_exo_leggings", "Exo Suit Leggings"),
+            Map.entry("t3_exo_boots", "Exo Suit Boots"),
+            Map.entry("t4_praetor_helmet", "Nether Combat Helmet"),
+            Map.entry("t4_praetor_chestplate", "Nether Combat Chestplate"),
+            Map.entry("t4_praetor_leggings", "Nether Combat Leggings"),
+            Map.entry("t4_praetor_boots", "Nether Combat Boots"),
+            Map.entry("t4_power_helmet", "Power Armor Mk2 Helmet"),
+            Map.entry("t4_power_chestplate", "Power Armor Mk2 Chestplate"),
+            Map.entry("t4_power_leggings", "Power Armor Mk2 Leggings"),
+            Map.entry("t4_power_boots", "Power Armor Mk2 Boots"),
             Map.entry("hazmat_helmet", "Hazmat Suit Helmet"),
             Map.entry("hazmat_chestplate", "Hazmat Suit Chestplate"),
             Map.entry("hazmat_leggings", "Hazmat Suit Leggings"),
@@ -184,6 +208,15 @@ public class TGLanguageProvider extends LanguageProvider {
         add("attribute.name.techguns.cooling_system", "Cooling System");
         add("attribute.name.techguns.radiation_resistance", "Radiation Resistance");
         add("attribute.name.techguns.oxygen_gear", "Oxygen Gear");
+        add("attribute.name.techguns.step_assist", "Step Assist");
+        add("tooltip.techguns.armor.power", "Power: %s/%s");
+        add("tooltip.techguns.armor.power_type", "Power type: %s");
+        add("tooltip.techguns.armor.power_type_battery", "Power type: %s (%s)");
+        add("tooltip.techguns.armor.power_type.steam", "Steam");
+        add("tooltip.techguns.armor.power_type.rf", "Electric");
+        add("message.techguns.step_assist", "Step Assist: %s");
+        add("message.techguns.on", "On");
+        add("message.techguns.off", "Off");
         add("techguns.lock_on.locking", "Locking... : %s");
         add("techguns.lock_on.locked", "Locked On: %s");
     }

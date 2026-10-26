@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "l": {
+      "tag": "c:plates/titanium"
+    },
+    "p": {
+      "tag": "c:plates/carbon"
+    }
+  },
+  "pattern": [
+    "pcp",
+    "lgl"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t3_miner_helmet"
+  }
+}

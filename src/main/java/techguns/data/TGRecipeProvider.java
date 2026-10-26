@@ -1,6 +1,7 @@
 package techguns.data;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -136,6 +137,65 @@ public class TGRecipeProvider extends RecipeProvider {
         armor(output, TGArmors.HAZMAT_CHESTPLATE.get(), fiber, hazmatKeys, "f f", "fff", "fff");
         armor(output, TGArmors.HAZMAT_LEGGINGS.get(), fiber, hazmatKeys, "fff", "f f", "f f");
         armor(output, TGArmors.HAZMAT_BOOTS.get(), fiber, hazmatKeys, "f f", "f f");
+
+        // Steam armor
+        Item steamPlate = TGItems.STEAM_ARMOR_PLATE.get();
+        Consumer<ShapedRecipeBuilder> steamKeys = b -> b.define('s', steamPlate);
+        armor(output, TGArmors.STEAM_HELMET.get(), steamPlate, steamKeys, "sss", "s s");
+        armor(output, TGArmors.STEAM_CHESTPLATE.get(), steamPlate, steamKeys, "s s", "sss", "sss");
+        armor(output, TGArmors.STEAM_LEGGINGS.get(), steamPlate, steamKeys, "sss", "s s", "s s");
+        armor(output, TGArmors.STEAM_BOOTS.get(), steamPlate, steamKeys, "s s", "s s");
+
+        // T3 power armor
+        Item powerPlating = TGItems.POWER_PLATING.get();
+        Item elite = TGItems.CIRCUIT_BOARD_ELITE.get();
+        Item engine = TGItems.ELECTRIC_ENGINE.get();
+        Map<Character, Object> powerKeys = Map.of('p', powerPlating, 'c', elite, 'e', engine, 'g', Tags.Items.GLASS_PANES);
+        usedKeys(output, TGArmors.T3_POWER_HELMET.get(), powerPlating, powerKeys, "cpc", "pgp");
+        usedKeys(output, TGArmors.T3_POWER_CHESTPLATE.get(), powerPlating, powerKeys, "p p", "ece", "ppp");
+        usedKeys(output, TGArmors.T3_POWER_LEGGINGS.get(), powerPlating, powerKeys, "pcp", "e e", "p p");
+        usedKeys(output, TGArmors.T3_POWER_BOOTS.get(), powerPlating, powerKeys, "e e", "p p");
+
+        // T3 miner (HEV suit)
+        Map<Character, Object> hevKeys = Map.of('p', TGTags.Items.plate("carbon"), 'c', elite,
+                'l', TGTags.Items.plate("titanium"), 'g', Tags.Items.GLASS_PANES);
+        usedKeys(output, TGArmors.T3_MINER_HELMET.get(), elite, hevKeys, "pcp", "lgl");
+        usedKeys(output, TGArmors.T3_MINER_CHESTPLATE.get(), elite, hevKeys, "p p", "lcl", "lpl");
+        usedKeys(output, TGArmors.T3_MINER_LEGGINGS.get(), elite, hevKeys, "ppp", "c c", "l l");
+        usedKeys(output, TGArmors.T3_MINER_BOOTS.get(), elite, hevKeys, "l l", "p p");
+
+        // T3 exo suit: upgrade of the matching T3 combat piece
+        exoSuit(output, TGArmors.T3_EXO_HELMET.get(), TGArmors.T3_COMBAT_HELMET.get(), 1);
+        exoSuit(output, TGArmors.T3_EXO_CHESTPLATE.get(), TGArmors.T3_COMBAT_CHESTPLATE.get(), 2);
+        exoSuit(output, TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_COMBAT_LEGGINGS.get(), 2);
+        exoSuit(output, TGArmors.T3_EXO_BOOTS.get(), TGArmors.T3_COMBAT_BOOTS.get(), 1);
+        // Techguns 2 has no crafting recipes for the T4 praetor and T4 power armor.
+    }
+
+    /** Shaped armor recipe that only defines the keys the pattern uses. */
+    private static void usedKeys(RecipeOutput output, Item armor, ItemLike unlock, Map<Character, Object> keys, String... pattern) {
+        String joined = String.join("", pattern);
+        armor(output, armor, unlock, b -> keys.forEach((symbol, ingredient) -> {
+            if (joined.indexOf(symbol) >= 0) {
+                if (ingredient instanceof TagKey<?> tag) {
+                    @SuppressWarnings("unchecked")
+                    TagKey<Item> itemTag = (TagKey<Item>) tag;
+                    b.define(symbol, itemTag);
+                } else {
+                    b.define(symbol, (ItemLike) ingredient);
+                }
+            }
+        }), pattern);
+    }
+
+    private static void exoSuit(RecipeOutput output, Item exo, Item combat, int titaniumIngots) {
+        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, exo)
+                .requires(combat).requires(TGItems.MECHANICAL_PARTS_CARBON.get()).requires(TGItems.CIRCUIT_BOARD_ELITE.get())
+                .requires(TGItems.ELECTRIC_ENGINE.get());
+        for (int i = 0; i < titaniumIngots; i++) {
+            builder.requires(TGTags.Items.ingot("titanium"));
+        }
+        builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
     }
 
     private static void armor(RecipeOutput output, Item armor, ItemLike unlock, Consumer<ShapedRecipeBuilder> keys, String... pattern) {

@@ -1,6 +1,7 @@
 package techguns.network;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,6 +16,7 @@ import techguns.core.damage.DeathType;
 import techguns.core.fx.EntityCondition;
 import techguns.gun.GunClientEffects;
 import techguns.gun.GunItem;
+import techguns.player.TGPlayerData;
 
 /**
  * Registers all Techguns payloads and offers typed send helpers. All payload types live in this package.
@@ -37,6 +39,19 @@ public final class TGNetwork {
         registrar.playToClient(FxPayloads.SpawnFxOnEntity.TYPE, FxPayloads.SpawnFxOnEntity.STREAM_CODEC, TGNetwork::handleSpawnFxOnEntity);
         registrar.playToClient(FxPayloads.GunImpactFx.TYPE, FxPayloads.GunImpactFx.STREAM_CODEC, TGNetwork::handleGunImpactFx);
         registrar.playToClient(FxPayloads.EntityDeathFx.TYPE, FxPayloads.EntityDeathFx.STREAM_CODEC, TGNetwork::handleEntityDeathFx);
+        registrar.playToServer(PlayerPayloads.SetStepAssist.TYPE, PlayerPayloads.SetStepAssist.STREAM_CODEC, TGNetwork::handleSetStepAssist);
+        registrar.playToClient(PlayerPayloads.SyncPlayerData.TYPE, PlayerPayloads.SyncPlayerData.STREAM_CODEC, TGNetwork::handleSyncPlayerData);
+    }
+
+    /** Sends the saved player settings to their client (login, respawn, dimension change). */
+    public static void syncPlayerData(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new PlayerPayloads.SyncPlayerData(TGPlayerData.of(player).stepAssist()));
+        }
+    }
+
+    public static void sendSetStepAssist(boolean enabled) {
+        PacketDistributor.sendToServer(new PlayerPayloads.SetStepAssist(enabled));
     }
 
     // --- Send helpers ---
@@ -120,7 +135,15 @@ public final class TGNetwork {
         }
     }
 
+    private static void handleSetStepAssist(PlayerPayloads.SetStepAssist payload, IPayloadContext context) {
+        TGPlayerData.of(context.player()).setStepAssist(payload.enabled());
+    }
+
     // --- Client handlers (only invoked on the client) ---
+
+    private static void handleSyncPlayerData(PlayerPayloads.SyncPlayerData payload, IPayloadContext context) {
+        TGPlayerData.of(context.player()).setStepAssist(payload.stepAssist());
+    }
 
     private static void handleGunFired(GunPayloads.GunFired payload, IPayloadContext context) {
         if (clientEntity(context, payload.entityId()) instanceof LivingEntity shooter) {

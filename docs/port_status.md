@@ -108,3 +108,7 @@ Batches: design doc Phase 4. Source: Techguns 2 for all values; Fabric for the a
 | 4a T1 combat set | 12 | rendered | |
 | 4b plain sets: T1 scout/miner, hazmat, T2 combat/commando/riot, T3 combat, beret (29 items, recipes, lang) | 12 | rendered | default camo textures only (variants in 4d) |
 | 4b custom armor models: riot coat (`coat_0..3`), beret (`IClientItemExtensions#getHumanoidArmorModel`) | 12 | rendered | |
+| 4c powered armor framework (`TGPoweredArmorItem`, `armor_power` component): powered/unpowered bonuses, chest refills from a battery item and tops up the other pieces of its power type, 1 power per piece per second of movement, action costs (jump 5 legs + steam jump sound, fall >3 blocks 5 boots, cooling 1 chest); radiation resistance independent of power | 12 | tested | GameTests: bonuses by power, battery swap/sharing, per-second use; checked in game |
+| 4c step assist: `step_assist` bonus + toggle key (V) + saved player setting (`techguns:player_data` attachment, synced on login/respawn/dimension change) | 12 | rendered | step height 1.1 checked in game |
+| 4c powered sets: steam, T3 power, T3 miner (HEV), T3 exo, T4 praetor, T4 power (24 items, recipes from 1.12 where they exist) | 12 | rendered | T4 sets have no 1.12 recipe; 1.12 3D inventory icons (render hack) replaced by plate icons; hide face/back/glove slot flags follow with 4f |
+| 4c armor models: steam, T3 power, exo suit, T4 power mk2 (`TGArmorModels`, 1.12 values incl. its mirror-flag order) | 12 | rendered | |

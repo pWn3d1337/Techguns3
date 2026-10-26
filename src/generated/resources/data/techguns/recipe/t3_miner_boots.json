@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "l": {
+      "tag": "c:plates/titanium"
+    },
+    "p": {
+      "tag": "c:plates/carbon"
+    }
+  },
+  "pattern": [
+    "l l",
+    "p p"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t3_miner_boots"
+  }
+}

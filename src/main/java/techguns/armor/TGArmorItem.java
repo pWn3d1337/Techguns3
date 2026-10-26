@@ -110,6 +110,10 @@ public class TGArmorItem extends ArmorItem {
         return bonus(TGAttributes.OXYGEN_GEAR, value);
     }
 
+    public TGArmorItem stepAssist(float value) {
+        return bonus(TGAttributes.STEP_ASSIST, value);
+    }
+
     public TGArmorItem cooling(float value) {
         return bonus(TGAttributes.COOLING_SYSTEM, value);
     }
@@ -163,6 +167,11 @@ public class TGArmorItem extends ArmorItem {
         return bonuses.getOrDefault(attribute, 0.0);
     }
 
+    /** Bonuses this stack gives now (powered armor: depends on its power). */
+    protected Map<Holder<Attribute>, Double> activeBonuses(ItemStack stack) {
+        return bonuses;
+    }
+
     /** Worn out: one point of durability left, no armor and no bonuses. */
     public static boolean isWornOut(ItemStack stack) {
         return stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1;
@@ -193,7 +202,7 @@ public class TGArmorItem extends ArmorItem {
         if (stats.toughness() > 0.0f) {
             builder.add(Attributes.ARMOR_TOUGHNESS, modifier("toughness", stats.toughness()), slot);
         }
-        bonuses.forEach((attribute, value) -> builder.add(attribute,
+        activeBonuses(stack).forEach((attribute, value) -> builder.add(attribute,
                 modifier(attribute.unwrapKey().map(key -> key.location().getPath()).orElse("bonus"), value), slot));
         // the vanilla lines would show the category differences; the tooltip lists the real values instead
         return builder.build().withTooltip(false);
@@ -229,7 +238,7 @@ public class TGArmorItem extends ArmorItem {
         if (stats.toughness() > 0.0f) {
             tooltip.add(Component.translatable("tooltip.techguns.armor.toughness", FORMAT.format(stats.toughness())).withStyle(ChatFormatting.GRAY));
         }
-        bonuses.forEach((attribute, value) -> tooltip.add(bonusLine(attribute, value)));
+        activeBonuses(stack).forEach((attribute, value) -> tooltip.add(bonusLine(attribute, value)));
     }
 
     /** Armor values as a row of category icons (see {@code ClientArmorTooltip}). */

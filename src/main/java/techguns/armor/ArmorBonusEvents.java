@@ -66,6 +66,7 @@ public final class ArmorBonusEvents {
         }
         if (!player.level().isClientSide && player.isOnFire() && value(player, TGAttributes.COOLING_SYSTEM) >= 1.0) {
             player.clearFire();
+            ArmorPowerEvents.useActionPower(player, TGAttributes.COOLING_SYSTEM);
         }
     }
 
@@ -73,6 +74,7 @@ public final class ArmorBonusEvents {
         if (event.getEntity() instanceof Player player) {
             double jump = value(player, TGAttributes.JUMP_BONUS);
             if (jump > 0.0) {
+                ArmorPowerEvents.useActionPower(player, TGAttributes.JUMP_BONUS);
                 Vec3 motion = player.getDeltaMovement();
                 player.setDeltaMovement(motion.x, motion.y + jump, motion.z);
             }
@@ -84,6 +86,9 @@ public final class ArmorBonusEvents {
             float freeHeight = (float) value(player, TGAttributes.FALL_FREE_HEIGHT);
             float reduction = (float) value(player, TGAttributes.FALL_DAMAGE_REDUCTION);
             float distance = Math.max(0.0f, event.getDistance() - freeHeight);
+            if (event.getDistance() > 3.0f && reduction > 0.0f) {
+                ArmorPowerEvents.useActionPower(player, TGAttributes.FALL_DAMAGE_REDUCTION);
+            }
             event.setDistance(distance * Math.max(0.0f, 1.0f - reduction));
         }
     }
