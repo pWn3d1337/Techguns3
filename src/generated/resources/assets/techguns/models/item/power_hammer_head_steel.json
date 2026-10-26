@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "techguns:item/power_hammer_head_steel"
+  }
+}

@@ -45,7 +45,7 @@ public class GeoGunModel extends TGModel {
     public void render(@Nullable LivingEntity entity, PoseStack poseStack, VertexConsumer vertices, int ammoLeft, float reloadProgress,
                        ItemDisplayContext context, int part, float fireProgress, float chargeProgress, int light, int overlay) {
         if (TGGeoBridge.enabled() && part < geoIds.length) {
-            if (!visibility.isVisible(part, ammoLeft, reloadProgress)) {
+            if (!visibility.isVisible(part, ammoLeft, reloadProgress) || !fallback.isPartVisible(entity, part)) {
                 return;
             }
             boolean inHand = entity != null && (context.firstPerson() || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
@@ -53,7 +53,7 @@ public class GeoGunModel extends TGModel {
             boolean left = context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
             long animationKey = inHand ? entity.getId() * 2L + (left ? 1 : 0) : -1L;
             poseStack.pushPose();
-            fallback.transformPart(poseStack, part, ammoLeft, reloadProgress, fireProgress);
+            fallback.transformPart(poseStack, entity, context, part, ammoLeft, reloadProgress, fireProgress);
             boolean drawn = TGGeoBridge.get().render(geoIds[part], animationKey, poseStack,
                     Minecraft.getInstance().renderBuffers().bufferSource(), vertices, light, overlay, reloadProgress, fireProgress,
                     bones -> partModel(part).animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, chargeProgress, context));

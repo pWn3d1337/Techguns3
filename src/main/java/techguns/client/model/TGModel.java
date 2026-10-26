@@ -46,6 +46,20 @@ public abstract class TGModel extends Model {
     }
 
     /**
+     * Like {@link #transformPart(PoseStack, int, int, float, float)}, for parts that depend on the holder or the display
+     * context (static copies in the GUI, per-player state). Both renders call this one.
+     */
+    public void transformPart(PoseStack poseStack, @Nullable LivingEntity entity, ItemDisplayContext context, int part, int ammoLeft,
+                              float reloadProgress, float fireProgress) {
+        this.transformPart(poseStack, part, ammoLeft, reloadProgress, fireProgress);
+    }
+
+    /** Whether a render part is drawn for this holder (e.g. the grappling hook while it is launched). */
+    public boolean isPartVisible(@Nullable LivingEntity entity, int part) {
+        return true;
+    }
+
+    /**
      * Code-driven bone changes for the geo version of this model (the Java render does the same in {@link #render}).
      * Overrides must call super, which applies the static part scales.
      */

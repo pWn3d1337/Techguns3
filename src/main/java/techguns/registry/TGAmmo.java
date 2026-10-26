@@ -71,6 +71,8 @@ public final class TGAmmo {
     public static final DeferredItem<Item> MAGIC_BULLET = flat("magic_bullet", 64);
     public static final DeferredItem<Item> MAGIC_BULLET_FIRE = flat("magic_bullet_fire", 64);
     public static final DeferredItem<Item> MAGIC_BULLET_LIGHTNING = flat("magic_bullet_lightning", 64);
+    public static final DeferredItem<Item> COMPRESSED_AIR_TANK = flat("compressed_air_tank", 16);
+    public static final DeferredItem<Item> COMPRESSED_AIR_TANK_EMPTY = flat("compressed_air_tank_empty", 16);
 
     // --- Ammo types ---
     public static final AmmoType PISTOL_ROUNDS_TYPE = AmmoType.simple(PISTOL_ROUNDS)
@@ -97,6 +99,7 @@ public final class TGAmmo {
     public static final AmmoType GRENADES_40MM_TYPE = AmmoType.simple(GRENADE_40MM);
     public static final AmmoType FUEL_TANK_TYPE = AmmoType.withEmpty(FUEL_TANK, FUEL_TANK_EMPTY, null, 0);
     public static final AmmoType BIO_TANK_TYPE = AmmoType.withEmpty(BIO_TANK, BIO_TANK_EMPTY, null, 0);
+    public static final AmmoType COMPRESSED_AIR_TANK_TYPE = AmmoType.withEmpty(COMPRESSED_AIR_TANK, COMPRESSED_AIR_TANK_EMPTY, null, 0);
     public static final AmmoType STONE_BULLETS_TYPE = AmmoType.simple(STONE_BULLETS);
     public static final AmmoType MAGIC_BULLETS_TYPE = AmmoType.simple(MAGIC_BULLET)
             .addVariant(AmmoType.FIRE, MAGIC_BULLET_FIRE, MAGIC_BULLET_FIRE)

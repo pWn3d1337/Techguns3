@@ -99,7 +99,16 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("fuel_tank_empty", "Fuel Tank (Empty)"),
             Map.entry("bio_tank_empty", "Bio Tank (Empty)"),
             Map.entry("magic_bullet_fire", "Magic Bullet (Fire)"),
-            Map.entry("magic_bullet_lightning", "Magic Bullet (Lightning)"));
+            Map.entry("magic_bullet_lightning", "Magic Bullet (Lightning)"),
+            Map.entry("compressed_air_tank_empty", "Compressed Air Tank (Empty)"),
+            Map.entry("chainsaw_blades_steel", "Chainsaw Blades (Steel)"),
+            Map.entry("chainsaw_blades_obsidian", "Chainsaw Blades (Obsidian)"),
+            Map.entry("chainsaw_blades_carbon", "Chainsaw Blades (Carbon)"),
+            Map.entry("mining_drill_head_obsidian", "Mining Drill Head (Obsidian)"),
+            Map.entry("mining_drill_head_carbon", "Mining Drill Head (Carbon)"),
+            Map.entry("power_hammer_head_steel", "Power Hammer Head (Steel)"),
+            Map.entry("power_hammer_head_obsidian", "Power Hammer Head (Obsidian)"),
+            Map.entry("power_hammer_head_carbon", "Power Hammer Head (Carbon)"));
 
     @Override
     protected void addTranslations() {

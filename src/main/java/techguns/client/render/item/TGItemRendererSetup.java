@@ -2,6 +2,11 @@ package techguns.client.render.item;
 
 import techguns.TGIds;
 import techguns.client.model.gun.ModelAK;
+import techguns.client.model.gun.ModelChainsaw;
+import techguns.client.model.gun.ModelGrapplingHook;
+import techguns.client.model.gun.ModelMiningDrill;
+import techguns.client.model.gun.ModelPowerHammer;
+import techguns.client.model.gun.ModelShishkebap;
 import techguns.client.model.gun.ModelBiogun;
 import techguns.client.model.gun.ModelFlamethrower;
 import techguns.client.model.gun.ModelHandgun;
@@ -351,6 +356,58 @@ public final class TGItemRendererSetup {
                         {0.0f, 0.1f, 0}, // Ground
                         {0, 0, 0f} // frame
                 }).setMuzzleFXPos3P(0.24f, -0.56f).setBaseScale(1.25f).setFirstPersonScale(0.4f).setGroundAndFrameScale(0.35f));
+
+        // Tools: the head level picks the texture of render part 1 (Fabric/Techguns 2 values)
+        TGItemRenderers.register(TGGuns.CHAINSAW, new RenderMiningTool(new GeoGunModel(new ModelChainsaw(), "chainsaw", "chainsaw_1"), 2, TGIds.id("textures/guns/chainsaw.png"),
+                TGIds.id("textures/guns/chainsaw.png"), TGIds.id("textures/guns/chainsaw_blades_obsidian.png"), TGIds.id("textures/guns/chainsaw_blades_carbon.png"))
+                .setBaseTranslation(-0.4f, -0.2f, RenderItemBase.SCALE - 0.09f).setBaseScale(0.95f).setGUIScale(0.45f).setTransformTranslations(new float[][]{
+                        {0f, -0.08f, 0.15f}, // First Person
+                        {0f, -0.5f, 0.04f}, // Third Person
+                        {0.03f, 0.01f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {-0.07f, -0.03f, -0.11f} // frame
+                }));
+
+        TGItemRenderers.register(TGGuns.POWER_HAMMER, new RenderMiningTool(new GeoGunModel(new ModelPowerHammer(), "power_hammer", "power_hammer_1"), 2, TGIds.id("textures/guns/powerhammer.png"),
+                TGIds.id("textures/guns/powerhammer.png"), TGIds.id("textures/guns/powerhammer_obsidian.png"), TGIds.id("textures/guns/powerhammer_carbon.png"))
+                .setBaseTranslation(0.15f, -0.2f, RenderItemBase.SCALE - 0.09f).setBaseScale(1.25f).setGUIScale(0.45f).setMuzzleFx(null, 0, 0.26f, -0.67f, 0.5f, 0).setTransformTranslations(new float[][]{
+                        {0f, 0.18f, 0.09f}, // First Person
+                        {0f, 0.04f, 0.04f}, // Third Person
+                        {0.03f, 0.01f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {-0.07f, -0.03f, -0.05f} // frame
+                }).setMuzzleFXPos3P(0.12f, -0.65f).setChargeTranslationAmount(0.125f));
+
+        TGItemRenderers.register(TGGuns.MINING_DRILL, new RenderMiningTool(new GeoGunModel(new ModelMiningDrill(), "mining_drill", "mining_drill_1"), 2, TGIds.id("textures/guns/miningdrill_obsidian.png"),
+                TGIds.id("textures/guns/miningdrill_obsidian.png"), TGIds.id("textures/guns/miningdrill_carbon.png"))
+                .setBaseTranslation(0, -0.2f, -RenderItemBase.SCALE * 0.5f).setBaseScale(2.0f).setGUIScale(0.35f).setTransformTranslations(new float[][]{
+                        {0f, -0.03f, 0.0f}, // First Person
+                        {0f, -0.57f, 0.08f}, // Third Person
+                        {0.01f, -0.01f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {0f, -0.08f, -0.05f} // frame
+                }).setRecoilAnim(GunAnimation.genericRecoil, 0.05f, 1.0f));
+
+        // Part 1 is the hook (hidden while launched), part 2 the wheel (the Fabric port drew everything twice)
+        TGItemRenderers.register(TGGuns.GRAPPLING_HOOK, new RenderGunBase90(new GeoGunModel(new ModelGrapplingHook(), "grappling_hook", "grappling_hook_1", "grappling_hook_2"), 3,
+                TGIds.id("textures/guns/grappling_hook.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE * 0.5f - 0.10f)
+                .setBaseScale(1.2f).setGUIScale(0.85f).setTransformTranslations(new float[][]{
+                        {0, 0.00f, 0f}, // First Person
+                        {0.0f, -0.0f, 0.0f}, // Third Person
+                        {0.0f, -0.3f, 0}, // GUI
+                        {0.0f, -0.0f, 0}, // Ground
+                        {0, 0, 0f} // frame
+                }).setRecoilAnim(GunAnimation.genericRecoil, 0.0125f, 6.0f));
+
+        // Techguns 2 only; the texture variations (camo) are not ported yet
+        TGItemRenderers.register(TGGuns.SHISHKEBAP, new RenderGunBase(new GeoGunModel(new ModelShishkebap(), "shishkebap"), 1, TGIds.id("textures/guns/shishkebab_texture.png"))
+                .setBaseTranslation(0, 0, 0).setBaseScale(1.0f).setGUIScale(0.3f).setTransformTranslations(new float[][]{
+                        {0f, 0.0f, 0.0f}, // First Person
+                        {0f, 0.0f, 0.0f}, // Third Person
+                        {0.0f, -0.25f, 0f}, // GUI
+                        {0f, 0f, 0f}, // Ground
+                        {0f, 0.0f, 0.0f} // frame
+                }).setReloadAnim(GunAnimation.breechReload, -0.15f, 55.0f).setReloadAnim3p(GunAnimation.breechReload, 0f, 55.0f));
 
         // OBJ mesh model, no geo version
         TGItemRenderers.register(TGGuns.GRENADE_LAUNCHER, new RenderGunBaseObj(new ModelGrenadeLauncher(), 2, TGIds.id("textures/guns/grenadelauncher.png"), 90.0f)

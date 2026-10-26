@@ -23,6 +23,7 @@ import net.neoforged.neoforge.common.Tags;
 import techguns.TGIds;
 import techguns.gun.GunAmmo;
 import techguns.gun.GunData;
+import techguns.gun.MeleeToolItem;
 import techguns.gun.ammo.AmmoType;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGBlocks;
@@ -384,6 +385,26 @@ public class TGRecipeProvider extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.FUEL_TANK.get(), 2)
                 .requires(TGAmmo.FUEL_TANK_EMPTY.get(), 2).requires(Items.LAVA_BUCKET)
                 .unlockedBy("has_fuel_tank_empty", has(TGAmmo.FUEL_TANK_EMPTY.get())).save(output, TGIds.id("fuel_tank"));
+        // Batch 3f: compressed air tanks and tool mining heads
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get(), 4)
+                .pattern(" l ").pattern("i i").pattern("i i")
+                .define('l', Items.LEVER).define('i', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON)).save(output, TGIds.id("compressed_air_tank_empty"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.COMPRESSED_AIR_TANK.get())
+                .requires(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get()).requires(Items.WATER_BUCKET).requires(Items.COAL)
+                .unlockedBy("has_compressed_air_tank_empty", has(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get()))
+                .save(output, TGIds.id("compressed_air_tank"));
+        TagKey<Item> obsidianSteelIngot = TGTags.Items.ingot("obsidian_steel");
+        TagKey<Item> carbonPlate = TGTags.Items.plate("carbon");
+        miningHead(output, TGItems.CHAINSAW_BLADES_STEEL.get(), steelIngot, TGItems.MECHANICAL_PARTS_IRON.get(), " i", "ip", " i");
+        miningHead(output, TGItems.CHAINSAW_BLADES_OBSIDIAN.get(), obsidianSteelIngot, TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get(),
+                " i", "ip", " i");
+        miningHead(output, TGItems.CHAINSAW_BLADES_CARBON.get(), carbonPlate, TGItems.MECHANICAL_PARTS_CARBON.get(), " i", "ip", " i");
+        miningHead(output, TGItems.MINING_DRILL_HEAD_OBSIDIAN.get(), obsidianSteelIngot, null, " ii", "iii", " ii");
+        miningHead(output, TGItems.MINING_DRILL_HEAD_CARBON.get(), carbonPlate, null, " ii", "iii", " ii");
+        miningHead(output, TGItems.POWER_HAMMER_HEAD_STEEL.get(), steelIngot, null, "i  ", "iii", "i  ");
+        miningHead(output, TGItems.POWER_HAMMER_HEAD_OBSIDIAN.get(), obsidianSteelIngot, null, "i  ", "iii", "i  ");
+        miningHead(output, TGItems.POWER_HAMMER_HEAD_CARBON.get(), carbonPlate, null, "i  ", "iii", "i  ");
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.BIO_TANK_EMPTY.get())
                 .pattern("sss").pattern("sgs").pattern("sgs")
                 .define('s', steelNugget).define('g', Tags.Items.GLASS_BLOCKS)
@@ -626,6 +647,46 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('e', TGItems.SONIC_EMITTER.get());
         gun(output, sonic, 8, AmmoType.DEFAULT, "sonic_shotgun", TGAmmo.ENERGY_CELL.get(), sonicKeys, " p ", "ers", " m ");
         gun(output, sonic, 0, AmmoType.DEFAULT, "sonic_shotgun_empty", TGAmmo.ENERGY_CELL_EMPTY.get(), sonicKeys, " p ", "ers", " m ");
+
+        // --- Batch 3f: tools, crafted empty with any of their heads (head swaps: mining head upgrade recipe, batch 3g) ---
+        Consumer<StackShapedRecipeBuilder> chainsawKeys = b -> b.define('p', plastic).define('r', ironReceiver).define('s', steelIngot);
+        tool(output, TGGuns.CHAINSAW.get(), TGAmmo.FUEL_TANK_EMPTY.get(), chainsawKeys, "  p", "hsr", "  m");
+        tool(output, TGGuns.MINING_DRILL.get(), TGAmmo.FUEL_TANK_EMPTY.get(), chainsawKeys, "  p", "hsr", "  m");
+        tool(output, TGGuns.POWER_HAMMER.get(), TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get(),
+                b -> b.define('p', Items.PISTON).define('r', ironReceiver).define('i', TGItems.MECHANICAL_PARTS_IRON.get()),
+                " i ", "hpr", " im");
+        // shishkebap: Techguns 2 recipe (no Fabric port)
+        gun(output, TGGuns.SHISHKEBAP.get(), 0, AmmoType.DEFAULT, "shishkebap_empty", TGAmmo.FUEL_TANK_EMPTY.get(),
+                b -> b.define('p', TGTags.Items.plate("obsidian_steel")).define('f', TGItems.PUMP_MECHANISM.get()).define('s', plastic),
+                "p ", "pf", "sm");
+        // the grappling hook has no recipe in Fabric or Techguns 2
+    }
+
+    /** One empty tool recipe per mining head; the head ('h') sets the result's head level. */
+    private static void tool(RecipeOutput output, Item item, ItemLike tank, Consumer<StackShapedRecipeBuilder> keys, String... pattern) {
+        MeleeToolItem tool = (MeleeToolItem) item;
+        for (int level = 0; level < tool.heads().size(); level++) {
+            ItemStack result = new ItemStack(item);
+            GunData.setAmmo(result, new GunAmmo(0, AmmoType.DEFAULT));
+            tool.setHeadLevel(result, level);
+            Item head = tool.heads().get(level).item().get();
+            StackShapedRecipeBuilder builder = StackShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, result, pattern);
+            keys.accept(builder);
+            builder.define('h', head).define('m', tank).unlockedBy(getHasName(head), has(head))
+                    .save(output, TGIds.id(getItemName(item) + "_" + getItemName(head)));
+        }
+    }
+
+    private static void miningHead(RecipeOutput output, ItemLike head, TagKey<Item> material, ItemLike parts, String... pattern) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, head);
+        for (String row : pattern) {
+            builder.pattern(row);
+        }
+        builder.define('i', material);
+        if (parts != null) {
+            builder.define('p', parts);
+        }
+        builder.unlockedBy("has_material", has(material)).save(output, TGIds.id(getItemName(head)));
     }
 
     /**

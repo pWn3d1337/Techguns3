@@ -21,8 +21,10 @@ import techguns.client.particle.ClientFx;
 import techguns.client.render.entity.BeamProjectileRenderer;
 import techguns.client.render.entity.BioGunProjectileRenderer;
 import techguns.client.render.entity.GenericProjectileRenderer;
+import techguns.client.render.entity.GrapplingHookProjectileRenderer;
 import techguns.client.render.entity.GrenadeProjectileRenderer;
 import techguns.client.render.entity.RocketProjectileRenderer;
+import techguns.client.render.MiningPlaneOutline;
 import techguns.client.render.TGRenderTypes;
 import techguns.client.render.item.RenderingEntityTracker;
 import techguns.client.render.item.TGClientItemExtensions;
@@ -50,6 +52,7 @@ public class TechgunsClient {
         ClientFx.init(modEventBus, NeoForge.EVENT_BUS);
         ChargeEffects.init(NeoForge.EVENT_BUS);
         RenderingEntityTracker.init(NeoForge.EVENT_BUS);
+        MiningPlaneOutline.init(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(TGDebugCommands::register);
     }
 
@@ -62,6 +65,8 @@ public class TechgunsClient {
         // invisible: only the main segment's particle trail is drawn
         event.registerEntityRenderer(TGEntities.SONIC_SHOTGUN_PROJECTILE.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.TFG_PROJECTILE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(TGEntities.CHAINSAW_PROJECTILE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(TGEntities.GRAPPLING_HOOK_PROJECTILE.get(), GrapplingHookProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.BIOGUN_PROJECTILE.get(), BioGunProjectileRenderer::new);
         // bullet tracer; the type's particle trail comes on top
         event.registerEntityRenderer(TGEntities.MAGIC_RIFLE_PROJECTILE.get(), GenericProjectileRenderer::new);

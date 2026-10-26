@@ -8,8 +8,10 @@ import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 import techguns.entity.projectile.BioGunProjectile;
+import techguns.entity.projectile.ChainsawProjectile;
 import techguns.entity.projectile.GenericBeamProjectile;
 import techguns.entity.projectile.GenericProjectile;
+import techguns.entity.projectile.GrapplingHookProjectile;
 import techguns.entity.projectile.GrenadeProjectile;
 import techguns.entity.projectile.GuidedMissileProjectile;
 import techguns.entity.projectile.MagicRifleProjectile;
@@ -68,6 +70,17 @@ public final class TGEntities {
             () -> EntityType.Builder.<MagicRifleProjectile>of(MagicRifleProjectile::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(20)
                     .build("magic_rifle_projectile"));
+
+    public static final Supplier<EntityType<ChainsawProjectile>> CHAINSAW_PROJECTILE = ENTITY_TYPES.register("chainsaw_projectile",
+            () -> EntityType.Builder.<ChainsawProjectile>of(ChainsawProjectile::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(20)
+                    .build("chainsaw_projectile"));
+
+    public static final Supplier<EntityType<GrapplingHookProjectile>> GRAPPLING_HOOK_PROJECTILE = ENTITY_TYPES.register("grappling_hook_projectile",
+            () -> EntityType.Builder.<GrapplingHookProjectile>of(GrapplingHookProjectile::new, MobCategory.MISC)
+                    // follows its target while grappling: sync position every tick
+                    .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(1)
+                    .build("grappling_hook_projectile"));
 
     private TGEntities() {
     }

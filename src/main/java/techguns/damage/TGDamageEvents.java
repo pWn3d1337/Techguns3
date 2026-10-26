@@ -2,6 +2,7 @@ package techguns.damage;
 
 import net.minecraft.core.Holder;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -13,9 +14,11 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import techguns.TGConfig;
 import techguns.core.damage.DeathEffectRules;
-import techguns.network.TGNetwork;
+import techguns.core.damage.DeathType;
 import techguns.core.damage.TGArmorFormula;
 import techguns.core.damage.TGDamageCategory;
+import techguns.gun.MeleeToolItem;
+import techguns.network.TGNetwork;
 import techguns.registry.TGAttributes;
 
 /**
@@ -35,6 +38,13 @@ public final class TGDamageEvents {
                 && DeathEffectRules.playsDeathEffect(source.getDeathType(), debugAlwaysDeathEffect ? 1.0f : source.getGoreChance(),
                         entity.getRandom().nextFloat())) {
             TGNetwork.sendEntityDeath(entity, source.getDeathType());
+        } else if (!entity.level().isClientSide && event.getSource().is(DamageTypes.PLAYER_ATTACK)
+                && event.getSource().getEntity() instanceof Player player && player.getMainHandItem().getItem() instanceof MeleeToolItem tool) {
+            // melee tools hit with the vanilla player attack; their death effect comes from the tool
+            DeathType deathType = tool.meleeDeathType(player.getMainHandItem());
+            if (DeathEffectRules.playsDeathEffect(deathType, debugAlwaysDeathEffect ? 1.0f : tool.meleeGoreChance(), entity.getRandom().nextFloat())) {
+                TGNetwork.sendEntityDeath(entity, deathType);
+            }
         }
     }
 

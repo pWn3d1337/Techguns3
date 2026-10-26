@@ -5,11 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.entity.projectile.GenericBeamProjectile;
+import techguns.core.damage.DeathType;
 import techguns.entity.projectile.BioGunProjectile;
+import techguns.entity.projectile.ChainsawProjectile;
 import techguns.entity.projectile.GenericProjectile;
+import techguns.entity.projectile.GrapplingHookProjectile;
 import techguns.entity.projectile.GrenadeProjectile;
 import techguns.entity.projectile.GuidedMissileProjectile;
 import techguns.entity.projectile.MagicRifleProjectile;
@@ -20,10 +25,12 @@ import techguns.gun.GunHandType;
 import techguns.gun.GunItem;
 import techguns.gun.GunSounds;
 import techguns.gun.ChargeGunItem;
+import techguns.gun.GrapplingHookItem;
 import techguns.gun.GrenadeItem;
 import techguns.gun.GunStats;
 import techguns.gun.HoldType;
 import techguns.gun.LockOnGunItem;
+import techguns.gun.MeleeToolItem;
 import techguns.gun.ProjectileSelector;
 import techguns.gun.SonicShotgunItem;
 import techguns.gun.ammo.DamageModifier;
@@ -93,6 +100,12 @@ public final class TGGuns {
     private static final ProjectileSelector MAGIC_RIFLE_PROJECTILES = new ProjectileSelector(TGAmmo.MAGIC_BULLETS_TYPE,
             new MagicRifleProjectile.Factory(MagicRifleProjectile.Type.ARCANE), new MagicRifleProjectile.Factory(MagicRifleProjectile.Type.FIRE),
             new MagicRifleProjectile.Factory(MagicRifleProjectile.Type.LIGHTNING));
+    private static final ProjectileSelector CHAINSAW_PROJECTILES = new ProjectileSelector(TGAmmo.FUEL_TANK_TYPE,
+            new ChainsawProjectile.Factory(ChainsawProjectile.Type.CHAINSAW));
+    private static final ProjectileSelector POWER_HAMMER_PROJECTILES = new ProjectileSelector(TGAmmo.COMPRESSED_AIR_TANK_TYPE,
+            new ChainsawProjectile.Factory(ChainsawProjectile.Type.POWER_HAMMER));
+    private static final ProjectileSelector GRAPPLING_HOOK_PROJECTILES = new ProjectileSelector(TGAmmo.COMPRESSED_AIR_TANK_TYPE,
+            new GrapplingHookProjectile.Factory());
     private static final ProjectileSelector GRENADE_40MM_PROJECTILES = new ProjectileSelector(TGAmmo.GRENADES_40MM_TYPE,
             new GrenadeProjectile.Factory(GrenadeProjectile.Type.LAUNCHER_40MM));
 
@@ -335,6 +348,55 @@ public final class TGGuns {
             GunStats.builder(true, 12, 1, 30, 8.0f, 25, 0.035f)
                     .speed(1.0f).gravity(0.015).damageDrop(10, 25, 5.0f).recoilTicks(12).build(),
             GunSounds.of(TGSounds.HANDGUN_FIRE, TGSounds.HANDGUN_RELOAD), STONE_BULLET_PROJECTILES);
+
+    // --- Batch 3f: tools (Techguns 2 values where Fabric differs: tool levels and the sword attack speed) ---
+    public static final DeferredItem<GunItem> CHAINSAW = gun("chainsaw",
+            properties -> new MeleeToolItem(properties,
+                    GunStats.builder(false, 3, 300, 45, 10.0f, 2, 0.0f).recoilTicks(5).penetration(PENETRATION_MED).build(),
+                    GunSounds.of(TGSounds.CHAINSAW_LOOP, TGSounds.POWERHAMMER_RELOAD).withLoop(TGSounds.CHAINSAW_LOOP_START, 10),
+                    CHAINSAW_PROJECTILES, 1.0f, 1, 12.0f, 2.0f, 14.0f,
+                    List.of(new MeleeToolItem.MiningHead(TGItems.CHAINSAW_BLADES_STEEL, ChatFormatting.GRAY),
+                            new MeleeToolItem.MiningHead(TGItems.CHAINSAW_BLADES_OBSIDIAN, 1, 1.0, 1.0f, ChatFormatting.DARK_PURPLE),
+                            new MeleeToolItem.MiningHead(TGItems.CHAINSAW_BLADES_CARBON, 2, 2.0, 2.0f, ChatFormatting.DARK_GRAY)),
+                    MeleeToolItem.UseAction.SHOOT)
+                    .toolLevel(BlockTags.MINEABLE_WITH_AXE, 3).withHitSound(TGSounds.CHAINSAW_SWING));
+
+    public static final DeferredItem<GunItem> MINING_DRILL = gun("mining_drill",
+            properties -> new MeleeToolItem(properties,
+                    GunStats.builder(false, 3, 300, 45, 10.0f, 2, 0.0f).recoilTicks(5).penetration(PENETRATION_MED).build(),
+                    GunSounds.of(TGSounds.DRILLER_LOOP, TGSounds.POWERHAMMER_RELOAD).withLoop(TGSounds.DRILLER_SWING, 10),
+                    CHAINSAW_PROJECTILES, 1.0f, 1, 12.0f, 2.0f, 14.0f,
+                    List.of(new MeleeToolItem.MiningHead(TGItems.MINING_DRILL_HEAD_OBSIDIAN, ChatFormatting.DARK_PURPLE),
+                            new MeleeToolItem.MiningHead(TGItems.MINING_DRILL_HEAD_CARBON, 1, 1.0, 0.5f, ChatFormatting.DARK_GRAY)),
+                    MeleeToolItem.UseAction.SHOOT)
+                    .toolLevel(BlockTags.MINEABLE_WITH_PICKAXE, 3).toolLevel(BlockTags.MINEABLE_WITH_SHOVEL, 3).miningRadius(1)
+                    .meleeDeath(DeathType.GORE, 0.5f).withHitSound(TGSounds.DRILLER_HIT));
+
+    public static final DeferredItem<GunItem> POWER_HAMMER = gun("power_hammer",
+            properties -> new MeleeToolItem(properties,
+                    GunStats.builder(false, 4, 300, 45, 3.5f, 3, 0.0f).speed(1.0f).recoilTicks(12).damageDrop(3, 3, 2.5f).build(),
+                    GunSounds.of(TGSounds.POWERHAMMER_FIRE, TGSounds.POWERHAMMER_RELOAD), POWER_HAMMER_PROJECTILES, 20.0f, 5, 6.0f, 2.0f, 12.0f,
+                    List.of(new MeleeToolItem.MiningHead(TGItems.POWER_HAMMER_HEAD_STEEL, ChatFormatting.GRAY),
+                            new MeleeToolItem.MiningHead(TGItems.POWER_HAMMER_HEAD_OBSIDIAN, 1, 1.0, 0.5f, ChatFormatting.DARK_PURPLE),
+                            new MeleeToolItem.MiningHead(TGItems.POWER_HAMMER_HEAD_CARBON, 2, 2.0, 1.0f, ChatFormatting.DARK_GRAY)),
+                    MeleeToolItem.UseAction.CHARGE)
+                    .toolLevel(BlockTags.MINEABLE_WITH_PICKAXE, 2).toolLevel(BlockTags.MINEABLE_WITH_SHOVEL, 2)
+                    .withHitSound(TGSounds.POWERHAMMER_IMPACT).withChargeSound(TGSounds.POWERHAMMER_CHARGE));
+
+    public static final DeferredItem<GunItem> SHISHKEBAP = gun("shishkebap",
+            properties -> new MeleeToolItem(properties,
+                    GunStats.builder(false, 3, 300, 50, 12.0f, 2, 0.0f).recoilTicks(5).penetration(PENETRATION_MED).build(),
+                    GunSounds.of(TGSounds.SHISHKEBAP_SWING, TGSounds.SHISHKEBAP_RELOAD), CHAINSAW_PROJECTILES, 1.0f, 1, 14.0f, 2.0f, 4.0f,
+                    List.of(), MeleeToolItem.UseAction.NONE)
+                    .toolLevel(BlockTags.SWORD_EFFICIENT, 3).meleeDeath(DeathType.GORE, 0.25f).meleeIgnites());
+
+    // Fabric GrapplingHook: the use key shoots the hook at once and holding it keeps pulling
+    public static final DeferredItem<GunItem> GRAPPLING_HOOK = gun("grappling_hook",
+            properties -> new GrapplingHookItem(properties,
+                    GunStats.builder(true, 6, 100, 25, 1.0f, MAX_RANGE_RIFLE, 0.0f)
+                            .handType(GunHandType.ONE_HANDED).speed(2.5f).gravity(0.005).penetration(PENETRATION_LOW).damageDrop(8, 15, 0.5f)
+                            .forwardOffset(0.40f).build(),
+                    GunSounds.of(TGSounds.GRAPPLING_HOOK_FIRE, TGSounds.POWERHAMMER_RELOAD), GRAPPLING_HOOK_PROJECTILES, 30.0f, 1));
 
     // Hand grenades (Techguns 2 only): damage, full-damage radius, minimum damage, outer radius
     public static final DeferredItem<GrenadeItem> STIELGRANATE = TGItems.ITEMS.register("stielgranate",

@@ -210,7 +210,7 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         Vec3 motion = getDeltaMovement();
         setPos(getX() + motion.x, getY() + motion.y, getZ() + motion.z);
         if (isInWater()) {
-            setDeltaMovement(motion.scale(0.85));
+            setDeltaMovement(motion.scale(waterDrag()));
         }
         if (gravity > 0.0) {
             setDeltaMovement(getDeltaMovement().add(0, -gravity, 0));
@@ -224,6 +224,11 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         if (tickCount >= lifetime) {
             removeAfterHit();
         }
+    }
+
+    /** Velocity factor per tick while in water. */
+    protected double waterDrag() {
+        return 0.85;
     }
 
     @Override

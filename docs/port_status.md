@@ -11,7 +11,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 0 — Project setup | done |
 | 1 — Core infrastructure | done (machine-only recipes follow in Phase 5) |
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
-| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons) |
+| 3 — All guns, ammo, grenades, tools | in progress (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools) |
 | 4 — Armor & player gear | — |
 | 5 — Blocks & machines | — |
 | 6 — NPCs & factions | — |
@@ -87,3 +87,7 @@ Batches: design doc Phase 3. Each gun: Fabric stats, Java model exported to Geck
 | 3e charge guns (`ChargeGunItem`): left click = normal shot, hold use = charge, release = charged shot using ammo in proportion to the charge; charge sound and charge FX run on every client from the synced using-item state; charge progress drives the gun renderer | F | tested | GameTests: full/partial charge ammo use, ammo-limited charge, charged TFG shot, normal shot |
 | 3e projectiles: flame (fire, ignites, may light blocks, goes out in water), stone ball, bio blob shot (+ bio blob block), TFG plasma ball (charge-sized blast), magic rifle bullets (arcane / fire / lightning) | F | logic | magic rifle charge FX "tfgcharge" exists in no FX file (Fabric typo), so it has none |
 | 3e ammo and recipes: fuel tank, bio tank (+empty), stone bullets, magic bullets (fire, lightning); flamethrower, biogun, TFG (loaded + empty), hand cannon (empty) | F | logic | magic rifle and magic bullets have no recipe in Fabric |
+| 3f tools (`MeleeToolItem`): chainsaw, mining drill, power hammer, shishkebap (Techguns 2 only); fuel/air powers damage and mining, every hit and mined block uses a round, unpowered = weak club; mining heads (`MINING_HEAD` component) raise level, damage, speed; Techguns 2 sword attack speed | F + 12 | tested | GameTests: damage per fuel/head, fuel per hit (none in creative), mining level per head, fuel per mined block, power hammer charge ammo |
+| 3f drill area mining: (2r+1)² plane at the speed of its hardest block, sneaking mines one block (NeoForge break speed/break events instead of mixins); plane outline client-side | F | tested | GameTest: plane facing the player, none while sneaking |
+| 3f grappling hook, chainsaw/power hammer projectiles | F | logic | awaiting in-game check |
+| 3f recipes: compressed air tank (+empty), mining heads, tools (empty, one per head), shishkebap (Techguns 2) | F + 12 | logic | head swap on an existing tool = mining head upgrade recipe (batch 3g); grappling hook has no recipe |

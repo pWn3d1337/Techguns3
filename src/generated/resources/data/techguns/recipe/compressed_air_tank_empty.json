@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "l": {
+      "item": "minecraft:lever"
+    }
+  },
+  "pattern": [
+    " l ",
+    "i i",
+    "i i"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:compressed_air_tank_empty"
+  }
+}

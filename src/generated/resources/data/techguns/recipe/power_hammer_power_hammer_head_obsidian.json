@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "techguns:power_hammer_head_obsidian"
+    },
+    "i": {
+      "item": "techguns:mechanical_parts_iron"
+    },
+    "m": {
+      "item": "techguns:compressed_air_tank_empty"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    },
+    "r": {
+      "item": "techguns:iron_receiver"
+    }
+  },
+  "pattern": [
+    " i ",
+    "hpr",
+    " im"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      },
+      "techguns:mining_head": 1
+    },
+    "count": 1,
+    "id": "techguns:power_hammer"
+  }
+}

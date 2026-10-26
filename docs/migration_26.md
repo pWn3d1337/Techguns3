@@ -14,3 +14,4 @@ Each entry matches a `// MIGRATION(26.x): ...` comment in the code. See design d
 | `src/main/resources/META-INF/accesstransformer.cfg` | `ModelPart.children` made public for gore gibs. |
 | `src/main/java/techguns/client/render/geo/GeckoLibGunRenderer.java` | GeckoLib 4 `GeoObjectRenderer`/`AnimationController` API; GeckoLib 5 (1.21.2+) uses render states — rewrite the bridge. |
 | `src/main/java/techguns/client/gui/LockOnOverlay.java` | GUI layers (`RegisterGuiLayersEvent`) and `GuiGraphics.blit` change with the new GUI render pipeline. |
+| `src/main/java/techguns/client/render/MiningPlaneOutline.java` | Drill plane outline via `RenderHighlightEvent.Block` and `RenderType.lines()`; block highlight rendering moves to render states in 1.21.2+. |

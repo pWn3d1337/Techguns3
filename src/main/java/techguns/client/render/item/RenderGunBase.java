@@ -258,7 +258,7 @@ public class RenderGunBase extends RenderItemBase {
             this.applyBaseTranslation(poseStack);
 
             for (int i = 0; i < parts; i++) {
-                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(texture, i, ammoVariant)), state.loadedAmmo(), reloadProgress,
+                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(this.partTexture(context, i), i, ammoVariant)), state.loadedAmmo(), reloadProgress,
                         transform, i, fireProgress, chargeProgress, light, overlay);
             }
             poseStack.popPose();
@@ -311,6 +311,11 @@ public class RenderGunBase extends RenderItemBase {
         }
 
         poseStack.popPose();
+    }
+
+    /** Texture of one render part; overridden where it depends on the stack (mining heads). */
+    protected ResourceLocation partTexture(ItemRenderContext context, int part) {
+        return this.texture;
     }
 
     /** Re-rolls the muzzle flash jitter whenever a new flash starts. */

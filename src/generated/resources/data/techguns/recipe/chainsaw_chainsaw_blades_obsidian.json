@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "techguns:chainsaw_blades_obsidian"
+    },
+    "m": {
+      "item": "techguns:fuel_tank_empty"
+    },
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "r": {
+      "item": "techguns:iron_receiver"
+    },
+    "s": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "  p",
+    "hsr",
+    "  m"
+  ],
+  "result": {
+    "components": {
+      "techguns:gun_ammo": {
+        "loaded": 0
+      },
+      "techguns:mining_head": 1
+    },
+    "count": 1,
+    "id": "techguns:chainsaw"
+  }
+}
