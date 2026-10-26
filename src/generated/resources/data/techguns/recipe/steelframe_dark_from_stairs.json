@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "techguns:steelframe_dark_stairs"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:steelframe_dark"
+  }
+}

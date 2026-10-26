@@ -22,6 +22,15 @@ public class TGBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        // decorative blocks are mined with a pickaxe (Techguns 2 rock/iron materials)
+        TGBlocks.cubeBlocks().stream().filter(block -> block != TGBlocks.BUGNEST_SAND)
+                .forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
+        TGBlocks.stairBlocks().forEach(block -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            tag(BlockTags.STAIRS).add(block.get());
+        });
+        // Techguns 2: hardened bug nest sand is dug with a shovel
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(TGBlocks.BUGNEST_SAND.get());
         // Ores
         ore("tin", TGBlocks.TIN_ORE, TGBlocks.DEEPSLATE_TIN_ORE, BlockTags.NEEDS_STONE_TOOL);
         ore("lead", TGBlocks.LEAD_ORE, TGBlocks.DEEPSLATE_LEAD_ORE, BlockTags.NEEDS_IRON_TOOL);

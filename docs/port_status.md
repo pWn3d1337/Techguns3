@@ -13,7 +13,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
 | 3 — All guns, ammo, grenades, tools | done (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
 | 4 — Armor & player gear | done pending review (batches 4a–4f) |
-| 5 — Blocks & machines | — |
+| 5 — Blocks & machines | in progress (5a1 decorative cubes) |
 | 6 — NPCs & factions | — |
 | 7 — World generation | — |
 | 8 — Remaining systems & integrations | — |
@@ -120,3 +120,9 @@ Batches: design doc Phase 4. Source: Techguns 2 for all values; Fabric for the a
 | 4f extra slots framework: face/back/hand (`slot/`), Curios soft dependency (head/back/hands, `compat/curios`) or fallback attachment slots synced to trackers, bonuses as transient attribute modifiers, right click equips; toggles night vision (N) and jetpack (J) saved per player | 12 | tested | checked in game with Curios; fallback screen (inventory "TG" button) not checked in game (Curios is in the dev runtime) |
 | 4f gear: gas mask, oxygen mask, night vision goggles, tactical mask, glider, jump pack, jetpack, scuba tanks, antigrav pack, working gloves (+ gas mask filter, glider parts); recharge from refill items, recipes from 1.12 | 12 | tested | GameTests (8); jetpack boost, sounds and flames checked in game by the user; glider air control (`jumpMovementFactor`) not ported |
 | 4f gear rendering: 1.12 models on a player layer, armor hide flags, camos for jetpack/jump pack/antigrav/tactical mask, jetpack flames at the nozzles and start/loop/stop sounds (boost state synced to trackers) | 12 | rendered | first-person gloves not rendered (1.12 didn't either) |
+
+### Phase 5 — blocks & machines
+
+| Unit | Source | Status | Notes |
+|---|---|---|---|
+| 5a1 decorative cubes: concrete (6), metal panels/containers (8), nether metal (10, lava pillar glows with a lava + frame model), neon lights (5, glow), bug nest sand/eggs (animated), stairs (4); one block per 1.12 meta variant, groups kept as lists for the Camo Bench; recipes and names from 1.12 | 12 | tested | GameTests: drops, tool tags, light; checked in game. 1.12 connected textures (CTM) not used |

@@ -2,6 +2,8 @@ package techguns.data;
 
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
@@ -28,6 +30,12 @@ public class TGBlockStateProvider extends BlockStateProvider {
         cubeAllWithItem(TGBlocks.DEEPSLATE_TITANIUM_ORE);
         cubeAllWithItem(TGBlocks.URANIUM_ORE);
         cubeAllWithItem(TGBlocks.DEEPSLATE_URANIUM_ORE);
+        TGBlocks.cubeBlocks().stream().filter(block -> block != TGBlocks.NETHERMETAL_BORDER_LAVA).forEach(this::cubeAllWithItem);
+        borderLava();
+        stairsWithItem(TGBlocks.PANEL_LARGE_BORDER_STAIRS, TGBlocks.PANEL_LARGE_BORDER);
+        stairsWithItem(TGBlocks.STEELFRAME_DARK_STAIRS, TGBlocks.STEELFRAME_DARK);
+        stairsWithItem(TGBlocks.CONCRETE_GREY_DARK_STAIRS, TGBlocks.CONCRETE_GREY_DARK);
+        stairsWithItem(TGBlocks.CONCRETE_BROWN_LIGHT_STAIRS, TGBlocks.CONCRETE_BROWN_LIGHT);
         bioBlob();
     }
 
@@ -73,6 +81,31 @@ public class TGBlockStateProvider extends BlockStateProvider {
                     .rotationX(rotation[0]).rotationY(rotation[1]).build();
         });
         itemModels().getBuilder("bioblob").parent(models[0]);
+    }
+
+    /** Nether metal lava pillar (Techguns 2 cube_glow_frame): a lava cube behind a cutout frame texture. */
+    private void borderLava() {
+        BlockModelBuilder model = models().getBuilder("block/nethermetal_border_lava")
+                .texture("particle", "minecraft:block/lava_still")
+                .texture("glow", "minecraft:block/lava_still")
+                .texture("frame", modLoc("block/nethermetal_border_alpha"))
+                .renderType("cutout");
+        model.ao(false);
+        for (String texture : new String[]{"#glow", "#frame"}) {
+            var element = model.element().from(0, 0, 0).to(16, 16, 16);
+            for (Direction face : Direction.values()) {
+                element.face(face).texture(texture).cullface(face);
+            }
+            element.end();
+        }
+        simpleBlockWithItem(TGBlocks.NETHERMETAL_BORDER_LAVA.get(), model);
+    }
+
+    /** Vanilla stairs shapes with the base block's texture on all sides, plus the item model. */
+    private void stairsWithItem(DeferredBlock<StairBlock> stairs, DeferredBlock<Block> base) {
+        ResourceLocation texture = modLoc("block/" + base.getId().getPath());
+        stairsBlock(stairs.get(), texture);
+        itemModels().withExistingParent(stairs.getId().getPath(), modLoc("block/" + stairs.getId().getPath()));
     }
 
     /** Full cube with the same texture ({@code textures/block/<name>.png}) on all sides, plus its item model. */

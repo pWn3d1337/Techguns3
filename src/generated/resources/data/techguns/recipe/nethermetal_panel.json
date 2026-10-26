@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "n": {
+      "item": "minecraft:netherrack"
+    },
+    "s": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "nsn",
+    "sis",
+    "nsn"
+  ],
+  "result": {
+    "count": 16,
+    "id": "techguns:nethermetal_panel"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#glow"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#glow"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#glow"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#glow"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#glow"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#glow"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#frame"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#frame"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#frame"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#frame"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#frame"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#frame"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "frame": "techguns:block/nethermetal_border_alpha",
+    "glow": "minecraft:block/lava_still",
+    "particle": "minecraft:block/lava_still"
+  }
+}

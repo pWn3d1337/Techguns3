@@ -65,6 +65,7 @@ public class TGRecipeProvider extends RecipeProvider {
         buildGunRecipes(output);
         buildArmorRecipes(output);
         buildShieldRecipes(output);
+        buildBlockRecipes(output);
         buildSlotItemRecipes(output);
     }
 
@@ -287,6 +288,49 @@ public class TGRecipeProvider extends RecipeProvider {
             builder.requires(TGTags.Items.ingot("titanium"));
         }
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
+    }
+
+    /** Techguns 2 decorative blocks; other variants of a group come from the Camo Bench. */
+    private void buildBlockRecipes(RecipeOutput output) {
+        Ingredient anyConcrete = Ingredient.of(Items.WHITE_CONCRETE, Items.ORANGE_CONCRETE, Items.MAGENTA_CONCRETE, Items.LIGHT_BLUE_CONCRETE,
+                Items.YELLOW_CONCRETE, Items.LIME_CONCRETE, Items.PINK_CONCRETE, Items.GRAY_CONCRETE, Items.LIGHT_GRAY_CONCRETE, Items.CYAN_CONCRETE,
+                Items.PURPLE_CONCRETE, Items.BLUE_CONCRETE, Items.BROWN_CONCRETE, Items.GREEN_CONCRETE, Items.RED_CONCRETE, Items.BLACK_CONCRETE);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.CONCRETE_BROWN.get(), 16)
+                .pattern("ccc").pattern("cbc").pattern("ccc")
+                .define('c', anyConcrete).define('b', Items.IRON_BARS)
+                .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(output, TGIds.id("concrete_brown"));
+
+        // neon lights: 16 double neon lights
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.NEONTUBES2.get(), 16)
+                .pattern("nnn").pattern("gsg").pattern("nnn")
+                .define('n', Tags.Items.NUGGETS_IRON).define('g', Tags.Items.GLASS_PANES).define('s', Tags.Items.DUSTS_GLOWSTONE)
+                .unlockedBy("has_glowstone_dust", has(Tags.Items.DUSTS_GLOWSTONE)).save(output, TGIds.id("neontubes2"));
+        // nether metal: 16 plates
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.NETHERMETAL_PANEL.get(), 16)
+                .pattern("nsn").pattern("sis").pattern("nsn")
+                .define('n', Items.NETHERRACK).define('s', Items.STONE).define('i', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_netherrack", has(Items.NETHERRACK)).save(output, TGIds.id("nethermetal_panel"));
+        // metal panel: 32 red containers from iron or tin plates
+        for (String plate : List.of("iron", "tin")) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.CONTAINER_RED.get(), 32)
+                    .pattern("sss").pattern("psp").pattern("sss")
+                    .define('s', Items.STONE).define('p', TGTags.Items.plate(plate))
+                    .unlockedBy("has_" + plate + "_plate", has(TGTags.Items.plate(plate))).save(output, TGIds.id("container_red_from_" + plate + "_plate"));
+        }
+        // stairs: 6 from a block, and back
+        stairs(output, TGBlocks.PANEL_LARGE_BORDER_STAIRS.get(), TGBlocks.PANEL_LARGE_BORDER.get());
+        stairs(output, TGBlocks.STEELFRAME_DARK_STAIRS.get(), TGBlocks.STEELFRAME_DARK.get());
+        stairs(output, TGBlocks.CONCRETE_BROWN_LIGHT_STAIRS.get(), TGBlocks.CONCRETE_BROWN_LIGHT.get());
+        stairs(output, TGBlocks.CONCRETE_GREY_DARK_STAIRS.get(), TGBlocks.CONCRETE_GREY_DARK.get());
+    }
+
+    /** Techguns 2 stairs recipes: 6 stairs from a block, and one stair back into a block. */
+    private static void stairs(RecipeOutput output, ItemLike stairs, ItemLike block) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, stairs, 6)
+                .pattern("b  ").pattern("bb ").pattern("bbb")
+                .define('b', block).unlockedBy(getHasName(block), has(block)).save(output, TGIds.id(getItemName(stairs)));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, block)
+                .requires(stairs).unlockedBy(getHasName(stairs), has(stairs)).save(output, TGIds.id(getItemName(block) + "_from_stairs"));
     }
 
     /** Techguns 2 shields: a vanilla shield framed by the material, with glass panes. */
