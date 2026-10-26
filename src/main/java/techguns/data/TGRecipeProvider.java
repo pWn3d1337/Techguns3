@@ -28,7 +28,11 @@ import techguns.gun.GunData;
 import techguns.gun.MeleeToolItem;
 import techguns.gun.ammo.AmmoType;
 import techguns.recipe.AmmoChangeRecipe;
+import techguns.recipe.AmmoPressRecipe;
+import techguns.recipe.BlastFurnaceRecipe;
+import techguns.recipe.GrinderRecipe;
 import techguns.recipe.MetalPressRecipe;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
@@ -312,6 +316,26 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('c', Items.CHEST)
                 .unlockedBy(getHasName(TGBlocks.METAL_PRESS.get()), has(TGBlocks.METAL_PRESS.get())).save(output);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.AMMO_PRESS.get())
+                .pattern("ili").pattern("cec").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('l', TGTags.Items.ingot("lead")).define('c', Tags.Items.INGOTS_COPPER)
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.BLAST_FURNACE.get())
+                .pattern("iri").pattern("ifi").pattern("sbs")
+                .define('i', TGTags.Items.plate("iron")).define('r', Tags.Items.DUSTS_REDSTONE).define('f', Items.FURNACE)
+                .define('s', Items.STONE_BRICKS).define('b', Tags.Items.STORAGE_BLOCKS_IRON)
+                .unlockedBy(getHasName(Items.FURNACE), has(Items.FURNACE)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.GRINDER.get())
+                .pattern("imi").pattern("mem").pattern("iri")
+                .define('i', TGTags.Items.plate("iron")).define('m', TGItems.MECHANICAL_PARTS_IRON.get())
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+
+        ammoPressRecipes(output);
+        blastFurnaceRecipes(output);
+        grinderRecipes(output);
+
         // Techguns 2 TGMachineRecipes, in order; all allow swapped inputs
         metalPress(output, "tin_plate", ingot("tin"), ingot("tin"), TGItems.TIN_PLATE.get(), 2);
         metalPress(output, "copper_plate", Ingredient.of(Tags.Items.INGOTS_COPPER), Ingredient.of(Tags.Items.INGOTS_COPPER), TGItems.COPPER_PLATE.get(), 2);
@@ -334,6 +358,164 @@ public class TGRecipeProvider extends RecipeProvider {
         metalPress(output, "gauss_rifle_slugs", plate("obsidian_steel"), plate("titanium"), TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4);
         metalPress(output, "sniper_rounds_explosive", Ingredient.of(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), Ingredient.of(TGItems.TGX.get()),
                 TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 1);
+    }
+
+    /** Techguns 2 {@code AmmoPressBuildPlans}: bullet metal steel/lead, casing metal copper/tin/iron/bronze, gunpowder. */
+    private static void ammoPressRecipes(RecipeOutput output) {
+        Ingredient bullet = Ingredient.fromValues(java.util.stream.Stream.of(
+                new Ingredient.TagValue(TGTags.Items.ingot("steel")), new Ingredient.TagValue(TGTags.Items.ingot("lead"))));
+        Ingredient casing = Ingredient.fromValues(java.util.stream.Stream.of(
+                new Ingredient.TagValue(Tags.Items.INGOTS_COPPER), new Ingredient.TagValue(TGTags.Items.ingot("tin")),
+                new Ingredient.TagValue(Tags.Items.INGOTS_IRON), new Ingredient.TagValue(TGTags.Items.ingot("bronze"))));
+        Ingredient powder = Ingredient.of(Tags.Items.GUNPOWDERS);
+        ammoPress(output, 0, "pistol_rounds", bullet, casing, powder, TGAmmo.PISTOL_ROUNDS.get(), 12);
+        ammoPress(output, 1, "shotgun_rounds", bullet, casing, powder, TGAmmo.SHOTGUN_ROUNDS.get(), 16);
+        ammoPress(output, 2, "rifle_rounds", bullet, casing, powder, TGAmmo.RIFLE_ROUNDS.get(), 8);
+        ammoPress(output, 3, "sniper_rounds", bullet, casing, powder, TGAmmo.SNIPER_ROUNDS.get(), 4);
+    }
+
+    private static void ammoPress(RecipeOutput output, int order, String name, Ingredient bullet, Ingredient casing, Ingredient powder,
+                                  ItemLike result, int count) {
+        output.accept(TGIds.id("ammo_press/" + name), new AmmoPressRecipe(order, bullet, casing, powder, new ItemStack(result, count)), null);
+    }
+
+    /** Techguns 2 {@code BlastFurnaceRecipes}: power per tick and duration per recipe. */
+    private static void blastFurnaceRecipes(RecipeOutput output) {
+        blastFurnace(output, "steel_ingot", new SizedIngredient(Ingredient.of(Items.IRON_INGOT), 4),
+                new SizedIngredient(Ingredient.of(ItemTags.COALS), 1), new ItemStack(TGItems.STEEL_INGOT.get(), 4), 10, 800);
+        blastFurnace(output, "obsidian_steel_ingot", new SizedIngredient(ingot("steel"), 1),
+                new SizedIngredient(Ingredient.of(Tags.Items.OBSIDIANS), 1), new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get()), 10, 200);
+        blastFurnace(output, "bronze_ingot", new SizedIngredient(Ingredient.of(Tags.Items.INGOTS_COPPER), 3),
+                new SizedIngredient(ingot("tin"), 1), new ItemStack(TGItems.BRONZE_INGOT.get(), 4), 10, 100);
+    }
+
+    private static void blastFurnace(RecipeOutput output, String name, SizedIngredient first, SizedIngredient second, ItemStack result,
+                                     int powerPerTick, int time) {
+        output.accept(TGIds.id("blast_furnace/" + name), new BlastFurnaceRecipe(first, second, result, powerPerTick, time), null);
+    }
+
+    /**
+     * Techguns 2 grinder recipes: guns back into materials, carbon plates into fibers, rounds into nuggets and powder
+     * (with chances). Techguns 2 gave steel ingots for the "nuggets" part of {@code steelAndPlastic}; steel nuggets here.
+     */
+    private static void grinderRecipes(RecipeOutput output) {
+        ItemStack[] barrelStone = {new ItemStack(Items.COBBLESTONE, 3)};
+        ItemStack[] barrelObsidian = {new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 3)};
+        ItemStack gold3 = new ItemStack(Items.GOLD_INGOT, 3);
+        grinder(output, TGGuns.HAND_CANNON.get(), barrelStone, ironAndWood(0, 1, 4));
+        grinder(output, TGGuns.SAWED_OFF.get(), ironAndWood(4, 1, 0), stacks(new ItemStack(Items.FLINT)));
+        grinder(output, TGGuns.REVOLVER.get(), ironAndWood(3, 1, 0));
+        grinder(output, TGGuns.GOLDEN_REVOLVER.get(), ironAndWood(3, 1, 0), stacks(new ItemStack(Items.GOLD_INGOT, 4)));
+        grinder(output, TGGuns.THOMPSON.get(), ironAndWood(4, 1, 0));
+        grinder(output, TGGuns.AK47.get(), barrelObsidian, ironAndWood(4, 1, 0));
+        grinder(output, TGGuns.BOLT_ACTION.get(), barrelObsidian, ironAndWood(4, 1, 0));
+        grinder(output, TGGuns.M4.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.M4_INFILTRATOR.get(), barrelObsidian, steelAndPlastic(3, 2, 0), stacks(new ItemStack(Items.REDSTONE)));
+        grinder(output, TGGuns.PISTOL.get(), barrelObsidian, steelAndPlastic(0, 1, 0), ironAndWood(2, 0, 0));
+        grinder(output, TGGuns.COMBAT_SHOTGUN.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.MAC10.get(), barrelObsidian, steelAndPlastic(1, 0, 5), ironAndWood(1, 0, 0));
+        grinder(output, TGGuns.FLAMETHROWER.get(), steelAndPlastic(0, 2, 0), ironAndWood(2, 0, 0));
+        grinder(output, TGGuns.ROCKET_LAUNCHER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 6)), steelAndPlastic(1, 0, 5));
+        grinder(output, TGGuns.GRIM_REAPER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 32),
+                new ItemStack(TGItems.CIRCUIT_BOARD_ELITE.get()), new ItemStack(TGItems.CARBON_FIBERS.get())));
+        grinder(output, TGGuns.GRENADE_LAUNCHER.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.AUG.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.NETHER_BLASTER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 4),
+                new ItemStack(TGItems.CYBERNETIC_PARTS.get(), 2)));
+        grinder(output, TGGuns.BIOGUN.get(), steelAndPlastic(2, 2, 0), stacks(new ItemStack(Items.GLASS, 2)));
+        grinder(output, TGGuns.TESLA_GUN.get(), carbonPlasticAndRedstone(3, 2, 2));
+        grinder(output, TGGuns.LMG.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 6), new ItemStack(TGItems.STEEL_INGOT.get(), 4),
+                new ItemStack(TGItems.PLASTIC_SHEET.get(), 2)));
+        grinder(output, TGGuns.MINIGUN.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 20), new ItemStack(TGItems.STEEL_INGOT.get(), 2),
+                new ItemStack(TGItems.ELECTRIC_ENGINE.get())));
+        grinder(output, TGGuns.AS50.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 9), new ItemStack(TGItems.PLASTIC_SHEET.get(), 2),
+                new ItemStack(Items.DIAMOND)));
+        grinder(output, TGGuns.VECTOR.get(), obsidianAndPlastic(5, 2));
+        grinder(output, TGGuns.SCAR.get(), obsidianAndPlastic(5, 2));
+        grinder(output, TGGuns.LASERGUN.get(), obsidianAndPlastic(2, 2), stacks(new ItemStack(Items.REDSTONE, 20), gold3));
+        grinder(output, TGGuns.BLASTER_RIFLE.get(), carbonPlasticAndRedstone(3, 1, 20), stacks(gold3));
+        grinder(output, TGGuns.SONIC_SHOTGUN.get(), carbonPlasticAndRedstone(3, 2, 2), stacks(new ItemStack(TGItems.TITANIUM_INGOT.get())));
+        grinder(output, TGGuns.PDW.get(), carbonPlasticAndRedstone(6, 1, 0), obsidianAndPlastic(1, 0));
+        grinder(output, TGGuns.PULSE_RIFLE.get(), carbonPlasticAndRedstone(6, 1, 0), obsidianAndPlastic(1, 0));
+        grinder(output, TGGuns.MIB_GUN.get(), stacks(gold3, new ItemStack(TGItems.TITANIUM_INGOT.get()), new ItemStack(Items.REDSTONE, 20)));
+        grinder(output, TGGuns.POWER_HAMMER.get(), ironAndWood(4, 0, 0), stacks(new ItemStack(Items.FLINT)));
+        grinder(output, TGGuns.CHAINSAW.get(), ironAndWood(5, 0, 0), stacks(new ItemStack(TGItems.PLASTIC_SHEET.get())));
+        grinder(output, TGGuns.NUCLEAR_DEATHRAY.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get(), 6), new ItemStack(TGItems.LEAD_INGOT.get(), 3),
+                new ItemStack(TGItems.MECHANICAL_PARTS_CARBON.get()), new ItemStack(TGItems.CIRCUIT_BOARD_ELITE.get())));
+        grinder(output, TGGuns.GAUSS_RIFLE.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get(), 9), new ItemStack(TGItems.TITANIUM_INGOT.get()),
+                new ItemStack(TGItems.PLASTIC_SHEET.get()), new ItemStack(TGItems.CIRCUIT_BOARD_ELITE.get())));
+        grinder(output, TGGuns.GUIDED_MISSILE_LAUNCHER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 8),
+                new ItemStack(TGItems.COPPER_WIRE.get())));
+        grinder(output, TGGuns.MINING_DRILL.get(), obsidianAndPlastic(6, 2));
+        grinder(output, TGGuns.TFG.get(), stacks(new ItemStack(TGItems.TITANIUM_INGOT.get(), 5), new ItemStack(TGItems.LEAD_INGOT.get(), 4),
+                new ItemStack(TGItems.CARBON_FIBERS.get(), 4)));
+        grinder(output, TGItems.CARBON_PLATE.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get())));
+
+        // rounds: lead and copper nuggets, sometimes powder (blaze powder / TGX for special rounds)
+        ItemStack lead = new ItemStack(TGItems.LEAD_NUGGET.get());
+        ItemStack copper = new ItemStack(TGItems.COPPER_NUGGET.get());
+        ItemStack powder = new ItemStack(Items.GUNPOWDER);
+        ItemStack blaze = new ItemStack(Items.BLAZE_POWDER);
+        roundsGrinder(output, TGAmmo.RIFLE_ROUNDS.get(), out(lead, 1), out(copper.copyWithCount(2), 1), out(powder, 0.125f));
+        roundsGrinder(output, TGAmmo.PISTOL_ROUNDS.get(), out(lead, 0.75f), out(copper, 1.5f), out(powder, 1.0f / 12.0f));
+        roundsGrinder(output, TGAmmo.SNIPER_ROUNDS.get(), out(lead.copyWithCount(2), 1), out(copper.copyWithCount(4), 1), out(powder, 0.25f));
+        roundsGrinder(output, TGAmmo.SHOTGUN_ROUNDS.get(), out(lead, 0.5f), out(copper, 1), out(powder, 0.0625f));
+        roundsGrinder(output, TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), out(lead, 1), out(copper.copyWithCount(2), 1), out(powder, 0.125f), out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), out(lead, 0.75f), out(copper, 1.5f), out(powder, 1.0f / 12.0f), out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.SNIPER_ROUNDS_INCENDIARY.get(), out(lead.copyWithCount(2), 1), out(copper.copyWithCount(4), 1), out(powder, 0.25f),
+                out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), out(lead, 0.5f), out(copper, 1), out(powder, 0.0625f), out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), out(lead.copyWithCount(2), 1), out(copper.copyWithCount(4), 1), out(powder, 0.25f),
+                out(blaze, 0.125f), out(new ItemStack(TGItems.TGX.get()), 0.5f));
+    }
+
+    private static ItemStack[] stacks(ItemStack... stacks) {
+        return stacks;
+    }
+
+    private static ItemStack[] ironAndWood(int iron, int wood, int nuggets) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (iron > 0) list.add(new ItemStack(Items.IRON_INGOT, iron));
+        if (wood > 0) list.add(new ItemStack(Items.OAK_LOG, wood));
+        if (nuggets > 0) list.add(new ItemStack(Items.IRON_NUGGET, nuggets));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static ItemStack[] steelAndPlastic(int steel, int plastic, int nuggets) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (steel > 0) list.add(new ItemStack(TGItems.STEEL_INGOT.get(), steel));
+        if (plastic > 0) list.add(new ItemStack(TGItems.PLASTIC_SHEET.get(), plastic));
+        if (nuggets > 0) list.add(new ItemStack(TGItems.STEEL_NUGGET.get(), nuggets));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static ItemStack[] obsidianAndPlastic(int obsidianSteel, int plastic) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (obsidianSteel > 0) list.add(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), obsidianSteel));
+        if (plastic > 0) list.add(new ItemStack(TGItems.PLASTIC_SHEET.get(), plastic));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static ItemStack[] carbonPlasticAndRedstone(int carbon, int plastic, int redstone) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (carbon > 0) list.add(new ItemStack(TGItems.CARBON_FIBERS.get(), carbon));
+        if (plastic > 0) list.add(new ItemStack(TGItems.PLASTIC_SHEET.get(), plastic));
+        if (redstone > 0) list.add(new ItemStack(Items.REDSTONE, redstone));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static void grinder(RecipeOutput output, ItemLike input, ItemStack[]... outputs) {
+        java.util.List<GrinderRecipe.Output> list = java.util.Arrays.stream(outputs).flatMap(java.util.Arrays::stream)
+                .map(GrinderRecipe.Output::of).toList();
+        output.accept(TGIds.id("grinder/" + getItemName(input)), new GrinderRecipe(Ingredient.of(input), list), null);
+    }
+
+    private static GrinderRecipe.Output out(ItemStack stack, float chance) {
+        return new GrinderRecipe.Output(stack, chance);
+    }
+
+    private static void roundsGrinder(RecipeOutput output, ItemLike input, GrinderRecipe.Output... outputs) {
+        output.accept(TGIds.id("grinder/" + getItemName(input)), new GrinderRecipe(Ingredient.of(input), java.util.List.of(outputs)), null);
     }
 
     private static Ingredient ingot(String material) {

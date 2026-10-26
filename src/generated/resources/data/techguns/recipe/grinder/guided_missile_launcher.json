@@ -1,0 +1,20 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:guided_missile_launcher"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 8,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:copper_wire"
+      }
+    }
+  ]
+}

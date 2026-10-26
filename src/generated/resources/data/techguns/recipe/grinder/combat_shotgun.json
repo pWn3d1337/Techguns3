@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:combat_shotgun"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:plastic_sheet"
+      }
+    }
+  ]
+}

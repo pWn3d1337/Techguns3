@@ -7,6 +7,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import techguns.machine.AmmoPressMenu;
+import techguns.machine.BlastFurnaceMenu;
+import techguns.machine.GrinderMenu;
 import techguns.machine.MetalPressMenu;
 import techguns.slot.menu.ExtraSlotsMenu;
 
@@ -20,6 +23,13 @@ public final class TGMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<MetalPressMenu>> METAL_PRESS = MENUS.register("metal_press",
             () -> IMenuTypeExtension.create(MetalPressMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<AmmoPressMenu>> AMMO_PRESS = MENUS.register("ammo_press",
+            () -> IMenuTypeExtension.create(AmmoPressMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<BlastFurnaceMenu>> BLAST_FURNACE = MENUS.register("blast_furnace",
+            () -> IMenuTypeExtension.create(BlastFurnaceMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<GrinderMenu>> GRINDER = MENUS.register("grinder",
+            () -> IMenuTypeExtension.create(GrinderMenu::new));
 
     private TGMenus() {
     }

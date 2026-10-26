@@ -9,6 +9,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import techguns.machine.AmmoPressBlockEntity;
+import techguns.machine.BlastFurnaceBlockEntity;
+import techguns.machine.GrinderBlockEntity;
 import techguns.machine.MetalPressBlockEntity;
 import techguns.machine.TGMachineBlockEntity;
 
@@ -21,6 +24,16 @@ public final class TGBlockEntities {
     public static final Supplier<BlockEntityType<MetalPressBlockEntity>> METAL_PRESS = BLOCK_ENTITY_TYPES.register("metal_press",
             () -> BlockEntityType.Builder.of(MetalPressBlockEntity::new, TGBlocks.METAL_PRESS.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<AmmoPressBlockEntity>> AMMO_PRESS = BLOCK_ENTITY_TYPES.register("ammo_press",
+            () -> BlockEntityType.Builder.of(AmmoPressBlockEntity::new, TGBlocks.AMMO_PRESS.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<BlastFurnaceBlockEntity>> BLAST_FURNACE = BLOCK_ENTITY_TYPES.register("blast_furnace",
+            () -> BlockEntityType.Builder.of(BlastFurnaceBlockEntity::new, TGBlocks.BLAST_FURNACE.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<GrinderBlockEntity>> GRINDER = BLOCK_ENTITY_TYPES.register("grinder",
+            () -> BlockEntityType.Builder.of(GrinderBlockEntity::new, TGBlocks.GRINDER.get()).build(null));
+
     private TGBlockEntities() {
     }
 
@@ -30,6 +43,9 @@ public final class TGBlockEntities {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         machine(event, METAL_PRESS.get());
+        machine(event, AMMO_PRESS.get());
+        machine(event, BLAST_FURNACE.get());
+        machine(event, GRINDER.get());
     }
 
     private static <T extends TGMachineBlockEntity> void machine(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

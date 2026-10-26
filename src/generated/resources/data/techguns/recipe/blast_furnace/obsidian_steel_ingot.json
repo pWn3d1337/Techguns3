@@ -1,0 +1,17 @@
+{
+  "type": "techguns:blast_furnace",
+  "first": {
+    "count": 1,
+    "tag": "c:ingots/steel"
+  },
+  "power_per_tick": 10,
+  "result": {
+    "count": 1,
+    "id": "techguns:obsidian_steel_ingot"
+  },
+  "second": {
+    "count": 1,
+    "tag": "c:obsidians"
+  },
+  "time": 200
+}

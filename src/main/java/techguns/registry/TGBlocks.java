@@ -32,6 +32,8 @@ import techguns.block.SandbagsBlock;
 import techguns.block.TGLadderBlock;
 import techguns.block.TGLampBlock;
 import techguns.block.TGLanternBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.phys.shapes.Shapes;
 import techguns.machine.TGMachineBlock;
 
 /**
@@ -215,6 +217,12 @@ public final class TGBlocks {
     // --- Machines (Phase 5b; one block per Techguns 2 machine type) ---
     public static final DeferredBlock<TGMachineBlock> METAL_PRESS = withItem("metal_press",
             () -> new TGMachineBlock(machine(), TGBlockEntities.METAL_PRESS));
+    public static final DeferredBlock<TGMachineBlock> AMMO_PRESS = withItem("ammo_press",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.AMMO_PRESS));
+    public static final DeferredBlock<TGMachineBlock> BLAST_FURNACE = withItem("blast_furnace",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.BLAST_FURNACE, Shapes.block(), RenderShape.MODEL));
+    public static final DeferredBlock<TGMachineBlock> GRINDER = withItem("grinder",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.GRINDER, Shapes.block(), RenderShape.MODEL));
 
     private TGBlocks() {
     }

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "tag": "c:ingots/copper"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "l": {
+      "tag": "c:ingots/lead"
+    },
+    "r": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "ili",
+    "cec",
+    "iri"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:ammo_press"
+  }
+}

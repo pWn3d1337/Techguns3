@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:pulse_rifle"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 6,
+        "id": "techguns:carbon_fibers"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:plastic_sheet"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    }
+  ]
+}

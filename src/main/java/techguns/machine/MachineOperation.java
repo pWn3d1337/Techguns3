@@ -8,13 +8,15 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * A running machine job (Techguns 2 {@code MachineOperation}): the inputs are taken when it starts, the outputs (per
- * operation, times {@code multiplier}) are delivered when it finishes.
+ * operation, times {@code multiplier}) are delivered when it finishes. It drains {@code powerPerTick} times
+ * {@code multiplier} each tick.
  */
-public record MachineOperation(List<ItemStack> outputs, int multiplier, int time) {
+public record MachineOperation(List<ItemStack> outputs, int multiplier, int time, int powerPerTick) {
     public static final Codec<MachineOperation> CODEC = RecordCodecBuilder.create(i -> i.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("outputs").forGetter(MachineOperation::outputs),
             Codec.INT.fieldOf("multiplier").forGetter(MachineOperation::multiplier),
-            Codec.INT.fieldOf("time").forGetter(MachineOperation::time)
+            Codec.INT.fieldOf("time").forGetter(MachineOperation::time),
+            Codec.INT.fieldOf("power_per_tick").forGetter(MachineOperation::powerPerTick)
     ).apply(i, MachineOperation::new));
 
     public MachineOperation {

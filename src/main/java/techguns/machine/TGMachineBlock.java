@@ -41,18 +41,26 @@ public class TGMachineBlock extends BaseEntityBlock {
 
     private final Supplier<? extends BlockEntityType<? extends TGMachineBlockEntity>> type;
     private final VoxelShape shape;
+    private final RenderShape renderShape;
     private final MapCodec<TGMachineBlock> codec;
 
-    public TGMachineBlock(Properties properties, Supplier<? extends BlockEntityType<? extends TGMachineBlockEntity>> type, VoxelShape shape) {
+    /**
+     * @param renderShape {@code ENTITYBLOCK_ANIMATED} for machines drawn only by their renderer (Techguns 2 TESR models),
+     *                    {@code MODEL} for block models with renderer extras
+     */
+    public TGMachineBlock(Properties properties, Supplier<? extends BlockEntityType<? extends TGMachineBlockEntity>> type, VoxelShape shape,
+                          RenderShape renderShape) {
         super(properties);
         this.type = type;
         this.shape = shape;
-        this.codec = simpleCodec(p -> new TGMachineBlock(p, type, shape));
+        this.renderShape = renderShape;
+        this.codec = simpleCodec(p -> new TGMachineBlock(p, type, shape, renderShape));
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
+    /** A full block machine drawn by its renderer. */
     public TGMachineBlock(Properties properties, Supplier<? extends BlockEntityType<? extends TGMachineBlockEntity>> type) {
-        this(properties, type, Shapes.block());
+        this(properties, type, Shapes.block(), RenderShape.ENTITYBLOCK_ANIMATED);
     }
 
     @Override
@@ -65,15 +73,19 @@ public class TGMachineBlock extends BaseEntityBlock {
         builder.add(FACING);
     }
 
-    /** Techguns 2 stored the placer's look direction (yaw quadrant) as the machine rotation. */
+    /**
+     * Techguns 2: renderer-drawn machines store the placer's look direction (yaw quadrant); block model machines
+     * ({@code SimpleMachine}) face the placer.
+     */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+        Direction look = context.getHorizontalDirection();
+        return defaultBlockState().setValue(FACING, renderShape == RenderShape.MODEL ? look.getOpposite() : look);
     }
 
     @Override
     protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return renderShape;
     }
 
     @Override

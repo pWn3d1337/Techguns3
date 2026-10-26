@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:ak47"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 4,
+        "id": "minecraft:iron_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "minecraft:oak_log"
+      }
+    }
+  ]
+}

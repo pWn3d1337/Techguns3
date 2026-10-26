@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:hand_cannon"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "minecraft:cobblestone"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "minecraft:oak_log"
+      }
+    },
+    {
+      "item": {
+        "count": 4,
+        "id": "minecraft:iron_nugget"
+      }
+    }
+  ]
+}

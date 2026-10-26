@@ -1,0 +1,32 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:mac10"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 5,
+        "id": "techguns:steel_nugget"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "minecraft:iron_ingot"
+      }
+    }
+  ]
+}

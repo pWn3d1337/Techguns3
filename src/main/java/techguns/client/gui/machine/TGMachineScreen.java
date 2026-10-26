@@ -79,6 +79,11 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
         if (hasUpgradeSlot) {
             graphics.blit(WIDGETS, x + upgradeSlotX, y + upgradeSlotY, 119, 59, 20, 20);
         }
+        menu.slotIcons().forEach((slot, icon) -> {
+            if (!slot.hasItem()) {
+                graphics.blit(TGIds.id("textures/gui/emptyslots/emptyslot_" + icon + ".png"), x + slot.x, y + slot.y, 0, 0, 16, 16, 16, 16);
+            }
+        });
         renderMachineBg(graphics, x, y);
     }
 

@@ -1,5 +1,7 @@
 package techguns.machine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -134,9 +136,6 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         return -1;
     }
 
-    /** Power drained per tick for one operation; multiplied by the stack multiplier. */
-    protected abstract int powerPerTick();
-
     /** Starts a job if the inputs allow it (Techguns 2 {@code checkAndStartOperation}). Server only. */
     protected abstract void checkAndStartOperation();
 
@@ -180,7 +179,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
             return;
         }
         if (operation != null) {
-            if (consumePower(powerPerTick() * operation.multiplier())) {
+            if (consumePower(operation.powerPerTick() * operation.multiplier())) {
                 setStalled(false);
                 progress++;
                 if (progress >= totalTime) {
@@ -239,6 +238,59 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
             return output.getCount() <= Math.min(inventory.getSlotLimit(slot), output.getMaxStackSize());
         }
         return ItemStack.isSameItemSameComponents(present, output) && present.getCount() + output.getCount() <= present.getMaxStackSize();
+    }
+
+    /** Whether {@code slot} holds at least {@code count} items. */
+    protected boolean has(int slot, int count) {
+        return inventory.getStackInSlot(slot).getCount() >= count;
+    }
+
+    /** Removes {@code count} items from {@code slot}. */
+    protected void consume(int slot, int count) {
+        if (count > 0) {
+            ItemStack stack = inventory.getStackInSlot(slot);
+            inventory.setStackInSlot(slot, stack.copyWithCount(Math.max(0, stack.getCount() - count)));
+        }
+    }
+
+    /** Whether all {@code outputs} fit into the slots {@code from..to} (inclusive), merged like {@link #insertAll}. */
+    protected boolean canInsertAll(int from, int to, List<ItemStack> outputs) {
+        return insertAll(from, to, outputs, true).stream().allMatch(ItemStack::isEmpty);
+    }
+
+    /**
+     * Merges {@code outputs} into the slots {@code from..to} (inclusive), filling matching stacks first, then empty
+     * slots (Techguns 2 {@code ItemStackHandlerPlus.mergeAll}); returns what did not fit.
+     */
+    protected List<ItemStack> insertAll(int from, int to, List<ItemStack> outputs, boolean simulate) {
+        ItemStack[] slots = new ItemStack[to - from + 1];
+        for (int i = 0; i < slots.length; i++) {
+            slots[i] = inventory.getStackInSlot(from + i).copy();
+        }
+        List<ItemStack> leftovers = new ArrayList<>();
+        for (ItemStack output : outputs) {
+            ItemStack rest = output.copy();
+            for (int pass = 0; pass < 2 && !rest.isEmpty(); pass++) {
+                for (int i = 0; i < slots.length && !rest.isEmpty(); i++) {
+                    if (pass == 0 && !slots[i].isEmpty() && ItemStack.isSameItemSameComponents(slots[i], rest)) {
+                        int moved = Math.min(rest.getCount(), slots[i].getMaxStackSize() - slots[i].getCount());
+                        slots[i].grow(moved);
+                        rest.shrink(moved);
+                    } else if (pass == 1 && slots[i].isEmpty()) {
+                        int moved = Math.min(rest.getCount(), rest.getMaxStackSize());
+                        slots[i] = rest.copyWithCount(moved);
+                        rest.shrink(moved);
+                    }
+                }
+            }
+            leftovers.add(rest);
+        }
+        if (!simulate) {
+            for (int i = 0; i < slots.length; i++) {
+                inventory.setStackInSlot(from + i, slots[i]);
+            }
+        }
+        return leftovers;
     }
 
     /** Puts {@code output} into {@code slot}, ignoring the slot rules (outputs are not placeable by hand). */

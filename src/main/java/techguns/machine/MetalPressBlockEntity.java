@@ -51,11 +51,6 @@ public class MetalPressBlockEntity extends TGMachineBlockEntity {
         return slot == SLOT_OUTPUT;
     }
 
-    @Override
-    protected int powerPerTick() {
-        return POWER_PER_TICK;
-    }
-
     private List<RecipeHolder<MetalPressRecipe>> recipes() {
         return level == null ? List.of() : level.getRecipeManager().getAllRecipesFor(TGRecipes.METAL_PRESS.get());
     }
@@ -134,7 +129,7 @@ public class MetalPressBlockEntity extends TGMachineBlockEntity {
         inventory.setStackInSlot(SLOT_INPUT1, in1.copyWithCount(in1.getCount() - multiplier));
         inventory.setStackInSlot(SLOT_INPUT2, in2.copyWithCount(in2.getCount() - multiplier));
         contentsChanged = false;
-        startOperation(new MachineOperation(List.of(output), multiplier, TIME));
+        startOperation(new MachineOperation(List.of(output), multiplier, TIME, POWER_PER_TICK));
     }
 
     /** Techguns 2 {@code splitSlot}: half of {@code from} moves to the empty {@code to} slot. */

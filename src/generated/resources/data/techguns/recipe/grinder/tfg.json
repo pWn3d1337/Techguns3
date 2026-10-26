@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:tfg"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 5,
+        "id": "techguns:titanium_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 4,
+        "id": "techguns:lead_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 4,
+        "id": "techguns:carbon_fibers"
+      }
+    }
+  ]
+}

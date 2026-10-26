@@ -1,0 +1,32 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:blaster_rifle"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:carbon_fibers"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:plastic_sheet"
+      }
+    },
+    {
+      "item": {
+        "count": 20,
+        "id": "minecraft:redstone"
+      }
+    },
+    {
+      "item": {
+        "count": 3,
+        "id": "minecraft:gold_ingot"
+      }
+    }
+  ]
+}

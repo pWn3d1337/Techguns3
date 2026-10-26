@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:tesla_gun"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:carbon_fibers"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:plastic_sheet"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "minecraft:redstone"
+      }
+    }
+  ]
+}

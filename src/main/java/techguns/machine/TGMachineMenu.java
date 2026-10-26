@@ -1,5 +1,8 @@
 package techguns.machine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,6 +25,7 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
     protected final T machine;
     protected final ContainerData data;
     private int machineSlots;
+    private final Map<Slot, String> slotIcons = new HashMap<>();
 
     /** Server side: the machine's live data; client side: the client's copy of the machine and a synced data mirror. */
     protected TGMachineMenu(MenuType<?> type, int id, T machine) {
@@ -42,6 +46,18 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
     protected Slot addMachineSlot(int index, int x, int y) {
         machineSlots++;
         return addSlot(new SlotItemHandler(machine.getInventory(), index, x, y));
+    }
+
+    /** A machine slot showing a Techguns 2 empty slot icon ({@code textures/gui/emptyslots/emptyslot_<icon>.png}). */
+    protected Slot addMachineSlot(int index, int x, int y, String icon) {
+        Slot slot = addMachineSlot(index, x, y);
+        slotIcons.put(slot, icon);
+        return slot;
+    }
+
+    /** Empty slot icons by slot, for the screen. */
+    public Map<Slot, String> slotIcons() {
+        return slotIcons;
     }
 
     /** The player inventory at the Techguns 2 position (top left 8, 84). */

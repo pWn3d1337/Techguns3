@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:mib_gun"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "minecraft:gold_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:titanium_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 20,
+        "id": "minecraft:redstone"
+      }
+    }
+  ]
+}

@@ -15,6 +15,8 @@ import techguns.registry.TGBlocks;
 public final class TGMachineRenderers {
     private static final TGMachineRenderer<?> METAL_PRESS = new TGMachineRenderer<>(lazy(MetalPressModel::bake),
             TGIds.id("textures/block/metal_press.png"));
+    private static final TGMachineRenderer<?> AMMO_PRESS = new TGMachineRenderer<>(lazy(techguns.client.model.machine.AmmoPressModel::bake),
+            TGIds.id("textures/block/ammo_press.png"));
 
     private TGMachineRenderers() {
     }
@@ -27,10 +29,14 @@ public final class TGMachineRenderers {
     @SuppressWarnings("unchecked")
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(TGBlockEntities.METAL_PRESS.get(), context -> (TGMachineRenderer<techguns.machine.MetalPressBlockEntity>) METAL_PRESS);
+        event.registerBlockEntityRenderer(TGBlockEntities.AMMO_PRESS.get(), context -> (TGMachineRenderer<techguns.machine.AmmoPressBlockEntity>) AMMO_PRESS);
+        event.registerBlockEntityRenderer(TGBlockEntities.GRINDER.get(), GrinderRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.BLAST_FURNACE.get(), BlastFurnaceRenderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {
         TGMachineItemRenderer.register(event, TGBlocks.METAL_PRESS.get(), METAL_PRESS);
+        TGMachineItemRenderer.register(event, TGBlocks.AMMO_PRESS.get(), AMMO_PRESS);
     }
 
     /** Bakes on first use (after resource loading). */

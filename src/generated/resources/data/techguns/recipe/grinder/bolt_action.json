@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:bolt_action"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 4,
+        "id": "minecraft:iron_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "minecraft:oak_log"
+      }
+    }
+  ]
+}

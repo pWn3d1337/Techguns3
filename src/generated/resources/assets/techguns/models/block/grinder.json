@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/grinder_base",
+  "render_type": "minecraft:cutout"
+}

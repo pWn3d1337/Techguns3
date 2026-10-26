@@ -307,6 +307,19 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
     /** Machines are drawn by their block entity renderer; the block model only gives the particle texture. */
     private void machines() {
         machine(TGBlocks.METAL_PRESS, "metal_press");
+        machine(TGBlocks.AMMO_PRESS, "ammo_press");
+        modelMachine(TGBlocks.BLAST_FURNACE, "blast_furnace_base", "blast_furnace_base");
+        modelMachine(TGBlocks.GRINDER, "grinder_base", "grinder_inventory_base");
+    }
+
+    /**
+     * Machines with a Techguns 2 block model (copied as parent): turned by facing like the 1.12 blockstate (model front
+     * is north); the item uses its own parent model.
+     */
+    private void modelMachine(DeferredBlock<? extends Block> block, String parent, String itemParent) {
+        ModelFile model = models().withExistingParent("block/" + path(block), modLoc("block/" + parent)).renderType(CUTOUT);
+        horizontalBlock(block.get(), model, 180);
+        itemModels().withExistingParent(path(block), modLoc("block/" + itemParent));
     }
 
     private void machine(DeferredBlock<? extends Block> block, String particle) {

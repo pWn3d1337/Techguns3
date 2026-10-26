@@ -10,5 +10,8 @@ public final class TGMachineScreens {
 
     public static void register(RegisterMenuScreensEvent event) {
         event.register(TGMenus.METAL_PRESS.get(), MetalPressScreen::new);
+        event.register(TGMenus.AMMO_PRESS.get(), AmmoPressScreen::new);
+        event.register(TGMenus.BLAST_FURNACE.get(), BlastFurnaceScreen::new);
+        event.register(TGMenus.GRINDER.get(), GrinderScreen::new);
     }
 }

@@ -275,6 +275,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.tooltip.unowned", "Unowned (Replace Block to set ownership)");
         add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
         add("techguns.container.metalpress.autosplit", "Stack split:");
+        add("techguns.container.ammopress.build", "Building:");
         add("techguns.container.info.on", "On");
         add("techguns.container.info.off", "Off");
         add("techguns.button.switch", "Switch");

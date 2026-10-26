@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:sawed_off"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 4,
+        "id": "minecraft:iron_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "minecraft:oak_log"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "minecraft:flint"
+      }
+    }
+  ]
+}
