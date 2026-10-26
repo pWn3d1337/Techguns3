@@ -1,0 +1,9 @@
+{
+  "loader": "neoforge:obj",
+  "model": "techguns:models/block/hangar_door_down_opened.obj",
+  "flip_v": false,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "techguns:block/hangar_door"
+  }
+}

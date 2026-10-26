@@ -72,7 +72,7 @@ public class TGMeleeToolTests {
     @GameTest(template = ARENA)
     public static void poweredHitUsesFuel(GameTestHelper helper) {
         MeleeToolItem chainsaw = (MeleeToolItem) TGGuns.CHAINSAW.get();
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(3, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(3, 1, 4));
         ItemStack survival = tool(chainsaw, 10, 0);
         ItemStack creative = tool(chainsaw, 10, 0);
 

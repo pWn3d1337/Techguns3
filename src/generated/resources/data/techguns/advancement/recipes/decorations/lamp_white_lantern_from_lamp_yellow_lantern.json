@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lamp_yellow_lantern": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:lamp_yellow_lantern"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:lamp_white_lantern_from_lamp_yellow_lantern"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_lamp_yellow_lantern"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:lamp_white_lantern_from_lamp_yellow_lantern"
+    ]
+  }
+}

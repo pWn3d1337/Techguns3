@@ -1,0 +1,338 @@
+package techguns.data;
+
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import techguns.Techguns;
+import techguns.block.CamoNetBlock;
+import techguns.block.Door3x3Block;
+import techguns.block.SandbagsBlock;
+import techguns.block.TGLampBlock;
+import techguns.registry.TGBlocks;
+
+/**
+ * Block states, block models and item models of the shaped decorative blocks (Phase 5a2). The geometry of the Techguns 2
+ * models (lamp, ladder, camo net, sandbags, crate, door parents) is kept as parent models in
+ * {@code src/main/resources/assets/techguns/models/block} (copied from 1.12 with the texture paths fixed); the per-type
+ * models, block states and item models are generated here.
+ */
+public class TGShapedBlockStateProvider extends BlockStateProvider {
+    private static final String CUTOUT = "cutout";
+
+    public TGShapedBlockStateProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, Techguns.MODID, existingFileHelper);
+    }
+
+    /** A distinct name: the data generator rejects two providers with the same name. */
+    @Override
+    public String getName() {
+        return "Shaped Block States: " + Techguns.MODID;
+    }
+
+    @Override
+    protected void registerStatesAndModels() {
+        lamps();
+        lanterns();
+        ladders();
+        slimyLadder();
+        camoNets();
+        camoNetsTop();
+        sandbags();
+        crates();
+        bunkerDoor();
+        doors3x3();
+    }
+
+    private ModelFile existing(String name) {
+        return models().getExistingFile(modLoc("block/" + name));
+    }
+
+    private ResourceLocation tex(String name) {
+        return modLoc("block/" + name);
+    }
+
+    private static String path(DeferredBlock<? extends Block> block) {
+        return block.getId().getPath();
+    }
+
+    // --- lamps and lanterns ---
+
+    private void lamps() {
+        lamp(TGBlocks.LAMP_YELLOW, "lamp01");
+        lamp(TGBlocks.LAMP_WHITE, "lamp02");
+    }
+
+    private void lamp(DeferredBlock<TGLampBlock> block, String texture) {
+        BlockModelBuilder model = models().withExistingParent("block/" + path(block), modLoc("block/lamp_base"))
+                .texture("texture", tex(texture)).renderType(CUTOUT);
+        getVariantBuilder(block.get()).forAllStates(state -> {
+            int[] rotation = switch (state.getValue(TGLampBlock.FACING)) {
+                case UP -> new int[]{180, 0};
+                case NORTH -> new int[]{90, 180};
+                case WEST -> new int[]{90, 90};
+                case SOUTH -> new int[]{90, 0};
+                case EAST -> new int[]{90, 270};
+                default -> new int[]{0, 0};
+            };
+            return ConfiguredModel.builder().modelFile(model).rotationX(rotation[0]).rotationY(rotation[1]).build();
+        });
+        itemModels().withExistingParent(path(block), modLoc("block/lamp_inventory_base")).texture("tex", tex(texture));
+    }
+
+    private void lanterns() {
+        lantern(TGBlocks.LAMP_YELLOW_LANTERN, "lantern01");
+        lantern(TGBlocks.LAMP_WHITE_LANTERN, "lantern02");
+    }
+
+    private void lantern(DeferredBlock<? extends Block> block, String texture) {
+        String name = path(block);
+        ModelFile base = lanternModel(name, "lantern_base", texture);
+        ModelFile side = lanternModel(name + "_side", "lantern_side_base", texture);
+        ModelFile top = lanternModel(name + "_top", "lantern_top_base", texture);
+        MultiPartBlockStateBuilder builder = getMultipartBuilder(block.get());
+        builder.part().modelFile(base).addModel().end();
+        builder.part().modelFile(side).rotationY(270).addModel().condition(BlockStateProperties.NORTH, true).end();
+        builder.part().modelFile(side).addModel().condition(BlockStateProperties.EAST, true).end();
+        builder.part().modelFile(side).rotationY(90).addModel().condition(BlockStateProperties.SOUTH, true).end();
+        builder.part().modelFile(side).rotationY(180).addModel().condition(BlockStateProperties.WEST, true).end();
+        builder.part().modelFile(top).addModel().condition(BlockStateProperties.UP, true).end();
+        builder.part().modelFile(top).rotationX(180).addModel().condition(BlockStateProperties.DOWN, true).end();
+        itemModels().withExistingParent(name, modLoc("block/lantern_inventory_base"))
+                .texture("side", tex(texture + "_side")).texture("top", tex(texture + "_top")).texture("particle", tex(texture + "_side"));
+    }
+
+    private ModelFile lanternModel(String name, String parent, String texture) {
+        return models().withExistingParent("block/" + name, modLoc("block/" + parent))
+                .texture("side", tex(texture + "_side")).texture("particle", tex(texture + "_side")).texture("top", tex(texture + "_top"))
+                .renderType(CUTOUT);
+    }
+
+    // --- ladders ---
+
+    private void ladders() {
+        ladder(TGBlocks.LADDER_METAL, "metal_ladder");
+        ladder(TGBlocks.LADDER_SHINY, "metal_ladder_shiny");
+        ladder(TGBlocks.LADDER_RUSTY, "metal_ladder_rusty");
+        ladder(TGBlocks.LADDER_CARBON, "metal_ladder_carbon");
+    }
+
+    private void ladder(DeferredBlock<? extends Block> block, String texture) {
+        BlockModelBuilder model = models().withExistingParent("block/" + path(block), modLoc("block/ladder_base"))
+                .texture("texture", tex(texture)).renderType(CUTOUT);
+        getVariantBuilder(block.get()).forAllStatesExcept(state -> {
+            int y = switch (state.getValue(LadderBlock.FACING)) {
+                case NORTH -> 180;
+                case EAST -> 270;
+                case WEST -> 90;
+                default -> 0;
+            };
+            return ConfiguredModel.builder().modelFile(model).rotationY(y).build();
+        }, LadderBlock.WATERLOGGED);
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
+    }
+
+    private void slimyLadder() {
+        BlockModelBuilder model = models().withExistingParent("block/slimy_ladder", modLoc("block/slimyladder")).renderType(CUTOUT);
+        getVariantBuilder(TGBlocks.SLIMY_LADDER.get()).forAllStatesExcept(state -> {
+            int y = switch (state.getValue(LadderBlock.FACING)) {
+                case EAST -> 90;
+                case SOUTH -> 180;
+                case WEST -> 270;
+                default -> 0;
+            };
+            return ConfiguredModel.builder().modelFile(model).rotationX(90).rotationY(y).build();
+        }, LadderBlock.WATERLOGGED);
+        itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder"));
+    }
+
+    // --- camo nets ---
+
+    /** Plank texture behind the net and the net texture per type: woodland, desert, snow. */
+    private static final String[] NET_TYPES = {"wood", "desert", "snow"};
+    private static final String[] NET_PLANKS = {"oak_planks", "acacia_planks", "spruce_planks"};
+    private static final String[] NET_TEXTURES = {"camonet", "camonet_desert", "camonet_snow"};
+
+    private void camoNets() {
+        for (int type = 0; type < 3; type++) {
+            DeferredBlock<CamoNetBlock> block = TGBlocks.CAMO_NETS.get(type);
+            ResourceLocation net = tex(NET_TEXTURES[type]);
+            ResourceLocation planks = mcLoc("block/" + NET_PLANKS[type]);
+            ModelFile stick = netModel(block, "stick", "camonet_stick", planks, net);
+            ModelFile half = netModel(block, "half", "camonet_half", planks, net);
+            ModelFile full = netModel(block, "full", "camonet_full", planks, net);
+            MultiPartBlockStateBuilder builder = getMultipartBuilder(block.get());
+            for (int index = 0; index < 16; index++) {
+                boolean n = (index & 8) != 0;
+                boolean e = (index & 4) != 0;
+                boolean s = (index & 2) != 0;
+                boolean w = (index & 1) != 0;
+                boolean straight = (e && w && !n && !s) || (n && s && !e && !w);
+                if (straight) {
+                    // a straight run is one full plane (east-west: y0, north-south: y270)
+                    netPart(builder, full, e ? 0 : 270, n, e, s, w);
+                    continue;
+                }
+                netPart(builder, stick, 0, n, e, s, w);
+                if (e) {
+                    netPart(builder, half, 0, n, e, s, w);
+                }
+                if (s) {
+                    netPart(builder, half, 90, n, e, s, w);
+                }
+                if (w) {
+                    netPart(builder, half, 180, n, e, s, w);
+                }
+                if (n) {
+                    netPart(builder, half, 270, n, e, s, w);
+                }
+            }
+            itemModels().withExistingParent(path(block), modLoc("block/camonet_inventory"))
+                    .texture("0", planks).texture("1", net).texture("particle", net);
+        }
+    }
+
+    private ModelFile netModel(DeferredBlock<? extends Block> block, String part, String parent, ResourceLocation planks, ResourceLocation net) {
+        return models().withExistingParent("block/" + path(block) + "_" + part, modLoc("block/" + parent))
+                .texture("0", planks).texture("1", net).texture("particle", net).renderType(CUTOUT);
+    }
+
+    private void netPart(MultiPartBlockStateBuilder builder, ModelFile model, int rotationY, boolean n, boolean e, boolean s, boolean w) {
+        builder.part().modelFile(model).rotationY(rotationY).uvLock(true).addModel()
+                .condition(CamoNetBlock.NORTH, n).condition(CamoNetBlock.EAST, e).condition(CamoNetBlock.SOUTH, s).condition(CamoNetBlock.WEST, w).end();
+    }
+
+    private void camoNetsTop() {
+        // per connection index (n=8, e=4, s=2, w=1): {model, rotationY} pairs, 1.12 camonet_top.json
+        String[][][] layouts = new String[16][][];
+        layouts[0] = parts("center", 0);
+        layouts[1] = parts("side", 180);
+        layouts[2] = parts("side", 90);
+        layouts[3] = parts("corner", 180);
+        layouts[4] = parts("side", 0);
+        layouts[5] = parts("side", 0, "side", 180);
+        layouts[6] = parts("corner", 90);
+        layouts[7] = parts("side2", 90);
+        layouts[8] = parts("side", 270);
+        layouts[9] = parts("corner", 270);
+        layouts[10] = parts("side", 270, "side", 90);
+        layouts[11] = parts("side2", 180);
+        layouts[12] = parts("corner", 0);
+        layouts[13] = parts("side2", 270);
+        layouts[14] = parts("side2", 0);
+        layouts[15] = parts("full", 0);
+        for (int type = 0; type < 3; type++) {
+            DeferredBlock<? extends Block> block = TGBlocks.CAMO_NETS_TOP.get(type);
+            ResourceLocation net = tex(NET_TEXTURES[type]);
+            MultiPartBlockStateBuilder builder = getMultipartBuilder(block.get());
+            for (int index = 0; index < 16; index++) {
+                for (String[] part : layouts[index]) {
+                    ModelFile model = models().withExistingParent("block/" + path(block) + "_" + part[0], modLoc("block/camonet_top_" + part[0]))
+                            .texture("0", net).texture("particle", net).renderType(CUTOUT);
+                    builder.part().modelFile(model).rotationY(Integer.parseInt(part[1])).uvLock(true).addModel()
+                            .condition(CamoNetBlock.NORTH, (index & 8) != 0).condition(CamoNetBlock.EAST, (index & 4) != 0)
+                            .condition(CamoNetBlock.SOUTH, (index & 2) != 0).condition(CamoNetBlock.WEST, (index & 1) != 0).end();
+                }
+            }
+            itemModels().withExistingParent(path(block), modLoc("block/camonet_top_inventory")).texture("0", net).texture("particle", net);
+        }
+    }
+
+    /** Alternating model name and rotation arguments to {model, rotation} pairs. */
+    private static String[][] parts(Object... modelAndRotation) {
+        String[][] result = new String[modelAndRotation.length / 2][];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new String[]{modelAndRotation[2 * i].toString(), modelAndRotation[2 * i + 1].toString()};
+        }
+        return result;
+    }
+
+    // --- sandbags ---
+
+    private void sandbags() {
+        ModelFile center = existing("sandbags_center");
+        ModelFile side = existing("sandbags_side");
+        ModelFile corner = existing("sandbags_corner");
+        MultiPartBlockStateBuilder builder = getMultipartBuilder(TGBlocks.SANDBAGS.get());
+        builder.part().modelFile(center).addModel().end();
+        builder.part().modelFile(side).uvLock(true).addModel().condition(SandbagsBlock.NORTH, true).end();
+        builder.part().modelFile(side).rotationY(90).uvLock(true).addModel().condition(SandbagsBlock.EAST, true).end();
+        builder.part().modelFile(side).rotationY(180).uvLock(true).addModel().condition(SandbagsBlock.SOUTH, true).end();
+        builder.part().modelFile(side).rotationY(270).uvLock(true).addModel().condition(SandbagsBlock.WEST, true).end();
+        builder.part().modelFile(corner).uvLock(true).addModel().condition(SandbagsBlock.CORNER_NE, true).end();
+        builder.part().modelFile(corner).rotationY(90).uvLock(true).addModel().condition(SandbagsBlock.CORNER_ES, true).end();
+        builder.part().modelFile(corner).rotationY(180).uvLock(true).addModel().condition(SandbagsBlock.CORNER_SW, true).end();
+        builder.part().modelFile(corner).rotationY(270).uvLock(true).addModel().condition(SandbagsBlock.CORNER_WN, true).end();
+        itemModels().withExistingParent("sandbags", modLoc("block/sandbags_inventory"));
+    }
+
+    // --- military crates ---
+
+    private void crates() {
+        // {top, side, bottom} per type in meta order; vanilla planks are in the minecraft namespace
+        String[][] textures = {
+                {"crate_top_dark", "military_crate_side", "military_crate_bottom"},
+                {"crate_top_dark", "military_crate_gun", "military_crate_bottom"},
+                {"crate_top", "armor_crate_side", "minecraft:oak_planks"},
+                {"crate_top_red", "medical_crate_side", "minecraft:birch_planks"},
+                {"crate_top_red", "explosive_crate", "minecraft:spruce_planks"},
+                {"crate_top", "minecraft:oak_planks", "minecraft:oak_planks"},
+                {"crate_top_dark", "minecraft:jungle_planks", "minecraft:jungle_planks"},
+                {"crate_top_blue", "minecraft:birch_planks", "minecraft:birch_planks"},
+                {"crate_top_red", "minecraft:spruce_planks", "minecraft:spruce_planks"}};
+        for (int type = 0; type < textures.length; type++) {
+            DeferredBlock<? extends Block> block = TGBlocks.MILITARY_CRATES.get(type);
+            BlockModelBuilder model = models().withExistingParent("block/" + path(block), modLoc("block/military_crate"))
+                    .texture("top", crateTexture(textures[type][0])).texture("side", crateTexture(textures[type][1]))
+                    .texture("bottom", crateTexture(textures[type][2])).texture("particle", crateTexture(textures[type][2]));
+            simpleBlockWithItem(block.get(), model);
+        }
+    }
+
+    private ResourceLocation crateTexture(String name) {
+        return name.startsWith("minecraft:") ? mcLoc("block/" + name.substring("minecraft:".length())) : tex(name);
+    }
+
+    // --- doors ---
+
+    private void bunkerDoor() {
+        doorBlockWithRenderType(TGBlocks.BUNKER_DOOR.get(), tex("bunker_door_lower"), tex("bunker_door_upper"), CUTOUT);
+        itemModels().withExistingParent("bunker_door", mcLoc("item/generated")).texture("layer0", modLoc("item/item_bunkerdoor"));
+    }
+
+    private void doors3x3() {
+        // closed model, open model, particle texture and item texture per kind; the hangar open models are .obj files
+        door3x3(TGBlocks.DOOR_METAL_3X3, "techdoor3x3_full", "techdoor3x3_opened", "techdoor3x3", "item_door3x3", true);
+        door3x3(TGBlocks.DOOR_HANGAR_UP_3X3, "hangar_door_closed", "hangar_door_opened", "hangar_door", "hangar_door_up", false);
+        door3x3(TGBlocks.DOOR_HANGAR_DOWN_3X3, "hangar_door_down_closed", "hangar_door_down_opened", "hangar_door", "hangar_door_down", false);
+        door3x3(TGBlocks.DOOR_NETHER_3X3, "techdoor3x3_full_nether", "techdoor3x3_opened_nether", "techdoor3x3_nether", "item_door3x3_nether", true);
+    }
+
+    private void door3x3(DeferredBlock<Door3x3Block> block, String closedParent, String openParent, String particle, String itemTexture,
+                         boolean jsonOpenModel) {
+        String name = path(block);
+        ModelFile closed = models().withExistingParent("block/" + name + "_closed", modLoc("block/" + closedParent)).renderType(CUTOUT);
+        // the .obj wrappers carry their own render type (a child of a custom loader model would not)
+        ModelFile open = jsonOpenModel
+                ? models().withExistingParent("block/" + name + "_open", modLoc("block/" + openParent)).renderType(CUTOUT)
+                : existing(openParent);
+        // the eight other blocks of the door draw nothing, only the particle texture
+        ModelFile part = models().getBuilder("block/" + name + "_part").texture("particle", tex(particle));
+        getVariantBuilder(block.get()).forAllStatesExcept(state -> {
+            if (!Door3x3Block.isMaster(state)) {
+                return ConfiguredModel.builder().modelFile(part).build();
+            }
+            return ConfiguredModel.builder().modelFile(state.getValue(Door3x3Block.OPEN) ? open : closed)
+                    .rotationY(state.getValue(Door3x3Block.ZPLANE) ? 90 : 0).build();
+        }, Door3x3Block.POWERED);
+        itemModels().withExistingParent(name, mcLoc("item/generated")).texture("layer0", modLoc("item/" + itemTexture));
+    }
+}

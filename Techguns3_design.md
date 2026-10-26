@@ -485,7 +485,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 ### Phase 5 — Blocks & machines
 - 5a: Simple decorative blocks (flattened): concrete, metal panels, lamps, neon, ladders, camo nets, sandbags, stairs, slimy blocks, military crates, doors (2x1, 3x3 bunker).
   - 5a1 (planned 2026-10-26): full cube variants, one block per 1.12 meta variant: concrete (6), metal panels (8), nether metal (10, border_lava glows), neon lights (5, glow), bug nest sand, bug nest eggs (slimy), metal/concrete stairs; 1.12 "camo changeable" groups become block lists the Camo Bench cycles through (Phase 5b).
-  - 5a2: shaped blocks: lamps (4, facing), ladders (4), slimy ladder, camo nets (3 + top), sandbags, military crates (9, containers with loot), 2x1 bunker door, 3x3 doors (4, multiblock).
+  - 5a2: shaped blocks: lamps (4, facing), ladders (4), slimy ladder, camo nets (3 + top), sandbags, military crates (9, break into loot; not containers in 1.12), 2x1 bunker door, 3x3 doors (4, multiblock).
 - 5b: Single-block machines + screens + recipe types: Ammo Press/Bench, Metal Press, Chem Lab, Grinder, Blast Furnace, Charging Station, Repair Bench, Camo Bench, Upgrade/Armor Bench.
   - From Phase 4: the 9 armor upgrade items (protection / projectile / blast protection, tiers 1-3) applied by the Upgrade Bench; Repair Bench repair costs for armor and shields (1.12 `repairMat` counts); gun camo changes at the Camo Bench (armor already cycles with sneak + use); the Ammo Bench and Camo Bench recipe types from Fabric.
 - 5c: Multiblocks: Fabricator, Reaction Chamber, Ore Drill (+ ore clusters).

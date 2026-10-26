@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": {
+      "item": "minecraft:dirt"
+    },
+    "s": {
+      "tag": "c:strings"
+    },
+    "w": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "wdw",
+    "dsd",
+    "wdw"
+  ],
+  "result": {
+    "count": 16,
+    "id": "techguns:camo_net_top_wood"
+  }
+}

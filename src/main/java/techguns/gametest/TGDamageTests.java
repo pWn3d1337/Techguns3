@@ -1,6 +1,8 @@
 package techguns.gametest;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -28,7 +30,7 @@ public class TGDamageTests {
     private static final float DAMAGE = 10.0f;
 
     private static Zombie armoredZombie(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, 1, 2, 1);
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(1, 2, 1));
         zombie.getAttribute(Attributes.ARMOR).setBaseValue(8.0);
         return zombie;
     }
@@ -85,7 +87,7 @@ public class TGDamageTests {
 
     @GameTest(template = "empty")
     public static void rapidHitsBypassHurtCooldown(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, 1, 2, 1);
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(1, 2, 1));
         zombie.getAttribute(Attributes.ARMOR).setBaseValue(0.0);
         zombie.hurt(TGDamage.bullet(helper.getLevel(), null, null, DeathType.DEFAULT), 3f);
         zombie.hurt(TGDamage.bullet(helper.getLevel(), null, null, DeathType.DEFAULT), 3f);

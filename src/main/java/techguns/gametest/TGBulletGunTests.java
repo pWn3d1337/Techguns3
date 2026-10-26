@@ -107,7 +107,7 @@ public class TGBulletGunTests {
     }
 
     private static Zombie target(GameTestHelper helper, int x) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(x, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(x, 1, 4));
         zombie.getAttribute(Attributes.ARMOR).setBaseValue(0.0);
         return zombie;
     }
@@ -167,7 +167,7 @@ public class TGBulletGunTests {
     private static void pierces(GameTestHelper helper, GunItem gun) {
         Player player = shooter(helper);
         ItemStack stack = hold(player, gun, gun.stats().firing().clipSize(), AmmoType.DEFAULT);
-        Zombie front = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(3, 1, 4));
+        Zombie front = TGTestTargets.husk(helper, new BlockPos(3, 1, 4));
         Zombie back = target(helper);
         float frontHealth = front.getHealth();
         float backHealth = back.getHealth();
@@ -204,7 +204,7 @@ public class TGBulletGunTests {
         ItemStack stack = hold(player, gun, gun.stats().firing().clipSize(), AmmoType.EXPLOSIVE);
         Zombie zombie = target(helper);
         // out of the line of fire, inside the blast radius
-        Zombie neighbour = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(5, 1, 6));
+        Zombie neighbour = TGTestTargets.husk(helper, new BlockPos(5, 1, 6));
         float health = neighbour.getHealth();
 
         gun.shoot(stack, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);

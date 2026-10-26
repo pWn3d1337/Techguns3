@@ -31,6 +31,19 @@ public class TGBlockTagsProvider extends BlockTagsProvider {
         });
         // Techguns 2: hardened bug nest sand is dug with a shovel
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(TGBlocks.BUGNEST_SAND.get());
+        // Phase 5a2: Techguns 2 iron blocks are mined with a pickaxe (no tool needed for drops), crates are wood
+        TGBlocks.LAMPS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
+        TGBlocks.LANTERNS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
+        TGBlocks.LADDERS.forEach(block -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            tag(BlockTags.CLIMBABLE).add(block.get());
+        });
+        tag(BlockTags.CLIMBABLE).add(TGBlocks.SLIMY_LADDER.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(TGBlocks.SLIMY_LADDER.get());
+        TGBlocks.MILITARY_CRATES.forEach(block -> tag(BlockTags.MINEABLE_WITH_AXE).add(block.get()));
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TGBlocks.BUNKER_DOOR.get());
+        tag(BlockTags.DOORS).add(TGBlocks.BUNKER_DOOR.get());
+        TGBlocks.DOORS_3X3.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
         // Ores
         ore("tin", TGBlocks.TIN_ORE, TGBlocks.DEEPSLATE_TIN_ORE, BlockTags.NEEDS_STONE_TOOL);
         ore("lead", TGBlocks.LEAD_ORE, TGBlocks.DEEPSLATE_LEAD_ORE, BlockTags.NEEDS_IRON_TOOL);

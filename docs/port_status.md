@@ -13,7 +13,7 @@ Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 | 2 — Gun framework | done pending review (3 guns with FX and death effects in SP and on a dedicated server; all guns rendered with GeckoLib, Q3 decided) |
 | 3 — All guns, ammo, grenades, tools | done (batches 3a bullet guns, 3b shotguns/sniper/advanced/blaster, 3c energy guns, 3d explosives, 3e charge and fuel weapons, 3f tools, 3g ammo bag and recipe types) |
 | 4 — Armor & player gear | done pending review (batches 4a–4f) |
-| 5 — Blocks & machines | in progress (5a1 decorative cubes) |
+| 5 — Blocks & machines | in progress (5a1 decorative cubes, 5a2 shaped blocks) |
 | 6 — NPCs & factions | — |
 | 7 — World generation | — |
 | 8 — Remaining systems & integrations | — |
@@ -126,3 +126,4 @@ Batches: design doc Phase 4. Source: Techguns 2 for all values; Fabric for the a
 | Unit | Source | Status | Notes |
 |---|---|---|---|
 | 5a1 decorative cubes: concrete (6), metal panels/containers (8), nether metal (10, lava pillar glows with a lava + frame model), neon lights (5, glow), bug nest sand/eggs (animated), stairs (4); one block per 1.12 meta variant, groups kept as lists for the Camo Bench; recipes and names from 1.12 | 12 | tested | GameTests: drops, tool tags, light; checked in game. 1.12 connected textures (CTM) not used |
+| 5a2 shaped blocks: lamps and lanterns (4, attach to faces / hang between supports), metal ladders (4, free-standing) + slimy ladder, camo nets (3) + top nets (3) with fence-like connections, sandbags (connect to fences/solids, corner models), military crates (9, break into loot, Silk Touch keeps the crate), bunker door (vanilla double door, double doors toggle together), 3x3 doors (4 kinds, nine-block multiblock with item placement, use + redstone + auto close, hangar doors open together) | 12 | tested | GameTests: placement, drops, door toggling, crate loot; checked in game (all blocks render, doors open/close incl. hangar OBJ open model); models copied from 1.12 as parents, per-type models/states by datagen. Not ported: 3x3 door open/close animation (static open/closed models, no "state finished" sound), door block entity (Manual/Redstone/Player-Detector mode GUI, auto close toggle, owner), radaway/radpills crate loot, desert/snow nets and shiny/rusty/carbon ladders have no recipe (Camo Bench) |

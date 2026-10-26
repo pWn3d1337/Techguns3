@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/hangar_door_down_closed",
+  "render_type": "minecraft:cutout"
+}

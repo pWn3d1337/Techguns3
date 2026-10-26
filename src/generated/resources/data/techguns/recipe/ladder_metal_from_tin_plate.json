@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "tag": "c:plates/tin"
+    }
+  },
+  "pattern": [
+    "iii",
+    " i ",
+    "iii"
+  ],
+  "result": {
+    "count": 16,
+    "id": "techguns:ladder_metal"
+  }
+}

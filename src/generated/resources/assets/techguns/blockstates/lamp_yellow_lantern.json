@@ -1,0 +1,61 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern_side",
+        "y": 270
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern_side"
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern_side",
+        "y": 90
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern_side",
+        "y": 180
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern_top"
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/lamp_yellow_lantern_top",
+        "x": 180
+      },
+      "when": {
+        "down": "true"
+      }
+    }
+  ]
+}

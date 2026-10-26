@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "p": {
+      "tag": "c:plates/iron"
+    },
+    "s": {
+      "item": "minecraft:piston"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "ppp",
+    "sps"
+  ],
+  "result": {
+    "count": 2,
+    "id": "techguns:door_hangar_down_3x3"
+  }
+}

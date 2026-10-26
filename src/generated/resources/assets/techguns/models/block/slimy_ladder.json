@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/slimyladder",
+  "render_type": "minecraft:cutout"
+}

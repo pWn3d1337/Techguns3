@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "techguns:block/ladder_shiny",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "techguns:block/ladder_shiny",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "techguns:block/ladder_shiny"
+    },
+    "facing=west": {
+      "model": "techguns:block/ladder_shiny",
+      "y": 90
+    }
+  }
+}

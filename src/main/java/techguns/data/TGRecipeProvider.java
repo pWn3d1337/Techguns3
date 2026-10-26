@@ -317,11 +317,74 @@ public class TGRecipeProvider extends RecipeProvider {
                     .define('s', Items.STONE).define('p', TGTags.Items.plate(plate))
                     .unlockedBy("has_" + plate + "_plate", has(TGTags.Items.plate(plate))).save(output, TGIds.id("container_red_from_" + plate + "_plate"));
         }
+        buildShapedBlockRecipes(output);
         // stairs: 6 from a block, and back
         stairs(output, TGBlocks.PANEL_LARGE_BORDER_STAIRS.get(), TGBlocks.PANEL_LARGE_BORDER.get());
         stairs(output, TGBlocks.STEELFRAME_DARK_STAIRS.get(), TGBlocks.STEELFRAME_DARK.get());
         stairs(output, TGBlocks.CONCRETE_BROWN_LIGHT_STAIRS.get(), TGBlocks.CONCRETE_BROWN_LIGHT.get());
         stairs(output, TGBlocks.CONCRETE_GREY_DARK_STAIRS.get(), TGBlocks.CONCRETE_GREY_DARK.get());
+    }
+
+    /**
+     * Phase 5a2 (Techguns 2 Recipewriter). Not crafted yet: the desert/snow camo nets and the shiny/rusty/carbon ladders
+     * (Camo Bench), crates and the slimy ladder (no recipe in 1.12).
+     */
+    private void buildShapedBlockRecipes(RecipeOutput output) {
+        // lamps: 16 from iron nuggets, glass panes and redstone; yellow and white convert into each other
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LAMP_YELLOW.get(), 16)
+                .pattern("iii").pattern("grg").pattern("ggg")
+                .define('i', Tags.Items.NUGGETS_IRON).define('r', Tags.Items.DUSTS_REDSTONE).define('g', Tags.Items.GLASS_PANES)
+                .unlockedBy("has_redstone", has(Tags.Items.DUSTS_REDSTONE)).save(output, TGIds.id("lamp_yellow"));
+        swap(output, TGBlocks.LAMP_YELLOW.get(), TGBlocks.LAMP_WHITE.get());
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LAMP_YELLOW_LANTERN.get(), 16)
+                .pattern("iii").pattern("grg").pattern("iii")
+                .define('i', Tags.Items.NUGGETS_IRON).define('r', Tags.Items.DUSTS_REDSTONE).define('g', Tags.Items.GLASS_PANES)
+                .unlockedBy("has_redstone", has(Tags.Items.DUSTS_REDSTONE)).save(output, TGIds.id("lamp_yellow_lantern"));
+        swap(output, TGBlocks.LAMP_YELLOW_LANTERN.get(), TGBlocks.LAMP_WHITE_LANTERN.get());
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TGBlocks.SANDBAGS.get(), 8)
+                .requires(TGItems.RUBBER_BAR.get()).requires(Ingredient.of(Tags.Items.SANDS), 8)
+                .unlockedBy("has_rubber_bar", has(TGItems.RUBBER_BAR.get())).save(output, TGIds.id("sandbags"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.CAMO_NET_WOOD.get(), 8)
+                .pattern("sds").pattern("sds")
+                .define('s', Tags.Items.RODS_WOODEN).define('d', Items.DIRT)
+                .unlockedBy("has_stick", has(Tags.Items.RODS_WOODEN)).save(output, TGIds.id("camo_net_wood"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.CAMO_NET_TOP_WOOD.get(), 16)
+                .pattern("wdw").pattern("dsd").pattern("wdw")
+                .define('w', Tags.Items.RODS_WOODEN).define('d', Items.DIRT).define('s', Tags.Items.STRINGS)
+                .unlockedBy("has_string", has(Tags.Items.STRINGS)).save(output, TGIds.id("camo_net_top_wood"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.BUNKER_DOOR.get(), 2)
+                .pattern("pp").pattern("pp").pattern("pp")
+                .define('p', TGTags.Items.plate("iron"))
+                .unlockedBy("has_iron_plate", has(TGTags.Items.plate("iron"))).save(output, TGIds.id("bunker_door"));
+
+        for (String plate : List.of("iron", "tin")) {
+            TagKey<Item> plates = TGTags.Items.plate(plate);
+            String suffix = "_from_" + plate + "_plate";
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.DOOR_METAL_3X3.get(), 2)
+                    .pattern("ppp").pattern("sps").pattern("ppp").define('s', Items.PISTON).define('p', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("door_metal_3x3" + suffix));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.DOOR_HANGAR_UP_3X3.get(), 2)
+                    .pattern("sps").pattern("ppp").pattern("ppp").define('s', Items.PISTON).define('p', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("door_hangar_up_3x3" + suffix));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.DOOR_HANGAR_DOWN_3X3.get(), 2)
+                    .pattern("ppp").pattern("ppp").pattern("sps").define('s', Items.PISTON).define('p', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("door_hangar_down_3x3" + suffix));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LADDER_METAL.get(), 16)
+                    .pattern("iii").pattern(" i ").pattern("iii").define('i', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("ladder_metal" + suffix));
+        }
+        swap(output, TGBlocks.DOOR_HANGAR_UP_3X3.get(), TGBlocks.DOOR_HANGAR_DOWN_3X3.get());
+    }
+
+    /** Two blocks that convert into each other with a shapeless recipe (Techguns 2 lamp/door variants). */
+    private static void swap(RecipeOutput output, ItemLike first, ItemLike second) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, second).requires(first)
+                .unlockedBy(getHasName(first), has(first)).save(output, TGIds.id(getItemName(second) + "_from_" + getItemName(first)));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, first).requires(second)
+                .unlockedBy(getHasName(second), has(second)).save(output, TGIds.id(getItemName(first) + "_from_" + getItemName(second)));
     }
 
     /** Techguns 2 stairs recipes: 6 stairs from a block, and one stair back into a block. */
