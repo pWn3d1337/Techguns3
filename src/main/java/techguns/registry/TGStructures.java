@@ -1,5 +1,6 @@
 package techguns.registry;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +34,7 @@ import techguns.world.structure.LegacyTemplateStructure;
 /**
  * Structure and structure piece types, and the generated structures and structure sets: Techguns 2
  * {@code TGStructureSpawnRegister} (weights) and {@code WorldGenTGStructureSpawn} (a small structure every 16 chunks, a
- * medium one every 32), as random spread sets.
+ * medium one every 32, in the overworld and the Nether), as random spread sets.
  */
 public final class TGStructures {
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister.create(Registries.STRUCTURE_TYPE, Techguns.MODID);
@@ -54,6 +55,9 @@ public final class TGStructures {
     /** Techguns 2 {@code DESERTS_ONLY}: deserts, badlands and wastelands. */
     public static final TagKey<Biome> HAS_ALIEN_BUG_NEST = TagKey.create(Registries.BIOME, TGIds.id("has_structure/alien_bug_nest"));
 
+    /** Biomes of the Nether structures. */
+    public static final TagKey<Biome> HAS_NETHER = TagKey.create(Registries.BIOME, TGIds.id("has_structure/nether"));
+
     /**
      * A converted Techguns 2 template structure: Techguns 2 weight, set and placement values.
      *
@@ -66,18 +70,33 @@ public final class TGStructures {
         }
     }
 
-    /** Techguns 2 {@code StructureSize} grids: spacing in chunks; a structure lands in the first half of its cell. */
+    /**
+     * Techguns 2 {@code StructureSize} grids per dimension: spacing in chunks; a structure lands in the first half of
+     * its cell. Small structures stay 2 chunks away from the medium ones, which took their place in the Techguns 2 grid.
+     */
     public enum Size {
-        SMALL("overworld_small", 16, 51531853), MEDIUM("overworld_medium", 32, 51531854);
+        SMALL("overworld_small", 16, 51531853, false), MEDIUM("overworld_medium", 32, 51531854, false),
+        NETHER_SMALL("nether_small", 16, 51531855, true), NETHER_MEDIUM("nether_medium", 32, 51531856, true);
 
         public final ResourceKey<StructureSet> set;
         public final int spacing;
         public final int salt;
+        public final boolean nether;
 
-        Size(String set, int spacing, int salt) {
+        Size(String set, int spacing, int salt, boolean nether) {
             this.set = ResourceKey.create(Registries.STRUCTURE_SET, TGIds.id(set));
             this.spacing = spacing;
             this.salt = salt;
+            this.nether = nether;
+        }
+
+        /** The medium set a small one keeps away from. */
+        Optional<Size> medium() {
+            return switch (this) {
+                case SMALL -> Optional.of(MEDIUM);
+                case NETHER_SMALL -> Optional.of(NETHER_MEDIUM);
+                default -> Optional.empty();
+            };
         }
     }
 
@@ -89,6 +108,20 @@ public final class TGStructures {
             new Template("police_station", "police_station", Size.MEDIUM, 10, -1, 3, 7),
             new Template("survivor_hideout", "survivor_hideout", Size.MEDIUM, 10, -1, 3, 7));
 
+    /**
+     * Techguns 2 Nether structures: cave floor height - 1 + their {@code hoffset}, {@code placeFoundationNether} 16
+     * (the small ore cluster 2), no clean-up. Techguns 2 gave the ore cluster castle weight 1000 in the medium table.
+     */
+    public static final List<Template> NETHER = List.of(
+            new Template("nether_altar_small", "nether_altar_small", Size.NETHER_SMALL, 10, -3, 16, 0),
+            new Template("nether_soul_platform", "nether_soul_platform", Size.NETHER_SMALL, 10, -3, 16, 0),
+            new Template("nether_loot_01", "nether_loot_01", Size.NETHER_SMALL, 10, 0, 16, 0),
+            new Template("nether_acid_hole", "nether_acid_hole", Size.NETHER_SMALL, 10, -2, 16, 0),
+            new Template("nether_ore_cluster_small", "nether_ore_cluster_small", Size.NETHER_SMALL, 10, 0, 2, 0),
+            new Template("nether_altar_medium", "nether_altar_medium", Size.NETHER_MEDIUM, 10, -2, 16, 0),
+            new Template("nether_ghast_spawner", "nether_ghast_spawner", Size.NETHER_MEDIUM, 10, -3, 16, 0),
+            new Template("nether_ore_cluster_castle", "nether_ore_cluster_castle", Size.NETHER_MEDIUM, 1000, -2, 16, 0));
+
     public static final ResourceKey<Structure> ALIEN_BUG_NEST_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("alien_bug_nest"));
     /** Techguns 2 weight of the bug nest in the medium table. */
     private static final int ALIEN_BUG_NEST_WEIGHT = 20;
@@ -96,24 +129,33 @@ public final class TGStructures {
     private TGStructures() {
     }
 
-    public static void bootstrapStructures(BootstrapContext<Structure> context) {
-        HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
-        HolderSet<Biome> surface = biomes.getOrThrow(HAS_OVERWORLD_SURFACE);
-        for (Template t : OVERWORLD) {
-            context.register(t.key(), new LegacyTemplateStructure(settings(surface), TGIds.id(t.template()), t.yOffset(), t.foundation(), t.clearAbove(), 3));
-        }
-        context.register(ALIEN_BUG_NEST_KEY, new AlienBugNestStructure(settings(biomes.getOrThrow(HAS_ALIEN_BUG_NEST))));
+    private static List<Template> all() {
+        List<Template> all = new ArrayList<>(OVERWORLD);
+        all.addAll(NETHER);
+        return all;
     }
 
-    private static Structure.StructureSettings settings(HolderSet<Biome> biomes) {
-        return new Structure.StructureSettings(biomes, Map.of(), GenerationStep.Decoration.SURFACE_STRUCTURES, TerrainAdjustment.NONE);
+    public static void bootstrapStructures(BootstrapContext<Structure> context) {
+        HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
+        for (Template t : all()) {
+            HolderSet<Biome> where = biomes.getOrThrow(t.size().nether ? HAS_NETHER : HAS_OVERWORLD_SURFACE);
+            context.register(t.key(), new LegacyTemplateStructure(settings(where, t.size().nether), TGIds.id(t.template()), t.yOffset(), t.foundation(),
+                    t.clearAbove(), 3, t.size().nether ? LegacyTemplateStructure.Placement.CAVE : LegacyTemplateStructure.Placement.SURFACE));
+        }
+        context.register(ALIEN_BUG_NEST_KEY, new AlienBugNestStructure(settings(biomes.getOrThrow(HAS_ALIEN_BUG_NEST), false)));
+    }
+
+    private static Structure.StructureSettings settings(HolderSet<Biome> biomes, boolean underground) {
+        return new Structure.StructureSettings(biomes, Map.of(),
+                underground ? GenerationStep.Decoration.UNDERGROUND_STRUCTURES : GenerationStep.Decoration.SURFACE_STRUCTURES, TerrainAdjustment.NONE);
     }
 
     public static void bootstrapSets(BootstrapContext<StructureSet> context) {
         HolderGetter<Structure> structures = context.lookup(Registries.STRUCTURE);
+        HolderGetter<StructureSet> sets = context.lookup(Registries.STRUCTURE_SET);
         for (Size size : Size.values()) {
-            List<StructureSet.StructureSelectionEntry> entries = new java.util.ArrayList<>();
-            for (Template t : OVERWORLD) {
+            List<StructureSet.StructureSelectionEntry> entries = new ArrayList<>();
+            for (Template t : all()) {
                 if (t.size() == size) {
                     entries.add(StructureSet.entry(structures.getOrThrow(t.key()), t.weight()));
                 }
@@ -121,10 +163,7 @@ public final class TGStructures {
             if (size == Size.MEDIUM) {
                 entries.add(StructureSet.entry(structures.getOrThrow(ALIEN_BUG_NEST_KEY), ALIEN_BUG_NEST_WEIGHT));
             }
-            // a small structure stays clear of the medium ones, which took its place in Techguns 2's grid
-            Optional<StructurePlacement.ExclusionZone> exclusion = size == Size.SMALL
-                    ? Optional.of(new StructurePlacement.ExclusionZone(context.lookup(Registries.STRUCTURE_SET).getOrThrow(Size.MEDIUM.set), 2))
-                    : Optional.empty();
+            Optional<StructurePlacement.ExclusionZone> exclusion = size.medium().map(medium -> new StructurePlacement.ExclusionZone(sets.getOrThrow(medium.set), 2));
             context.register(size.set, new StructureSet(entries, new RandomSpreadStructurePlacement(Vec3i.ZERO,
                     StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0f, size.salt, exclusion, size.spacing, size.spacing / 2,
                     RandomSpreadType.LINEAR)));

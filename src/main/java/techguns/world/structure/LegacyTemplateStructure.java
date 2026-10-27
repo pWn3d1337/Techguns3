@@ -1,5 +1,6 @@
 package techguns.world.structure;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
@@ -11,6 +12,8 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.QuartPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -22,12 +25,19 @@ import techguns.registry.TGStructures;
 import techguns.world.LegacyPaletteProcessor;
 
 /**
- * A converted Techguns 2 surface structure (Techguns 2 {@code WorldgenStructure.spawnStructureWorldgen}): one template
- * in a random rotation, its footprint starting at the chunk corner. It only spawns where the ground under the
- * footprint (sampled every 4 blocks) varies by at most {@code heightTolerance}, with no liquid on top and not in
- * oceans; the base layer sits at the average ground height plus {@code yOffset}.
+ * A converted Techguns 2 structure: one template in a random rotation, its footprint starting at the chunk corner.
+ * <ul>
+ * <li>{@link Placement#SURFACE} (Techguns 2 {@code spawnStructureWorldgen}): only where the ground under the footprint
+ * (sampled every 4 blocks) varies by at most {@code heightTolerance}, with no liquid on top and not in oceans; the
+ * height is the average first free block above the ground.</li>
+ * <li>{@link Placement#CAVE} (Techguns 2 {@code spawnStructureCaveWorldgen}, the Nether): on a cave floor with at least
+ * 10 blocks of air above it between y 20 and 100, found at the four chunk corners within 10 blocks of each other; the
+ * height is the average floor block. The foundation stops at solid ground.</li>
+ * </ul>
+ * The base layer sits at that height plus {@code yOffset}.
  *
- * @param yOffset        base layer height relative to the average surface (Techguns 2: -1, the small mine -6)
+ * @param yOffset        base layer height relative to the placement height (Techguns 2 surface: -1, the small mine -6;
+ *                       cave: -1 plus the structure's {@code hoffset})
  * @param foundation     how many blocks the base layer is extended down into replaceable blocks
  * @param clearAbove     how many blocks above the base layer are cleared first
  */
@@ -38,8 +48,25 @@ public class LegacyTemplateStructure extends Structure {
             Codec.INT.optionalFieldOf("y_offset", -1).forGetter(s -> s.yOffset),
             Codec.INT.optionalFieldOf("foundation", 3).forGetter(s -> s.foundation),
             Codec.INT.optionalFieldOf("clear_above", 7).forGetter(s -> s.clearAbove),
-            Codec.INT.optionalFieldOf("height_tolerance", 3).forGetter(s -> s.heightTolerance)
+            Codec.INT.optionalFieldOf("height_tolerance", 3).forGetter(s -> s.heightTolerance),
+            Placement.CODEC.optionalFieldOf("placement", Placement.SURFACE).forGetter(s -> s.placement)
     ).apply(instance, LegacyTemplateStructure::new));
+
+    public enum Placement implements StringRepresentable {
+        SURFACE, CAVE;
+
+        public static final Codec<Placement> CODEC = StringRepresentable.fromEnum(Placement::values);
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /** Techguns 2 {@code WorldGenTGStructureSpawn.NETHER_STRUCT_MIN_Y / MAX_Y} and the air needed above a cave floor. */
+    private static final int CAVE_MIN_Y = 20;
+    private static final int CAVE_MAX_Y = 100;
+    private static final int CAVE_AIR = 10;
 
     /** Techguns 2 {@code getStep}: ground sample spacing. */
     private static final int SAMPLE_STEP = 4;
@@ -49,14 +76,17 @@ public class LegacyTemplateStructure extends Structure {
     private final int foundation;
     private final int clearAbove;
     private final int heightTolerance;
+    private final Placement placement;
 
-    public LegacyTemplateStructure(StructureSettings settings, ResourceLocation template, int yOffset, int foundation, int clearAbove, int heightTolerance) {
+    public LegacyTemplateStructure(StructureSettings settings, ResourceLocation template, int yOffset, int foundation, int clearAbove, int heightTolerance,
+                                   Placement placement) {
         super(settings);
         this.template = template;
         this.yOffset = yOffset;
         this.foundation = foundation;
         this.clearAbove = clearAbove;
         this.heightTolerance = heightTolerance;
+        this.placement = placement;
     }
 
     @Override
@@ -75,15 +105,51 @@ public class LegacyTemplateStructure extends Structure {
         int sizeX = footprint.getXSpan();
         int sizeZ = footprint.getZSpan();
 
-        Optional<Integer> ground = groundHeight(context, x0, z0, sizeX, sizeZ, heightTolerance);
-        if (ground.isEmpty() || isOcean(context, x0 + sizeX / 2, ground.get(), z0 + sizeZ / 2)) {
+        Optional<Integer> ground = placement == Placement.CAVE ? caveHeight(context, x0, z0)
+                : groundHeight(context, x0, z0, sizeX, sizeZ, heightTolerance).filter(y -> !isOcean(context, x0 + sizeX / 2, y, z0 + sizeZ / 2));
+        if (ground.isEmpty()) {
             return Optional.empty();
         }
         LegacyPaletteProcessor.BiomeColor biomeColor = LegacyPaletteProcessor.BiomeColor.of(biome(context, x0 + sizeX / 2, ground.get(), z0 + sizeZ / 2));
         BlockPos origin = new BlockPos(originX, ground.get() + yOffset, originZ);
         BlockPos center = new BlockPos(x0 + sizeX / 2, ground.get(), z0 + sizeZ / 2);
         return Optional.of(new GenerationStub(center, pieces -> pieces.addPiece(
-                new LegacyTemplatePiece(context.structureTemplateManager(), template, origin, rotation, pivot, biomeColor, foundation, clearAbove))));
+                new LegacyTemplatePiece(context.structureTemplateManager(), template, origin, rotation, pivot, biomeColor, foundation, clearAbove,
+                        placement == Placement.CAVE))));
+    }
+
+    /** Techguns 2 {@code getCaveHeight}: the cave floor at the four chunk corners, if all are close enough. */
+    static Optional<Integer> caveHeight(GenerationContext context, int x0, int z0) {
+        int[] heights = {airFloor(context, x0, z0), airFloor(context, x0 + 15, z0), airFloor(context, x0, z0 + 15), airFloor(context, x0 + 15, z0 + 15)};
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        int sum = 0;
+        for (int h : heights) {
+            if (h < CAVE_MIN_Y || h > CAVE_MAX_Y) {
+                return Optional.empty();
+            }
+            min = Math.min(min, h);
+            max = Math.max(max, h);
+            sum += h;
+        }
+        return max - min <= CAVE_AIR ? Optional.of(sum / heights.length) : Optional.empty();
+    }
+
+    /** Techguns 2 {@code getAirHeight}: from y 100 down, the first non-air block with at least 10 air blocks above. */
+    private static int airFloor(GenerationContext context, int x, int z) {
+        NoiseColumn column = context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState());
+        int air = 0;
+        for (int y = CAVE_MAX_Y; y > CAVE_MIN_Y; y--) {
+            if (column.getBlock(y).isAir()) {
+                air++;
+            } else {
+                if (air >= CAVE_AIR) {
+                    return y;
+                }
+                air = 0;
+            }
+        }
+        return -1;
     }
 
     /**

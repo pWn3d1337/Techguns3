@@ -48,15 +48,18 @@ public class LegacyTemplatePiece extends TemplateStructurePiece {
     private final LegacyPaletteProcessor.BiomeColor biomeColor;
     private final int foundation;
     private final int clearAbove;
+    /** Techguns 2 {@code placeFoundationNether}: the foundation ends after two solid blocks. */
+    private final boolean foundationStopsAtSolid;
 
     public LegacyTemplatePiece(StructureTemplateManager templates, ResourceLocation template, BlockPos position, Rotation rotation, BlockPos pivot,
-                               LegacyPaletteProcessor.BiomeColor biomeColor, int foundation, int clearAbove) {
+                               LegacyPaletteProcessor.BiomeColor biomeColor, int foundation, int clearAbove, boolean foundationStopsAtSolid) {
         super(TGStructures.LEGACY_TEMPLATE_PIECE.get(), 0, templates, template, template.toString(), settings(rotation, pivot, biomeColor), position);
         this.rotation = rotation;
         this.pivot = pivot;
         this.biomeColor = biomeColor;
         this.foundation = foundation;
         this.clearAbove = clearAbove;
+        this.foundationStopsAtSolid = foundationStopsAtSolid;
     }
 
     public LegacyTemplatePiece(StructureTemplateManager templates, CompoundTag tag) {
@@ -67,6 +70,7 @@ public class LegacyTemplatePiece extends TemplateStructurePiece {
         this.biomeColor = biomeColor(tag);
         this.foundation = tag.getInt("Foundation");
         this.clearAbove = tag.getInt("ClearAbove");
+        this.foundationStopsAtSolid = tag.getBoolean("FoundationStopsAtSolid");
     }
 
     static StructurePlaceSettings settings(Rotation rotation, BlockPos pivot, LegacyPaletteProcessor.BiomeColor biomeColor) {
@@ -86,6 +90,7 @@ public class LegacyTemplatePiece extends TemplateStructurePiece {
         tag.putString("BiomeColor", biomeColor.getSerializedName());
         tag.putInt("Foundation", foundation);
         tag.putInt("ClearAbove", clearAbove);
+        tag.putBoolean("FoundationStopsAtSolid", foundationStopsAtSolid);
     }
 
     @Override
@@ -101,6 +106,7 @@ public class LegacyTemplatePiece extends TemplateStructurePiece {
             for (int up = 1; up <= clearAbove; up++) {
                 setIfInside(level, box, world.above(up), Blocks.AIR.defaultBlockState());
             }
+            int solid = 0;
             for (int down = 1; down <= foundation && !state.isAir(); down++) {
                 BlockPos below = world.below(down);
                 if (!box.isInside(below)) {
@@ -109,6 +115,9 @@ public class LegacyTemplatePiece extends TemplateStructurePiece {
                 BlockState current = level.getBlockState(below);
                 if (current.isAir() || current.canBeReplaced() || !current.getFluidState().isEmpty()) {
                     level.setBlock(below, state, Block.UPDATE_CLIENTS);
+                    solid = 0;
+                } else if (foundationStopsAtSolid && ++solid >= 2) {
+                    break;
                 }
             }
         }

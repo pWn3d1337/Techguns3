@@ -144,7 +144,12 @@ public class TGStructureTests {
                     size + " structures every " + size.spacing + " chunks");
         }
         helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
-                && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
+                && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 3
+                && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
+                && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
+        for (TGStructures.Template t : TGStructures.NETHER) {
+            helper.assertTrue(structures.containsKey(t.key()), t.name() + " is a structure");
+        }
         helper.succeed();
     }
 
@@ -153,7 +158,7 @@ public class TGStructureTests {
         ServerLevel level = helper.getLevel();
         BlockPos origin = helper.absolutePos(new BlockPos(0, 4, 0));
         LegacyTemplatePiece piece = new LegacyTemplatePiece(level.getStructureManager(), TGIds.id("ore_cluster_spike"), origin, Rotation.NONE,
-                new BlockPos(4, 0, 4), LegacyPaletteProcessor.BiomeColor.WOODLAND, 3, 7);
+                new BlockPos(4, 0, 4), LegacyPaletteProcessor.BiomeColor.WOODLAND, 3, 7, false);
         BoundingBox box = new BoundingBox(origin.getX() - 1, origin.getY() - 4, origin.getZ() - 1, origin.getX() + 9, origin.getY() + 9, origin.getZ() + 9);
         piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), RandomSource.create(1), box,
                 new ChunkPos(origin), origin);

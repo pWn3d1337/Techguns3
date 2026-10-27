@@ -22,6 +22,7 @@ public class TGBiomeTagsProvider extends BiomeTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(TGTags.Biomes.URANIUM_DEPOSITS).addTag(BiomeTags.IS_BADLANDS).addTag(Tags.Biomes.IS_DESERT);
         tag(TGStructures.HAS_OVERWORLD_SURFACE).addTag(Tags.Biomes.IS_OVERWORLD);
+        tag(TGStructures.HAS_NETHER).addTag(Tags.Biomes.IS_NETHER);
         // Techguns 2 SANDY and WASTELAND (beaches were not SANDY there)
         tag(TGStructures.HAS_ALIEN_BUG_NEST).addTag(Tags.Biomes.IS_DESERT).addTag(BiomeTags.IS_BADLANDS).addTag(Tags.Biomes.IS_WASTELAND);
     }
