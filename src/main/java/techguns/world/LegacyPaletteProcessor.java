@@ -2,7 +2,11 @@ package techguns.world;
 
 import javax.annotation.Nullable;
 
+import java.util.Locale;
+import java.util.Optional;
+
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,6 +16,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
@@ -30,8 +35,10 @@ import techguns.registry.TGStructureProcessors;
  * Without this processor the template's state (the first variant, as in Techguns 2) is placed.
  */
 public final class LegacyPaletteProcessor extends StructureProcessor {
-    public static final LegacyPaletteProcessor INSTANCE = new LegacyPaletteProcessor();
-    public static final MapCodec<LegacyPaletteProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
+    /** Takes the biome colors from the biome at the block (when its chunk is readable). */
+    public static final LegacyPaletteProcessor INSTANCE = new LegacyPaletteProcessor(Optional.empty());
+    public static final MapCodec<LegacyPaletteProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            BiomeColor.CODEC.optionalFieldOf("biome_color").forGetter(p -> p.biomeColor)).apply(instance, LegacyPaletteProcessor::new));
 
     /** Block NBT key of the option tree. */
     public static final String KEY = "techguns_legacy";
@@ -49,10 +56,18 @@ public final class LegacyPaletteProcessor extends StructureProcessor {
     public static final String ALT_CHANCE = "alt_chance";
 
     /** Techguns 2 {@code BiomeColorType} order of the biome variants. */
-    private enum BiomeColor {
+    public enum BiomeColor implements StringRepresentable {
         WOODLAND, SNOW, DESERT, NETHER;
 
-        static BiomeColor of(Holder<Biome> biome) {
+        public static final StringRepresentable.EnumCodec<BiomeColor> CODEC = StringRepresentable.fromEnum(BiomeColor::values);
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+
+        /** Techguns 2 {@code getBiomeColorTypeFromBiome}. */
+        public static BiomeColor of(Holder<Biome> biome) {
             if (biome.is(BiomeTags.IS_NETHER)) {
                 return NETHER;
             }
@@ -66,7 +81,11 @@ public final class LegacyPaletteProcessor extends StructureProcessor {
         }
     }
 
-    private LegacyPaletteProcessor() {
+    private final Optional<BiomeColor> biomeColor;
+
+    /** @param biomeColor the colors of the whole structure, chosen where it was placed */
+    public LegacyPaletteProcessor(Optional<BiomeColor> biomeColor) {
+        this.biomeColor = biomeColor;
     }
 
     @Nullable
@@ -77,7 +96,9 @@ public final class LegacyPaletteProcessor extends StructureProcessor {
         if (nbt == null || !nbt.contains(KEY, Tag.TAG_COMPOUND)) {
             return current;
         }
-        Context context = new Context(settings.getRandom(current.pos()), Mth.getSeed(offset), BiomeColor.of(level.getBiome(offset)));
+        // during world generation only the chunks around the one being generated are readable
+        BiomeColor color = biomeColor.orElseGet(() -> level.hasChunkAt(current.pos()) ? BiomeColor.of(level.getBiome(current.pos())) : BiomeColor.WOODLAND);
+        Context context = new Context(settings.getRandom(current.pos()), Mth.getSeed(offset), color);
         CompoundTag chosen = context.resolve(nbt.getCompound(KEY));
         BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), chosen.getCompound(STATE));
         CompoundTag blockEntity = chosen.contains(BLOCK_ENTITY, Tag.TAG_COMPOUND) ? chosen.getCompound(BLOCK_ENTITY) : null;

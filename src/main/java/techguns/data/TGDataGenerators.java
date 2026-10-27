@@ -22,6 +22,7 @@ import techguns.data.legacy.LegacyStructureProvider;
 import techguns.registry.TGCamos;
 import techguns.registry.TGFeatures;
 import techguns.registry.TGStructureProcessors;
+import techguns.registry.TGStructures;
 import techguns.damage.TGDamageTypes;
 
 /**
@@ -42,6 +43,8 @@ public final class TGDataGenerators {
                 .add(Registries.CONFIGURED_FEATURE, TGFeatures::bootstrapConfigured)
                 .add(Registries.PLACED_FEATURE, TGFeatures::bootstrapPlaced)
                 .add(Registries.PROCESSOR_LIST, TGStructureProcessors::bootstrap)
+                .add(Registries.STRUCTURE, TGStructures::bootstrapStructures)
+                .add(Registries.STRUCTURE_SET, TGStructures::bootstrapSets)
                 .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TGBiomeModifiers::bootstrap);
         DatapackBuiltinEntriesProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), datapackEntries, Set.of(Techguns.MODID)));

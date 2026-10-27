@@ -1,0 +1,6 @@
+{
+  "type": "techguns:alien_bug_nest",
+  "biomes": "#techguns:has_structure/alien_bug_nest",
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

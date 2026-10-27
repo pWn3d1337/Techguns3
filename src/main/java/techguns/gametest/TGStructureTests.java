@@ -14,6 +14,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
+import techguns.registry.TGStructures;
+import techguns.world.structure.AlienBugNest;
+import techguns.world.structure.LegacyTemplatePiece;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -31,7 +39,7 @@ import techguns.entity.spawn.TGSpawnerBlockEntity;
 import techguns.registry.TGBlocks;
 import techguns.world.LegacyPaletteProcessor;
 
-/** Structures converted from Techguns 2 (Phase 7b): templates, the legacy palette processor, chest loot. */
+/** Structures from Techguns 2 (Phase 7b/7c): templates, the legacy palette processor, chest loot, structures and sets. */
 @GameTestHolder(Techguns.MODID)
 @PrefixGameTestTemplate(false)
 public class TGStructureTests {
@@ -117,6 +125,66 @@ public class TGStructureTests {
                 items += table.getRandomItems(params).stream().mapToInt(ItemStack::getCount).sum();
             }
             helper.assertTrue(items > 0, "chests/" + name + " gives items");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void overworldStructuresAndSetsAreRegistered(GameTestHelper helper) {
+        var registries = helper.getLevel().registryAccess();
+        var structures = registries.registryOrThrow(Registries.STRUCTURE);
+        for (TGStructures.Template t : TGStructures.OVERWORLD) {
+            helper.assertTrue(structures.containsKey(t.key()), t.name() + " is a structure");
+        }
+        helper.assertTrue(structures.containsKey(TGStructures.ALIEN_BUG_NEST_KEY), "The alien bug nest is a structure");
+        var sets = registries.registryOrThrow(Registries.STRUCTURE_SET);
+        for (TGStructures.Size size : TGStructures.Size.values()) {
+            StructureSet set = sets.getOrThrow(size.set);
+            helper.assertTrue(set.placement() instanceof RandomSpreadStructurePlacement spread && spread.spacing() == size.spacing,
+                    size + " structures every " + size.spacing + " chunks");
+        }
+        helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
+                && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void templatePieceBuildsFoundation(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos origin = helper.absolutePos(new BlockPos(0, 4, 0));
+        LegacyTemplatePiece piece = new LegacyTemplatePiece(level.getStructureManager(), TGIds.id("ore_cluster_spike"), origin, Rotation.NONE,
+                new BlockPos(4, 0, 4), LegacyPaletteProcessor.BiomeColor.WOODLAND, 3, 7);
+        BoundingBox box = new BoundingBox(origin.getX() - 1, origin.getY() - 4, origin.getZ() - 1, origin.getX() + 9, origin.getY() + 9, origin.getZ() + 9);
+        piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), RandomSource.create(1), box,
+                new ChunkPos(origin), origin);
+        int filled = 0;
+        int baseBlocks = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int z = 0; z < 8; z++) {
+                BlockPos base = origin.offset(x, 0, z);
+                if (!level.getBlockState(base).isAir()) {
+                    baseBlocks++;
+                    if (!level.getBlockState(base.below(3)).isAir()) {
+                        filled++;
+                    }
+                }
+            }
+        }
+        helper.assertTrue(baseBlocks > 0 && filled == baseBlocks, "The foundation reaches 3 blocks under every base block: " + filled + "/" + baseBlocks);
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void alienBugNestGenerates(GameTestHelper helper) {
+        for (long seed = 0; seed < 5; seed++) {
+            AlienBugNest nest = new AlienBugNest(seed, 0, 64, 0, 16 + (int) seed, 20);
+            int spawners = nest.spawners().size();
+            helper.assertTrue(spawners >= 5 && spawners <= 10, "One spawner per side chamber, got " + spawners);
+            helper.assertTrue(nest.blocks().containsValue(TGBlocks.BUGNEST_SAND.get().defaultBlockState())
+                    && nest.blocks().values().stream().anyMatch(s -> s.is(TGBlocks.SLIMY_LADDER.get()))
+                    && nest.blocks().containsValue(TGBlocks.BUGNEST_EGGS.get().defaultBlockState()), "Walls, slime ladders and eggs");
+            BoundingBox bounds = nest.bounds();
+            helper.assertTrue(bounds.getXSpan() < 128 && bounds.getZSpan() < 128 && bounds.maxY() <= 64 + 8, "Nest size " + bounds);
         }
         helper.succeed();
     }

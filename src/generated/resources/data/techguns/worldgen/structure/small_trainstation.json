@@ -1,0 +1,8 @@
+{
+  "type": "techguns:legacy_template",
+  "biomes": "#techguns:has_structure/overworld_surface",
+  "foundation": 1,
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "template": "techguns:small_trainstation"
+}

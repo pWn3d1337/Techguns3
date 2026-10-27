@@ -1,0 +1,7 @@
+{
+  "type": "techguns:legacy_template",
+  "biomes": "#techguns:has_structure/overworld_surface",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "template": "techguns:factory_house_small"
+}
