@@ -26,7 +26,7 @@ final class LegacyItems {
             Map.entry(115, "assault_rifle_magazine_incendiary"));
 
     /** Techguns 2 item names that changed. */
-    private static final Map<String, String> RENAMED = Map.of("boltaction", "bolt_action", "combatshotgun", "combat_shotgun");
+    private static final Map<String, String> RENAMED = Map.of("boltaction", "bolt_action", "combatshotgun", "combat_shotgun", "radaway", "rad_away", "radpills", "rad_pills");
 
     private LegacyItems() {
     }

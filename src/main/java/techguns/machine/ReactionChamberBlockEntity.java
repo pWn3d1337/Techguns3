@@ -48,11 +48,16 @@ import techguns.registry.TGTags;
  * fills only up to the liquid level. Every 60 ticks a reaction tick uses the recipe's power and counts as completion
  * at the required intensity (which may drift with the recipe's instability). Enough completion gives the outputs and
  * uses some liquid; running out of time fails with the recipe's risk: the item is lost, or the chamber explodes.
- * Radiation of the focus follows with the radiation system (Phase 8).
+ * Every reaction tick without progress irradiates the area around the controller (Techguns 2 {@code doRadiation}).
  */
 public class ReactionChamberBlockEntity extends MultiblockMasterBlockEntity {
     public static final int SLOT_INPUT = ReactionChamberRecipe.SLOT_INPUT;
     public static final int SLOT_FOCUS = ReactionChamberRecipe.SLOT_FOCUS;
+    private static final float RADIATION_FACTOR_FAILURE = 0.5f;
+    private static final float RADIATION_FACTOR_SUCCESS = 0.0f;
+    private static final double RADIATION_RADIUS = 6.0;
+    private static final double RADIATION_INNER_RADIUS = 4.0;
+    private static final int RADIATION_DURATION = 62;
     public static final int SLOT_OUTPUT_FIRST = 2;
     public static final int SLOT_OUTPUT_LAST = 5;
 
@@ -255,9 +260,11 @@ public class ReactionChamberBlockEntity extends MultiblockMasterBlockEntity {
     private void reactionTick(ReactionChamberRecipe recipe) {
         boolean powered = consumePower(recipe.powerPerTick());
         boolean focusMatches = recipe.focus().test(inventory.getStackInSlot(SLOT_FOCUS));
-        if (powered && focusMatches && requiredIntensity == intensity && recipe.liquidLevel() == liquidLevel) {
+        boolean progressing = powered && focusMatches && requiredIntensity == intensity && recipe.liquidLevel() == liquidLevel;
+        if (progressing) {
             completion++;
         }
+        radiate(progressing);
         if (!focusMatches) {
             // a removed or wrong focus ends the reaction at once, without completion
             progress = totalTime;
@@ -265,6 +272,19 @@ public class ReactionChamberBlockEntity extends MultiblockMasterBlockEntity {
         } else if (recipe.instability() > 0.0f && level.random.nextFloat() < recipe.instability()) {
             int change = 1 + (recipe.intensityMargin() > 1 ? level.random.nextInt(recipe.intensityMargin()) : 0);
             requiredIntensity = Math.clamp(requiredIntensity + (level.random.nextBoolean() ? change : -change), 0, ReactionChamberRecipe.MAX_LEVEL);
+        }
+    }
+
+    /**
+     * Techguns 2 {@code doRadiation} with the {@code ReactionBeamFocus} defaults every focus used: level
+     * ceil(intensity / 2) on ticks without progress (none on good ticks) for 62 ticks, full within 4 blocks of the
+     * controller, fading to nothing at 6.
+     */
+    private void radiate(boolean progressing) {
+        int radiation = (int) Math.ceil((progressing ? RADIATION_FACTOR_SUCCESS : RADIATION_FACTOR_FAILURE) * intensity);
+        if (radiation > 0) {
+            techguns.radiation.RadiationSources.irradiate(level, worldPosition.getCenter(), RADIATION_RADIUS, RADIATION_DURATION, radiation - 1,
+                    RADIATION_INNER_RADIUS, 0);
         }
     }
 

@@ -29,6 +29,7 @@ public class TGLanguageProvider extends LanguageProvider {
     /** English names that differ from the title-cased registry name. */
     private static final Map<String, String> NAME_OVERRIDES = Map.ofEntries(
             Map.entry("biomass", "Bio Mass"),
+            Map.entry("rad_away", "RadAway"), Map.entry("rad_pills", "Anti-RAD Pills"),
             // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
             Map.entry("explosive_charge", "Mining Charge"),
             Map.entry("cyber_demon", "Cyberdemon"),
@@ -313,6 +314,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.hud.radiation", "%s RAD");
         add("techguns.hud.radiation_rate", "+[%s RAD/s]");
         add("techguns.tooltip.radiation", "Radiation");
+        add(techguns.registry.TGEntities.RADIATION_AREA.get(), "Radiation Area");
     }
 
     /** Techguns 2 machine screen texts. */

@@ -145,7 +145,9 @@ public class GenericBeamProjectile extends GenericProjectile {
             if (getOwner() instanceof LivingEntity owner) {
                 owner.setLastHurtMob(target);
             }
-            target.hurt(createDamageSource(), damage);
+            if (target.hurt(createDamageSource(), damage) && beamType == BeamType.NDR && target instanceof LivingEntity living) {
+                techguns.radiation.RadiationSources.ndrHit(living);
+            }
             if (level() instanceof ServerLevel server) {
                 Vec3 pos = result.getLocation();
                 sendImpactFx(server, pos, Vec3.ZERO);

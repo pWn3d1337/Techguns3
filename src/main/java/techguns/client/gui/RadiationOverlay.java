@@ -81,11 +81,11 @@ public final class RadiationOverlay {
     public static void onTooltip(ItemTooltipEvent event) {
         int level = ItemRadiation.of(event.getItemStack());
         if (level > 0) {
-            Component text = Component.translatable("techguns.tooltip.radiation");
+            var text = Component.translatable("techguns.tooltip.radiation");
             if (level > 1) {
-                text = Component.translatable("potion.withAmplifier", text, Component.translatable("potion.potency." + (level - 1)));
+                text.append(" " + techguns.radiation.RadMedicineItem.roman(level));
             }
-            event.getToolTip().add(text.copy().withStyle(ChatFormatting.GREEN));
+            event.getToolTip().add(text.withStyle(ChatFormatting.GREEN));
         }
     }
 }

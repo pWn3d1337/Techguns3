@@ -21,7 +21,9 @@ import techguns.Techguns;
 import techguns.core.radiation.RadiationRules;
 import techguns.radiation.ItemRadiation;
 import techguns.radiation.PlayerRadiation;
+import techguns.radiation.RadiationArea;
 import techguns.radiation.RadiationEvents;
+import techguns.radiation.RadiationSources;
 import techguns.registry.TGAttributes;
 import techguns.registry.TGItems;
 import techguns.registry.TGMobEffects;
@@ -130,4 +132,62 @@ public class TGRadiationTests {
                 "Enriched uranium brews severe radiation");
         helper.succeed();
     }
+
+    @GameTest(template = ARENA)
+    public static void radMedicineCuresRadiation(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack radAway = new ItemStack(TGItems.RAD_AWAY.get());
+        ItemStack rest = radAway.finishUsingItem(helper.getLevel(), player);
+        MobEffectInstance regeneration = player.getEffect(TGMobEffects.RAD_REGENERATION);
+        helper.assertTrue(regeneration != null && regeneration.getAmplifier() == 14 && regeneration.getDuration() == 400,
+                "RadAway gives rad regeneration XV for 20 s, got " + regeneration);
+        helper.assertTrue(rest.is(TGItems.INFUSION_BAG.get()), "RadAway leaves its infusion bag, got " + rest);
+
+        Player other = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack pills = new ItemStack(TGItems.RAD_PILLS.get(), 2);
+        new ItemStack(TGItems.RAD_PILLS.get()).finishUsingItem(helper.getLevel(), other);
+        pills.finishUsingItem(helper.getLevel(), other);
+        MobEffectInstance resistance = other.getEffect(TGMobEffects.RAD_RESISTANCE);
+        helper.assertTrue(resistance != null && resistance.getAmplifier() == 2 && other.hasEffect(TGMobEffects.RAD_REGENERATION),
+                "Rad pills give rad resistance III and rad regeneration");
+        helper.assertTrue(pills.getCount() == 1 && other.getInventory().contains(new ItemStack(Items.GLASS_BOTTLE)),
+                "A pill from a stack goes, its bottle into the inventory");
+        var recipes = helper.getLevel().getRecipeManager();
+        helper.assertTrue(recipes.byKey(TGIds.id("chem_lab/rad_away")).isPresent() && recipes.byKey(TGIds.id("chem_lab/rad_pills")).isPresent(),
+                "Chem Lab recipes for the rad medicine");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void radiationSourcesIrradiateAround(GameTestHelper helper) {
+        Zombie near = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 1, 1));
+        Zombie far = helper.spawn(EntityType.ZOMBIE, new BlockPos(6, 1, 1));
+        net.minecraft.world.phys.Vec3 center = near.position();
+        RadiationSources.irradiate(helper.getLevel(), center, 6.0, 60, 4, 4.0, 0);
+        MobEffectInstance nearEffect = near.getEffect(TGMobEffects.RADIATION);
+        MobEffectInstance farEffect = far.getEffect(TGMobEffects.RADIATION);
+        helper.assertTrue(nearEffect != null && nearEffect.getAmplifier() == 4, "Full strength inside the inner radius, got " + nearEffect);
+        helper.assertTrue(farEffect != null && farEffect.getAmplifier() == 2, "Half way between inner radius and edge: half, got " + farEffect);
+
+        Zombie ndrTarget = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 1, 6));
+        RadiationSources.ndrHit(ndrTarget);
+        MobEffectInstance ndr = ndrTarget.getEffect(TGMobEffects.RADIATION);
+        helper.assertTrue(ndr != null && ndr.getAmplifier() == 4 && ndr.getDuration() == 40, "NDR hits give radiation V for 2 s, got " + ndr);
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void radiationAreaPulses(GameTestHelper helper) {
+        Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(3, 1, 3));
+        zombie.setNoAi(true);
+        net.minecraft.world.phys.Vec3 at = helper.absoluteVec(new net.minecraft.world.phys.Vec3(3.5, 1, 3.5));
+        RadiationArea area = RadiationArea.create(helper.getLevel(), at.x, at.y, at.z, 200, 2.0f, 3, 5.0f, 1);
+        helper.getLevel().addFreshEntity(area);
+        helper.succeedWhen(() -> {
+            MobEffectInstance effect = zombie.getEffect(TGMobEffects.RADIATION);
+            helper.assertTrue(effect != null && effect.getAmplifier() == 3, "The area gives radiation IV inside, got " + effect);
+            area.discard();
+        });
+    }
 }
+

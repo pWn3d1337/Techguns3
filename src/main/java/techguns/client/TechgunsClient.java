@@ -92,6 +92,7 @@ public class TechgunsClient {
         // invisible: only the main segment's particle trail is drawn
         event.registerEntityRenderer(TGEntities.SONIC_SHOTGUN_PROJECTILE.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.TFG_PROJECTILE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(TGEntities.RADIATION_AREA.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.CHAINSAW_PROJECTILE.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.GRAPPLING_HOOK_PROJECTILE.get(), GrapplingHookProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.BIOGUN_PROJECTILE.get(), BioGunProjectileRenderer::new);

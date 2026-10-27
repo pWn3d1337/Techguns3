@@ -89,7 +89,9 @@ public class RocketProjectile extends GenericProjectile {
                 explosion.setBlockDropChance(0.05f);
                 explosion.explode(createDamageSource(), false);
                 server.playSound(null, getX(), getY(), getZ(), TGSounds.NUKE_EXPLOSION.get(), SoundSource.BLOCKS, 4.0f, 1.0f);
-                // Techguns 2 also spawned a lingering radiation area here; it follows with the radiation system
+                if (techguns.TGConfig.RADIATION_ENABLED.get()) {
+                    server.addFreshEntity(techguns.radiation.RadiationArea.nuke(server, getX(), getY(), getZ(), dropStart, dropEnd));
+                }
             } else {
                 explosion.explode(createDamageSource(), true);
             }

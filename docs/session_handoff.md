@@ -36,13 +36,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 7e1 | Ore cluster structures, aircraft carrier | `124f6e7` |
   | 7e2 | Military base | `1d90379` |
   | 7f | Maze dungeons (castle) | `38b66b1` (Phase 7 merged, PR #8) |
-  | 8a1 | Radiation core | not committed yet |
+  | 8a1 | Radiation core | `7570517` |
+  | 8a2 | Radiation sources and cures | not committed yet |
 
-- All 292 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 295 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 8a1 (when the user asks), then 8a2: radiation sources and cures (rad away and rad pills with their Chem Lab recipes and crate loot, the nuke's lingering radiation area, NDR beam hits, the Reaction Chamber focus radiation). Phase 8 batch plan in the design doc (8a1 to 8f); the guide book library (8d) is the author's decision.
+1. Commit 8a2 (when the user asks), then 8b: leftovers from earlier phases (nuke and tesla knockback multipliers, gun posing during elytra flight). Phase 8 batch plan in the design doc (8a1 to 8f); the guide book library (8d) is the author's decision.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
 
 ## Notes

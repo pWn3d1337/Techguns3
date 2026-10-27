@@ -61,6 +61,12 @@ public final class TGEntities {
                     .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(20)
                     .build("biogun_projectile"));
 
+    /** Techguns 2 {@code EntityRadiation}: invisible, lingering radiation (nuke fallout). */
+    public static final Supplier<EntityType<techguns.radiation.RadiationArea>> RADIATION_AREA = ENTITY_TYPES.register("radiation_area",
+            () -> EntityType.Builder.<techguns.radiation.RadiationArea>of(techguns.radiation.RadiationArea::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(Integer.MAX_VALUE).noSummon()
+                    .build("radiation_area"));
+
     public static final Supplier<EntityType<TFGProjectile>> TFG_PROJECTILE = ENTITY_TYPES.register("tfg_projectile",
             () -> EntityType.Builder.<TFGProjectile>of(TFGProjectile::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(20)

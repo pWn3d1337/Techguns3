@@ -482,10 +482,34 @@
       "bonus_rolls": 0.0,
       "entries": [
         {
-          "type": "minecraft:empty"
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "techguns:rad_away"
         },
         {
-          "type": "minecraft:empty"
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "techguns:rad_pills"
         }
       ],
       "rolls": {
