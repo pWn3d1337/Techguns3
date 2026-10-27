@@ -1,0 +1,20 @@
+{
+  "type": "techguns:chem_lab",
+  "first": {
+    "count": 8,
+    "item": "techguns:shotgun_rounds"
+  },
+  "fluid": {
+    "amount": 250,
+    "tag": "minecraft:lava"
+  },
+  "power_per_tick": 25,
+  "result": {
+    "count": 8,
+    "id": "techguns:shotgun_rounds_incendiary"
+  },
+  "second": {
+    "count": 1,
+    "item": "minecraft:blaze_powder"
+  }
+}

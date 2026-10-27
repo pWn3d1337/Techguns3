@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "techguns:block/fabricator_housing",
+    "east": "techguns:block/fabricator_controller",
+    "north": "techguns:block/fabricator_controller",
+    "particle": "techguns:block/fabricator_controller",
+    "south": "techguns:block/fabricator_controller",
+    "up": "techguns:block/fabricator_housing",
+    "west": "techguns:block/fabricator_controller"
+  }
+}

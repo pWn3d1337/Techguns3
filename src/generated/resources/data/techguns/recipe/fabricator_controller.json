@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "f": {
+      "item": "techguns:fabricator_housing"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    }
+  },
+  "pattern": [
+    " g ",
+    "cfc",
+    " g "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:fabricator_controller"
+  }
+}

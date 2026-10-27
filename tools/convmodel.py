@@ -34,6 +34,8 @@ def f(v):
 
 for line in ctor.splitlines():
     line = line.strip()
+    # some models write every statement as this.<field>...
+    line = re.sub(r'\bthis\.', '', line)
     m = re.match(r'(\w+)\s*=\s*new ModelRenderer\(this,\s*(\d+),\s*(\d+)\)', line)
     if m:
         n = m.group(1)

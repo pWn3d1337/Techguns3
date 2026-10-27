@@ -142,6 +142,11 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     /** Delivers the results of a finished job. Server only. */
     protected abstract void finishOperation(MachineOperation operation);
 
+    /** Whether the machine runs at all (multiblocks only when formed, Techguns 2 {@code enabled}). */
+    protected boolean canWork() {
+        return true;
+    }
+
     /** Server, no job running and redstone allows work: per-tick work besides jobs; true skips looking for a job. */
     protected boolean idleTick() {
         return false;
@@ -186,6 +191,9 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, TGMachineBlockEntity machine) {
+        if (!machine.canWork()) {
+            return;
+        }
         if (machine.working && !machine.stalled && machine.redstoneMode.allows(machine.signal) && machine.progress < machine.totalTime) {
             machine.progress++;
             machine.playWorkSound();
@@ -195,6 +203,9 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     }
 
     private void serverTick() {
+        if (!canWork()) {
+            return;
+        }
         if (!redstoneMode.allows(signal)) {
             setStalled(operation != null);
             return;

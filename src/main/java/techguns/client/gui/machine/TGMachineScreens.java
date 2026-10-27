@@ -19,5 +19,6 @@ public final class TGMachineScreens {
         event.register(TGMenus.CAMO_BENCH.get(), CamoBenchScreen::new);
         event.register(TGMenus.UPGRADE_BENCH.get(), UpgradeBenchScreen::new);
         event.register(TGMenus.AMMO_BENCH.get(), AmmoBenchScreen::new);
+        event.register(TGMenus.FABRICATOR.get(), FabricatorScreen::new);
     }
 }

@@ -1,0 +1,29 @@
+{
+  "type": "techguns:fabricator",
+  "input": {
+    "ingredient": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "plate": {
+    "count": 2,
+    "ingredient": {
+      "tag": "c:plates/lead"
+    }
+  },
+  "powder": {
+    "count": 4,
+    "ingredient": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:nuclear_power_cell_empty"
+  },
+  "wires": {
+    "ingredient": {
+      "item": "techguns:circuit_board"
+    }
+  }
+}

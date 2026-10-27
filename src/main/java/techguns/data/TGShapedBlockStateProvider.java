@@ -318,6 +318,29 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         cubeMachine(TGBlocks.REPAIR_BENCH, "repairbench_front", "repairbench_top");
         modelMachine(TGBlocks.UPGRADE_BENCH, "upgrade_bench_base", "upgrade_bench_base");
         modelMachine(TGBlocks.AMMO_BENCH, "ammo_bench_base", "ammo_bench_base");
+        multiblocks();
+    }
+
+    /**
+     * Techguns 2 multiblock blocks: plain cubes until formed, then only a particle texture (the controller's renderer
+     * draws the machine).
+     */
+    private void multiblocks() {
+        multiblockPart(TGBlocks.FABRICATOR_HOUSING, models().cubeAll("block/fabricator_housing", tex("fabricator_housing")), tex("fabricator_housing"));
+        multiblockPart(TGBlocks.FABRICATOR_GLASS, models().cubeAll("block/fabricator_glass", tex("fabricator_glass")).renderType(CUTOUT),
+                tex("fabricator_glass"));
+        ResourceLocation side = tex("fabricator_controller");
+        ResourceLocation housing = tex("fabricator_housing");
+        multiblockPart(TGBlocks.FABRICATOR_CONTROLLER, models().cube("block/fabricator_controller", housing, housing, side, side, side, side)
+                .texture("particle", side), side);
+    }
+
+    private void multiblockPart(DeferredBlock<? extends Block> block, ModelFile unformed, ResourceLocation particle) {
+        ModelFile formed = models().getBuilder("block/" + path(block) + "_formed").texture("particle", particle);
+        // the controller's facing does not change its look (Techguns 2 had none)
+        getVariantBuilder(block.get()).forAllStates(state -> net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()
+                .modelFile(state.getValue(techguns.multiblock.MultiblockPartBlock.FORMED) ? formed : unformed).build());
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
     }
 
     /** Techguns 2 {@code SimpleMachine} cube: own front and top, the paint machine side everywhere else. */

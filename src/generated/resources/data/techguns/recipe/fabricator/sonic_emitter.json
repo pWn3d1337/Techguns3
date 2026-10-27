@@ -1,0 +1,28 @@
+{
+  "type": "techguns:fabricator",
+  "input": {
+    "ingredient": {
+      "item": "techguns:coil"
+    }
+  },
+  "plate": {
+    "ingredient": {
+      "tag": "c:plates/titanium"
+    }
+  },
+  "powder": {
+    "ingredient": {
+      "item": "techguns:mechanical_parts_carbon"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:sonic_emitter"
+  },
+  "wires": {
+    "count": 2,
+    "ingredient": {
+      "item": "techguns:circuit_board_elite"
+    }
+  }
+}

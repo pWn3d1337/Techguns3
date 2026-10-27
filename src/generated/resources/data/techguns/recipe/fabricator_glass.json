@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "f": {
+      "item": "techguns:fabricator_housing"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    }
+  },
+  "pattern": [
+    "fgf",
+    "g g",
+    "fgf"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:fabricator_glass"
+  }
+}

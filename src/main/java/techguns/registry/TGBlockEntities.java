@@ -15,6 +15,9 @@ import techguns.machine.ChargingStationBlockEntity;
 import techguns.machine.ChemLabBlockEntity;
 import techguns.machine.GrinderBlockEntity;
 import techguns.machine.CamoBenchBlockEntity;
+import techguns.machine.FabricatorBlockEntity;
+import techguns.multiblock.MultiblockMasterBlockEntity;
+import techguns.multiblock.MultiblockPartBlockEntity;
 import techguns.machine.MetalPressBlockEntity;
 import techguns.machine.RepairBenchBlockEntity;
 import techguns.machine.UpgradeBenchBlockEntity;
@@ -56,6 +59,15 @@ public final class TGBlockEntities {
     public static final Supplier<BlockEntityType<UpgradeBenchBlockEntity>> UPGRADE_BENCH = BLOCK_ENTITY_TYPES.register("upgrade_bench",
             () -> BlockEntityType.Builder.of(UpgradeBenchBlockEntity::new, TGBlocks.UPGRADE_BENCH.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<FabricatorBlockEntity>> FABRICATOR = BLOCK_ENTITY_TYPES.register("fabricator",
+            () -> BlockEntityType.Builder.of(FabricatorBlockEntity::new, TGBlocks.FABRICATOR_CONTROLLER.get()).build(null));
+    /** All multiblock structure blocks (housings, glass, connectors). */
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<MultiblockPartBlockEntity>> MULTIBLOCK_PART = BLOCK_ENTITY_TYPES.register("multiblock_part",
+            () -> BlockEntityType.Builder.of(MultiblockPartBlockEntity::new, TGBlocks.FABRICATOR_HOUSING.get(), TGBlocks.FABRICATOR_GLASS.get())
+                    .build(null));
+
     private TGBlockEntities() {
     }
 
@@ -71,8 +83,26 @@ public final class TGBlockEntities {
         machine(event, CHEM_LAB.get());
         machine(event, CHARGING_STATION.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CHEM_LAB.get(), (lab, side) -> lab.getFluidHandler());
+        machine(event, FABRICATOR.get());
+        multiblockParts(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());
+    }
+
+    /** Linked parts expose their master's handlers by connector type (Techguns 2 slave capabilities). */
+    private static void multiblockParts(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MULTIBLOCK_PART.get(), (part, side) -> {
+            MultiblockMasterBlockEntity master = part.master();
+            return master != null && part.getConnector().items() ? master.getAutomationHandler() : null;
+        });
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, MULTIBLOCK_PART.get(), (part, side) -> {
+            MultiblockMasterBlockEntity master = part.master();
+            return master != null && part.getConnector().energy() ? master.getEnergy() : null;
+        });
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MULTIBLOCK_PART.get(), (part, side) -> {
+            MultiblockMasterBlockEntity master = part.master();
+            return master != null && part.getConnector().fluids() ? master.getMultiblockFluidHandler() : null;
+        });
     }
 
     private static <T extends TGMachineBlockEntity> void machine(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

@@ -36,6 +36,8 @@ import techguns.block.TGLanternBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import techguns.machine.TGMachineBlock;
+import techguns.multiblock.MultiblockControllerBlock;
+import techguns.multiblock.MultiblockPartBlock;
 
 /**
  * Techguns blocks. Every block registered with {@link #withItem} also gets a block item.
@@ -238,6 +240,14 @@ public final class TGBlocks {
     /** Techguns 2 {@code UpgradeBenchTileEnt.BLOCK_BB}: 13 pixels high. */
     public static final DeferredBlock<TGMachineBlock> UPGRADE_BENCH = withItem("upgrade_bench",
             () -> new TGMachineBlock(machine(), TGBlockEntities.UPGRADE_BENCH, Block.box(0, 0, 0, 16, 13, 16), RenderShape.MODEL));
+    // --- Multiblocks (Phase 5c; Techguns 2 MultiBlockMachine variants, one block each) ---
+    public static final DeferredBlock<MultiblockPartBlock> FABRICATOR_HOUSING = withItem("fabricator_housing",
+            () -> new MultiblockPartBlock(machine()));
+    public static final DeferredBlock<MultiblockPartBlock> FABRICATOR_GLASS = withItem("fabricator_glass",
+            () -> new MultiblockPartBlock(machine().sound(SoundType.GLASS)));
+    public static final DeferredBlock<MultiblockControllerBlock> FABRICATOR_CONTROLLER = withItem("fabricator_controller",
+            () -> new MultiblockControllerBlock(machine(), TGBlockEntities.FABRICATOR));
+
     /** Fabric Ammo Bench: no block entity, the menu keeps the inputs. */
     public static final DeferredBlock<AmmoBenchBlock> AMMO_BENCH = withItem("ammo_bench", () -> new AmmoBenchBlock(machine()));
 

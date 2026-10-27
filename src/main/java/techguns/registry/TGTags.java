@@ -32,6 +32,10 @@ public final class TGTags {
 
         /** Items that Ammo Bags accept: all ammo items, full and empty (magazines, cells, tanks, rounds, rockets). */
         public static final TagKey<Item> AMMO = TagKey.create(Registries.ITEM, TGIds.id("ammo"));
+        /** Fabricator slots (Techguns 2 {@code FabricatorRecipe.items_wireslot/powderslot/plateslot}). */
+        public static final TagKey<Item> FABRICATOR_WIRES = TagKey.create(Registries.ITEM, TGIds.id("fabricator_wires"));
+        public static final TagKey<Item> FABRICATOR_POWDERS = TagKey.create(Registries.ITEM, TGIds.id("fabricator_powders"));
+        public static final TagKey<Item> FABRICATOR_PLATES = TagKey.create(Registries.ITEM, TGIds.id("fabricator_plates"));
         /** Ammo Bench inputs (Fabric tags). */
         public static final TagKey<Item> BULLET_CORE = TagKey.create(Registries.ITEM, TGIds.id("bullet_metal_core"));
         public static final TagKey<Item> BULLET_CASING = TagKey.create(Registries.ITEM, TGIds.id("bullet_metal_casing"));

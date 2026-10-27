@@ -17,14 +17,15 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 5b1 | Machine framework + Metal Press + machine upgrade item | `0e7122b` |
   | 5b2a | Ammo Press, Blast Furnace, Grinder | `ca87676` |
   | 5b2b | Chem Lab (fluid tanks), Charging Station, creeper acid fluid | `c9a082e` |
-  | 5b3 | Repair, Camo, Upgrade and Ammo Bench, armor upgrades, Grinder armor recycling | not committed yet |
+  | 5b3 | Repair, Camo, Upgrade and Ammo Bench, armor upgrades, Grinder armor recycling | `7341f36` |
+  | 5c1 | Multiblock framework + Fabricator | not committed yet |
 
-- All 225 GameTests pass; each batch was checked in game via MCP.
+- All 229 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 5b3 (not committed yet).
-2. 5c multiblocks (Fabricator, Reaction Chamber, Ore Drill), 5d turrets / explosive charges / camp flag, 5e JEI.
+1. Commit 5c1, then 5c2 Reaction Chamber (also remove the laser focus crafting recipe there) and 5c3 Ore Drill + ore clusters (plan in the design doc, 5c batches).
+2. 5d turrets / explosive charges / camp flag, 5e JEI.
 3. Open a Phase 5 PR when Phase 5 is done (or earlier if the user asks).
 
 ## Open decision for the user
@@ -33,6 +34,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ## Decisions made in this session (also in the design doc)
 
+- Fabric fallback crafting recipes for machine-made items removed; Techguns 2 recipes only (laser focus follows with the Reaction Chamber).
 - Raw steel / raw obsidian steel ingots (Fabric interim) removed: steel and obsidian steel only from the Blast Furnace (2026-10-27).
 - Q6: port **both** Ammo Press (1.12, powered, build plans) and the Fabric Ammo Bench (unpowered).
 - Camo Bench: 1.12 scope with a Fabric-style named camo list.

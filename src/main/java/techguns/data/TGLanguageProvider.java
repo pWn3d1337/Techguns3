@@ -293,6 +293,9 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.gui.xp", "XP: %s");
         add("techguns.gui.xpcost", "XP Cost: %s");
         add("techguns.container.ammobench", "Ammo Bench");
+        // Phase 5c multiblocks
+        add("techguns.container.fabricator", "Fabricator");
+        add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
         add("techguns.container.ammopress.build", "Building:");
         add("techguns.gui.empty", "Empty");
         add("techguns.chemlab.dumpinput", "Dump Input Tank");
