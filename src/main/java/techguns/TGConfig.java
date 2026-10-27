@@ -72,6 +72,49 @@ public final class TGConfig {
 
     static {
         COMMON.pop();
+        COMMON.push("npc_spawn");
+    }
+
+    // Techguns 2 "NPC Spawn" category
+    public static final ModConfigSpec.IntValue DISTANCE_SPAWN_LEVEL_0 = COMMON
+            .comment("Up to which distance to the world spawn only NPCs with danger level up to 0 spawn (half that in the Nether).")
+            .defineInRange("distanceSpawnLevel0", 500, 0, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue DISTANCE_SPAWN_LEVEL_1 = COMMON
+            .comment("Up to which distance to the world spawn only NPCs with danger level up to 1 spawn (half that in the Nether).")
+            .defineInRange("distanceSpawnLevel1", 1000, 0, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue DISTANCE_SPAWN_LEVEL_2 = COMMON
+            .comment("Up to which distance to the world spawn only NPCs with danger level up to 2 spawn (half that in the Nether).")
+            .defineInRange("distanceSpawnLevel2", 2500, 0, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_OVERWORLD = COMMON
+            .comment("Spawn weight of Techguns NPCs among the monsters of overworld biomes; determines how many Techguns NPCs spawn. 0 disables them.")
+            .defineInRange("spawnWeightOverworld", 600, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_NETHER = COMMON
+            .comment("Spawn weight of Techguns NPCs among the monsters of Nether biomes. 0 disables them.")
+            .defineInRange("spawnWeightNether", 300, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_ZOMBIE_SOLDIER = COMMON
+            .comment("Spawn weight of zombie soldiers (danger level 1). 0 disables them.").defineInRange("spawnWeightZombieSoldier", 100, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_ZOMBIE_FARMER = COMMON
+            .comment("Spawn weight of zombie farmers (danger level 0). 0 disables them.").defineInRange("spawnWeightZombieFarmer", 200, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_ZOMBIE_MINER = COMMON
+            .comment("Spawn weight of zombie miners (danger level 0). 0 disables them.").defineInRange("spawnWeightZombieMiner", 200, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_SKELETON_SOLDIER = COMMON
+            .comment("Spawn weight of skeleton soldiers (danger level 1). 0 disables them.").defineInRange("spawnWeightSkeletonSoldier", 100, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_PSYCHO_STEVE = COMMON
+            .comment("Spawn weight of Psycho Steve (danger level 1), an early game boss; keep it low. 0 disables him.")
+            .defineInRange("spawnWeightPsychoSteve", 3, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_BANDIT = COMMON
+            .comment("Spawn weight of bandits (danger level 2). 0 disables them.").defineInRange("spawnWeightBandit", 50, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_ZOMBIE_PIGMAN_SOLDIER = COMMON
+            .comment("Spawn weight of zombie pigman soldiers (Nether, danger level 0). 0 disables them.")
+            .defineInRange("spawnWeightZombiePigmanSoldier", 100, 0, 10000);
+    public static final ModConfigSpec.IntValue SPAWN_WEIGHT_CYBER_DEMON = COMMON
+            .comment("Spawn weight of cyber demons (Nether, danger level 0). 0 disables them.").defineInRange("spawnWeightCyberDemon", 30, 0, 10000);
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> SPAWN_BIOME_BLACKLIST = COMMON
+            .comment("Biome ids (e.g. minecraft:mushroom_fields) where no Techguns NPCs spawn naturally.")
+            .defineListAllowEmpty("biomeBlacklist", java.util.List.of(), () -> "", entry -> entry instanceof String);
+
+    static {
+        COMMON.pop();
     }
 
     static final ModConfigSpec COMMON_SPEC = COMMON.build();

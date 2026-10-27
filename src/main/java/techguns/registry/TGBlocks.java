@@ -265,6 +265,12 @@ public final class TGBlocks {
     /** Techguns 2 turret base; base and turret are drawn by renderers. */
     public static final DeferredBlock<techguns.block.TurretBlock> TURRET = withItem("turret", () -> new techguns.block.TurretBlock(machine()));
 
+    // --- TG spawners (Phase 6f; Techguns 2 tg_spawner hole / soldier_spawn) ---
+    public static final DeferredBlock<techguns.block.TGSpawnerBlock> MONSTER_HOLE = withItem("monster_hole",
+            () -> new techguns.block.TGSpawnerBlock(spawner(), () -> TGNpcs.ZOMBIE_SOLDIER.type().get()));
+    public static final DeferredBlock<techguns.block.TGSpawnerBlock> MILITARY_SPAWN_POINT = withItem("military_spawn_point",
+            () -> new techguns.block.TGSpawnerBlock(spawner(), () -> TGNpcs.ARMY_SOLDIER.type().get()));
+
     // --- Explosive charges (Phase 5d; Techguns 2 explosive_charge variants) ---
     public static final DeferredBlock<techguns.block.ExplosiveChargeBlock> EXPLOSIVE_CHARGE = withItem("explosive_charge",
             () -> new techguns.block.ExplosiveChargeBlock(charge(), techguns.machine.ExplosiveChargeBlockEntity.Kind.TNT));
@@ -365,6 +371,11 @@ public final class TGBlocks {
     }
 
     /** Techguns 2 {@code BasicMachine} with the explosive charge's small box: iron, hardness 4, no tool needed. */
+    /** Techguns 2 spawners: unbreakable, no collision, nothing drops. */
+    private static BlockBehaviour.Properties spawner() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(-1.0f, 3600000.0f).noOcclusion().pushReaction(PushReaction.BLOCK);
+    }
+
     private static BlockBehaviour.Properties charge() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(4.0f, 20.0f).sound(SoundType.METAL).noOcclusion()
                 .pushReaction(PushReaction.DESTROY);

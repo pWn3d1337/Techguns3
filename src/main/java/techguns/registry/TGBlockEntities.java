@@ -84,6 +84,11 @@ public final class TGBlockEntities {
             "explosive_charge", () -> BlockEntityType.Builder.of(techguns.machine.ExplosiveChargeBlockEntity::new, TGBlocks.EXPLOSIVE_CHARGE.get(),
                     TGBlocks.EXPLOSIVE_CHARGE_ADVANCED.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.entity.spawn.TGSpawnerBlockEntity>> TG_SPAWNER = BLOCK_ENTITY_TYPES.register("tg_spawner",
+            () -> BlockEntityType.Builder.of(techguns.entity.spawn.TGSpawnerBlockEntity::new, TGBlocks.MONSTER_HOLE.get(),
+                    TGBlocks.MILITARY_SPAWN_POINT.get()).build(null));
+
     private TGBlockEntities() {
     }
 

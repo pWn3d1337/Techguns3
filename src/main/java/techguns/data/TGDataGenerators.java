@@ -12,9 +12,11 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import techguns.Techguns;
+import techguns.registry.TGBiomeModifiers;
 import techguns.registry.TGCamos;
 import techguns.damage.TGDamageTypes;
 
@@ -32,7 +34,8 @@ public final class TGDataGenerators {
 
         RegistrySetBuilder datapackEntries = new RegistrySetBuilder()
                 .add(Registries.DAMAGE_TYPE, TGDamageTypes::bootstrap)
-                .add(TGCamos.KEY, TGCamoProvider::bootstrap);
+                .add(TGCamos.KEY, TGCamoProvider::bootstrap)
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TGBiomeModifiers::bootstrap);
         DatapackBuiltinEntriesProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), datapackEntries, Set.of(Techguns.MODID)));
         CompletableFuture<HolderLookup.Provider> lookup = datapackProvider.getRegistryProvider();
@@ -43,7 +46,9 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new TGItemTagsProvider(output, lookup, blockTags.contentsGetter(), fileHelper));
         generator.addProvider(event.includeServer(), new TGFluidTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
-                List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK)), lookup));
+                List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK),
+                        new LootTableProvider.SubProviderEntry(TGEntityLootProvider::new, LootContextParamSets.ENTITY)), lookup));
+        generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
 

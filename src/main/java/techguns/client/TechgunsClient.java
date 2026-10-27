@@ -5,6 +5,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.minecraft.client.renderer.entity.NoopRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -80,6 +81,7 @@ public class TechgunsClient {
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(TGEntities.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.TURRET.get(), techguns.client.render.entity.TurretRenderer::new);
+        registerNpcRenderers(event);
         event.registerEntityRenderer(TGEntities.GENERIC_BEAM_PROJECTILE.get(), BeamProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.ROCKET_PROJECTILE.get(), RocketProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.GUIDED_MISSILE.get(), RocketProjectileRenderer::new);
@@ -92,5 +94,45 @@ public class TechgunsClient {
         event.registerEntityRenderer(TGEntities.BIOGUN_PROJECTILE.get(), BioGunProjectileRenderer::new);
         // bullet tracer; the type's particle trail comes on top
         event.registerEntityRenderer(TGEntities.MAGIC_RIFLE_PROJECTILE.get(), GenericProjectileRenderer::new);
+    }
+
+    /** Techguns 2 NPC renderers: texture and the vanilla model layers of the mob they look like (humans use the zombie biped). */
+    private static void registerNpcRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        ResourceLocation zombieSoldier = techguns.TGIds.id("textures/entity/zombie_soldier.png");
+        zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_SOLDIER, zombieSoldier);
+        zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_FARMER, zombieSoldier);
+        zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_MINER, zombieSoldier);
+        zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_POLICEMAN, techguns.TGIds.id("textures/entity/zombie_policeman.png"));
+        ResourceLocation armySoldier = techguns.TGIds.id("textures/entity/army_soldier.png");
+        zombieLike(event, techguns.registry.TGNpcs.ARMY_SOLDIER, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.BANDIT, techguns.TGIds.id("textures/entity/bandit.png"));
+        zombieLike(event, techguns.registry.TGNpcs.COMMANDO, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.OUTCAST, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.PSYCHO_STEVE, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.STORMTROOPER, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.DICTATOR_DAVE, techguns.TGIds.id("textures/entity/dictator.png"));
+        event.registerEntityRenderer(techguns.registry.TGNpcs.CYBER_DEMON.type().get(), context -> new techguns.client.render.entity.npc.CustomModelNpcRenderer(
+                context, techguns.client.render.entity.npc.CyberDemonModel.createLayer(), false, techguns.TGIds.id("textures/entity/cyberdemon.png"), 0.5f));
+        event.registerEntityRenderer(techguns.registry.TGNpcs.GHASTLING.type().get(), techguns.client.render.entity.npc.GhastlingRenderer::new);
+        event.registerEntityRenderer(techguns.registry.TGNpcs.ATTACK_HELICOPTER.type().get(), techguns.client.render.entity.npc.AttackHelicopterRenderer::new);
+        event.registerEntityRenderer(techguns.registry.TGNpcs.ALIEN_BUG.type().get(), techguns.client.render.entity.npc.AlienBugRenderer::new);
+        for (techguns.registry.TGNpcs.Npc mutant : java.util.List.of(techguns.registry.TGNpcs.SUPER_MUTANT_BASIC, techguns.registry.TGNpcs.SUPER_MUTANT_HEAVY,
+                techguns.registry.TGNpcs.SUPER_MUTANT_ELITE)) {
+            event.registerEntityRenderer(mutant.type().get(), techguns.client.render.entity.npc.SuperMutantRenderer::new);
+        }
+        event.registerEntityRenderer(techguns.registry.TGNpcs.ZOMBIE_PIGMAN_SOLDIER.type().get(), context -> new techguns.client.render.entity.npc.TGNpcRenderer(
+                context, techguns.TGIds.of("minecraft", "textures/entity/piglin/zombified_piglin.png"),
+                net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN, net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN_INNER_ARMOR,
+                net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN_OUTER_ARMOR));
+        event.registerEntityRenderer(techguns.registry.TGNpcs.SKELETON_SOLDIER.type().get(), context -> new techguns.client.render.entity.npc.TGNpcRenderer(
+                context, techguns.TGIds.of("minecraft", "textures/entity/skeleton/skeleton.png"),
+                net.minecraft.client.model.geom.ModelLayers.SKELETON, net.minecraft.client.model.geom.ModelLayers.SKELETON_INNER_ARMOR,
+                net.minecraft.client.model.geom.ModelLayers.SKELETON_OUTER_ARMOR));
+    }
+
+    private static void zombieLike(EntityRenderersEvent.RegisterRenderers event, techguns.registry.TGNpcs.Npc npc, ResourceLocation texture) {
+        event.registerEntityRenderer(npc.type().get(), context -> new techguns.client.render.entity.npc.TGNpcRenderer(context, texture,
+                net.minecraft.client.model.geom.ModelLayers.ZOMBIE, net.minecraft.client.model.geom.ModelLayers.ZOMBIE_INNER_ARMOR,
+                net.minecraft.client.model.geom.ModelLayers.ZOMBIE_OUTER_ARMOR));
     }
 }

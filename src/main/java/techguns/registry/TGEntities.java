@@ -87,10 +87,16 @@ public final class TGEntities {
             () -> EntityType.Builder.<techguns.entity.npc.TurretEntity>of(techguns.entity.npc.TurretEntity::new, MobCategory.MISC)
                     .sized(0.6f, 0.9f).eyeHeight(0.75f).clientTrackingRange(10).fireImmune().build("turret"));
 
+    /** Techguns 2 {@code TGDummySpawn}: zombie-sized placeholder in the biome spawn lists, replaced on spawn. */
+    public static final Supplier<EntityType<techguns.entity.spawn.NpcSpawnMarker>> NPC_SPAWN_MARKER = ENTITY_TYPES.register("npc_spawn_marker",
+            () -> EntityType.Builder.<techguns.entity.spawn.NpcSpawnMarker>of(techguns.entity.spawn.NpcSpawnMarker::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.95f).clientTrackingRange(8).build("npc_spawn_marker"));
+
     private TGEntities() {
     }
 
     public static void registerAttributes(net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent event) {
         event.put(TURRET.get(), techguns.entity.npc.TurretEntity.createAttributes().build());
+        event.put(NPC_SPAWN_MARKER.get(), net.minecraft.world.entity.monster.Monster.createMonsterAttributes().build());
     }
 }

@@ -15,6 +15,7 @@ public final class TGRegistries {
         TGGuns.init();
         TGArmors.init();
         TGSlotItems.init();
+        TGNpcs.init();
         TGFluids.init(modEventBus);
 
         TGBlocks.BLOCKS.register(modEventBus);
@@ -31,10 +32,12 @@ public final class TGRegistries {
         TGRecipes.TYPES.register(modEventBus);
         TGBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         TGMenus.MENUS.register(modEventBus);
+        TGBiomeModifiers.SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
         modEventBus.addListener(TGCamos::register);
         modEventBus.addListener(TGEntities::registerAttributes);
+        modEventBus.addListener(TGNpcs::registerAttributes);
         TGBlockEntities.init(modEventBus);
     }
 }

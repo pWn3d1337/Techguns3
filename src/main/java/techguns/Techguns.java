@@ -16,6 +16,7 @@ import techguns.gun.ShooterState;
 import org.slf4j.Logger;
 import techguns.damage.TGDamageEvents;
 import techguns.gun.MeleeToolEvents;
+import techguns.entity.spawn.TGSpawnManager;
 import techguns.item.AmmoBagEvents;
 import techguns.data.TGDataGenerators;
 import techguns.network.TGNetwork;
@@ -45,6 +46,7 @@ public class Techguns {
         ExtraSlots.init();
         ExtraSlotEvents.init(NeoForge.EVENT_BUS);
         AmmoBagEvents.init(NeoForge.EVENT_BUS);
+        TGSpawnManager.init(modEventBus, NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener((PlayerTickEvent.Post event) -> ShooterState.of(event.getEntity()).tick());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TGConfig.COMMON_SPEC);

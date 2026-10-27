@@ -30,6 +30,14 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("biomass", "Bio Mass"),
             // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
             Map.entry("explosive_charge", "Mining Charge"),
+            Map.entry("cyber_demon", "Cyberdemon"),
+            Map.entry("cyber_demon_spawn_egg", "Cyberdemon Spawn Egg"),
+            Map.entry("super_mutant_basic", "Super Mutant"),
+            Map.entry("super_mutant_heavy", "Heavy Super Mutant"),
+            Map.entry("super_mutant_elite", "Elite Super Mutant"),
+            Map.entry("super_mutant_basic_spawn_egg", "Super Mutant Spawn Egg"),
+            Map.entry("super_mutant_heavy_spawn_egg", "Heavy Super Mutant Spawn Egg"),
+            Map.entry("super_mutant_elite_spawn_egg", "Elite Super Mutant Spawn Egg"),
             Map.entry("turret_armor_iron", "Turret Armor (Iron)"),
             Map.entry("turret_armor_steel", "Turret Armor (Steel)"),
             Map.entry("turret_armor_obsidian_steel", "Turret Armor (Obsidian Steel)"),
@@ -345,6 +353,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.reactionchamber.risk.explosion_medium", "Medium Explosion");
         add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
         add("entity.techguns.turret", "Turret");
+        add("entity.techguns.npc_spawn_marker", "Techguns NPC Spawn");
         add("techguns.container.turretbase", "Turret");
         add("techguns.turret.health", "Turret Health");
         add("techguns.turret.targetAnimals", "Target Animals");
@@ -462,6 +471,7 @@ public class TGLanguageProvider extends LanguageProvider {
 
     /** Every block and item gets an English name; title-cased from its registry name unless overridden. */
     private void addItemsAndBlocks() {
+        techguns.registry.TGNpcs.npcs().forEach(npc -> add(npc.type().get(), englishName(npc.name())));
         Set<String> named = new HashSet<>();
         for (DeferredBlock<? extends Block> block : TGBlocks.blocksWithItem()) {
             String path = block.getId().getPath();

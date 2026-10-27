@@ -31,6 +31,7 @@ import techguns.core.damage.TGDamageCategory;
 import techguns.core.gun.GunMath;
 import techguns.damage.TGDamage;
 import techguns.damage.TGDamageSource;
+import techguns.entity.ai.GunShooter;
 import techguns.gun.FirePos;
 import techguns.gun.ProjectileFactory;
 import techguns.gun.ShotParams;
@@ -47,8 +48,6 @@ import techguns.registry.TGParticleTypes;
  * path, damage falls off with distance (Techguns 2 {@code GenericProjectile}).
  */
 public class GenericProjectile extends Projectile implements IEntityWithComplexSpawn {
-    /** Sideways distance of the muzzle from the eye when firing from the left or right hand. */
-    private static final float SIDE_OFFSET = 0.16f;
     /** Spread is given as a fraction; this scales it to degrees. */
     private static final float SPREAD_TO_DEGREES = 40.0f;
 
@@ -150,7 +149,8 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         Vec3 pos = shooter.getEyePosition().add(0, -0.1, 0);
         if (firePos != FirePos.CENTER) {
             float yawRad = shooter.getYRot() * Mth.DEG_TO_RAD;
-            double side = firePos == FirePos.RIGHT ? -SIDE_OFFSET : SIDE_OFFSET;
+            double offset = shooter instanceof GunShooter gunShooter ? gunShooter.bulletSideOffset() : GunShooter.DEFAULT_BULLET_SIDE_OFFSET;
+            double side = firePos == FirePos.RIGHT ? -offset : offset;
             pos = pos.add(Mth.cos(yawRad) * side, 0, Mth.sin(yawRad) * side);
         }
         setPos(pos);

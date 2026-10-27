@@ -1,0 +1,5 @@
+{
+  "type": "techguns:npc_spawns",
+  "biomes": "#c:is_nether",
+  "table": "nether"
+}

@@ -324,6 +324,15 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         machine(TGBlocks.TURRET, "turret_base");
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE, "tnt_charge");
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE_ADVANCED, "c4_charge");
+        spawner(TGBlocks.MONSTER_HOLE);
+        spawner(TGBlocks.MILITARY_SPAWN_POINT);
+    }
+
+    /** Techguns 2 spawner floor plates (Blockbench models with cut-out textures). */
+    private void spawner(DeferredBlock<techguns.block.TGSpawnerBlock> block) {
+        ModelFile model = models().withExistingParent("block/" + path(block), modLoc("block/" + path(block) + "_base")).renderType(CUTOUT);
+        simpleBlock(block.get(), model);
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
     }
 
     /** Techguns 2 charge models (wall side south), turned to the wall they stick to; armed charges change texture. */
