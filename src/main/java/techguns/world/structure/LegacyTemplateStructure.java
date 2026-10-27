@@ -213,7 +213,7 @@ public class LegacyTemplateStructure extends Structure {
      * {@link #SAMPLE_STEP} blocks over the footprint (edges included); empty if a sample is a liquid or the samples
      * differ by more than {@code tolerance}.
      */
-    static Optional<Integer> groundHeight(GenerationContext context, int x0, int z0, int sizeX, int sizeZ, int tolerance) {
+    public static Optional<Integer> groundHeight(GenerationContext context, int x0, int z0, int sizeX, int sizeZ, int tolerance) {
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
         long sum = 0;
@@ -229,6 +229,9 @@ public class LegacyTemplateStructure extends Structure {
                 }
                 min = Math.min(min, height);
                 max = Math.max(max, height);
+                if (max - min > tolerance) {
+                    return Optional.empty();
+                }
                 sum += height;
                 count++;
                 if (dz == sizeZ) {
@@ -239,15 +242,15 @@ public class LegacyTemplateStructure extends Structure {
                 break;
             }
         }
-        return max - min > tolerance ? Optional.empty() : Optional.of((int) (sum / count));
+        return Optional.of((int) (sum / count));
     }
 
     /** Techguns 2 {@code StructureLandType}: land structures never spawn in ocean biomes. */
-    static boolean isOcean(GenerationContext context, int x, int y, int z) {
+    public static boolean isOcean(GenerationContext context, int x, int y, int z) {
         return biome(context, x, y, z).is(BiomeTags.IS_OCEAN);
     }
 
-    static Holder<Biome> biome(GenerationContext context, int x, int y, int z) {
+    public static Holder<Biome> biome(GenerationContext context, int x, int y, int z) {
         return context.biomeSource().getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z), context.randomState().sampler());
     }
 

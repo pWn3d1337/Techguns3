@@ -530,7 +530,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 7d: Nether structures (altars, soul platform, loot room, acid hole, ghast spawner, ore cluster castle, dungeon entrance).
   - 7e1: ore cluster structures (spike, meteor basis; the desert oil cluster needs an oil fluid) and the aircraft carrier (water placement, big set every 64 chunks).
   - 7e2: the military base (Techguns 2 `MilitaryCamp`: camp layout, terrain flattening, tents, containers, bunkers, barracks, helipad, tanks, watch towers), generated into a virtual level from sampled generator heights; structure sets keep away from all bigger sets (`techguns:avoiding_spread`).
-  - 7f: maze dungeons (with the castle, a dungeon preset) and the city generator (evaluate jigsaw vs generator port first).
+  - 7f: maze dungeons: the castle (Techguns 2 maze generator and castle preset, templates dumped from the 1.12 runtime). The Nether dungeon and the city were never spawned by Techguns 2 (commented out) and are not ported.
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 
 ### Phase 8 — Remaining systems & integrations

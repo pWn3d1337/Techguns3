@@ -34,19 +34,20 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 7c | Small and medium overworld structures, alien bug nest | `b03ca09` |
   | 7d | Nether structures | `06405a6` |
   | 7e1 | Ore cluster structures, aircraft carrier | `124f6e7` |
-  | 7e2 | Military base | not committed yet |
+  | 7e2 | Military base | `1d90379` |
+  | 7f | Maze dungeons (castle) | not committed yet |
 
 - All 282 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 7e2 (when the user asks), then 7f: the maze dungeons (Techguns 2 dungeon generator and presets, incl. the castle and the Nether dungeon entrance) and the city generator (evaluate jigsaw vs a generator port first; `CampLevel` / `MilitaryBasePiece` show the virtual-level approach for procedural structures). Then the Phase 7 PR. Phase 7 batch plan is in the design doc; conversion inputs and how to re-dump them: `src/legacy/README.md`.
+1. Commit 7f (when the user asks). Phase 7 then covers everything Techguns 2 spawned: the Nether dungeon and the city were commented out of its spawn table (the city only ran from a test tool), so they are not ported unless the user wants them. Next: open the Phase 7 PR against master. Conversion inputs and how to re-dump them: `src/legacy/README.md`.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
 
 ## Notes
 
 - The Techguns 2 workspace runs (`./gradlew runClient` in `F:\Techguns3Work\Techguns2`, RetroFuturaGradle, JDK 8). On this PC the 2020 ForgeGradle MCP cache `~/.gradle/caches/minecraft/de/oceanlabs/mcp/mcp_snapshot/20180104` blocked RFG; it was renamed to `20180104.fg2-backup-2020` and RFG re-downloaded the mappings.
-- `TestworldFlat` has the 7b check structures placed at x 100..180, z 0..70. Throwaway dedicated-server worlds: `run/world_ore_test_7a*`, `run/world_struct_test_7c*`, `run/world_struct_test_7d`, `run/world_struct_test_7e*` (7e2b and 7e2c share a seed; forest camp at 1392, 96).
+- `TestworldFlat` has the 7b check structures placed at x 100..180, z 0..70. Throwaway dedicated-server worlds: `run/world_ore_test_7a*`, `run/world_struct_test_7c*`, `run/world_struct_test_7d`, `run/world_struct_test_7e*` (7e2b and 7e2c share a seed; forest camp at 1392, 96), `run/world_struct_test_7f` (castles at -1904, 2208 and 3440, 1440).
 - Background `./gradlew` launches sometimes fail with exit 127 right after the shell's working directory moved to `run/`; launching with the absolute wrapper path (`/f/Techguns3Work/Techguns3/gradlew -p /f/Techguns3Work/Techguns3 ...`) works.
 
 ## Open decision for the user

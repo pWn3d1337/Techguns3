@@ -25,6 +25,9 @@ import techguns.world.structure.AvoidingSpreadPlacement;
 import techguns.world.structure.CampLevel;
 import techguns.world.structure.MilitaryBasePiece;
 import techguns.world.structure.MilitaryBaseStructure;
+import techguns.world.structure.dungeon.DungeonPreset;
+import techguns.world.structure.dungeon.MazeDungeonPath;
+import techguns.world.structure.dungeon.SegmentType;
 import techguns.world.structure.LegacyTemplatePiece;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -142,6 +145,7 @@ public class TGStructureTests {
         }
         helper.assertTrue(structures.containsKey(TGStructures.ALIEN_BUG_NEST_KEY), "The alien bug nest is a structure");
         helper.assertTrue(structures.containsKey(TGStructures.MILITARY_BASE_KEY), "The military base is a structure");
+        helper.assertTrue(structures.containsKey(TGStructures.CASTLE_KEY), "The castle is a structure");
         var sets = registries.registryOrThrow(Registries.STRUCTURE_SET);
         for (TGStructures.Size size : TGStructures.Size.values()) {
             StructureSet set = sets.getOrThrow(size.set);
@@ -150,7 +154,7 @@ public class TGStructureTests {
         }
         helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
                 && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 5
-                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 2
+                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 3
                 && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
                 && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
         for (TGStructures.Template t : TGStructures.NETHER) {
@@ -254,6 +258,54 @@ public class TGStructureTests {
             }
         }
         helper.assertTrue(chests > 0, "Bunkers and barracks have loot chests");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void castleSegmentTemplatesLoad(GameTestHelper helper) {
+        var manager = helper.getLevel().getStructureManager();
+        for (int level = -1; level < 6; level++) {
+            for (SegmentType type : SegmentType.values()) {
+                var id = DungeonPreset.CASTLE.template(type, level, 6);
+                var template = manager.get(id);
+                helper.assertTrue(template.isPresent(), id + " exists");
+                Vec3i size = template.get().getSize();
+                helper.assertTrue(size.equals(new Vec3i(5, 5 * type.height, 5)), id + " is one cell, got " + size);
+            }
+        }
+        helper.succeed();
+    }
+
+    /** All segments a castle path places: type, level, cell and rotation. */
+    private static List<String> castlePlacements(long seed, int x, int y, int z, int[] counts) {
+        MazeDungeonPath path = new MazeDungeonPath(x, y, z, RandomSource.create(seed));
+        DungeonPreset.CASTLE.init(path);
+        path.generatePath();
+        List<String> placed = new java.util.ArrayList<>();
+        path.generateDungeon((type, level, cx, cy, cz, rotation) -> {
+            placed.add(type + "@" + level + ":" + cx + "," + cy + "," + cz + "r" + rotation);
+            if (type == SegmentType.ENTRANCE) {
+                counts[0]++;
+            }
+        });
+        counts[1] = path.numSegments();
+        counts[2] = path.unmatched();
+        return placed;
+    }
+
+    @GameTest(template = ARENA)
+    public static void castleMazeGenerates(GameTestHelper helper) {
+        for (long seed = 0; seed < 20; seed++) {
+            int x = 6 + (int) (seed % 4);
+            int y = 4 + (int) (seed % 4);
+            int[] counts = new int[3];
+            List<String> placed = castlePlacements(seed, x, y, x, counts);
+            String name = "Castle " + seed + " (" + x + "x" + y + "x" + x + ")";
+            helper.assertTrue(counts[1] > 0 && counts[2] == 0, name + ": every cell gets a segment, " + counts[2] + " of " + counts[1] + " unmatched");
+            helper.assertTrue(counts[0] >= 1, name + ": an entrance");
+            helper.assertTrue(placed.stream().anyMatch(p -> p.contains("@-1:")), name + ": a roof");
+            helper.assertTrue(placed.equals(castlePlacements(seed, x, y, x, new int[3])), name + ": the same path from the same seed");
+        }
         helper.succeed();
     }
 }

@@ -40,6 +40,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import techguns.TGIds;
+import techguns.world.structure.dungeon.DungeonPreset;
+import techguns.world.structure.dungeon.SegmentType;
 import techguns.block.Door3x3Block;
 import techguns.world.LegacyPaletteProcessor;
 
@@ -107,6 +109,20 @@ public class LegacyStructureProvider implements DataProvider {
                 CompoundTag template = new Converter(dump.getAsJsonObject(className)).convert();
                 write(output, structures.file(TGIds.id(name), "nbt"), template);
             });
+            JsonObject dungeons;
+            try (Reader reader = Files.newBufferedReader(dir.resolve("dungeon_dump.json"))) {
+                dungeons = JsonParser.parseReader(reader).getAsJsonObject();
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not read the dungeon dump", e);
+            }
+            // maze dungeon segments: dungeon/<template>/<segment>, the same palette and block format
+            for (String name : DungeonPreset.CASTLE_TEMPLATES) {
+                JsonObject segments = dungeons.getAsJsonObject(name).getAsJsonObject("segments");
+                for (SegmentType type : SegmentType.values()) {
+                    CompoundTag template = new Converter(segments.getAsJsonObject(type.name())).convert();
+                    write(output, structures.file(TGIds.id("dungeon/" + name + "/" + type.fileName()), "nbt"), template);
+                }
+            }
         });
     }
 
@@ -249,7 +265,7 @@ public class LegacyStructureProvider implements DataProvider {
                 case "MBlockChestLoottable" -> new Entry(state, chest(json), null);
                 case "MBlockTGSpawner" -> new Entry(state, tgSpawner(json), null);
                 case "MBlockVanillaSpawner" -> new Entry(state, vanillaSpawner(json), null);
-                case "MBlock", "AlienBugNest$MBlockSlime" -> new Entry(state, null, null);
+                case "MBlock", "AlienBugNest$MBlockSlime", "MBlockSkullBlock" -> new Entry(state, null, null);
                 default -> new Entry(state, null, options(json));
             };
         }
@@ -260,7 +276,7 @@ public class LegacyStructureProvider implements DataProvider {
             type = type.substring(type.lastIndexOf('.') + 1);
             CompoundTag option = new CompoundTag();
             switch (type) {
-                case "MBlock", "AlienBugNest$MBlockSlime" -> option.put(LegacyPaletteProcessor.STATE, NbtUtils.writeBlockState(states.get(json.get("state").getAsString())));
+                case "MBlock", "AlienBugNest$MBlockSlime", "MBlockSkullBlock" -> option.put(LegacyPaletteProcessor.STATE, NbtUtils.writeBlockState(states.get(json.get("state").getAsString())));
                 case "MBlockChestLoottable" -> {
                     option.put(LegacyPaletteProcessor.STATE, NbtUtils.writeBlockState(states.get(json.get("state").getAsString())));
                     option.put(LegacyPaletteProcessor.BLOCK_ENTITY, chest(json));
