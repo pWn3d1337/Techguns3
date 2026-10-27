@@ -523,6 +523,13 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - Ores + ore clusters as configured/placed features via datagen + biome modifiers.
 - Structures: convert 1.12 hand-coded structures to `.nbt` templates (write a one-time converter running in 1.12 or reconstruct in-game), jigsaw pools, structure sets, processors, loot tables.
 - Maze dungeons: convert `.ser` presets; evaluate jigsaw-based reimplementation vs porting the dungeon generator.
+- Batches:
+  - 7a: ore generation (tin, lead, titanium, uranium with deepslate variants) as configured / placed features, added by config-gated biome modifiers. Re-balanced for the 1.18+ world by tool tier like the vanilla ores (tin near the surface like copper, lead at mid depth like iron, titanium deep like diamonds, uranium deepest and rarest), plus biome extras like vanilla badlands gold: tin in mountains, uranium in badlands and deserts.
+  - 7b: structure converter: the 1.12 scanned structures (`BlockUtils` files + `MBlock` palettes in the structure classes) to `.nbt` templates with a legacy block id / meta mapping; spawners, loot chests and TG blocks via data and processors; chest loot tables.
+  - 7c: small and medium overworld structures (factory house, train station, mine, gas station, police station, survivor hideout, alien bug nest) as structures with structure sets (Techguns 2 spacing, biome and land / water rules).
+  - 7d: Nether structures (altars, soul platform, loot room, acid hole, ghast spawner, ore cluster castle, dungeon entrance).
+  - 7e: big structures (military base, castle, aircraft carrier) and the ore cluster structures (spike, meteor, desert oil cluster).
+  - 7f: maze dungeons and the city generator (evaluate jigsaw vs generator port first).
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 
 ### Phase 8 — Remaining systems & integrations

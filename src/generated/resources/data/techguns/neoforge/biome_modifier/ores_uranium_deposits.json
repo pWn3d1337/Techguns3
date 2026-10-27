@@ -1,0 +1,11 @@
+{
+  "type": "techguns:config_features",
+  "biomes": "#techguns:uranium_deposits",
+  "features": [
+    {
+      "config": "uranium",
+      "feature": "techguns:ore_uranium_deposits"
+    }
+  ],
+  "step": "underground_ores"
+}

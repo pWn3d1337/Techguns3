@@ -18,6 +18,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import techguns.Techguns;
 import techguns.registry.TGBiomeModifiers;
 import techguns.registry.TGCamos;
+import techguns.registry.TGFeatures;
 import techguns.damage.TGDamageTypes;
 
 /**
@@ -35,6 +36,8 @@ public final class TGDataGenerators {
         RegistrySetBuilder datapackEntries = new RegistrySetBuilder()
                 .add(Registries.DAMAGE_TYPE, TGDamageTypes::bootstrap)
                 .add(TGCamos.KEY, TGCamoProvider::bootstrap)
+                .add(Registries.CONFIGURED_FEATURE, TGFeatures::bootstrapConfigured)
+                .add(Registries.PLACED_FEATURE, TGFeatures::bootstrapPlaced)
                 .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TGBiomeModifiers::bootstrap);
         DatapackBuiltinEntriesProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), datapackEntries, Set.of(Techguns.MODID)));
@@ -49,6 +52,7 @@ public final class TGDataGenerators {
                 List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK),
                         new LootTableProvider.SubProviderEntry(TGEntityLootProvider::new, LootContextParamSets.ENTITY)), lookup));
         generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
+        generator.addProvider(event.includeServer(), new TGBiomeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
 

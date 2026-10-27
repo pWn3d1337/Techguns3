@@ -6,8 +6,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ## Where we are
 
-- Branch: `phase6-npcs` (base `master`). Phase 5 (PR pWn3d1337/Techguns3#6) is merged into `master`.
-- Phase 5 progress (one commit per batch):
+- Branch: `phase7-worldgen` (base `master`). Phases 5 (PR pWn3d1337/Techguns3#6) and 6 (PR pWn3d1337/Techguns3#7) are merged into `master`.
+- Progress (one commit per batch):
 
   | Batch | Content | Commit |
   |---|---|---|
@@ -28,15 +28,15 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 6c | Super mutants | `200da58` |
   | 6d | Nether and bosses: cyber demon, ghastling, attack helicopter | `60bc107` |
   | 6e | Alien bugs | `ea56533` |
-  | 6f | Natural NPC spawning, TG spawner blocks | not committed yet |
+  | 6f | Natural NPC spawning, TG spawner blocks | `2949812` (Phase 6 merged, PR #7) |
+  | 7a | Ore generation | not committed yet |
 
-- All 273 GameTests pass; each batch was checked in game via MCP.
+- All 275 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 6f (when the user asks) and open the Phase 6 PR against master. Then Phase 7 world generation (structures will place the TG spawners; the alien bug nest belongs there).
+1. Commit 7a (when the user asks), then 7b: the structure converter (1.12 scanned structures + `MBlock` palettes to `.nbt` templates, legacy block id / meta mapping, spawners and loot chests). Phase 7 batch plan is in the design doc.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
-3. Phase 6 is complete with 6f.
 
 ## Open decision for the user
 

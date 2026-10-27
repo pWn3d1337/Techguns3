@@ -1,0 +1,11 @@
+{
+  "type": "techguns:config_features",
+  "biomes": "#c:is_mountain",
+  "features": [
+    {
+      "config": "tin",
+      "feature": "techguns:ore_tin_mountains"
+    }
+  ],
+  "step": "underground_ores"
+}

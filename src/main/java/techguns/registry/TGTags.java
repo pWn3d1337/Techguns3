@@ -29,6 +29,15 @@ public final class TGTags {
         }
     }
 
+    public static final class Biomes {
+        private Biomes() {
+        }
+
+        /** Extra near-surface uranium (sandstone-hosted deposits): badlands and deserts. */
+        public static final TagKey<net.minecraft.world.level.biome.Biome> URANIUM_DEPOSITS = TagKey.create(Registries.BIOME,
+                TGIds.id("uranium_deposits"));
+    }
+
     public static final class Fluids {
         private Fluids() {
         }
