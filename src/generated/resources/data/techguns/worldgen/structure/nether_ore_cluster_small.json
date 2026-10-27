@@ -1,0 +1,12 @@
+{
+  "type": "techguns:legacy_template",
+  "biomes": "#techguns:has_structure/nether",
+  "clear_above": 0,
+  "config": "ore_clusters",
+  "foundation": 2,
+  "placement": "cave",
+  "spawn_overrides": {},
+  "step": "underground_structures",
+  "template": "techguns:nether_ore_cluster_small",
+  "y_offset": 0
+}

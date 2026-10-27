@@ -1,0 +1,10 @@
+{
+  "type": "techguns:legacy_template",
+  "biomes": "#techguns:has_structure/overworld_surface",
+  "clear_above": 6,
+  "config": "ore_clusters",
+  "foundation": 0,
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "template": "techguns:ore_cluster_spike"
+}

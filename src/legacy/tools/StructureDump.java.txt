@@ -1,0 +1,203 @@
+package techguns.devdump;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import techguns.util.MBlock;
+
+/**
+ * TEMPORARY dev tool for the Techguns 3 port (batch 7b), not part of Techguns 2: when the dev client opens its first
+ * screen it writes every static palette (MBlock lists / arrays) and scanned block array (short[][]) of the
+ * structure classes to run/structure_dump.json, with all MBlock fields evaluated (block states, random variants,
+ * loot tables, spawner settings).
+ */
+@Mod.EventBusSubscriber(modid = "techguns", value = Side.CLIENT)
+public final class StructureDump {
+	private static boolean done = false;
+
+	@SubscribeEvent
+	public static void onGuiOpen(GuiOpenEvent event) {
+		if (done) {
+			return;
+		}
+		done = true;
+		try {
+			JsonObject root = new JsonObject();
+			for (String pkg : new String[] {"techguns/world/structures"}) {
+				for (String className : classesIn(pkg)) {
+					Class<?> clazz = Class.forName(className);
+					JsonObject entry = dumpClass(clazz);
+					if (entry.size() > 0) {
+						root.add(clazz.getName(), entry);
+					}
+				}
+			}
+			JsonObject shared = new JsonObject();
+			net.minecraft.item.Item item = net.minecraft.item.Item.REGISTRY.getObject(new ResourceLocation("techguns", "itemshared"));
+			for (int meta = 0; meta < 256; meta++) {
+				try {
+					shared.addProperty(Integer.toString(meta), new ItemStack(item, 1, meta).getUnlocalizedName());
+				} catch (IndexOutOfBoundsException e) {
+					break;
+				}
+			}
+			root.add("itemshared", shared);
+			File out = new File("structure_dump.json");
+			try (Writer w = new FileWriter(out)) {
+				new GsonBuilder().setPrettyPrinting().create().toJson(root, w);
+			}
+			System.out.println("TG STRUCTURE DUMP DONE: " + out.getAbsolutePath());
+		} catch (Throwable t) {
+			System.out.println("TG STRUCTURE DUMP FAILED");
+			t.printStackTrace();
+		}
+	}
+
+	/** Classes are loaded from a jar in the RFG dev run: list them from the source folder instead. */
+	private static List<String> classesIn(String pkg) throws Exception {
+		List<String> names = new ArrayList<>();
+		File dir = new File("../src/main/java/" + pkg);
+		for (File f : dir.listFiles()) {
+			String n = f.getName();
+			if (n.endsWith(".java")) {
+				names.add(pkg.replace('/', '.') + "." + n.substring(0, n.length() - 5));
+			}
+		}
+		names.sort(null);
+		return names;
+	}
+
+	private static JsonObject dumpClass(Class<?> clazz) throws Exception {
+		JsonObject entry = new JsonObject();
+		for (Field f : clazz.getDeclaredFields()) {
+			if (!Modifier.isStatic(f.getModifiers())) {
+				continue;
+			}
+			f.setAccessible(true);
+			Object value = f.get(null);
+			if (value instanceof short[][]) {
+				JsonArray blocks = new JsonArray();
+				for (short[] b : (short[][]) value) {
+					JsonArray row = new JsonArray();
+					for (short s : b) {
+						row.add(s);
+					}
+					blocks.add(row);
+				}
+				entry.add("blocks:" + f.getName(), blocks);
+			} else if (isPalette(value)) {
+				entry.add("palette:" + f.getName(), serialize(value, new IdentityHashMap<>(), 0));
+			}
+		}
+		return entry;
+	}
+
+	private static boolean isPalette(Object value) {
+		if (value instanceof MBlock) {
+			return true;
+		}
+		if (value instanceof Collection) {
+			for (Object o : (Collection<?>) value) {
+				return o instanceof MBlock;
+			}
+		}
+		return value != null && value.getClass().isArray() && MBlock.class.isAssignableFrom(value.getClass().getComponentType());
+	}
+
+	private static JsonElement serialize(Object v, Map<Object, Boolean> seen, int depth) throws Exception {
+		if (v == null) {
+			return JsonNull.INSTANCE;
+		}
+		if (depth > 12) {
+			return new JsonPrimitive("<depth>");
+		}
+		if (v instanceof Number || v instanceof Boolean) {
+			return new JsonPrimitive(v.toString());
+		}
+		if (v instanceof String || v instanceof ResourceLocation || v instanceof Enum) {
+			return new JsonPrimitive(v instanceof Enum ? ((Enum<?>) v).name() : v.toString());
+		}
+		if (v instanceof IBlockState) {
+			return new JsonPrimitive(v.toString());
+		}
+		if (v instanceof Block) {
+			return new JsonPrimitive(String.valueOf(((Block) v).getRegistryName()));
+		}
+		if (v instanceof ItemStack) {
+			ItemStack s = (ItemStack) v;
+			return new JsonPrimitive(s.isEmpty() ? "empty" : s.getItem().getRegistryName() + "@" + s.getMetadata() + "x" + s.getCount());
+		}
+		if (v instanceof Class) {
+			Class<?> c = (Class<?>) v;
+			if (Entity.class.isAssignableFrom(c)) {
+				@SuppressWarnings("unchecked")
+				ResourceLocation key = EntityList.getKey((Class<? extends Entity>) c);
+				return new JsonPrimitive("entity:" + key);
+			}
+			return new JsonPrimitive("class:" + c.getName());
+		}
+		if (v.getClass().isArray()) {
+			JsonArray arr = new JsonArray();
+			for (int i = 0; i < Array.getLength(v); i++) {
+				arr.add(serialize(Array.get(v, i), seen, depth + 1));
+			}
+			return arr;
+		}
+		if (v instanceof Collection) {
+			JsonArray arr = new JsonArray();
+			for (Object o : (Collection<?>) v) {
+				arr.add(serialize(o, seen, depth + 1));
+			}
+			return arr;
+		}
+		if (v instanceof MBlock) {
+			if (seen.containsKey(v)) {
+				return new JsonPrimitive("<cycle>");
+			}
+			seen.put(v, true);
+			MBlock m = (MBlock) v;
+			JsonObject o = new JsonObject();
+			o.addProperty("type", v.getClass().getName());
+			o.addProperty("state", String.valueOf(m.getState()));
+			o.addProperty("pass", m.getPass());
+			for (Class<?> c = v.getClass(); c != Object.class; c = c.getSuperclass()) {
+				for (Field f : c.getDeclaredFields()) {
+					if (Modifier.isStatic(f.getModifiers()) || o.has(f.getName())) {
+						continue;
+					}
+					f.setAccessible(true);
+					o.add(f.getName(), serialize(f.get(v), seen, depth + 1));
+				}
+			}
+			seen.remove(v);
+			return o;
+		}
+		return new JsonPrimitive(v.getClass().getSimpleName() + ":" + v);
+	}
+}

@@ -1,0 +1,11 @@
+{
+  "type": "techguns:legacy_template",
+  "biomes": "#techguns:has_structure/nether",
+  "clear_above": 0,
+  "foundation": 16,
+  "placement": "cave",
+  "spawn_overrides": {},
+  "step": "underground_structures",
+  "template": "techguns:nether_loot_01",
+  "y_offset": 0
+}

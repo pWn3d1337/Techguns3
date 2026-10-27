@@ -1,0 +1,7 @@
+{
+  "type": "techguns:maze_dungeon",
+  "biomes": "#techguns:has_structure/overworld_surface",
+  "preset": "castle",
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

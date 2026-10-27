@@ -1,0 +1,60 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_boots"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "techguns:crates/military_crate_armor"
+}

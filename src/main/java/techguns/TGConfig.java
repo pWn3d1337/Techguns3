@@ -115,6 +115,23 @@ public final class TGConfig {
 
     static {
         COMMON.pop();
+        COMMON.push("worldgen");
+    }
+
+    // Techguns 2 "World Generation" category; read when the server starts
+    public static final ModConfigSpec.BooleanValue ORE_GEN_TIN = COMMON
+            .comment("Generate tin ore; disable if another mod does.").define("oreGenTin", true);
+    public static final ModConfigSpec.BooleanValue ORE_GEN_LEAD = COMMON
+            .comment("Generate lead ore; disable if another mod does.").define("oreGenLead", true);
+    public static final ModConfigSpec.BooleanValue ORE_GEN_TITANIUM = COMMON
+            .comment("Generate titanium ore; few other mods add it, leave it on in most cases.").define("oreGenTitanium", true);
+    public static final ModConfigSpec.BooleanValue ORE_GEN_URANIUM = COMMON
+            .comment("Generate uranium ore; disable if another mod already adds it and you want only one kind.").define("oreGenUranium", true);
+    public static final ModConfigSpec.BooleanValue SPAWN_ORE_CLUSTER_STRUCTURES = COMMON
+            .comment("Generate the structures that contain ore clusters (ore spike, meteor, Nether ore clusters).").define("spawnOreClusterStructures", true);
+
+    static {
+        COMMON.pop();
     }
 
     static final ModConfigSpec COMMON_SPEC = COMMON.build();

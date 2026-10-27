@@ -1,0 +1,23 @@
+{
+  "type": "techguns:config_features",
+  "biomes": "#c:is_overworld",
+  "features": [
+    {
+      "config": "tin",
+      "feature": "techguns:ore_tin"
+    },
+    {
+      "config": "lead",
+      "feature": "techguns:ore_lead"
+    },
+    {
+      "config": "titanium",
+      "feature": "techguns:ore_titanium"
+    },
+    {
+      "config": "uranium",
+      "feature": "techguns:ore_uranium"
+    }
+  ],
+  "step": "underground_ores"
+}

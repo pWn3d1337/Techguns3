@@ -1,0 +1,194 @@
+package techguns.devdump;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import techguns.util.MBlock;
+import techguns.world.Structure;
+import techguns.world.dungeon.DungeonSegment;
+import techguns.world.dungeon.DungeonTemplate;
+import techguns.world.dungeon.TemplateSegment.SegmentType;
+import techguns.world.dungeon.presets.IDungeonPreset;
+
+/**
+ * TEMPORARY dev tool for the Techguns 3 port (batch 7f), not part of Techguns 2: when the dev client opens its first
+ * screen it writes every maze dungeon template (the deserialized .ser files, with the presets' special blocks
+ * applied: loot chests, spawners, random crates) to run/dungeon_dump.json. Per template and segment type: the size,
+ * the palette (MBlocks with all fields evaluated, like the 7b structure dump) and the blocks (x, y, z, palette index,
+ * placement layer).
+ */
+@Mod.EventBusSubscriber(modid = "techguns", value = Side.CLIENT)
+public final class DungeonDump {
+	private static boolean done = false;
+
+	@SubscribeEvent
+	public static void onGuiOpen(GuiOpenEvent event) {
+		if (done) {
+			return;
+		}
+		done = true;
+		try {
+			// the presets apply their loot tables and special blocks to the templates when they are created
+			Object[] presets = {IDungeonPreset.PRESET_CASTLE, IDungeonPreset.PRESET_NETHER, IDungeonPreset.PRESET_TECHFORTRESS};
+			JsonObject root = new JsonObject();
+			for (Map.Entry<String, DungeonTemplate> t : new java.util.TreeMap<>(DungeonTemplate.dungeonTemplates).entrySet()) {
+				DungeonTemplate template = t.getValue();
+				JsonObject entry = new JsonObject();
+				entry.addProperty("sizeXZ", template.sizeXZ);
+				entry.addProperty("sizeY", template.sizeY);
+				JsonObject segments = new JsonObject();
+				for (SegmentType type : SegmentType.values()) {
+					DungeonSegment segment = template.segments.get(type);
+					if (segment != null && segment.structure != null) {
+						segments.add(type.name(), structure(segment.structure));
+					}
+				}
+				entry.add("segments", segments);
+				root.add(t.getKey(), entry);
+			}
+			File out = new File("dungeon_dump.json");
+			try (Writer w = new FileWriter(out)) {
+				new GsonBuilder().create().toJson(root, w);
+			}
+			System.out.println("TG DUNGEON DUMP DONE: " + out.getAbsolutePath() + " (" + presets.length + " presets)");
+		} catch (Throwable t) {
+			System.out.println("TG DUNGEON DUMP FAILED");
+			t.printStackTrace();
+		}
+	}
+
+	private static Object field(Object o, String name) throws Exception {
+		for (Class<?> c = o.getClass(); c != Object.class; c = c.getSuperclass()) {
+			try {
+				Field f = c.getDeclaredField(name);
+				f.setAccessible(true);
+				return f.get(o);
+			} catch (NoSuchFieldException e) {
+				// next superclass
+			}
+		}
+		throw new NoSuchFieldException(name);
+	}
+
+	private static JsonObject structure(Structure structure) throws Exception {
+		JsonObject o = new JsonObject();
+		JsonArray size = new JsonArray();
+		size.add((Integer) field(structure, "sizeX"));
+		size.add((Integer) field(structure, "sizeY"));
+		size.add((Integer) field(structure, "sizeZ"));
+		o.add("size", size);
+		o.add("palette:blockList", serialize(field(structure, "blocks"), new IdentityHashMap<>(), 0));
+		JsonArray blocks = new JsonArray();
+		@SuppressWarnings("unchecked")
+		Map<Integer, List<Object>> entries = (Map<Integer, List<Object>>) field(structure, "blockEntries");
+		for (Map.Entry<Integer, List<Object>> layer : new java.util.TreeMap<>(entries).entrySet()) {
+			for (Object b : layer.getValue()) {
+				JsonArray row = new JsonArray();
+				row.add((Integer) field(b, "x"));
+				row.add((Integer) field(b, "y"));
+				row.add((Integer) field(b, "z"));
+				row.add((Integer) field(b, "blockIndex"));
+				row.add(layer.getKey());
+				blocks.add(row);
+			}
+		}
+		o.add("blocks:blocks", blocks);
+		return o;
+	}
+
+	private static JsonElement serialize(Object v, Map<Object, Boolean> seen, int depth) throws Exception {
+		if (v == null) {
+			return JsonNull.INSTANCE;
+		}
+		if (depth > 12) {
+			return new JsonPrimitive("<depth>");
+		}
+		if (v instanceof Number || v instanceof Boolean) {
+			return new JsonPrimitive(v.toString());
+		}
+		if (v instanceof String || v instanceof ResourceLocation || v instanceof Enum) {
+			return new JsonPrimitive(v instanceof Enum ? ((Enum<?>) v).name() : v.toString());
+		}
+		if (v instanceof IBlockState) {
+			return new JsonPrimitive(v.toString());
+		}
+		if (v instanceof Block) {
+			return new JsonPrimitive(String.valueOf(((Block) v).getRegistryName()));
+		}
+		if (v instanceof ItemStack) {
+			ItemStack s = (ItemStack) v;
+			return new JsonPrimitive(s.isEmpty() ? "empty" : s.getItem().getRegistryName() + "@" + s.getMetadata() + "x" + s.getCount());
+		}
+		if (v instanceof Class) {
+			Class<?> c = (Class<?>) v;
+			if (Entity.class.isAssignableFrom(c)) {
+				@SuppressWarnings("unchecked")
+				ResourceLocation key = EntityList.getKey((Class<? extends Entity>) c);
+				return new JsonPrimitive("entity:" + key);
+			}
+			return new JsonPrimitive("class:" + c.getName());
+		}
+		if (v.getClass().isArray()) {
+			JsonArray arr = new JsonArray();
+			for (int i = 0; i < Array.getLength(v); i++) {
+				arr.add(serialize(Array.get(v, i), seen, depth + 1));
+			}
+			return arr;
+		}
+		if (v instanceof Collection) {
+			JsonArray arr = new JsonArray();
+			for (Object o : (Collection<?>) v) {
+				arr.add(serialize(o, seen, depth + 1));
+			}
+			return arr;
+		}
+		if (v instanceof MBlock) {
+			if (seen.containsKey(v)) {
+				return new JsonPrimitive("<cycle>");
+			}
+			seen.put(v, true);
+			MBlock m = (MBlock) v;
+			JsonObject o = new JsonObject();
+			o.addProperty("type", v.getClass().getName());
+			o.addProperty("state", String.valueOf(m.getState()));
+			o.addProperty("pass", m.getPass());
+			for (Class<?> c = v.getClass(); c != Object.class; c = c.getSuperclass()) {
+				for (Field f : c.getDeclaredFields()) {
+					if (Modifier.isStatic(f.getModifiers()) || o.has(f.getName())) {
+						continue;
+					}
+					f.setAccessible(true);
+					o.add(f.getName(), serialize(f.get(v), seen, depth + 1));
+				}
+			}
+			seen.remove(v);
+			return o;
+		}
+		return new JsonPrimitive(v.getClass().getSimpleName() + ":" + v);
+	}
+}

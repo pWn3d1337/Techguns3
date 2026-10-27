@@ -6,8 +6,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ## Where we are
 
-- Branch: `phase6-npcs` (base `master`). Phase 5 (PR pWn3d1337/Techguns3#6) is merged into `master`.
-- Phase 5 progress (one commit per batch):
+- Branch: `phase7-worldgen` (base `master`). Phases 5 (PR pWn3d1337/Techguns3#6) and 6 (PR pWn3d1337/Techguns3#7) are merged into `master`.
+- Progress (one commit per batch):
 
   | Batch | Content | Commit |
   |---|---|---|
@@ -28,15 +28,27 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 6c | Super mutants | `200da58` |
   | 6d | Nether and bosses: cyber demon, ghastling, attack helicopter | `60bc107` |
   | 6e | Alien bugs | `ea56533` |
-  | 6f | Natural NPC spawning, TG spawner blocks | not committed yet |
+  | 6f | Natural NPC spawning, TG spawner blocks | `2949812` (Phase 6 merged, PR #7) |
+  | 7a | Ore generation | `4391c43` |
+  | 7b | Structure converter, legacy palette processor, chest loot | `9276054` |
+  | 7c | Small and medium overworld structures, alien bug nest | `b03ca09` |
+  | 7d | Nether structures | `06405a6` |
+  | 7e1 | Ore cluster structures, aircraft carrier | `124f6e7` |
+  | 7e2 | Military base | `1d90379` |
+  | 7f | Maze dungeons (castle) | not committed yet |
 
-- All 273 GameTests pass; each batch was checked in game via MCP.
+- All 282 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 6f (when the user asks) and open the Phase 6 PR against master. Then Phase 7 world generation (structures will place the TG spawners; the alien bug nest belongs there).
+1. Commit 7f (when the user asks). Phase 7 then covers everything Techguns 2 spawned: the Nether dungeon and the city were commented out of its spawn table (the city only ran from a test tool), so they move to Phase 9 as improvements over Techguns 2 (design doc §7). Next: open the Phase 7 PR against master. Conversion inputs and how to re-dump them: `src/legacy/README.md`.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
-3. Phase 6 is complete with 6f.
+
+## Notes
+
+- The Techguns 2 workspace runs (`./gradlew runClient` in `F:\Techguns3Work\Techguns2`, RetroFuturaGradle, JDK 8). On this PC the 2020 ForgeGradle MCP cache `~/.gradle/caches/minecraft/de/oceanlabs/mcp/mcp_snapshot/20180104` blocked RFG; it was renamed to `20180104.fg2-backup-2020` and RFG re-downloaded the mappings.
+- `TestworldFlat` has the 7b check structures placed at x 100..180, z 0..70. Throwaway dedicated-server worlds: `run/world_ore_test_7a*`, `run/world_struct_test_7c*`, `run/world_struct_test_7d`, `run/world_struct_test_7e*` (7e2b and 7e2c share a seed; forest camp at 1392, 96), `run/world_struct_test_7f` (castles at -1904, 2208 and 3440, 1440).
+- Background `./gradlew` launches sometimes fail with exit 127 right after the shell's working directory moved to `run/`; launching with the absolute wrapper path (`/f/Techguns3Work/Techguns3/gradlew -p /f/Techguns3Work/Techguns3 ...`) works.
 
 ## Open decision for the user
 

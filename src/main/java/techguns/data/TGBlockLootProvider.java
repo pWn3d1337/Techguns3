@@ -1,10 +1,16 @@
 package techguns.data;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -12,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
@@ -19,7 +26,9 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import techguns.TGIds;
 import techguns.block.Door3x3Block;
+import techguns.block.MilitaryCrateBlock;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
 import techguns.registry.TGBlocks;
@@ -95,6 +104,16 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
     // --- military crates (Techguns 2 loot_tables/blocks/military_crate_*.json) ---
 
     private void crateLoot() {
+        crateContents().keySet().forEach(crate -> add(crate.get(), crateTable(crate)));
+    }
+
+    /** The crate contents table, also used by structure chests (Techguns 2 nested the crate tables there). */
+    public static ResourceKey<LootTable> crateContentsTable(DeferredBlock<? extends Block> crate) {
+        return ResourceKey.create(Registries.LOOT_TABLE, TGIds.id("crates/" + crate.getId().getPath()));
+    }
+
+    /** Techguns 2 crate loot, one pool per crate; generated as {@code techguns:crates/*} by {@link Crates}. */
+    static Map<DeferredBlock<MilitaryCrateBlock>, LootPool.Builder> crateContents() {
         LootPool.Builder ammo = pool(
                 entry(TGAmmo.PISTOL_ROUNDS.get(), 2, 1, 4), entry(TGAmmo.SHOTGUN_ROUNDS.get(), 2, 4, 8), entry(TGAmmo.RIFLE_ROUNDS.get(), 2, 1, 2),
                 entry(TGAmmo.SNIPER_ROUNDS.get(), 1, 1, 2), entry(TGAmmo.SMG_MAGAZINE.get(), 2, 1, 2), entry(TGAmmo.PISTOL_MAGAZINE.get(), 1, 1, 2),
@@ -121,18 +140,20 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
                 entry(TGAmmo.ROCKET.get(), 2, 1, 3), entry(TGAmmo.GRENADE_40MM.get(), 2, 1, 4), entry(TGGuns.STIELGRANATE.get(), 2, 1, 3),
                 entry(TGGuns.FRAG_GRENADE.get(), 2, 1, 2), entry(TGGuns.ROCKET_LAUNCHER.get(), 1), entry(TGGuns.GRENADE_LAUNCHER.get(), 1));
 
-        add(TGBlocks.MILITARY_CRATE_AMMO.get(), crateTable(TGBlocks.MILITARY_CRATE_AMMO, ammo));
-        add(TGBlocks.MILITARY_CRATE_GUN.get(), crateTable(TGBlocks.MILITARY_CRATE_GUN, guns));
-        add(TGBlocks.MILITARY_CRATE_ARMOR.get(), crateTable(TGBlocks.MILITARY_CRATE_ARMOR, armor));
-        add(TGBlocks.MILITARY_CRATE_MEDICAL.get(), crateTable(TGBlocks.MILITARY_CRATE_MEDICAL, medical));
-        add(TGBlocks.MILITARY_CRATE_EXPLOSIVE.get(), crateTable(TGBlocks.MILITARY_CRATE_EXPLOSIVE, explosives));
-        // the four supply crates share one table
+        Map<DeferredBlock<MilitaryCrateBlock>, LootPool.Builder> contents = new LinkedHashMap<>();
+        contents.put(TGBlocks.MILITARY_CRATE_AMMO, ammo);
+        contents.put(TGBlocks.MILITARY_CRATE_GUN, guns);
+        contents.put(TGBlocks.MILITARY_CRATE_ARMOR, armor);
+        contents.put(TGBlocks.MILITARY_CRATE_MEDICAL, medical);
+        contents.put(TGBlocks.MILITARY_CRATE_EXPLOSIVE, explosives);
+        // the four supply crates share one pool
         for (int type = 5; type < 9; type++) {
-            add(TGBlocks.MILITARY_CRATES.get(type).get(), crateTable(TGBlocks.MILITARY_CRATES.get(type), genericPool()));
+            contents.put(TGBlocks.MILITARY_CRATES.get(type), genericPool());
         }
+        return contents;
     }
 
-    private LootPool.Builder genericPool() {
+    private static LootPool.Builder genericPool() {
         return pool(
                 entry(Items.IRON_INGOT, 10, 1, 1), entry(Items.REDSTONE, 10, 1, 2), entry(Items.COAL, 10, 1, 2), entry(Items.GUNPOWDER, 10, 1, 2),
                 entry(Items.GOLD_INGOT, 5, 1, 1), entry(Items.DIAMOND, 1), entry(Items.ENDER_PEARL, 1),
@@ -141,11 +162,24 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
                 entry(TGItems.RUBBER_BAR.get(), 5, 1, 1), entry(TGItems.OBSIDIAN_STEEL_INGOT.get(), 5, 1, 1));
     }
 
-    /** The crate itself with Silk Touch, otherwise one weighted roll of the loot pool (Techguns 2 dropped only the loot). */
-    private LootTable.Builder crateTable(DeferredBlock<? extends Block> crate, LootPool.Builder loot) {
+    /** The crate itself with Silk Touch, otherwise its contents table (Techguns 2 dropped only the loot). */
+    private LootTable.Builder crateTable(DeferredBlock<? extends Block> crate) {
         return LootTable.lootTable()
                 .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(crate.get())).when(hasSilkTouch()))
-                .withPool(loot.when(hasSilkTouch().invert()));
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(NestedLootTable.lootTableReference(crateContentsTable(crate)))
+                        .when(hasSilkTouch().invert()));
+    }
+
+    /** The crate contents tables. */
+    public static class Crates implements LootTableSubProvider {
+        @SuppressWarnings("unused")
+        public Crates(HolderLookup.Provider registries) {
+        }
+
+        @Override
+        public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+            crateContents().forEach((crate, pool) -> output.accept(crateContentsTable(crate), LootTable.lootTable().withPool(pool)));
+        }
     }
 
     private static LootPool.Builder pool(LootPoolSingletonContainer.Builder<?>... entries) {

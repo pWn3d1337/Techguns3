@@ -1,0 +1,10 @@
+{
+  "type": "techguns:legacy_template",
+  "biomes": "#techguns:has_structure/overworld_surface",
+  "clear_above": 4,
+  "foundation": 0,
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "template": "techguns:small_mine",
+  "y_offset": -6
+}
