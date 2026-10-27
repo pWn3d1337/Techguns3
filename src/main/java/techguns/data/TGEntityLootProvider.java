@@ -73,6 +73,12 @@ public class TGEntityLootProvider extends EntityLootSubProvider {
         add(TGNpcs.STORMTROOPER, pool(TGItems.PLASTIC_SHEET, 1, 2, 0, CHANCE, LOOTING), pool(TGItems.OBSIDIAN_STEEL_INGOT, 1, 2, 2, CHANCE, LOOTING),
                 pool(() -> Items.REDSTONE, 1, 5, 2, 0.3f, LOOTING), pool(TGItems.CIRCUIT_BOARD, 1, 2, 2, 0.1f, LOOTING),
                 pool(TGAmmo.ENERGY_CELL, 1, 2, 2, 0.1f, LOOTING));
+        add(TGNpcs.CYBER_DEMON, pool(TGItems.CYBERNETIC_PARTS, 1, 3, 0, 0.5f, LOOTING), pool(() -> Items.BLAZE_ROD, 1, 2, 2, 0.05f, LOOTING),
+                pool(() -> Items.GHAST_TEAR, 1, 2, 2, 0.05f, LOOTING));
+        // Techguns 2 ghastling: no drop chances, vanilla-style 0..n counts
+        add(TGNpcs.GHASTLING, plainPool(() -> Items.GHAST_TEAR, 0, 1, 1), plainPool(() -> Items.GUNPOWDER, 0, 2, 1));
+        add(TGNpcs.ATTACK_HELICOPTER, plainPool(TGItems.CYBERNETIC_PARTS, 2, 4, 1, 2), plainPool(TGAmmo.RIFLE_ROUNDS, 8, 16, 4, 8),
+                plainPool(TGAmmo.ROCKET, 4, 8, 2, 4), plainPool(() -> Items.IRON_BLOCK, 2, 4, 1, 2));
         // Techguns 2: all super mutants use the basic mutant's table
         for (TGNpcs.Npc mutant : java.util.List.of(TGNpcs.SUPER_MUTANT_BASIC, TGNpcs.SUPER_MUTANT_HEAVY, TGNpcs.SUPER_MUTANT_ELITE)) {
             add(mutant, pool(TGItems.CYBERNETIC_PARTS, 1, 2, 0, 0.75f, LOOTING), pool(() -> Items.BLAZE_ROD, 1, 2, 2, CHANCE, LOOTING),
@@ -100,6 +106,18 @@ public class TGEntityLootProvider extends EntityLootSubProvider {
         }
         return LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(entry)
                 .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(registries, chance, lootingChance));
+    }
+
+    /** One roll of {@code item}, {@code min}..{@code max}, plus 0..{@code looting} per looting level, always dropped. */
+    private LootPool.Builder plainPool(Supplier<? extends ItemLike> item, int min, int max, int looting) {
+        return plainPool(item, min, max, 0, looting);
+    }
+
+    /** One roll of {@code item}, {@code min}..{@code max}, plus {@code lootingMin}..{@code lootingMax} per looting level. */
+    private LootPool.Builder plainPool(Supplier<? extends ItemLike> item, int min, int max, int lootingMin, int lootingMax) {
+        return LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(item.get())
+                .apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)))
+                .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(lootingMin, lootingMax))));
     }
 
     @Override

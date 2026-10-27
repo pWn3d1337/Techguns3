@@ -3,6 +3,7 @@ package techguns.registry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +15,9 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
+import techguns.entity.npc.AttackHelicopter;
 import techguns.entity.npc.NpcDefinition;
+import techguns.entity.npc.Ghastling;
 import techguns.entity.npc.NpcLoadout;
 import techguns.entity.npc.SuperMutant;
 import techguns.entity.npc.TGNpc;
@@ -135,6 +138,24 @@ public final class TGNpcs {
                     .weapon(TGGuns.GOLDEN_REVOLVER, 1)
                     .build(), 35));
 
+    // --- Nether and bosses (Phase 6d) ---
+    /** Techguns 2 GenericNPCUndead that doesn't burn; holds its nether blaster low. */
+    public static final Npc CYBER_DEMON = npc("cyber_demon", 0.6f, 1.95f, true, 0xFF1111, 0x777777,
+            () -> TGNpc.createAttributes(30, 0.35, 7, 50, 1),
+            new NpcDefinition(10.0f, NpcDefinition.Sounds.CYBER_DEMON, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .weapon(TGGuns.NETHER_BLASTER, 1).build()));
+
+    public static final Npc GHASTLING = npc("ghastling", 1.0f, 2.1f, true, 0xaeaeae, 0xce81ff, Ghastling::createGhastlingAttributes,
+            (t, level) -> new Ghastling(t, level, new NpcDefinition(0.0f, NpcDefinition.Sounds.GHAST, TGNpcFaction.HOSTILE, false,
+                    NpcLoadout.NONE, 10)));
+
+    /** Techguns 2 AttackHelicopter: 4 x 4 blocks, eyes low at the nose gun, seen from 200 blocks. */
+    public static final Npc ATTACK_HELICOPTER = npc("attack_helicopter", 4.0f, 4.0f, true, 0x373d23, 0x8ec0d7,
+            AttackHelicopter::createHelicopterAttributes,
+            (t, level) -> new AttackHelicopter(t, level, new NpcDefinition(16.0f, NpcDefinition.Sounds.HELICOPTER, TGNpcFaction.HOSTILE, false,
+                    NpcLoadout.NONE)),
+            builder -> builder.eyeHeight(0.5f).clientTrackingRange(13));
+
     // --- Super mutants (Phase 6c; Techguns 2 sizes: width, 2 x model scale) ---
     private static final NpcLoadout MUTANT_LOADOUT = NpcLoadout.builder()
             .weapon(TGGuns.ROCKET_LAUNCHER, 1).weapon(TGGuns.AK47, 1).weapon(TGGuns.COMBAT_SHOTGUN, 1).weapon(TGGuns.LASERGUN, 2).build();
@@ -153,7 +174,7 @@ public final class TGNpcs {
     }
 
     private static Npc mutant(String name, SuperMutant.Kind kind, float width, int eggSpots, Supplier<AttributeSupplier.Builder> attributes) {
-        NpcDefinition definition = new NpcDefinition(0.0f, NpcDefinition.Sounds.VILLAGER, TGNpcFaction.HOSTILE, false, MUTANT_LOADOUT);
+        NpcDefinition definition = new NpcDefinition(0.0f, NpcDefinition.Sounds.CYBER_DEMON, TGNpcFaction.HOSTILE, false, MUTANT_LOADOUT);
         return npc(name, width, 2.0f * kind.scale, false, 0xc6a96b, eggSpots, attributes, (t, level) -> new SuperMutant(t, level, definition, kind));
     }
 
@@ -164,12 +185,21 @@ public final class TGNpcs {
 
     private static Npc npc(String name, float width, float height, boolean fireImmune, int eggBackground, int eggSpots,
                            Supplier<AttributeSupplier.Builder> attributes, EntityType.EntityFactory<TGNpc> factory) {
+        return npc(name, width, height, fireImmune, eggBackground, eggSpots, attributes, factory, builder -> {
+        });
+    }
+
+    /** {@code tweaks} adjusts the type builder after the defaults (eye height, tracking range). */
+    private static Npc npc(String name, float width, float height, boolean fireImmune, int eggBackground, int eggSpots,
+                           Supplier<AttributeSupplier.Builder> attributes, EntityType.EntityFactory<TGNpc> factory,
+                           Consumer<EntityType.Builder<TGNpc>> tweaks) {
         Supplier<EntityType<TGNpc>> type = TGEntities.ENTITY_TYPES.register(name, () -> {
             EntityType.Builder<TGNpc> builder = EntityType.Builder.<TGNpc>of(factory, MobCategory.MONSTER)
                     .sized(width, height).eyeHeight(height * 0.85f).clientTrackingRange(8);
             if (fireImmune) {
                 builder.fireImmune();
             }
+            tweaks.accept(builder);
             return builder.build(name);
         });
         DeferredItem<Item> egg = TGItems.ITEMS.register(name + "_spawn_egg",
@@ -181,7 +211,7 @@ public final class TGNpcs {
 
     /** Techguns 2 {@code GenericNPCUndead} subclasses. */
     public static List<Npc> undead() {
-        return List.of(ZOMBIE_SOLDIER, ZOMBIE_FARMER, ZOMBIE_MINER, ZOMBIE_POLICEMAN, ZOMBIE_PIGMAN_SOLDIER, SKELETON_SOLDIER);
+        return List.of(ZOMBIE_SOLDIER, ZOMBIE_FARMER, ZOMBIE_MINER, ZOMBIE_POLICEMAN, ZOMBIE_PIGMAN_SOLDIER, SKELETON_SOLDIER, CYBER_DEMON);
     }
 
     public static List<Npc> npcs() {

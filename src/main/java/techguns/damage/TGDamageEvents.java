@@ -78,7 +78,11 @@ public final class TGDamageEvents {
         float armor = target instanceof TGArmorProvider provider ? provider.tgArmorAgainst(category)
                 : TGArmorFormula.armorAgainst(category, target.getArmorValue(), bonusArmor(target, category), target.fireImmune());
         float toughness = (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
-        return TGArmorFormula.damageAfterArmor(damage, armor, toughness, TGDamage.penetrationOf(container.getSource()));
+        float penetration = TGDamage.penetrationOf(container.getSource());
+        if (target instanceof TGArmorProvider provider) {
+            penetration = Math.max(penetration - provider.tgPenetrationResistance(category), 0.0f);
+        }
+        return TGArmorFormula.damageAfterArmor(damage, armor, toughness, penetration);
     }
 
     private static float bonusArmor(LivingEntity target, TGDamageCategory category) {

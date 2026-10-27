@@ -25,15 +25,16 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 5e | JEI plugin (optional) | `c1d0c5d` (Phase 5 merged, PR #6) |
   | 6a | NPC framework + undead NPCs | `04a9f8b` |
   | 6b | Human NPCs | `32eabb9` |
-  | 6c | Super mutants | not committed yet |
+  | 6c | Super mutants | `200da58` |
+  | 6d | Nether and bosses: cyber demon, ghastling, attack helicopter | not committed yet |
 
-- All 262 GameTests pass; each batch was checked in game via MCP.
+- All 266 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 6c (when the user asks), then 6d nether and bosses: cyber demon, ghastling, attack helicopter (plan in the design doc, Phase 6 batches).
+1. Commit 6d (when the user asks), then 6e alien bugs (plan in the design doc, Phase 6 batches), then 6f natural spawning and the TG spawner.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
-3. Open a Phase 5 PR when Phase 5 is done (or earlier if the user asks).
+3. Open the Phase 6 PR when 6f is done (or earlier if the user asks).
 
 ## Open decision for the user
 

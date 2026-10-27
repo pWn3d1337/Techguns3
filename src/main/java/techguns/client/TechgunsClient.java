@@ -111,6 +111,10 @@ public class TechgunsClient {
         zombieLike(event, techguns.registry.TGNpcs.PSYCHO_STEVE, armySoldier);
         zombieLike(event, techguns.registry.TGNpcs.STORMTROOPER, armySoldier);
         zombieLike(event, techguns.registry.TGNpcs.DICTATOR_DAVE, techguns.TGIds.id("textures/entity/dictator.png"));
+        event.registerEntityRenderer(techguns.registry.TGNpcs.CYBER_DEMON.type().get(), context -> new techguns.client.render.entity.npc.CustomModelNpcRenderer(
+                context, techguns.client.render.entity.npc.CyberDemonModel.createLayer(), false, techguns.TGIds.id("textures/entity/cyberdemon.png"), 0.5f));
+        event.registerEntityRenderer(techguns.registry.TGNpcs.GHASTLING.type().get(), techguns.client.render.entity.npc.GhastlingRenderer::new);
+        event.registerEntityRenderer(techguns.registry.TGNpcs.ATTACK_HELICOPTER.type().get(), techguns.client.render.entity.npc.AttackHelicopterRenderer::new);
         for (techguns.registry.TGNpcs.Npc mutant : java.util.List.of(techguns.registry.TGNpcs.SUPER_MUTANT_BASIC, techguns.registry.TGNpcs.SUPER_MUTANT_HEAVY,
                 techguns.registry.TGNpcs.SUPER_MUTANT_ELITE)) {
             event.registerEntityRenderer(mutant.type().get(), techguns.client.render.entity.npc.SuperMutantRenderer::new);

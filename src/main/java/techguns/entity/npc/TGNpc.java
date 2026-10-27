@@ -186,24 +186,23 @@ public class TGNpc extends Monster implements GunShooter, RangedAttackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return definition.sounds().ambient;
+        return definition.sounds().ambient.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return definition.sounds().hurt;
+        return definition.sounds().hurt.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return definition.sounds().death;
+        return definition.sounds().death.get();
     }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        SoundEvent step = definition.sounds().step;
-        if (step != null) {
-            playSound(step, 0.15f, 1.0f);
+        if (definition.sounds().step != null) {
+            playSound(definition.sounds().step.get(), 0.15f, 1.0f);
         } else {
             super.playStepSound(pos, state);
         }

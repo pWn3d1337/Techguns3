@@ -8,4 +8,9 @@ import techguns.core.damage.TGDamageCategory;
  */
 public interface TGArmorProvider {
     float tgArmorAgainst(TGDamageCategory category);
+
+    /** Subtracted from the armor penetration of a hit (Techguns 2 {@code getPenetrationResistance}). */
+    default float tgPenetrationResistance(TGDamageCategory category) {
+        return 0.0f;
+    }
 }

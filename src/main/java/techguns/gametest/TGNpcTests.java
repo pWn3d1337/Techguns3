@@ -1,5 +1,6 @@
 package techguns.gametest;
 
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import techguns.Techguns;
+import techguns.core.damage.TGDamageCategory;
+import techguns.entity.npc.AttackHelicopter;
 import techguns.entity.npc.TGNpc;
 import techguns.entity.npc.TGNpcFaction;
 import techguns.gun.GunItem;
@@ -34,7 +37,7 @@ public class TGNpcTests {
     public static void npcsSpawnWithLoadouts(GameTestHelper helper) {
         for (TGNpcs.Npc type : TGNpcs.npcs()) {
             TGNpc npc = spawn(helper, type, new BlockPos(3, 1, 3));
-            helper.assertTrue(npc != null && !npc.getMainHandItem().isEmpty(), type.name() + " spawns with a weapon");
+            helper.assertTrue(npc != null && (!npc.getMainHandItem().isEmpty() || type == TGNpcs.GHASTLING || type == TGNpcs.ATTACK_HELICOPTER), type.name() + " spawns with a weapon");
             helper.assertFalse(npc.canPickUpLoot(), type.name() + " doesn't pick up loot");
             npc.discard();
         }
@@ -78,6 +81,58 @@ public class TGNpcTests {
                 && armored.tgArmorAgainst(techguns.core.damage.TGDamageCategory.UNRESISTABLE) == 0.0f, "Heavy mutant armor 12 / 16 / 18 / 0");
         helper.assertTrue(TGNpcs.SUPER_MUTANT_ELITE.type().get().getDimensions().height() == 3.3f, "Elite mutants are 2 x 1.65 high");
         helper.assertTrue(mutant.isHoldingGun(), "Mutants carry guns");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 300)
+    public static void ghastlingShootsBolts(GameTestHelper helper) {
+        TGNpc ghastling = spawn(helper, TGNpcs.GHASTLING, new BlockPos(1, 1, 3));
+        Husk husk = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(6, 1, 3));
+        husk.getAttribute(Attributes.MAX_HEALTH).setBaseValue(500.0);
+        husk.setHealth(500.0f);
+        ghastling.setTarget(husk);
+        helper.assertTrue(((techguns.damage.TGArmorProvider) ghastling).tgArmorAgainst(techguns.core.damage.TGDamageCategory.PROJECTILE) == 0.0f,
+                "Ghastlings have no armor against Techguns damage");
+        helper.runAfterDelay(200, () -> {
+            helper.assertTrue(husk.getHealth() < 500.0f, "The ghastling's bolts hit, health " + husk.getHealth());
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 100)
+    public static void helicopterShootsAndArmor(GameTestHelper helper) {
+        AttackHelicopter helicopter = (AttackHelicopter) spawn(helper, TGNpcs.ATTACK_HELICOPTER, new BlockPos(4, 5, 2));
+        helicopter.setNoAi(true);
+        Husk husk = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(4, 1, 7));
+        husk.getAttribute(Attributes.MAX_HEALTH).setBaseValue(500.0);
+        husk.setHealth(500.0f);
+        helper.assertTrue(helicopter.tgArmorAgainst(TGDamageCategory.PROJECTILE) == 20.0f && helicopter.tgArmorAgainst(TGDamageCategory.EXPLOSION) == 0.0f
+                && helicopter.tgPenetrationResistance(TGDamageCategory.PROJECTILE) == 0.5f && helicopter.isNoGravity(),
+                "Helicopters: armor 20 against bullets, none against explosions, flying");
+        helicopter.lookAt(EntityAnchorArgument.Anchor.EYES, husk.position().add(0, 1, 0));
+        helicopter.fireBullet();
+        helper.runAfterDelay(20, () -> {
+            helper.assertTrue(husk.getHealth() < 500.0f, "The helicopter's bullet hits, health " + husk.getHealth());
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void helicopterCrashesBeforeRemoval(GameTestHelper helper) {
+        AttackHelicopter helicopter = (AttackHelicopter) spawn(helper, TGNpcs.ATTACK_HELICOPTER, new BlockPos(4, 5, 4));
+        helicopter.kill();
+        helper.runAfterDelay(50, () -> helper.assertFalse(helicopter.isRemoved(), "The wreck falls for five seconds"));
+        helper.runAfterDelay(AttackHelicopter.MAX_DEATH_TIME + 5, () -> {
+            helper.assertTrue(helicopter.isRemoved(), "The wreck explodes after five seconds");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA)
+    public static void cyberDemonCarriesNetherBlaster(GameTestHelper helper) {
+        TGNpc demon = spawn(helper, TGNpcs.CYBER_DEMON, new BlockPos(3, 1, 3));
+        helper.assertTrue(demon.getMainHandItem().is(TGGuns.NETHER_BLASTER.get()) && demon.fireImmune() && demon.getArmorValue() == 10,
+                "Cyber demons: nether blaster, fire immune, armor 10");
         helper.succeed();
     }
 

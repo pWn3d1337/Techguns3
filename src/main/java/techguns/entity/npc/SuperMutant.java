@@ -1,14 +1,9 @@
 package techguns.entity.npc;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import techguns.core.damage.TGDamageCategory;
 import techguns.damage.TGArmorProvider;
-import techguns.registry.TGSounds;
 
 /**
  * Techguns 2 {@code SuperMutantBasic} / {@code Heavy} / {@code Elite}: big mutants with the cyber demon's sounds and
@@ -60,25 +55,5 @@ public class SuperMutant extends TGNpc implements TGArmorProvider {
     @Override
     public int getArmorValue() {
         return kind.armorValue;
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return TGSounds.CYBERDEMON_IDLE.get();
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return TGSounds.CYBERDEMON_HURT.get();
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return TGSounds.CYBERDEMON_DEATH.get();
-    }
-
-    @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        playSound(TGSounds.CYBERDEMON_STEP.get(), 0.15f, 1.0f);
     }
 }
