@@ -127,6 +127,8 @@ public final class TGConfig {
             .comment("Generate titanium ore; few other mods add it, leave it on in most cases.").define("oreGenTitanium", true);
     public static final ModConfigSpec.BooleanValue ORE_GEN_URANIUM = COMMON
             .comment("Generate uranium ore; disable if another mod already adds it and you want only one kind.").define("oreGenUranium", true);
+    public static final ModConfigSpec.BooleanValue SPAWN_ORE_CLUSTER_STRUCTURES = COMMON
+            .comment("Generate the structures that contain ore clusters (ore spike, meteor, Nether ore clusters).").define("spawnOreClusterStructures", true);
 
     static {
         COMMON.pop();

@@ -528,8 +528,9 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 7b: structure converter: the 1.12 scanned structures (`BlockUtils` files + `MBlock` palettes in the structure classes) to `.nbt` templates with a legacy block id / meta mapping; spawners, loot chests and TG blocks via data and processors; chest loot tables.
   - 7c: small and medium overworld structures (factory house, train station, mine, gas station, police station, survivor hideout, alien bug nest) as structures with structure sets (Techguns 2 spacing, biome and land / water rules).
   - 7d: Nether structures (altars, soul platform, loot room, acid hole, ghast spawner, ore cluster castle, dungeon entrance).
-  - 7e: big structures (military base, castle, aircraft carrier) and the ore cluster structures (spike, meteor, desert oil cluster).
-  - 7f: maze dungeons and the city generator (evaluate jigsaw vs generator port first).
+  - 7e1: ore cluster structures (spike, meteor basis; the desert oil cluster needs an oil fluid) and the aircraft carrier (water placement, big set every 64 chunks).
+  - 7e2: the military base (Techguns 2 `MilitaryCamp`: camp layout, terrain flattening, tents, containers, bunkers, barracks, helipad, tanks, watch towers).
+  - 7f: maze dungeons (with the castle, a dungeon preset) and the city generator (evaluate jigsaw vs generator port first).
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 
 ### Phase 8 — Remaining systems & integrations

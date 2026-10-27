@@ -144,7 +144,8 @@ public class TGStructureTests {
                     size + " structures every " + size.spacing + " chunks");
         }
         helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
-                && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 3
+                && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 5
+                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 1
                 && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
                 && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
         for (TGStructures.Template t : TGStructures.NETHER) {

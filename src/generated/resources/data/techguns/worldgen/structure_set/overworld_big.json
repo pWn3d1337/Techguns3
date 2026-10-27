@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 51531857,
+    "separation": 32,
+    "spacing": 64
+  },
+  "structures": [
+    {
+      "structure": "techguns:aircraft_carrier",
+      "weight": 1
+    }
+  ]
+}

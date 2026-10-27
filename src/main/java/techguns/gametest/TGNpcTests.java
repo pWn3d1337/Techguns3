@@ -155,10 +155,10 @@ public class TGNpcTests {
         }
         AlienBug bug = (AlienBug) spawn(helper, TGNpcs.ALIEN_BUG, new BlockPos(3, 1, 3));
         double startY = bug.getY();
-        // steer into the wall; stop the paths of the wander goal so they don't override it
+        // push it into the wall (its goals may steer elsewhere); climbing is the bug's own physics
         helper.onEachTick(() -> {
             bug.getNavigation().stop();
-            bug.getMoveControl().setWantedPosition(bug.getX() + 3.0, bug.getY(), bug.getZ(), 1.0);
+            bug.setDeltaMovement(0.2, bug.getDeltaMovement().y, 0.0);
         });
         helper.succeedWhen(() -> helper.assertTrue(bug.getY() > startY + 2.0, "The bug climbs the wall, at "
                 + helper.relativeVec(bug.position()) + ", collision " + bug.horizontalCollision + ", climbing " + bug.onClimbable()));

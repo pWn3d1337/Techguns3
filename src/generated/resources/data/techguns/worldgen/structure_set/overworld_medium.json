@@ -1,6 +1,10 @@
 {
   "placement": {
     "type": "minecraft:random_spread",
+    "exclusion_zone": {
+      "chunk_count": 2,
+      "other_set": "techguns:overworld_big"
+    },
     "salt": 51531854,
     "separation": 16,
     "spacing": 32
@@ -13,6 +17,14 @@
     {
       "structure": "techguns:survivor_hideout",
       "weight": 10
+    },
+    {
+      "structure": "techguns:ore_cluster_spike",
+      "weight": 10
+    },
+    {
+      "structure": "techguns:ore_cluster_meteor_basis",
+      "weight": 5
     },
     {
       "structure": "techguns:alien_bug_nest",
