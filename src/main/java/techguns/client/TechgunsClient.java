@@ -111,6 +111,10 @@ public class TechgunsClient {
         zombieLike(event, techguns.registry.TGNpcs.PSYCHO_STEVE, armySoldier);
         zombieLike(event, techguns.registry.TGNpcs.STORMTROOPER, armySoldier);
         zombieLike(event, techguns.registry.TGNpcs.DICTATOR_DAVE, techguns.TGIds.id("textures/entity/dictator.png"));
+        for (techguns.registry.TGNpcs.Npc mutant : java.util.List.of(techguns.registry.TGNpcs.SUPER_MUTANT_BASIC, techguns.registry.TGNpcs.SUPER_MUTANT_HEAVY,
+                techguns.registry.TGNpcs.SUPER_MUTANT_ELITE)) {
+            event.registerEntityRenderer(mutant.type().get(), techguns.client.render.entity.npc.SuperMutantRenderer::new);
+        }
         event.registerEntityRenderer(techguns.registry.TGNpcs.ZOMBIE_PIGMAN_SOLDIER.type().get(), context -> new techguns.client.render.entity.npc.TGNpcRenderer(
                 context, techguns.TGIds.of("minecraft", "textures/entity/piglin/zombified_piglin.png"),
                 net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN, net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN_INNER_ARMOR,

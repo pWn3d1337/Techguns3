@@ -67,6 +67,20 @@ public class TGNpcTests {
         });
     }
 
+    @GameTest(template = ARENA)
+    public static void superMutantsArmorAndSize(GameTestHelper helper) {
+        TGNpc mutant = spawn(helper, TGNpcs.SUPER_MUTANT_HEAVY, new BlockPos(3, 1, 3));
+        helper.assertTrue(mutant instanceof techguns.entity.npc.SuperMutant, "Super mutants have their own class");
+        var armored = (techguns.damage.TGArmorProvider) mutant;
+        helper.assertTrue(armored.tgArmorAgainst(techguns.core.damage.TGDamageCategory.PROJECTILE) == 12.0f
+                && armored.tgArmorAgainst(techguns.core.damage.TGDamageCategory.ENERGY) == 16.0f
+                && armored.tgArmorAgainst(techguns.core.damage.TGDamageCategory.RADIATION) == 18.0f
+                && armored.tgArmorAgainst(techguns.core.damage.TGDamageCategory.UNRESISTABLE) == 0.0f, "Heavy mutant armor 12 / 16 / 18 / 0");
+        helper.assertTrue(TGNpcs.SUPER_MUTANT_ELITE.type().get().getDimensions().height() == 3.3f, "Elite mutants are 2 x 1.65 high");
+        helper.assertTrue(mutant.isHoldingGun(), "Mutants carry guns");
+        helper.succeed();
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 200)
     public static void npcShootsItsTarget(GameTestHelper helper) {
         TGNpc npc = spawn(helper, TGNpcs.ZOMBIE_POLICEMAN, new BlockPos(1, 1, 3));

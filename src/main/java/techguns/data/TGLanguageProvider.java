@@ -30,6 +30,12 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("biomass", "Bio Mass"),
             // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
             Map.entry("explosive_charge", "Mining Charge"),
+            Map.entry("super_mutant_basic", "Super Mutant"),
+            Map.entry("super_mutant_heavy", "Heavy Super Mutant"),
+            Map.entry("super_mutant_elite", "Elite Super Mutant"),
+            Map.entry("super_mutant_basic_spawn_egg", "Super Mutant Spawn Egg"),
+            Map.entry("super_mutant_heavy_spawn_egg", "Heavy Super Mutant Spawn Egg"),
+            Map.entry("super_mutant_elite_spawn_egg", "Elite Super Mutant Spawn Egg"),
             Map.entry("turret_armor_iron", "Turret Armor (Iron)"),
             Map.entry("turret_armor_steel", "Turret Armor (Steel)"),
             Map.entry("turret_armor_obsidian_steel", "Turret Armor (Obsidian Steel)"),

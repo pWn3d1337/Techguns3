@@ -73,6 +73,11 @@ public class TGEntityLootProvider extends EntityLootSubProvider {
         add(TGNpcs.STORMTROOPER, pool(TGItems.PLASTIC_SHEET, 1, 2, 0, CHANCE, LOOTING), pool(TGItems.OBSIDIAN_STEEL_INGOT, 1, 2, 2, CHANCE, LOOTING),
                 pool(() -> Items.REDSTONE, 1, 5, 2, 0.3f, LOOTING), pool(TGItems.CIRCUIT_BOARD, 1, 2, 2, 0.1f, LOOTING),
                 pool(TGAmmo.ENERGY_CELL, 1, 2, 2, 0.1f, LOOTING));
+        // Techguns 2: all super mutants use the basic mutant's table
+        for (TGNpcs.Npc mutant : java.util.List.of(TGNpcs.SUPER_MUTANT_BASIC, TGNpcs.SUPER_MUTANT_HEAVY, TGNpcs.SUPER_MUTANT_ELITE)) {
+            add(mutant, pool(TGItems.CYBERNETIC_PARTS, 1, 2, 0, 0.75f, LOOTING), pool(() -> Items.BLAZE_ROD, 1, 2, 2, CHANCE, LOOTING),
+                    pool(() -> Items.GHAST_TEAR, 1, 2, 2, 0.05f, LOOTING));
+        }
         add(TGNpcs.DICTATOR_DAVE, pool(TGGuns.GOLDEN_REVOLVER, 1, 2, 0, 0.5f, LOOTING), pool(TGAmmo.PISTOL_ROUNDS, 1, 17, 2, 0.5f, LOOTING));
     }
 

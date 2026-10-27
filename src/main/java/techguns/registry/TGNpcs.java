@@ -16,6 +16,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.entity.npc.NpcDefinition;
 import techguns.entity.npc.NpcLoadout;
+import techguns.entity.npc.SuperMutant;
 import techguns.entity.npc.TGNpc;
 import techguns.entity.npc.TGNpcFaction;
 
@@ -134,6 +135,16 @@ public final class TGNpcs {
                     .weapon(TGGuns.GOLDEN_REVOLVER, 1)
                     .build(), 35));
 
+    // --- Super mutants (Phase 6c; Techguns 2 sizes: width, 2 x model scale) ---
+    private static final NpcLoadout MUTANT_LOADOUT = NpcLoadout.builder()
+            .weapon(TGGuns.ROCKET_LAUNCHER, 1).weapon(TGGuns.AK47, 1).weapon(TGGuns.COMBAT_SHOTGUN, 1).weapon(TGGuns.LASERGUN, 2).build();
+    public static final Npc SUPER_MUTANT_BASIC = mutant("super_mutant_basic", SuperMutant.Kind.BASIC, 1.0f, 0x71552e,
+            () -> TGNpc.createAttributes(35, 0.30, 7, 50, 1));
+    public static final Npc SUPER_MUTANT_HEAVY = mutant("super_mutant_heavy", SuperMutant.Kind.HEAVY, 1.2f, 0x51350e,
+            () -> TGNpc.createAttributes(45, 0.25, 9, 50, 2));
+    public static final Npc SUPER_MUTANT_ELITE = mutant("super_mutant_elite", SuperMutant.Kind.ELITE, 1.4f, 0x61451e,
+            () -> TGNpc.createAttributes(60, 0.20, 11, 50, 2.5));
+
     private TGNpcs() {
     }
 
@@ -141,10 +152,20 @@ public final class TGNpcs {
     public static void init() {
     }
 
+    private static Npc mutant(String name, SuperMutant.Kind kind, float width, int eggSpots, Supplier<AttributeSupplier.Builder> attributes) {
+        NpcDefinition definition = new NpcDefinition(0.0f, NpcDefinition.Sounds.VILLAGER, TGNpcFaction.HOSTILE, false, MUTANT_LOADOUT);
+        return npc(name, width, 2.0f * kind.scale, false, 0xc6a96b, eggSpots, attributes, (t, level) -> new SuperMutant(t, level, definition, kind));
+    }
+
     private static Npc npc(String name, float width, float height, boolean fireImmune, int eggBackground, int eggSpots,
                            Supplier<AttributeSupplier.Builder> attributes, NpcDefinition definition) {
+        return npc(name, width, height, fireImmune, eggBackground, eggSpots, attributes, (t, level) -> new TGNpc(t, level, definition));
+    }
+
+    private static Npc npc(String name, float width, float height, boolean fireImmune, int eggBackground, int eggSpots,
+                           Supplier<AttributeSupplier.Builder> attributes, EntityType.EntityFactory<TGNpc> factory) {
         Supplier<EntityType<TGNpc>> type = TGEntities.ENTITY_TYPES.register(name, () -> {
-            EntityType.Builder<TGNpc> builder = EntityType.Builder.<TGNpc>of((t, level) -> new TGNpc(t, level, definition), MobCategory.MONSTER)
+            EntityType.Builder<TGNpc> builder = EntityType.Builder.<TGNpc>of(factory, MobCategory.MONSTER)
                     .sized(width, height).eyeHeight(height * 0.85f).clientTrackingRange(8);
             if (fireImmune) {
                 builder.fireImmune();
