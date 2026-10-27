@@ -34,11 +34,16 @@ public final class NpcLoadout {
     private final List<Piece> pieces;
     private final List<Weapon> weapons;
     private final int camo;
+    /** Each piece rolls its own camo in this range (inclusive), when {@link #camoPerPieceMax} >= 0. */
+    private final int camoPerPieceMin;
+    private final int camoPerPieceMax;
 
-    private NpcLoadout(List<Piece> pieces, List<Weapon> weapons, int camo) {
+    private NpcLoadout(List<Piece> pieces, List<Weapon> weapons, int camo, int camoPerPieceMin, int camoPerPieceMax) {
         this.pieces = pieces;
         this.weapons = weapons;
         this.camo = camo;
+        this.camoPerPieceMin = camoPerPieceMin;
+        this.camoPerPieceMax = camoPerPieceMax;
     }
 
     public static Builder builder() {
@@ -53,6 +58,9 @@ public final class NpcLoadout {
             camoIndex = camos.isEmpty() ? DEFAULT_CAMO : random.nextInt(camos.size());
         }
         for (Piece piece : pieces) {
+            if (camoPerPieceMax >= 0) {
+                camoIndex = camoPerPieceMin + random.nextInt(camoPerPieceMax - camoPerPieceMin + 1);
+            }
             if (random.nextDouble() > piece.chance()) {
                 if (piece.alternative() == null) {
                     continue;
@@ -89,6 +97,8 @@ public final class NpcLoadout {
         private final List<Piece> pieces = new ArrayList<>();
         private final List<Weapon> weapons = new ArrayList<>();
         private int camo = DEFAULT_CAMO;
+        private int camoPerPieceMin;
+        private int camoPerPieceMax = -1;
 
         private Builder() {
         }
@@ -111,13 +121,20 @@ public final class NpcLoadout {
             return this;
         }
 
+        /** Every piece gets its own random camo index in {@code min..max} (Techguns 2 Outcast). */
+        public Builder camoPerPiece(int min, int max) {
+            this.camoPerPieceMin = min;
+            this.camoPerPieceMax = max;
+            return this;
+        }
+
         public Builder weapon(Supplier<? extends Item> item, int weight) {
             weapons.add(new Weapon(item, weight));
             return this;
         }
 
         public NpcLoadout build() {
-            return new NpcLoadout(List.copyOf(pieces), List.copyOf(weapons), camo);
+            return new NpcLoadout(List.copyOf(pieces), List.copyOf(weapons), camo, camoPerPieceMin, camoPerPieceMax);
         }
     }
 }

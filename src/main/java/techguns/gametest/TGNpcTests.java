@@ -49,6 +49,24 @@ public class TGNpcTests {
         helper.succeed();
     }
 
+    @GameTest(template = ARENA)
+    public static void humanNpcsGear(GameTestHelper helper) {
+        TGNpc outcast = spawn(helper, TGNpcs.OUTCAST, new BlockPos(3, 1, 3));
+        helper.assertTrue(outcast.getItemBySlot(EquipmentSlot.CHEST).is(techguns.registry.TGArmors.T3_POWER_CHESTPLATE.get()),
+                "Outcasts wear power armor");
+        TGNpc commando = spawn(helper, TGNpcs.COMMANDO, new BlockPos(3, 1, 3));
+        helper.assertTrue(commando.getMainHandItem().is(TGGuns.M4_INFILTRATOR.get()) && commando.getArmorValue() == 8,
+                "Commandos: M4 Infiltrator, armor stat 8");
+        TGNpc dave = spawn(helper, TGNpcs.DICTATOR_DAVE, new BlockPos(3, 1, 3));
+        helper.assertTrue(dave.getMainHandItem().is(TGGuns.GOLDEN_REVOLVER.get()) && dave.getAttributeValue(Attributes.MAX_HEALTH) == 100.0
+                && dave.getAttributeValue(Attributes.ARMOR_TOUGHNESS) == 2.0, "Dictator Dave: golden revolver, 100 health, toughness 2");
+        // worn armor attributes apply on the entity's next tick
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(outcast.getArmorValue() > 10, "Outcasts' worn armor protects them (gear armor), got " + outcast.getArmorValue());
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 200)
     public static void npcShootsItsTarget(GameTestHelper helper) {
         TGNpc npc = spawn(helper, TGNpcs.ZOMBIE_POLICEMAN, new BlockPos(1, 1, 3));

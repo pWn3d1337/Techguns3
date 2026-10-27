@@ -50,6 +50,7 @@ public class TGNpc extends Monster implements GunShooter, RangedAttackMob {
     public TGNpc(EntityType<? extends TGNpc> type, Level level, NpcDefinition definition) {
         super(type, level);
         this.definition = definition;
+        this.xpReward = definition.experience();
         if (!level.isClientSide) {
             updateCombatGoal();
         }
@@ -57,8 +58,12 @@ public class TGNpc extends Monster implements GunShooter, RangedAttackMob {
 
     /** Techguns 2 GenericNPC defaults; each NPC type sets its own values on top. */
     public static AttributeSupplier.Builder createAttributes(double health, double speed, double attack) {
+        return createAttributes(health, speed, attack, 50.0, 0.0);
+    }
+
+    public static AttributeSupplier.Builder createAttributes(double health, double speed, double attack, double followRange, double toughness) {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, health).add(Attributes.MOVEMENT_SPEED, speed)
-                .add(Attributes.ATTACK_DAMAGE, attack).add(Attributes.FOLLOW_RANGE, 50.0);
+                .add(Attributes.ATTACK_DAMAGE, attack).add(Attributes.FOLLOW_RANGE, followRange).add(Attributes.ARMOR_TOUGHNESS, toughness);
     }
 
     public NpcDefinition definition() {
@@ -150,7 +155,7 @@ public class TGNpc extends Monster implements GunShooter, RangedAttackMob {
 
     @Override
     public int getArmorValue() {
-        return Math.round(definition.armor());
+        return definition.armor() < 0 ? super.getArmorValue() : Math.round(definition.armor());
     }
 
     @Nullable

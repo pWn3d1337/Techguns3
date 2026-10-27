@@ -96,13 +96,21 @@ public class TechgunsClient {
         event.registerEntityRenderer(TGEntities.MAGIC_RIFLE_PROJECTILE.get(), GenericProjectileRenderer::new);
     }
 
-    /** Techguns 2 NPC renderers: texture and the vanilla model layers of the mob they look like. */
+    /** Techguns 2 NPC renderers: texture and the vanilla model layers of the mob they look like (humans use the zombie biped). */
     private static void registerNpcRenderers(EntityRenderersEvent.RegisterRenderers event) {
         ResourceLocation zombieSoldier = techguns.TGIds.id("textures/entity/zombie_soldier.png");
         zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_SOLDIER, zombieSoldier);
         zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_FARMER, zombieSoldier);
         zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_MINER, zombieSoldier);
         zombieLike(event, techguns.registry.TGNpcs.ZOMBIE_POLICEMAN, techguns.TGIds.id("textures/entity/zombie_policeman.png"));
+        ResourceLocation armySoldier = techguns.TGIds.id("textures/entity/army_soldier.png");
+        zombieLike(event, techguns.registry.TGNpcs.ARMY_SOLDIER, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.BANDIT, techguns.TGIds.id("textures/entity/bandit.png"));
+        zombieLike(event, techguns.registry.TGNpcs.COMMANDO, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.OUTCAST, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.PSYCHO_STEVE, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.STORMTROOPER, armySoldier);
+        zombieLike(event, techguns.registry.TGNpcs.DICTATOR_DAVE, techguns.TGIds.id("textures/entity/dictator.png"));
         event.registerEntityRenderer(techguns.registry.TGNpcs.ZOMBIE_PIGMAN_SOLDIER.type().get(), context -> new techguns.client.render.entity.npc.TGNpcRenderer(
                 context, techguns.TGIds.of("minecraft", "textures/entity/piglin/zombified_piglin.png"),
                 net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN, net.minecraft.client.model.geom.ModelLayers.ZOMBIFIED_PIGLIN_INNER_ARMOR,

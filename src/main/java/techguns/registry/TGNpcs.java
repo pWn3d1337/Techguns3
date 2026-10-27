@@ -77,6 +77,63 @@ public final class TGNpcs {
                     .weapon(TGGuns.REVOLVER, 1).weapon(TGGuns.THOMPSON, 1).weapon(TGGuns.HAND_CANNON, 1)
                     .build()));
 
+    // --- Humans (Phase 6b) ---
+    public static final Npc ARMY_SOLDIER = npc("army_soldier", 0.6f, 1.95f, false, 0x74806e, 0x191512,
+            () -> TGNpc.createAttributes(25, 0.30, 4, 75, 0),
+            new NpcDefinition(8.0f, NpcDefinition.Sounds.SOLDIER, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .armorChoice(EquipmentSlot.HEAD, TGArmors.T2_COMBAT_HELMET, TGArmors.T2_BERET_ITEM, HALF)
+                    .armor(EquipmentSlot.CHEST, TGArmors.T2_COMBAT_CHESTPLATE, HALF).armor(EquipmentSlot.LEGS, TGArmors.T2_COMBAT_LEGGINGS, HALF)
+                    .armor(EquipmentSlot.FEET, TGArmors.T2_COMBAT_BOOTS, HALF)
+                    .weapon(TGGuns.M4, 1).weapon(TGGuns.COMBAT_SHOTGUN, 1).weapon(TGGuns.BOLT_ACTION, 1)
+                    .build()));
+    public static final Npc BANDIT = npc("bandit", 0.6f, 1.95f, false, 0x8f9d59, 0x2c3117,
+            () -> TGNpc.createAttributes(20, 0.30, 5, 40, 0),
+            new NpcDefinition(5.0f, NpcDefinition.Sounds.VILLAGER, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .armor(EquipmentSlot.CHEST, TGArmors.T1_SCOUT_CHESTPLATE, ALWAYS).armor(EquipmentSlot.LEGS, TGArmors.T1_SCOUT_LEGGINGS, ALWAYS)
+                    .armor(EquipmentSlot.FEET, TGArmors.T1_SCOUT_BOOTS, ALWAYS).armor(EquipmentSlot.HEAD, TGArmors.T1_SCOUT_HELMET, HALF)
+                    .weapon(TGGuns.PISTOL, 1).weapon(TGGuns.AK47, 1).weapon(TGGuns.SAWED_OFF, 1).weapon(TGGuns.THOMPSON, 1)
+                    .weapon(TGGuns.REVOLVER, 1).weapon(TGGuns.BOLT_ACTION, 1)
+                    .build()));
+    public static final Npc COMMANDO = npc("commando", 0.6f, 1.95f, false, 0x191512, 0x74806e,
+            () -> TGNpc.createAttributes(30, 0.35, 5, 75, 0),
+            new NpcDefinition(8.0f, NpcDefinition.Sounds.SOLDIER, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .armor(EquipmentSlot.HEAD, TGArmors.T2_COMMANDO_HELMET, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T2_COMMANDO_CHESTPLATE, ALWAYS)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T2_COMMANDO_LEGGINGS, ALWAYS).armor(EquipmentSlot.FEET, TGArmors.T2_COMMANDO_BOOTS, ALWAYS)
+                    .weapon(TGGuns.M4_INFILTRATOR, 1)
+                    .build()));
+    /** Techguns 2 GenericNPCGearSpecificStats: the power armor protects it; each piece has camo 1 or 2. */
+    public static final Npc OUTCAST = npc("outcast", 0.6f, 1.95f, false, 0x101010, 0xFF0000,
+            () -> TGNpc.createAttributes(30, 0.2, 8, 60, 0),
+            new NpcDefinition(NpcDefinition.GEAR_ARMOR, NpcDefinition.Sounds.VILLAGER, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .camoPerPiece(1, 2)
+                    .armor(EquipmentSlot.HEAD, TGArmors.T3_POWER_HELMET, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T3_POWER_CHESTPLATE, ALWAYS)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T3_POWER_LEGGINGS, ALWAYS).armor(EquipmentSlot.FEET, TGArmors.T3_POWER_BOOTS, ALWAYS)
+                    .weapon(TGGuns.LASERGUN, 1).weapon(TGGuns.GRIM_REAPER, 1).weapon(TGGuns.MINIGUN, 1).weapon(TGGuns.BIOGUN, 1)
+                    .weapon(TGGuns.FLAMETHROWER, 1).weapon(TGGuns.TESLA_GUN, 1).weapon(TGGuns.LMG, 1)
+                    .build()));
+    public static final Npc PSYCHO_STEVE = npc("psycho_steve", 0.6f, 1.95f, false, 0x757468, 0xF0F0F0,
+            () -> TGNpc.createAttributes(75, 0.60, 7, 60, 1),
+            new NpcDefinition(5.0f, NpcDefinition.Sounds.HEAVY, TGNpcFaction.HOSTILE, false, NpcLoadout.builder().camo(NpcLoadout.RANDOM_CAMO)
+                    .armor(EquipmentSlot.HEAD, TGArmors.T1_MINER_HELMET, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T1_MINER_CHESTPLATE, ALWAYS)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T1_MINER_LEGGINGS, ALWAYS).armor(EquipmentSlot.FEET, TGArmors.T1_MINER_BOOTS, ALWAYS)
+                    .weapon(TGGuns.CHAINSAW, 1)
+                    .build(), 25));
+    /** Techguns 2 GenericNPCGearSpecificStats: the worn armor protects it. */
+    public static final Npc STORMTROOPER = npc("stormtrooper", 0.6f, 1.95f, false, 0xF0F0F0, 0x404040,
+            () -> TGNpc.createAttributes(35, 0.30, 4, 75, 0),
+            new NpcDefinition(NpcDefinition.GEAR_ARMOR, NpcDefinition.Sounds.HEAVY, TGNpcFaction.HOSTILE, false, NpcLoadout.builder().camo(1)
+                    .armor(EquipmentSlot.HEAD, TGArmors.T3_MINER_HELMET, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T3_MINER_CHESTPLATE, ALWAYS)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T3_MINER_LEGGINGS, ALWAYS).armor(EquipmentSlot.FEET, TGArmors.T3_MINER_BOOTS, ALWAYS)
+                    .weapon(TGGuns.BLASTER_RIFLE, 1).weapon(TGGuns.LASERGUN, 1)
+                    .build()));
+    public static final Npc DICTATOR_DAVE = npc("dictator_dave", 0.6f, 1.95f, false, 0x8f9d59, 0xA0A000,
+            () -> TGNpc.createAttributes(100, 0.40, 7, 60, 2),
+            new NpcDefinition(15.0f, NpcDefinition.Sounds.SOLDIER, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .armor(EquipmentSlot.HEAD, TGArmors.T2_BERET_ITEM, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T1_COMBAT_CHESTPLATE, ALWAYS)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T1_SCOUT_LEGGINGS, ALWAYS).armor(EquipmentSlot.FEET, TGArmors.T1_COMBAT_BOOTS, ALWAYS)
+                    .weapon(TGGuns.GOLDEN_REVOLVER, 1)
+                    .build(), 35));
+
     private TGNpcs() {
     }
 
