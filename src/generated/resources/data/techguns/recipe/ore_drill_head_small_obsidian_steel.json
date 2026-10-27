@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "p": {
+      "tag": "c:plates/obsidian_steel"
+    },
+    "s": {
+      "tag": "c:ingots/obsidian_steel"
+    }
+  },
+  "pattern": [
+    "sps",
+    "sps",
+    " s "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:ore_drill_head_small_obsidian_steel"
+  }
+}

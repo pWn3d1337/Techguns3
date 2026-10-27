@@ -21,6 +21,7 @@ public class TGItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         TGItems.simpleItems().forEach(item -> basicItem(item.get()));
+        TGItems.oreDrillHeads().forEach(item -> basicItem(item.get()));
         TGAmmo.flatAmmo().forEach(item -> basicItem(item.get()));
         TGArmors.armors().forEach(item -> basicItem(item.get()));
         TGSlotItems.items().forEach(item -> basicItem(item.get()));

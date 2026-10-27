@@ -69,6 +69,11 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
         dropSelf(TGBlocks.REACTION_CHAMBER_HOUSING.get());
         dropSelf(TGBlocks.REACTION_CHAMBER_GLASS.get());
         dropSelf(TGBlocks.REACTION_CHAMBER_CONTROLLER.get());
+        dropSelf(TGBlocks.ORE_DRILL_FRAME.get());
+        dropSelf(TGBlocks.ORE_DRILL_SCAFFOLD.get());
+        dropSelf(TGBlocks.ORE_DRILL_ROD.get());
+        dropSelf(TGBlocks.ORE_DRILL_ENGINE.get());
+        dropSelf(TGBlocks.ORE_DRILL_CONTROLLER.get());
         add(TGBlocks.BUNKER_DOOR.get(), this::createDoorTable);
         // a 3x3 door drops one item, from its centre block (breaking another part drops it through the centre, see Door3x3Block)
         TGBlocks.DOORS_3X3.forEach(door -> add(door.get(), this::doorMasterDrop));

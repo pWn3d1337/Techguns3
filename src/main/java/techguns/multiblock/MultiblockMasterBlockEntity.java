@@ -2,6 +2,7 @@ package techguns.multiblock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -75,6 +76,11 @@ public abstract class MultiblockMasterBlockEntity extends TGMachineBlockEntity {
         if (level == null || formed || !schematic().canFormFromSide(side)) {
             return false;
         }
+        Optional<Component> problem = schematic().check(level, worldPosition, side);
+        if (problem.isPresent()) {
+            player.displayClientMessage(problem.get().copy().withStyle(ChatFormatting.RED), true);
+            return false;
+        }
         List<MultiblockPart> parts = schematic().parts(level, worldPosition, side);
         List<BlockPos> invalid = parts.stream().filter(part -> !matches(part)).map(MultiblockPart::pos).toList();
         if (parts.isEmpty() || !invalid.isEmpty()) {
@@ -90,7 +96,8 @@ public abstract class MultiblockMasterBlockEntity extends TGMachineBlockEntity {
                 continue;
             }
             BlockState state = level.getBlockState(part.pos());
-            level.setBlock(part.pos(), state.setValue(MultiblockPartBlock.FORMED, true), 3);
+            level.setBlock(part.pos(), state.getBlock() instanceof MultiblockPartBlock block ? block.formedState(state, part)
+                    : state.setValue(MultiblockPartBlock.FORMED, true), 3);
             if (level.getBlockEntity(part.pos()) instanceof MultiblockPartBlockEntity partEntity) {
                 partEntity.link(worldPosition, part.connector());
             }
@@ -99,7 +106,7 @@ public abstract class MultiblockMasterBlockEntity extends TGMachineBlockEntity {
         formed = true;
         direction = side;
         BlockState formedState = getBlockState().setValue(MultiblockPartBlock.FORMED, true);
-        if (formedState.hasProperty(TGMachineBlock.FACING)) {
+        if (formedState.hasProperty(TGMachineBlock.FACING) && side.getAxis().isHorizontal()) {
             // formed controllers with a block model (Reaction Chamber OBJ) are turned by the structure direction
             formedState = formedState.setValue(TGMachineBlock.FACING, side.getOpposite());
         }
@@ -128,8 +135,8 @@ public abstract class MultiblockMasterBlockEntity extends TGMachineBlockEntity {
             if (level.getBlockEntity(pos) instanceof MultiblockPartBlockEntity partEntity && worldPosition.equals(partEntity.getMasterPos())) {
                 partEntity.unlink();
                 BlockState state = level.getBlockState(pos);
-                if (state.hasProperty(MultiblockPartBlock.FORMED)) {
-                    level.setBlock(pos, state.setValue(MultiblockPartBlock.FORMED, false), 3);
+                if (state.getBlock() instanceof MultiblockPartBlock block) {
+                    level.setBlock(pos, block.unformedState(state), 3);
                 }
             }
         }

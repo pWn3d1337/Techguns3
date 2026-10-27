@@ -1,0 +1,21 @@
+{
+  "type": "techguns:ore_cluster",
+  "cluster": "techguns:ore_cluster_coal",
+  "entries": [
+    {
+      "item": {
+        "item": "minecraft:coal_ore"
+      },
+      "weight": 99
+    },
+    {
+      "item": {
+        "item": "minecraft:diamond"
+      },
+      "weight": 1
+    }
+  ],
+  "mining_level": 0,
+  "ore_multiplier": 10.0,
+  "power_multiplier": 0.1
+}

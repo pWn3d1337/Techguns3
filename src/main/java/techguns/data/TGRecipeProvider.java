@@ -48,6 +48,7 @@ import techguns.recipe.AmmoPressRecipe;
 import techguns.recipe.BlastFurnaceRecipe;
 import techguns.recipe.ChargingRecipe;
 import techguns.recipe.ChemLabRecipe;
+import techguns.recipe.OreClusterRecipe;
 import techguns.recipe.GrinderRecipe;
 import techguns.recipe.MetalPressRecipe;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -88,6 +89,75 @@ public class TGRecipeProvider extends RecipeProvider {
         buildBlockRecipes(output);
         buildMachineRecipes(output);
         buildSlotItemRecipes(output);
+        buildOreDrillRecipes(output);
+    }
+
+    /** Techguns 2 Ore Drill blocks and heads, and the ore clusters (Techguns 2 {@code TGOreClusters} and its config). */
+    private void buildOreDrillRecipes(RecipeOutput output) {
+        Item engine = TGItems.ELECTRIC_ENGINE.get();
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_FRAME.get(), 8).pattern("pbp").pattern("bpb").pattern("pbp")
+                .define('p', TGTags.Items.plate("iron")).define('b', Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_BARS), has(Items.IRON_BARS)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_SCAFFOLD.get(), 8).pattern("bbb").pattern("bpb").pattern("bbb")
+                .define('p', TGTags.Items.plate("iron")).define('b', Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_BARS), has(Items.IRON_BARS)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_ROD.get(), 4).pattern("ipi").pattern("ipi").pattern("ipi")
+                .define('p', TGTags.Items.plate("iron")).define('i', Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_ENGINE.get(), 4).pattern("bbb").pattern("beb").pattern("bbb")
+                .define('b', Items.IRON_BARS).define('e', engine).unlockedBy(getHasName(engine), has(engine)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_CONTROLLER.get()).pattern("pcp").pattern("cec").pattern("pcp")
+                .define('p', TGTags.Items.plate("iron")).define('c', TGItems.CIRCUIT_BOARD.get()).define('e', engine)
+                .unlockedBy(getHasName(engine), has(engine)).save(output);
+
+        drillHeads(output, TGItems.ORE_DRILL_HEAD_SMALL_STEEL.get(), TGItems.ORE_DRILL_HEAD_MEDIUM_STEEL.get(), TGItems.ORE_DRILL_HEAD_LARGE_STEEL.get(),
+                b -> b.pattern("sps").pattern("sps").pattern(" s ").define('s', TGTags.Items.ingot("steel")).define('p', TGTags.Items.plate("steel")),
+                TGItems.STEEL_PLATE.get());
+        drillHeads(output, TGItems.ORE_DRILL_HEAD_SMALL_OBSIDIAN_STEEL.get(), TGItems.ORE_DRILL_HEAD_MEDIUM_OBSIDIAN_STEEL.get(),
+                TGItems.ORE_DRILL_HEAD_LARGE_OBSIDIAN_STEEL.get(), b -> b.pattern("sps").pattern("sps").pattern(" s ")
+                        .define('s', TGTags.Items.ingot("obsidian_steel")).define('p', TGTags.Items.plate("obsidian_steel")),
+                TGItems.OBSIDIAN_STEEL_PLATE.get());
+        drillHeads(output, TGItems.ORE_DRILL_HEAD_SMALL_CARBON.get(), TGItems.ORE_DRILL_HEAD_MEDIUM_CARBON.get(), TGItems.ORE_DRILL_HEAD_LARGE_CARBON.get(),
+                b -> b.pattern("sss").pattern("sss").pattern(" s ").define('s', TGTags.Items.plate("carbon")), TGItems.CARBON_PLATE.get());
+
+        oreCluster(output, TGBlocks.ORE_CLUSTER_COAL, 0, 10.0f, 0.1f, item(Items.COAL_ORE, 99), item(Items.DIAMOND, 1));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_COMMON_METAL, 0, 5.0f, 0.2f, item(Items.IRON_ORE, 45), item(Items.COPPER_ORE, 30),
+                item(TGBlocks.TIN_ORE.get(), 25));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_RARE_METAL, 1, 2.5f, 0.4f, item(TGBlocks.LEAD_ORE.get(), 50), ore("osmium", 50), ore("aluminum", 50));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_SHINY_METAL, 2, 1.0f, 1.0f, item(TGBlocks.TITANIUM_ORE.get(), 20), item(Items.GOLD_ORE, 40),
+                ore("silver", 40));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_URANIUM, 3, 0.5f, 1.0f, item(TGBlocks.URANIUM_ORE.get(), 50));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_COMMON_GEM, 1, 5.0f, 0.2f, item(Items.REDSTONE_ORE, 40), item(Items.LAPIS_ORE, 20),
+                ore("certus_quartz", 40));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_SHINY_GEM, 3, 0.2f, 1.0f, item(Items.DIAMOND_ORE, 40), item(Items.EMERALD_ORE, 20));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_NETHER_CRYSTAL, 2, 4.0f, 0.5f, item(Items.NETHER_QUARTZ_ORE, 50), item(Items.GLOWSTONE, 40),
+                item(Items.BLAZE_ROD, 10));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_OIL, 2, 4.0f, 1.0f, OreClusterRecipe.Entry.fluid(TGTags.Fluids.DRILL_OIL, 10));
+    }
+
+    /** Small head from {@code small}, medium from three small, large from three medium (Techguns 2). */
+    private void drillHeads(RecipeOutput output, Item small, Item medium, Item large,
+                            java.util.function.UnaryOperator<ShapedRecipeBuilder> smallPattern, Item unlock) {
+        smallPattern.apply(ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, small)).unlockedBy(getHasName(unlock), has(unlock)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, medium).pattern("d d").pattern(" d ").define('d', small)
+                .unlockedBy(getHasName(small), has(small)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, large).pattern("d d").pattern(" d ").define('d', medium)
+                .unlockedBy(getHasName(medium), has(medium)).save(output);
+    }
+
+    private static OreClusterRecipe.Entry item(net.minecraft.world.level.ItemLike item, int weight) {
+        return OreClusterRecipe.Entry.item(Ingredient.of(item), weight);
+    }
+
+    /** Another mod's ore by its common tag; skipped while no mod fills the tag. */
+    private static OreClusterRecipe.Entry ore(String material, int weight) {
+        return OreClusterRecipe.Entry.item(Ingredient.of(TGTags.Items.ore(material)), weight);
+    }
+
+    private void oreCluster(RecipeOutput output, net.neoforged.neoforge.registries.DeferredBlock<? extends net.minecraft.world.level.block.Block> cluster,
+                            int miningLevel, float oreMultiplier, float powerMultiplier, OreClusterRecipe.Entry... entries) {
+        output.accept(TGIds.id("ore_cluster/" + cluster.getId().getPath().replace("ore_cluster_", "")),
+                new OreClusterRecipe(cluster.get(), miningLevel, oreMultiplier, powerMultiplier, List.of(entries)), null);
     }
 
     /** Techguns 2 armor recipes. */

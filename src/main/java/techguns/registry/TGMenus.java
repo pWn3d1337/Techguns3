@@ -58,6 +58,8 @@ public final class TGMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<ReactionChamberMenu>> REACTION_CHAMBER = MENUS.register("reaction_chamber",
             () -> IMenuTypeExtension.create(ReactionChamberMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.OreDrillMenu>> ORE_DRILL = MENUS.register("ore_drill",
+            () -> IMenuTypeExtension.create(techguns.machine.OreDrillMenu::new));
 
     private TGMenus() {
     }

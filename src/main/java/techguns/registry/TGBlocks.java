@@ -38,6 +38,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import techguns.machine.TGMachineBlock;
 import techguns.multiblock.MultiblockControllerBlock;
 import techguns.multiblock.MultiblockPartBlock;
+import techguns.block.OreDrillScaffoldBlock;
 
 /**
  * Techguns blocks. Every block registered with {@link #withItem} also gets a block item.
@@ -253,6 +254,26 @@ public final class TGBlocks {
             () -> new MultiblockPartBlock(machine().sound(SoundType.GLASS)));
     public static final DeferredBlock<MultiblockControllerBlock> REACTION_CHAMBER_CONTROLLER = withItem("reaction_chamber_controller",
             () -> new MultiblockControllerBlock(machine(), TGBlockEntities.REACTION_CHAMBER));
+    public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_FRAME = withItem("ore_drill_frame", () -> new MultiblockPartBlock(machine()));
+    public static final DeferredBlock<OreDrillScaffoldBlock> ORE_DRILL_SCAFFOLD = withItem("ore_drill_scaffold",
+            () -> new OreDrillScaffoldBlock(machine()));
+    public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_ROD = withItem("ore_drill_rod", () -> new MultiblockPartBlock(machine()));
+    public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_ENGINE = withItem("ore_drill_engine", () -> new MultiblockPartBlock(machine()));
+    public static final DeferredBlock<MultiblockControllerBlock> ORE_DRILL_CONTROLLER = withItem("ore_drill_controller",
+            () -> new MultiblockControllerBlock(machine(), TGBlockEntities.ORE_DRILL));
+
+    // --- Ore clusters (Techguns 2 TGOreClusters): unbreakable Ore Drill targets, placed by worldgen (Phase 7) ---
+    public static final DeferredBlock<Block> ORE_CLUSTER_COAL = oreCluster("coal");
+    public static final DeferredBlock<Block> ORE_CLUSTER_COMMON_METAL = oreCluster("common_metal");
+    public static final DeferredBlock<Block> ORE_CLUSTER_RARE_METAL = oreCluster("rare_metal");
+    public static final DeferredBlock<Block> ORE_CLUSTER_SHINY_METAL = oreCluster("shiny_metal");
+    public static final DeferredBlock<Block> ORE_CLUSTER_URANIUM = oreCluster("uranium");
+    public static final DeferredBlock<Block> ORE_CLUSTER_COMMON_GEM = oreCluster("common_gem");
+    public static final DeferredBlock<Block> ORE_CLUSTER_SHINY_GEM = oreCluster("shiny_gem");
+    public static final DeferredBlock<Block> ORE_CLUSTER_NETHER_CRYSTAL = oreCluster("nether_crystal");
+    public static final DeferredBlock<Block> ORE_CLUSTER_OIL = oreCluster("oil");
+    public static final List<DeferredBlock<Block>> ORE_CLUSTERS = List.of(ORE_CLUSTER_COAL, ORE_CLUSTER_COMMON_METAL, ORE_CLUSTER_RARE_METAL,
+            ORE_CLUSTER_SHINY_METAL, ORE_CLUSTER_URANIUM, ORE_CLUSTER_COMMON_GEM, ORE_CLUSTER_SHINY_GEM, ORE_CLUSTER_NETHER_CRYSTAL, ORE_CLUSTER_OIL);
 
     /** Fabric Ammo Bench: no block entity, the menu keeps the inputs. */
     public static final DeferredBlock<AmmoBenchBlock> AMMO_BENCH = withItem("ammo_bench", () -> new AmmoBenchBlock(machine()));
@@ -332,6 +353,12 @@ public final class TGBlocks {
     /** Full cube blocks with one texture that drop themselves (datagen). */
     public static List<DeferredBlock<? extends Block>> cubeBlocks() {
         return Collections.unmodifiableList(CUBE_BLOCKS);
+    }
+
+    /** Techguns 2 {@code BlockOreCluster}: unbreakable, no drops. */
+    private static DeferredBlock<Block> oreCluster(String name) {
+        return withItem("ore_cluster_" + name, () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                .instrument(NoteBlockInstrument.BASEDRUM).strength(-1.0f, 3600000.0f).noLootTable().isValidSpawn((s, l, p, e) -> false)));
     }
 
     private static BlockBehaviour.Properties stoneOre(float hardness) {

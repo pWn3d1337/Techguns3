@@ -1,0 +1,27 @@
+{
+  "type": "techguns:ore_cluster",
+  "cluster": "techguns:ore_cluster_common_gem",
+  "entries": [
+    {
+      "item": {
+        "item": "minecraft:redstone_ore"
+      },
+      "weight": 40
+    },
+    {
+      "item": {
+        "item": "minecraft:lapis_ore"
+      },
+      "weight": 20
+    },
+    {
+      "item": {
+        "tag": "c:ores/certus_quartz"
+      },
+      "weight": 40
+    }
+  ],
+  "mining_level": 1,
+  "ore_multiplier": 5.0,
+  "power_multiplier": 0.2
+}

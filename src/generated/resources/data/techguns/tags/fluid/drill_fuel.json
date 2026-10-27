@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "#c:fuel",
+      "required": false
+    },
+    {
+      "id": "#c:diesel",
+      "required": false
+    },
+    {
+      "id": "#c:biodiesel",
+      "required": false
+    }
+  ]
+}

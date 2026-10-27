@@ -19,13 +19,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 5b2b | Chem Lab (fluid tanks), Charging Station, creeper acid fluid | `c9a082e` |
   | 5b3 | Repair, Camo, Upgrade and Ammo Bench, armor upgrades, Grinder armor recycling | `7341f36` |
   | 5c1 | Multiblock framework + Fabricator, Fabric fallback recipes removed | `af3babb` |
-  | 5c2 | Reaction Chamber | not committed yet |
+  | 5c2 | Reaction Chamber | `2cf2c17` |
+  | 5c3 | Ore Drill + ore clusters | not committed yet |
 
-- All 233 GameTests pass; each batch was checked in game via MCP.
+- All 244 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 5c2, then 5c3 Ore Drill + ore clusters (plan in the design doc, 5c batches).
+1. Commit 5c3 (when the user asks).
 2. 5d turrets / explosive charges / camp flag, 5e JEI.
 3. Open a Phase 5 PR when Phase 5 is done (or earlier if the user asks).
 
@@ -48,13 +49,17 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   (`MachineEnergy`), redstone mode, owner + owner-only security, one `MachineOperation` (outputs, multiplier, time,
   power per tick) with progress; hooks `checkAndStartOperation`, `finishOperation`, `idleTick` (server, no job),
   `clientIdleTick`, `playWorkSound` (client), `useItem`/`canUseItem` (held item on the block, e.g. buckets),
-  `pressMachineButton` (menu buttons), extra synced data (`extraDataCount`/`getExtraData`); helpers `has`, `consume`,
+  `keepOperation` (cancel a running job, Ore Drill head change), `pressMachineButton` (menu buttons), extra synced data (`extraDataCount`/`getExtraData`); helpers `has`, `consume`,
   `canOutput`, `deliver`, `canInsertAll`/`insertAll`, `maxStackMultiplier`.
 - `TGMachineBlock`: facing (renderer-drawn machines store the look direction, block-model machines face the placer),
   owner on placement, menu, drops contents. `RenderShape.ENTITYBLOCK_ANIMATED` for Java-model machines, `MODEL` for
   JSON/OBJ block models with renderer extras.
 - `TGMachineMenu` (data slots, buttons via `clickMenuButton`, slot icons), `TGMachineScreen` (1.12 GUI textures, power
   bar, redstone/security buttons, `IconButton`, `drawFluid`, `tankTooltip`).
+- Multiblocks (`techguns.multiblock`): `MultiblockSchematic` (`canFormFromSide`, `check` for a size/target message,
+  `parts`), `MultiblockPart` (block or air, connector, `hidden`), `MultiblockMasterBlockEntity` (`tryForm`/`unform`,
+  linked parts, works only formed), `MultiblockPartBlock` (`FORMED`, `formedState`/`unformedState` hooks), one shared
+  `MULTIBLOCK_PART` block entity type (add every new part block to it).
 - Recipes are data-driven types in `techguns.recipe` (`MachineInput`, `MachineRecipe`), generated in `TGRecipeProvider`.
 - 1.12 Java machine models are converted with a small script (`convmodel.py`, see below) into vanilla
   `LayerDefinition`s (`client/model/machine`), drawn by `TGMachineRenderer` (+ translucent pass).

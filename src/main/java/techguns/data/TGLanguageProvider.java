@@ -28,6 +28,25 @@ public class TGLanguageProvider extends LanguageProvider {
     /** English names that differ from the title-cased registry name. */
     private static final Map<String, String> NAME_OVERRIDES = Map.ofEntries(
             Map.entry("biomass", "Bio Mass"),
+            // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
+            Map.entry("ore_cluster_coal", "Ore Cluster (Coal)"),
+            Map.entry("ore_cluster_common_metal", "Ore Cluster (Common Metal)"),
+            Map.entry("ore_cluster_rare_metal", "Ore Cluster (Rare Metal)"),
+            Map.entry("ore_cluster_shiny_metal", "Ore Cluster (Shiny Metal)"),
+            Map.entry("ore_cluster_uranium", "Ore Cluster (Uranium)"),
+            Map.entry("ore_cluster_common_gem", "Ore Cluster (Common Gem)"),
+            Map.entry("ore_cluster_shiny_gem", "Ore Cluster (Shiny Gem)"),
+            Map.entry("ore_cluster_nether_crystal", "Ore Cluster (Nether Crystal)"),
+            Map.entry("ore_cluster_oil", "Ore Cluster (Oil)"),
+            Map.entry("ore_drill_head_small_steel", "Small Ore Drill (Steel)"),
+            Map.entry("ore_drill_head_small_obsidian_steel", "Small Ore Drill (Obsidian Steel)"),
+            Map.entry("ore_drill_head_small_carbon", "Small Ore Drill (Carbon)"),
+            Map.entry("ore_drill_head_medium_steel", "Medium Ore Drill (Steel)"),
+            Map.entry("ore_drill_head_medium_obsidian_steel", "Medium Ore Drill (Obsidian Steel)"),
+            Map.entry("ore_drill_head_medium_carbon", "Medium Ore Drill (Carbon)"),
+            Map.entry("ore_drill_head_large_steel", "Large Ore Drill (Steel)"),
+            Map.entry("ore_drill_head_large_obsidian_steel", "Large Ore Drill (Obsidian Steel)"),
+            Map.entry("ore_drill_head_large_carbon", "Large Ore Drill (Carbon)"),
             // Phase 5a2 (Techguns 2 lang: tile.techguns.*)
             Map.entry("lamp_yellow", "Lamp (Yellow)"),
             Map.entry("lamp_white", "Lamp (White)"),
@@ -300,6 +319,32 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.reactionchamber.risk.explosion_low", "Small Explosion");
         add("techguns.reactionchamber.risk.explosion_medium", "Medium Explosion");
         add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
+        add("techguns.container.oredrill", "Ore Drill");
+        add("techguns.container.oredrill.broken", "Multiblock broken");
+        add("techguns.container.oredrill.drillrequired.small", "Requires Small Drill");
+        add("techguns.container.oredrill.drillrequired.medium", "Requires Medium Drill");
+        add("techguns.container.oredrill.drillrequired.large", "Requires Large Drill");
+        add("techguns.msg.error.oredrill.controlleralone", "Can't form multiblock: No connected ore drill engines/rods");
+        add("techguns.msg.error.oredrill.nocluster", "Can't form multiblock: The rods must end at an ore cluster");
+        add("techguns.msg.error.oredrill.rodsize", "Rod must be at least as long as drill diameter and engine size. "
+                + "Engine height must be at least as high as drill radius.");
+        add("techguns.gui.oredrill.rftick", "FE/t");
+        add("techguns.gui.oredrill.orehour", "Ores/h");
+        add("techguns.oredrill.nofuel", "No Fuel");
+        add("techguns.oredrill.currentfuel", "Fuel");
+        add("techguns.oredrill.remaining", "Remaining time");
+        add("techguns.oredrill.ticks", "ticks.");
+        add("techguns.oredrill.drillsize", "Drill Size");
+        add("techguns.oredrill.drillradius", "Drill Radius");
+        add("techguns.oredrill.drillsize.small", "Small Drill");
+        add("techguns.oredrill.drillsize.medium", "Medium Drill");
+        add("techguns.oredrill.drillsize.large", "Large Drill");
+        add("techguns.oredrill.mininglevel", "Ore Drill Mining Level: %s");
+        add("techguns.configuration.ore_drills", "Ore Drills");
+        add("techguns.configuration.oreDrillMultiplierOre", "Ore Drill Ore Multiplier");
+        add("techguns.configuration.oreDrillMultiplierPower", "Ore Drill Power Multiplier");
+        add("techguns.configuration.oreDrillFuelMultiplier", "Ore Drill Fuel Multiplier");
+        add("techguns.configuration.oreDrillFuelValueFuel", "Ore Drill Liquid Fuel Value");
         add("techguns.container.ammopress.build", "Building:");
         add("techguns.gui.empty", "Empty");
         add("techguns.chemlab.dumpinput", "Dump Input Tank");

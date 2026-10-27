@@ -1,0 +1,13 @@
+{
+  "type": "techguns:ore_cluster",
+  "cluster": "techguns:ore_cluster_oil",
+  "entries": [
+    {
+      "fluid": "techguns:drill_oil",
+      "weight": 10
+    }
+  ],
+  "mining_level": 2,
+  "ore_multiplier": 4.0,
+  "power_multiplier": 1.0
+}

@@ -21,5 +21,9 @@ public class TGFluidTagsProvider extends FluidTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(TGTags.Fluids.LIQUID_REDSTONE).addTag(FluidTags.LAVA).addOptionalTag(TGIds.of("c", "redstone"));
         tag(TGTags.Fluids.LIQUID_ENDER).addTag(FluidTags.LAVA).addOptionalTag(TGIds.of("c", "ender"));
+        // Techguns 2 read the fuels and oil from other mods' Forge fluids
+        tag(TGTags.Fluids.DRILL_FUEL).addOptionalTag(TGIds.of("c", "fuel")).addOptionalTag(TGIds.of("c", "diesel"))
+                .addOptionalTag(TGIds.of("c", "biodiesel"));
+        tag(TGTags.Fluids.DRILL_OIL).addOptionalTag(TGIds.of("c", "oil")).addOptionalTag(TGIds.of("c", "crude_oil"));
     }
 }

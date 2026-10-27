@@ -67,10 +67,14 @@ public final class TGBlockEntities {
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<MultiblockPartBlockEntity>> MULTIBLOCK_PART = BLOCK_ENTITY_TYPES.register("multiblock_part",
             () -> BlockEntityType.Builder.of(MultiblockPartBlockEntity::new, TGBlocks.FABRICATOR_HOUSING.get(), TGBlocks.FABRICATOR_GLASS.get(),
-                    TGBlocks.REACTION_CHAMBER_HOUSING.get(), TGBlocks.REACTION_CHAMBER_GLASS.get()).build(null));
+                    TGBlocks.REACTION_CHAMBER_HOUSING.get(), TGBlocks.REACTION_CHAMBER_GLASS.get(), TGBlocks.ORE_DRILL_FRAME.get(),
+                    TGBlocks.ORE_DRILL_SCAFFOLD.get(), TGBlocks.ORE_DRILL_ROD.get(), TGBlocks.ORE_DRILL_ENGINE.get()).build(null));
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<ReactionChamberBlockEntity>> REACTION_CHAMBER = BLOCK_ENTITY_TYPES.register("reaction_chamber",
             () -> BlockEntityType.Builder.of(ReactionChamberBlockEntity::new, TGBlocks.REACTION_CHAMBER_CONTROLLER.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.OreDrillBlockEntity>> ORE_DRILL = BLOCK_ENTITY_TYPES.register("ore_drill",
+            () -> BlockEntityType.Builder.of(techguns.machine.OreDrillBlockEntity::new, TGBlocks.ORE_DRILL_CONTROLLER.get()).build(null));
 
     private TGBlockEntities() {
     }
@@ -90,6 +94,8 @@ public final class TGBlockEntities {
         machine(event, FABRICATOR.get());
         machine(event, REACTION_CHAMBER.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, REACTION_CHAMBER.get(), (chamber, side) -> chamber.getMultiblockFluidHandler());
+        machine(event, ORE_DRILL.get());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ORE_DRILL.get(), (drill, side) -> drill.getMultiblockFluidHandler());
         multiblockParts(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());

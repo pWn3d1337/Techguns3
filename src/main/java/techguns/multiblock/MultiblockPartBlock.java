@@ -45,6 +45,16 @@ public class MultiblockPartBlock extends BaseEntityBlock {
         builder.add(FORMED);
     }
 
+    /** The state of a part as linked into a formed structure. */
+    public BlockState formedState(BlockState state, MultiblockPart part) {
+        return state.setValue(FORMED, true);
+    }
+
+    /** The state of a part after its structure unformed. */
+    public BlockState unformedState(BlockState state) {
+        return state.setValue(FORMED, false);
+    }
+
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;

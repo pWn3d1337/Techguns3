@@ -339,6 +339,30 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         multiblockPart(TGBlocks.REACTION_CHAMBER_GLASS, models().cubeAll("block/reaction_chamber_glass", tex("reactionchamber_glass"))
                 .renderType(CUTOUT), tex("reactionchamber_glass"));
         reactionChamberController();
+        oreDrill();
+    }
+
+    /**
+     * Techguns 2 Ore Drill: frame, scaffold and engines switch to their connected textures when formed; rods and the
+     * drill plate disappear (the controller's renderer draws the drill bit); the controller never changes.
+     */
+    private void oreDrill() {
+        multiblockPart(TGBlocks.ORE_DRILL_FRAME, models().cubeAll("block/ore_drill_frame", tex("drill_frame")).renderType(CUTOUT),
+                models().cubeAll("block/ore_drill_frame_formed", tex("drill_frame_c")).renderType(CUTOUT));
+        ModelFile scaffold = models().cubeAll("block/ore_drill_scaffold", tex("drill_scaffold")).renderType(CUTOUT);
+        ModelFile scaffoldFormed = models().cubeAll("block/ore_drill_scaffold_formed", tex("drill_scaffold_c")).renderType(CUTOUT);
+        ModelFile scaffoldHidden = models().getBuilder("block/ore_drill_scaffold_hidden").texture("particle", tex("drill_scaffold"));
+        getVariantBuilder(TGBlocks.ORE_DRILL_SCAFFOLD.get()).forAllStates(state -> net.neoforged.neoforge.client.model.generators.ConfiguredModel
+                .builder().modelFile(!state.getValue(techguns.multiblock.MultiblockPartBlock.FORMED) ? scaffold
+                        : state.getValue(techguns.block.OreDrillScaffoldBlock.HIDDEN) ? scaffoldHidden : scaffoldFormed).build());
+        itemModels().withExistingParent(path(TGBlocks.ORE_DRILL_SCAFFOLD), modLoc("block/ore_drill_scaffold"));
+        multiblockPart(TGBlocks.ORE_DRILL_ROD, models().cubeColumn("block/ore_drill_rod", tex("drill_rod"), tex("drill_rod_top")).renderType(CUTOUT),
+                tex("drill_rod"));
+        multiblockPart(TGBlocks.ORE_DRILL_ENGINE, models().cubeAll("block/ore_drill_engine", tex("drill_engine")),
+                models().cubeColumn("block/ore_drill_engine_formed", tex("drill_engine_c"), tex("drill_engine_top_c")));
+        ModelFile controller = models().cubeAll("block/ore_drill_controller", tex("drill_engine_controller"));
+        multiblockPart(TGBlocks.ORE_DRILL_CONTROLLER, controller, controller);
+        TGBlocks.ORE_CLUSTERS.forEach(block -> simpleBlockWithItem(block.get(), models().cubeAll("block/" + path(block), tex(path(block)))));
     }
 
     /**
@@ -362,7 +386,10 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
     }
 
     private void multiblockPart(DeferredBlock<? extends Block> block, ModelFile unformed, ResourceLocation particle) {
-        ModelFile formed = models().getBuilder("block/" + path(block) + "_formed").texture("particle", particle);
+        multiblockPart(block, unformed, models().getBuilder("block/" + path(block) + "_formed").texture("particle", particle));
+    }
+
+    private void multiblockPart(DeferredBlock<? extends Block> block, ModelFile unformed, ModelFile formed) {
         // the controller's facing does not change its look (Techguns 2 had none)
         getVariantBuilder(block.get()).forAllStates(state -> net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()
                 .modelFile(state.getValue(techguns.multiblock.MultiblockPartBlock.FORMED) ? formed : unformed).build());

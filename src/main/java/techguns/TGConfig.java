@@ -47,6 +47,24 @@ public final class TGConfig {
 
     static {
         COMMON.pop();
+        COMMON.push("ore_drills");
+    }
+
+    public static final ModConfigSpec.DoubleValue ORE_DRILL_MULTIPLIER_ORES = COMMON
+            .comment("Multiplier to the default rate of how many ores an ore drill produces.")
+            .defineInRange("oreDrillMultiplierOre", 1.0, 0.001, 1000.0);
+    public static final ModConfigSpec.DoubleValue ORE_DRILL_MULTIPLIER_POWER = COMMON
+            .comment("Multiplier to the default rate of how much power an ore drill requires.")
+            .defineInRange("oreDrillMultiplierPower", 1.0, 0.0, 1000.0);
+    public static final ModConfigSpec.DoubleValue ORE_DRILL_MULTIPLIER_FUEL = COMMON
+            .comment("FE per furnace burn time tick for ore drills: burn time * this value = FE. Only used inside the ore drill.")
+            .defineInRange("oreDrillFuelMultiplier", 1000.0, 1.0, 100000.0);
+    public static final ModConfigSpec.DoubleValue ORE_DRILL_FUEL_VALUE_FUEL = COMMON
+            .comment("Fuel value of liquid fuels (fluid tag techguns:drill_fuel) in ore drills, per millibucket.")
+            .defineInRange("oreDrillFuelValueFuel", 100.0, 1.0, 100000.0);
+
+    static {
+        COMMON.pop();
     }
 
     static final ModConfigSpec COMMON_SPEC = COMMON.build();

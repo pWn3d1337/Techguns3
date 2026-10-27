@@ -129,7 +129,33 @@ public final class TGItems {
     public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_3 = simple("upgrade_projectile_protection_3");
     public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_3 = simple("upgrade_blast_protection_3");
 
+    // --- Ore Drill heads (Techguns 2 OREDRILLHEAD_*): size by drill, mining level steel 1, obsidian steel 2, carbon 3 ---
+    private static final List<DeferredItem<techguns.item.OreDrillHeadItem>> ORE_DRILL_HEADS = new ArrayList<>();
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_STEEL = drillHead("small_steel", techguns.item.OreDrillHeadItem.Size.SMALL, 1);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_OBSIDIAN_STEEL = drillHead("small_obsidian_steel",
+            techguns.item.OreDrillHeadItem.Size.SMALL, 2);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_CARBON = drillHead("small_carbon", techguns.item.OreDrillHeadItem.Size.SMALL, 3);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_MEDIUM_STEEL = drillHead("medium_steel", techguns.item.OreDrillHeadItem.Size.MEDIUM, 1);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_MEDIUM_OBSIDIAN_STEEL = drillHead("medium_obsidian_steel",
+            techguns.item.OreDrillHeadItem.Size.MEDIUM, 2);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_MEDIUM_CARBON = drillHead("medium_carbon", techguns.item.OreDrillHeadItem.Size.MEDIUM, 3);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_LARGE_STEEL = drillHead("large_steel", techguns.item.OreDrillHeadItem.Size.LARGE, 1);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_LARGE_OBSIDIAN_STEEL = drillHead("large_obsidian_steel",
+            techguns.item.OreDrillHeadItem.Size.LARGE, 2);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_LARGE_CARBON = drillHead("large_carbon", techguns.item.OreDrillHeadItem.Size.LARGE, 3);
+
     private TGItems() {
+    }
+
+    private static DeferredItem<techguns.item.OreDrillHeadItem> drillHead(String name, techguns.item.OreDrillHeadItem.Size size, int miningLevel) {
+        DeferredItem<techguns.item.OreDrillHeadItem> item = ITEMS.registerItem("ore_drill_head_" + name,
+                props -> new techguns.item.OreDrillHeadItem(props, size, miningLevel));
+        ORE_DRILL_HEADS.add(item);
+        return item;
+    }
+
+    public static List<DeferredItem<techguns.item.OreDrillHeadItem>> oreDrillHeads() {
+        return Collections.unmodifiableList(ORE_DRILL_HEADS);
     }
 
     // --- Ammo Bags (capacity in rounds; a full stack counts 64) ---

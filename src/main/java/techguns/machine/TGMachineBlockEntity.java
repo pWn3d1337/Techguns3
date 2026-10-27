@@ -147,6 +147,11 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         return true;
     }
 
+    /** Server, a job runs: whether it may go on (Ore Drill: the drill head is unchanged); false cancels it. */
+    protected boolean keepOperation() {
+        return true;
+    }
+
     /** Server, no job running and redstone allows work: per-tick work besides jobs; true skips looking for a job. */
     protected boolean idleTick() {
         return false;
@@ -209,6 +214,15 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         if (!redstoneMode.allows(signal)) {
             setStalled(operation != null);
             return;
+        }
+        if (operation != null && !keepOperation()) {
+            operation = null;
+            progress = 0;
+            totalTime = 0;
+            contentsChanged = true;
+            stalled = false;
+            setChanged();
+            sendUpdate();
         }
         if (operation != null) {
             if (consumePower(operation.powerPerTick() * operation.multiplier())) {
@@ -456,6 +470,11 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
 
     public boolean isWorking() {
         return level != null && level.isClientSide ? working : operation != null;
+    }
+
+    /** Client: the job waits for power or a redstone signal (renderers stop animating). */
+    public boolean isStalled() {
+        return stalled;
     }
 
     /** Job progress 0..1 (client: for the renderer). */

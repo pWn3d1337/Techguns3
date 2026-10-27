@@ -8,9 +8,14 @@ import net.minecraft.world.level.block.Block;
 /**
  * One block of a multiblock structure (Techguns 2 {@code MultiBlockMachineSchematic} position lists): {@code block}
  * must stand at {@code pos}; a null block means the position must be air. Linked parts forward the master's
- * capabilities by their {@code connector}.
+ * capabilities by their {@code connector}; a {@code hidden} part shows nothing when formed (the renderer draws it,
+ * e.g. the Ore Drill plate).
  */
-public record MultiblockPart(BlockPos pos, @Nullable Block block, Connector connector) {
+public record MultiblockPart(BlockPos pos, @Nullable Block block, Connector connector, boolean hidden) {
+    public MultiblockPart(BlockPos pos, @Nullable Block block, Connector connector) {
+        this(pos, block, connector, false);
+    }
+
     public static MultiblockPart air(BlockPos pos) {
         return new MultiblockPart(pos, null, Connector.NONE);
     }
@@ -27,7 +32,9 @@ public record MultiblockPart(BlockPos pos, @Nullable Block block, Connector conn
         /** Reaction Chamber side connector (type 2). */
         ITEMS_FLUIDS(true, true, false),
         /** Reaction Chamber top connector (type 3). */
-        ENERGY(false, false, true);
+        ENERGY(false, false, true),
+        /** Ore Drill frame, scaffold and engines (Techguns 2 forwarded everything). */
+        ALL(true, true, true);
 
         private final boolean items;
         private final boolean fluids;

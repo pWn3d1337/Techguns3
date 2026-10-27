@@ -17,6 +17,9 @@ public final class TGTags {
         private Blocks() {
         }
 
+        /** Ore Drill targets (Techguns 2 {@code TGOreClusters}); each has an {@code ore_cluster} recipe. */
+        public static final TagKey<Block> ORE_CLUSTERS = TagKey.create(Registries.BLOCK, TGIds.id("ore_clusters"));
+
         public static TagKey<Block> ore(String material) {
             return common("ores/" + material);
         }
@@ -37,6 +40,10 @@ public final class TGTags {
         public static final TagKey<net.minecraft.world.level.material.Fluid> LIQUID_REDSTONE = TagKey.create(Registries.FLUID,
                 TGIds.id("liquid_redstone"));
         public static final TagKey<net.minecraft.world.level.material.Fluid> LIQUID_ENDER = TagKey.create(Registries.FLUID, TGIds.id("liquid_ender"));
+        /** Liquid fuels the Ore Drill burns (Techguns 2 {@code fluidListFuel}); lava always works. */
+        public static final TagKey<net.minecraft.world.level.material.Fluid> DRILL_FUEL = TagKey.create(Registries.FLUID, TGIds.id("drill_fuel"));
+        /** What the oil cluster pumps; Techguns 2 used the Forge {@code oil} fluid, here the common oil tags. */
+        public static final TagKey<net.minecraft.world.level.material.Fluid> DRILL_OIL = TagKey.create(Registries.FLUID, TGIds.id("drill_oil"));
     }
 
     public static final class Items {

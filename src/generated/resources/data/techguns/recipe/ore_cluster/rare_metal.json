@@ -1,0 +1,27 @@
+{
+  "type": "techguns:ore_cluster",
+  "cluster": "techguns:ore_cluster_rare_metal",
+  "entries": [
+    {
+      "item": {
+        "item": "techguns:lead_ore"
+      },
+      "weight": 50
+    },
+    {
+      "item": {
+        "tag": "c:ores/osmium"
+      },
+      "weight": 50
+    },
+    {
+      "item": {
+        "tag": "c:ores/aluminum"
+      },
+      "weight": 50
+    }
+  ],
+  "mining_level": 1,
+  "ore_multiplier": 2.5,
+  "power_multiplier": 0.4
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ore_drill_head_medium_steel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:ore_drill_head_medium_steel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:ore_drill_head_large_steel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_ore_drill_head_medium_steel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:ore_drill_head_large_steel"
+    ]
+  }
+}

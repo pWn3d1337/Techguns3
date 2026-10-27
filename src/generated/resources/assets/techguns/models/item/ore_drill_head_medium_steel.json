@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "techguns:item/ore_drill_head_medium_steel"
+  }
+}

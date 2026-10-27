@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "techguns:block/drill_engine_top_c",
+    "side": "techguns:block/drill_engine_c"
+  }
+}
