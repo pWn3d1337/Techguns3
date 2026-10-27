@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/military_spawn_point_base",
+  "render_type": "minecraft:cutout"
+}

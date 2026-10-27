@@ -2,6 +2,7 @@ package techguns.registry;
 
 import java.util.function.Supplier;
 
+import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -29,6 +30,10 @@ public final class TGAttachments {
     /** Fallback extra slots (face/back/hand) when Curios is absent; synced by TGNetwork. */
     public static final Supplier<AttachmentType<FallbackSlots.Inventory>> EXTRA_SLOTS = ATTACHMENTS.register("extra_slots",
             () -> AttachmentType.builder(FallbackSlots.Inventory::new).serialize(FallbackSlots.Inventory.CODEC).copyOnDeath().build());
+
+    /** Position of the TG spawner an NPC came from ({@code SpawnerLink}); saved with the entity. */
+    public static final Supplier<AttachmentType<BlockPos>> SPAWNER_POS = ATTACHMENTS.register("spawner_pos",
+            () -> AttachmentType.builder(() -> BlockPos.ZERO).serialize(BlockPos.CODEC).build());
 
     private TGAttachments() {
     }

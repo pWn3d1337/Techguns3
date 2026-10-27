@@ -353,6 +353,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.reactionchamber.risk.explosion_medium", "Medium Explosion");
         add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
         add("entity.techguns.turret", "Turret");
+        add("entity.techguns.npc_spawn_marker", "Techguns NPC Spawn");
         add("techguns.container.turretbase", "Turret");
         add("techguns.turret.health", "Turret Health");
         add("techguns.turret.targetAnimals", "Target Animals");

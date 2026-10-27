@@ -33,6 +33,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import techguns.entity.ai.GunRangedAttackGoal;
 import techguns.entity.ai.GunShooter;
+import techguns.entity.spawn.SpawnerLink;
 import techguns.gun.FirePos;
 import techguns.gun.GunItem;
 
@@ -46,6 +47,7 @@ public class TGNpc extends Monster implements GunShooter, RangedAttackMob {
     private final NpcDefinition definition;
     @Nullable
     private Goal combatGoal;
+    private boolean tryLinkSpawner = true;
 
     public TGNpc(EntityType<? extends TGNpc> type, Level level, NpcDefinition definition) {
         super(type, level);
@@ -170,9 +172,36 @@ public class TGNpc extends Monster implements GunShooter, RangedAttackMob {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        // Techguns 2 ITGSpawnerNPC.onUpdateSpawner: re-register with the spawner after loading
+        if (tryLinkSpawner && !level().isClientSide) {
+            tryLinkSpawner = false;
+            SpawnerLink.spawner(this).ifPresent(spawner -> spawner.relink(this));
+        }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (!level().isClientSide && dead) {
+            SpawnerLink.spawner(this).ifPresent(spawner -> spawner.killed(this));
+        }
+    }
+
+    /** Despawning (discarding) frees the NPC's spawner slot without using up one of its mobs. */
+    @Override
+    public void remove(RemovalReason reason) {
+        if (reason == RemovalReason.DISCARDED && !level().isClientSide) {
+            SpawnerLink.spawner(this).ifPresent(spawner -> spawner.despawned(this));
+        }
+        super.remove(reason);
+    }
+
+    @Override
     public void aiStep() {
-        // Techguns 2 GenericNPCUndead: some undead burn in daylight (not when bound to a spawner, Phase 6f)
-        if (definition.burnsInDay() && isAlive() && isSunBurnTick()) {
+        // Techguns 2 GenericNPCUndead: some undead burn in daylight, unless they guard a spawner
+        if (definition.burnsInDay() && isAlive() && isSunBurnTick() && SpawnerLink.get(this).isEmpty()) {
             igniteForSeconds(8.0f);
         }
         super.aiStep();

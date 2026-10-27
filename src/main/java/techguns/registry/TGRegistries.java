@@ -32,6 +32,7 @@ public final class TGRegistries {
         TGRecipes.TYPES.register(modEventBus);
         TGBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         TGMenus.MENUS.register(modEventBus);
+        TGBiomeModifiers.SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
         modEventBus.addListener(TGCamos::register);

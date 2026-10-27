@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/monster_hole_base",
+  "render_type": "minecraft:cutout"
+}
