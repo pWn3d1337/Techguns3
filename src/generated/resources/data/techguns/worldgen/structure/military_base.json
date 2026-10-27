@@ -1,0 +1,6 @@
+{
+  "type": "techguns:military_base",
+  "biomes": "#techguns:has_structure/overworld_surface",
+  "spawn_overrides": {},
+  "step": "top_layer_modification"
+}

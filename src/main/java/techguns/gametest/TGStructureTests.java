@@ -2,6 +2,7 @@ package techguns.gametest;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.core.BlockPos;
@@ -18,9 +19,12 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import techguns.registry.TGStructures;
 import techguns.world.structure.AlienBugNest;
+import techguns.world.structure.AvoidingSpreadPlacement;
+import techguns.world.structure.CampLevel;
+import techguns.world.structure.MilitaryBasePiece;
+import techguns.world.structure.MilitaryBaseStructure;
 import techguns.world.structure.LegacyTemplatePiece;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -137,15 +141,16 @@ public class TGStructureTests {
             helper.assertTrue(structures.containsKey(t.key()), t.name() + " is a structure");
         }
         helper.assertTrue(structures.containsKey(TGStructures.ALIEN_BUG_NEST_KEY), "The alien bug nest is a structure");
+        helper.assertTrue(structures.containsKey(TGStructures.MILITARY_BASE_KEY), "The military base is a structure");
         var sets = registries.registryOrThrow(Registries.STRUCTURE_SET);
         for (TGStructures.Size size : TGStructures.Size.values()) {
             StructureSet set = sets.getOrThrow(size.set);
-            helper.assertTrue(set.placement() instanceof RandomSpreadStructurePlacement spread && spread.spacing() == size.spacing,
+            helper.assertTrue(set.placement() instanceof AvoidingSpreadPlacement spread && spread.spacing() == size.spacing,
                     size + " structures every " + size.spacing + " chunks");
         }
         helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
                 && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 5
-                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 1
+                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 2
                 && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
                 && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
         for (TGStructures.Template t : TGStructures.NETHER) {
@@ -192,6 +197,63 @@ public class TGStructureTests {
             BoundingBox bounds = nest.bounds();
             helper.assertTrue(bounds.getXSpan() < 128 && bounds.getZSpan() < 128 && bounds.maxY() <= 64 + 8, "Nest size " + bounds);
         }
+        helper.succeed();
+    }
+
+    /** A camp on generated ground around (0, 0): flat at y 64, or hills of 6 blocks. */
+    private static CampLevel camp(long seed, int sizeX, int sizeZ, boolean hilly) {
+        int countX = (sizeX + 8) / 4 + 2;
+        int countZ = (sizeZ + 8) / 4 + 2;
+        int[] heights = new int[countX * countZ];
+        for (int i = 0; i < countX; i++) {
+            for (int j = 0; j < countZ; j++) {
+                heights[i * countZ + j] = hilly ? 64 + (int) Math.round(3 + 3 * Math.sin(i * 0.7) * Math.cos(j * 0.5)) : 64;
+            }
+        }
+        return MilitaryBasePiece.build(seed, 0, 0, sizeX, sizeZ, LegacyPaletteProcessor.BiomeColor.WOODLAND,
+                new MilitaryBaseStructure.HeightGrid(-4, -4, countX, countZ, heights));
+    }
+
+    @GameTest(template = ARENA)
+    public static void militaryCampGenerates(GameTestHelper helper) {
+        int chests = 0;
+        for (long seed = 0; seed < 6; seed++) {
+            int sizeX = 32 + (int) seed * 9;
+            int sizeZ = 79 - (int) seed * 8;
+            boolean hilly = seed % 2 == 1;
+            CampLevel camp = camp(seed, sizeX, sizeZ, hilly);
+            String name = "Camp " + seed + " (" + sizeX + "x" + sizeZ + (hilly ? ", hills" : "") + ")";
+
+            Map<BlockPos, CampLevel.Spawner> spawners = camp.spawners();
+            helper.assertTrue(spawners.values().stream().filter(t -> t == CampLevel.Spawner.HELICOPTER).count() == 1,
+                    name + ": one helicopter spawner on the flag segment");
+            helper.assertTrue(spawners.containsValue(CampLevel.Spawner.SOLDIERS), name + ": soldier spawners on the roads");
+            for (BlockPos pos : spawners.keySet()) {
+                helper.assertTrue(camp.get(pos.getX(), pos.getY(), pos.getZ()).is(TGBlocks.MILITARY_SPAWN_POINT.get()), name + ": spawner block at " + pos);
+            }
+            helper.assertTrue(camp.get(0, camp.groundY(0, 0) + 1, 0).is(Blocks.IRON_BARS)
+                    && camp.get(sizeX - 1, camp.groundY(sizeX - 1, sizeZ - 1) + 2, sizeZ - 1).is(Blocks.IRON_BARS), name + ": fence corners");
+            helper.assertTrue(camp.blocks().containsValue(Blocks.GRAVEL.defaultBlockState()), name + ": gravel roads");
+
+            int min = Integer.MAX_VALUE;
+            int max = Integer.MIN_VALUE;
+            for (int x = 0; x < sizeX; x++) {
+                for (int z = 0; z < sizeZ; z++) {
+                    min = Math.min(min, camp.groundY(x, z));
+                    max = Math.max(max, camp.groundY(x, z));
+                }
+            }
+            helper.assertTrue(max - min <= 4, name + ": ground flattened to 4 blocks, got " + min + ".." + max);
+
+            CampLevel again = camp(seed, sizeX, sizeZ, hilly);
+            helper.assertTrue(again.blocks().equals(camp.blocks()) && again.spawners().equals(camp.spawners()), name + ": rebuilt the same from its seed");
+
+            for (ResourceKey<LootTable> table : camp.chests().values()) {
+                helper.assertTrue(helper.getLevel().getServer().reloadableRegistries().getLootTable(table) != LootTable.EMPTY, table + " exists");
+                chests++;
+            }
+        }
+        helper.assertTrue(chests > 0, "Bunkers and barracks have loot chests");
         helper.succeed();
     }
 }

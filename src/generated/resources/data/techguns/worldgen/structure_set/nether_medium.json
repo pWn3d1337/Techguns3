@@ -1,6 +1,7 @@
 {
   "placement": {
-    "type": "minecraft:random_spread",
+    "type": "techguns:avoiding_spread",
+    "avoid": [],
     "salt": 51531856,
     "separation": 16,
     "spacing": 32

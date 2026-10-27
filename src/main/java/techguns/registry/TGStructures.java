@@ -20,16 +20,19 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
-import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.TGIds;
 import techguns.Techguns;
 import techguns.world.structure.AlienBugNestPiece;
 import techguns.world.structure.AlienBugNestStructure;
+import techguns.world.structure.AvoidingSpreadPlacement;
 import techguns.world.structure.LegacyTemplatePiece;
 import techguns.world.structure.LegacyTemplateStructure;
+import techguns.world.structure.MilitaryBasePiece;
+import techguns.world.structure.MilitaryBaseStructure;
 
 /**
  * Structure and structure piece types, and the generated structures and structure sets: Techguns 2
@@ -39,16 +42,25 @@ import techguns.world.structure.LegacyTemplateStructure;
 public final class TGStructures {
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister.create(Registries.STRUCTURE_TYPE, Techguns.MODID);
     public static final DeferredRegister<StructurePieceType> PIECE_TYPES = DeferredRegister.create(Registries.STRUCTURE_PIECE, Techguns.MODID);
+    public static final DeferredRegister<StructurePlacementType<?>> PLACEMENT_TYPES = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT,
+            Techguns.MODID);
 
     public static final Supplier<StructureType<LegacyTemplateStructure>> LEGACY_TEMPLATE = STRUCTURE_TYPES.register("legacy_template",
             () -> () -> LegacyTemplateStructure.CODEC);
     public static final Supplier<StructureType<AlienBugNestStructure>> ALIEN_BUG_NEST = STRUCTURE_TYPES.register("alien_bug_nest",
             () -> () -> AlienBugNestStructure.CODEC);
+    public static final Supplier<StructureType<MilitaryBaseStructure>> MILITARY_BASE = STRUCTURE_TYPES.register("military_base",
+            () -> () -> MilitaryBaseStructure.CODEC);
 
     public static final Supplier<StructurePieceType> LEGACY_TEMPLATE_PIECE = PIECE_TYPES.register("legacy_template",
             () -> (StructurePieceType.StructureTemplateType) LegacyTemplatePiece::new);
     public static final Supplier<StructurePieceType> ALIEN_BUG_NEST_PIECE = PIECE_TYPES.register("alien_bug_nest",
             () -> (StructurePieceType.ContextlessType) AlienBugNestPiece::new);
+    public static final Supplier<StructurePieceType> MILITARY_BASE_PIECE = PIECE_TYPES.register("military_base",
+            () -> (StructurePieceType.ContextlessType) MilitaryBasePiece::new);
+
+    public static final Supplier<StructurePlacementType<AvoidingSpreadPlacement>> AVOIDING_SPREAD = PLACEMENT_TYPES.register("avoiding_spread",
+            () -> () -> AvoidingSpreadPlacement.CODEC);
 
     /** Biomes of the overworld surface structures (oceans are rejected when generating). */
     public static final TagKey<Biome> HAS_OVERWORLD_SURFACE = TagKey.create(Registries.BIOME, TGIds.id("has_structure/overworld_surface"));
@@ -90,7 +102,8 @@ public final class TGStructures {
 
     /**
      * Techguns 2 {@code StructureSize} grids per dimension: spacing in chunks; a structure lands in the first half of
-     * its cell. A set stays 2 chunks away from the next bigger one, which took its place in the Techguns 2 grid.
+     * its cell. A set keeps away from the bigger ones, which took its place in the Techguns 2 grid: 2 chunks from a
+     * medium start, {@link #BIG_CLEARANCE} from a big one.
      */
     public enum Size {
         SMALL("overworld_small", 16, 51531853, false), MEDIUM("overworld_medium", 32, 51531854, false), BIG("overworld_big", 64, 51531857, false),
@@ -150,6 +163,15 @@ public final class TGStructures {
     /** Techguns 2 weight of the bug nest in the medium table. */
     private static final int ALIEN_BUG_NEST_WEIGHT = 20;
 
+    public static final ResourceKey<Structure> MILITARY_BASE_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("military_base"));
+    /** Techguns 2 weight of the military base in the big table. */
+    private static final int MILITARY_BASE_WEIGHT = 1;
+    /**
+     * Chunks a smaller structure keeps away from a big one's start: the big ones reach 5 (camp) to 7 (carrier) chunks
+     * from it, a medium structure 2.
+     */
+    private static final int BIG_CLEARANCE = 7;
+
     private TGStructures() {
     }
 
@@ -166,6 +188,9 @@ public final class TGStructures {
                     t.foundation(), t.clearAbove(), 3, t.placement(), t.toggle()));
         }
         context.register(ALIEN_BUG_NEST_KEY, new AlienBugNestStructure(settings(biomes.getOrThrow(HAS_ALIEN_BUG_NEST), false)));
+        // after the trees, which the camp clears (Techguns 2 spawned its structures after the decoration)
+        context.register(MILITARY_BASE_KEY, new MilitaryBaseStructure(new Structure.StructureSettings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), Map.of(),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TerrainAdjustment.NONE)));
     }
 
     private static Structure.StructureSettings settings(HolderSet<Biome> biomes, boolean underground) {
@@ -186,10 +211,16 @@ public final class TGStructures {
             if (size == Size.MEDIUM) {
                 entries.add(StructureSet.entry(structures.getOrThrow(ALIEN_BUG_NEST_KEY), ALIEN_BUG_NEST_WEIGHT));
             }
-            Optional<StructurePlacement.ExclusionZone> exclusion = size.bigger().map(bigger -> new StructurePlacement.ExclusionZone(sets.getOrThrow(bigger.set), 2));
-            context.register(size.set, new StructureSet(entries, new RandomSpreadStructurePlacement(Vec3i.ZERO,
-                    StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0f, size.salt, exclusion, size.spacing, size.spacing / 2,
-                    RandomSpreadType.LINEAR)));
+            if (size == Size.BIG) {
+                entries.add(StructureSet.entry(structures.getOrThrow(MILITARY_BASE_KEY), MILITARY_BASE_WEIGHT));
+            }
+            List<StructurePlacement.ExclusionZone> avoid = new ArrayList<>();
+            for (Optional<Size> bigger = size.bigger(); bigger.isPresent(); bigger = bigger.get().bigger()) {
+                avoid.add(new StructurePlacement.ExclusionZone(sets.getOrThrow(bigger.get().set), bigger.get() == Size.BIG ? BIG_CLEARANCE : 2));
+            }
+            context.register(size.set, new StructureSet(entries, new AvoidingSpreadPlacement(Vec3i.ZERO,
+                    StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0f, size.salt, size.spacing, size.spacing / 2,
+                    RandomSpreadType.LINEAR, avoid)));
         }
     }
 }

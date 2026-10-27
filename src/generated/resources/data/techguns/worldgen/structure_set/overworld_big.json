@@ -1,6 +1,7 @@
 {
   "placement": {
-    "type": "minecraft:random_spread",
+    "type": "techguns:avoiding_spread",
+    "avoid": [],
     "salt": 51531857,
     "separation": 32,
     "spacing": 64
@@ -8,6 +9,10 @@
   "structures": [
     {
       "structure": "techguns:aircraft_carrier",
+      "weight": 1
+    },
+    {
+      "structure": "techguns:military_base",
       "weight": 1
     }
   ]

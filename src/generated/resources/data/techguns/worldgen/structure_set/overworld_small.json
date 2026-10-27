@@ -1,10 +1,16 @@
 {
   "placement": {
-    "type": "minecraft:random_spread",
-    "exclusion_zone": {
-      "chunk_count": 2,
-      "other_set": "techguns:overworld_medium"
-    },
+    "type": "techguns:avoiding_spread",
+    "avoid": [
+      {
+        "chunk_count": 2,
+        "other_set": "techguns:overworld_medium"
+      },
+      {
+        "chunk_count": 7,
+        "other_set": "techguns:overworld_big"
+      }
+    ],
     "salt": 51531853,
     "separation": 8,
     "spacing": 16

@@ -529,7 +529,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 7c: small and medium overworld structures (factory house, train station, mine, gas station, police station, survivor hideout, alien bug nest) as structures with structure sets (Techguns 2 spacing, biome and land / water rules).
   - 7d: Nether structures (altars, soul platform, loot room, acid hole, ghast spawner, ore cluster castle, dungeon entrance).
   - 7e1: ore cluster structures (spike, meteor basis; the desert oil cluster needs an oil fluid) and the aircraft carrier (water placement, big set every 64 chunks).
-  - 7e2: the military base (Techguns 2 `MilitaryCamp`: camp layout, terrain flattening, tents, containers, bunkers, barracks, helipad, tanks, watch towers).
+  - 7e2: the military base (Techguns 2 `MilitaryCamp`: camp layout, terrain flattening, tents, containers, bunkers, barracks, helipad, tanks, watch towers), generated into a virtual level from sampled generator heights; structure sets keep away from all bigger sets (`techguns:avoiding_spread`).
   - 7f: maze dungeons (with the castle, a dungeon preset) and the city generator (evaluate jigsaw vs generator port first).
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 

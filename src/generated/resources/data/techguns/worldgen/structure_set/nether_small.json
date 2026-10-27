@@ -1,10 +1,12 @@
 {
   "placement": {
-    "type": "minecraft:random_spread",
-    "exclusion_zone": {
-      "chunk_count": 2,
-      "other_set": "techguns:nether_medium"
-    },
+    "type": "techguns:avoiding_spread",
+    "avoid": [
+      {
+        "chunk_count": 2,
+        "other_set": "techguns:nether_medium"
+      }
+    ],
     "salt": 51531855,
     "separation": 8,
     "spacing": 16
