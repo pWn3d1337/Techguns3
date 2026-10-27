@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:lava",
+    {
+      "id": "#c:ender",
+      "required": false
+    }
+  ]
+}

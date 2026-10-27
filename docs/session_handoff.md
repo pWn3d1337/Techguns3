@@ -18,13 +18,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 5b2a | Ammo Press, Blast Furnace, Grinder | `ca87676` |
   | 5b2b | Chem Lab (fluid tanks), Charging Station, creeper acid fluid | `c9a082e` |
   | 5b3 | Repair, Camo, Upgrade and Ammo Bench, armor upgrades, Grinder armor recycling | `7341f36` |
-  | 5c1 | Multiblock framework + Fabricator | not committed yet |
+  | 5c1 | Multiblock framework + Fabricator, Fabric fallback recipes removed | `af3babb` |
+  | 5c2 | Reaction Chamber | not committed yet |
 
-- All 229 GameTests pass; each batch was checked in game via MCP.
+- All 233 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 5c1, then 5c2 Reaction Chamber (also remove the laser focus crafting recipe there) and 5c3 Ore Drill + ore clusters (plan in the design doc, 5c batches).
+1. Commit 5c2, then 5c3 Ore Drill + ore clusters (plan in the design doc, 5c batches).
 2. 5d turrets / explosive charges / camp flag, 5e JEI.
 3. Open a Phase 5 PR when Phase 5 is done (or earlier if the user asks).
 
@@ -64,6 +65,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 - Java 21: `export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot"` (Git Bash). Installed on both PCs; on the second PC the user/machine `JAVA_HOME` points to it.
 - Build + tests: `./gradlew build runGameTestServer -Puse_mcpfabric=false`; data: `./gradlew runData`.
+- Dev client runs windowed at 2560x1080 (`--width/--height` in `build.gradle`, `fullscreen:false` in the git-ignored `run/options.txt`) so it doesn't cover the screen.
 - Dev client: `./gradlew runClient` in the background; ready when the log shows "Sound engine started", world joined
   when `run/logs/latest.log` shows "Dev joined". Join with MCP `join_world` `sp:TestworldFlat`.
 - MCP on a new PC: Node.js 20+, then `claude mcp add mcpfabric --scope user -e MCPFABRIC_URL=http://127.0.0.1:25599 -e MCPFABRIC_TOKEN=<token> -- node F:/Techguns3Work/tools/mcpfabric/mcp-server/dist/index.js` (server already built on F:). The token must match `run/config/mcpfabric.config.json` (git-ignored); `enableUiControl` is on there for `get_ui`/`click_widget`. The MCP `container_transfer take` cannot take from machine (`SlotItemHandler`) slots; use GameTests for that.

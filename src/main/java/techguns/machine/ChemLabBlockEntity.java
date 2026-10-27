@@ -263,7 +263,7 @@ public class ChemLabBlockEntity extends TGMachineBlockEntity {
     }
 
     /** Fluids are synced to the screen as registry ids (the data slots carry numbers only). */
-    private static int fluidId(FluidStack stack) {
+    public static int fluidId(FluidStack stack) {
         return stack.isEmpty() ? -1 : BuiltInRegistries.FLUID.getId(stack.getFluid());
     }
 

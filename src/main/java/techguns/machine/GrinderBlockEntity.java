@@ -171,6 +171,12 @@ public class GrinderBlockEntity extends TGMachineBlockEntity {
     }
 
     @Override
+    protected void loadUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadUpdateTag(tag, registries);
+        grinding = ItemStack.parseOptional(registries, tag.getCompound("grinding"));
+    }
+
+    @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new GrinderMenu(id, inventory, this);
     }

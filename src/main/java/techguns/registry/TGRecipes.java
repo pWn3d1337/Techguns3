@@ -57,6 +57,10 @@ public final class TGRecipes {
     public static final Supplier<RecipeSerializer<techguns.recipe.FabricatorRecipe>> FABRICATOR_SERIALIZER = SERIALIZERS.register("fabricator",
             techguns.recipe.FabricatorRecipe.Serializer::new);
 
+    public static final Supplier<RecipeType<techguns.recipe.ReactionChamberRecipe>> REACTION_CHAMBER = type("reaction_chamber");
+    public static final Supplier<RecipeSerializer<techguns.recipe.ReactionChamberRecipe>> REACTION_CHAMBER_SERIALIZER = SERIALIZERS.register(
+            "reaction_chamber", techguns.recipe.ReactionChamberRecipe.Serializer::new);
+
     // --- Benches ---
     public static final Supplier<RecipeType<techguns.recipe.UpgradeBenchRecipe>> UPGRADE_BENCH = type("upgrade_bench");
     public static final Supplier<RecipeSerializer<techguns.recipe.UpgradeBenchRecipe>> UPGRADE_BENCH_SERIALIZER = SERIALIZERS.register("upgrade_bench",

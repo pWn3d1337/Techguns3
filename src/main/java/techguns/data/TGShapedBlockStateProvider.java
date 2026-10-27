@@ -27,6 +27,7 @@ import techguns.registry.TGBlocks;
  */
 public class TGShapedBlockStateProvider extends BlockStateProvider {
     private static final String CUTOUT = "cutout";
+    private static final String TRANSLUCENT = "translucent";
 
     public TGShapedBlockStateProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, Techguns.MODID, existingFileHelper);
@@ -333,6 +334,31 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         ResourceLocation housing = tex("fabricator_housing");
         multiblockPart(TGBlocks.FABRICATOR_CONTROLLER, models().cube("block/fabricator_controller", housing, housing, side, side, side, side)
                 .texture("particle", side), side);
+        multiblockPart(TGBlocks.REACTION_CHAMBER_HOUSING, models().cubeAll("block/reaction_chamber_housing", tex("reactionchamber_housing")),
+                tex("reactionchamber_housing"));
+        multiblockPart(TGBlocks.REACTION_CHAMBER_GLASS, models().cubeAll("block/reaction_chamber_glass", tex("reactionchamber_glass"))
+                .renderType(CUTOUT), tex("reactionchamber_glass"));
+        reactionChamberController();
+    }
+
+    /**
+     * Techguns 2: the formed Reaction Chamber is the controller's OBJ model of the whole chamber (flipped v), turned
+     * by the structure direction stored in the facing.
+     */
+    private void reactionChamberController() {
+        ResourceLocation side = tex("reactionchamber_controller");
+        ResourceLocation housing = tex("reactionchamber_housing");
+        ModelFile unformed = models().cube("block/reaction_chamber_controller", housing, housing, side, side, side, side).texture("particle", side);
+        ModelFile formed = models().getBuilder("block/reaction_chamber_controller_formed").parent(new ModelFile.UncheckedModelFile(mcLoc("block/block")))
+                .customLoader(net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder::begin)
+                .modelLocation(modLoc("models/block/reactionchamber.obj")).flipV(true).end()
+                .texture("particle", housing).renderType(TRANSLUCENT);
+        getVariantBuilder(TGBlocks.REACTION_CHAMBER_CONTROLLER.get()).forAllStates(state -> {
+            boolean isFormed = state.getValue(techguns.multiblock.MultiblockPartBlock.FORMED);
+            return net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder().modelFile(isFormed ? formed : unformed)
+                    .rotationY(isFormed ? (int) state.getValue(techguns.machine.TGMachineBlock.FACING).toYRot() : 0).build();
+        });
+        itemModels().withExistingParent(path(TGBlocks.REACTION_CHAMBER_CONTROLLER), modLoc("block/reaction_chamber_controller"));
     }
 
     private void multiblockPart(DeferredBlock<? extends Block> block, ModelFile unformed, ResourceLocation particle) {

@@ -76,6 +76,8 @@ neoForge {
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // dev window (windowed, so MCP testing doesn't take over the screen)
+            programArguments.addAll '--width', '2560', '--height', '1080'
         }
 
         server {

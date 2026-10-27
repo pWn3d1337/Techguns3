@@ -1,0 +1,27 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "tag": "minecraft:lava"
+  },
+  "focus": {
+    "item": "techguns:heat_ray_focus"
+  },
+  "input": {
+    "item": "techguns:quartz_rod"
+  },
+  "instability": 0.5,
+  "intensity": 7,
+  "intensity_margin": 2,
+  "liquid_consumption": 1000,
+  "liquid_level": 4,
+  "outputs": [
+    {
+      "count": 1,
+      "id": "minecraft:blaze_rod"
+    }
+  ],
+  "power_per_tick": 250000,
+  "required_completion": 3,
+  "risk": "break_item",
+  "ticks": 5
+}

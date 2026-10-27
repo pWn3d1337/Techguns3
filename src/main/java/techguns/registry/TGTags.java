@@ -26,6 +26,19 @@ public final class TGTags {
         }
     }
 
+    public static final class Fluids {
+        private Fluids() {
+        }
+
+        /**
+         * Techguns 2 used Thermal Expansion's liquid redstone and liquid ender and fell back to lava without it; the tags
+         * hold lava and the common {@code c:} tags.
+         */
+        public static final TagKey<net.minecraft.world.level.material.Fluid> LIQUID_REDSTONE = TagKey.create(Registries.FLUID,
+                TGIds.id("liquid_redstone"));
+        public static final TagKey<net.minecraft.world.level.material.Fluid> LIQUID_ENDER = TagKey.create(Registries.FLUID, TGIds.id("liquid_ender"));
+    }
+
     public static final class Items {
         private Items() {
         }
@@ -36,6 +49,8 @@ public final class TGTags {
         public static final TagKey<Item> FABRICATOR_WIRES = TagKey.create(Registries.ITEM, TGIds.id("fabricator_wires"));
         public static final TagKey<Item> FABRICATOR_POWDERS = TagKey.create(Registries.ITEM, TGIds.id("fabricator_powders"));
         public static final TagKey<Item> FABRICATOR_PLATES = TagKey.create(Registries.ITEM, TGIds.id("fabricator_plates"));
+        /** Beam focuses for the Reaction Chamber focus slot (Techguns 2 {@code ReactionBeamFocus}). */
+        public static final TagKey<Item> REACTION_CHAMBER_FOCUSES = TagKey.create(Registries.ITEM, TGIds.id("reaction_chamber_focuses"));
         /** Ammo Bench inputs (Fabric tags). */
         public static final TagKey<Item> BULLET_CORE = TagKey.create(Registries.ITEM, TGIds.id("bullet_metal_core"));
         public static final TagKey<Item> BULLET_CASING = TagKey.create(Registries.ITEM, TGIds.id("bullet_metal_casing"));

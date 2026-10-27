@@ -34,7 +34,8 @@ public class TGBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TGBlocks.METAL_PRESS.get(), TGBlocks.AMMO_PRESS.get(), TGBlocks.BLAST_FURNACE.get(),
                 TGBlocks.GRINDER.get(), TGBlocks.CHEM_LAB.get(), TGBlocks.CHARGING_STATION.get(), TGBlocks.REPAIR_BENCH.get(),
                 TGBlocks.CAMO_BENCH.get(), TGBlocks.UPGRADE_BENCH.get(), TGBlocks.AMMO_BENCH.get(), TGBlocks.FABRICATOR_HOUSING.get(),
-                TGBlocks.FABRICATOR_GLASS.get(), TGBlocks.FABRICATOR_CONTROLLER.get());
+                TGBlocks.FABRICATOR_GLASS.get(), TGBlocks.FABRICATOR_CONTROLLER.get(), TGBlocks.REACTION_CHAMBER_HOUSING.get(),
+                TGBlocks.REACTION_CHAMBER_GLASS.get(), TGBlocks.REACTION_CHAMBER_CONTROLLER.get());
         // Phase 5a2: Techguns 2 iron blocks are mined with a pickaxe (no tool needed for drops), crates are wood
         TGBlocks.LAMPS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
         TGBlocks.LANTERNS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));

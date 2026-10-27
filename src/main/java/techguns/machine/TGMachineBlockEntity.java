@@ -538,6 +538,26 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
+    /**
+     * Client: reads an update packet. The default would run {@link #loadAdditional}, which resets the inventory the
+     * open menu keeps in sync (the update tag has no inventory).
+     */
+    @Override
+    public void onDataPacket(net.minecraft.network.Connection connection, ClientboundBlockEntityDataPacket packet,
+                             HolderLookup.Provider registries) {
+        loadUpdateTag(packet.getTag(), registries);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        loadUpdateTag(tag, registries);
+    }
+
+    /** Reads what {@link #getUpdateTag} wrote. */
+    protected void loadUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        loadClientData(tag);
+    }
+
     /** Automation access to {@link #inventory}: the slot rules for inserting, output slots only for extracting. */
     private final class AutomationHandler implements IItemHandler {
         @Override

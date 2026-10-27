@@ -295,6 +295,10 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.ammobench", "Ammo Bench");
         // Phase 5c multiblocks
         add("techguns.container.fabricator", "Fabricator");
+        add("techguns.container.reactionchamber", "Reaction Chamber");
+        add("techguns.reactionchamber.risk.break_item", "Break Item");
+        add("techguns.reactionchamber.risk.explosion_low", "Small Explosion");
+        add("techguns.reactionchamber.risk.explosion_medium", "Medium Explosion");
         add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
         add("techguns.container.ammopress.build", "Building:");
         add("techguns.gui.empty", "Empty");

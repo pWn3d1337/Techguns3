@@ -227,6 +227,12 @@ public class ChargingStationBlockEntity extends TGMachineBlockEntity {
     }
 
     @Override
+    protected void loadUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadUpdateTag(tag, registries);
+        shown = ItemStack.parseOptional(registries, tag.getCompound("shown"));
+    }
+
+    @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new ChargingStationMenu(id, inventory, this);
     }

@@ -16,6 +16,7 @@ import techguns.machine.ChemLabBlockEntity;
 import techguns.machine.GrinderBlockEntity;
 import techguns.machine.CamoBenchBlockEntity;
 import techguns.machine.FabricatorBlockEntity;
+import techguns.machine.ReactionChamberBlockEntity;
 import techguns.multiblock.MultiblockMasterBlockEntity;
 import techguns.multiblock.MultiblockPartBlockEntity;
 import techguns.machine.MetalPressBlockEntity;
@@ -65,8 +66,11 @@ public final class TGBlockEntities {
     /** All multiblock structure blocks (housings, glass, connectors). */
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<MultiblockPartBlockEntity>> MULTIBLOCK_PART = BLOCK_ENTITY_TYPES.register("multiblock_part",
-            () -> BlockEntityType.Builder.of(MultiblockPartBlockEntity::new, TGBlocks.FABRICATOR_HOUSING.get(), TGBlocks.FABRICATOR_GLASS.get())
-                    .build(null));
+            () -> BlockEntityType.Builder.of(MultiblockPartBlockEntity::new, TGBlocks.FABRICATOR_HOUSING.get(), TGBlocks.FABRICATOR_GLASS.get(),
+                    TGBlocks.REACTION_CHAMBER_HOUSING.get(), TGBlocks.REACTION_CHAMBER_GLASS.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<ReactionChamberBlockEntity>> REACTION_CHAMBER = BLOCK_ENTITY_TYPES.register("reaction_chamber",
+            () -> BlockEntityType.Builder.of(ReactionChamberBlockEntity::new, TGBlocks.REACTION_CHAMBER_CONTROLLER.get()).build(null));
 
     private TGBlockEntities() {
     }
@@ -84,6 +88,8 @@ public final class TGBlockEntities {
         machine(event, CHARGING_STATION.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CHEM_LAB.get(), (lab, side) -> lab.getFluidHandler());
         machine(event, FABRICATOR.get());
+        machine(event, REACTION_CHAMBER.get());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, REACTION_CHAMBER.get(), (chamber, side) -> chamber.getMultiblockFluidHandler());
         multiblockParts(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());

@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_diamond": {
+    "has_chem_lab": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:diamond"
+            "items": "techguns:chem_lab"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "techguns:laser_focus"
+        "recipe": "techguns:reaction_chamber_housing"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_diamond"
+      "has_chem_lab"
     ]
   ],
   "rewards": {
     "recipes": [
-      "techguns:laser_focus"
+      "techguns:reaction_chamber_housing"
     ]
   }
 }

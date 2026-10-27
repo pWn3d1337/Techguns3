@@ -247,6 +247,12 @@ public final class TGBlocks {
             () -> new MultiblockPartBlock(machine().sound(SoundType.GLASS)));
     public static final DeferredBlock<MultiblockControllerBlock> FABRICATOR_CONTROLLER = withItem("fabricator_controller",
             () -> new MultiblockControllerBlock(machine(), TGBlockEntities.FABRICATOR));
+    public static final DeferredBlock<MultiblockPartBlock> REACTION_CHAMBER_HOUSING = withItem("reaction_chamber_housing",
+            () -> new MultiblockPartBlock(machine()));
+    public static final DeferredBlock<MultiblockPartBlock> REACTION_CHAMBER_GLASS = withItem("reaction_chamber_glass",
+            () -> new MultiblockPartBlock(machine().sound(SoundType.GLASS)));
+    public static final DeferredBlock<MultiblockControllerBlock> REACTION_CHAMBER_CONTROLLER = withItem("reaction_chamber_controller",
+            () -> new MultiblockControllerBlock(machine(), TGBlockEntities.REACTION_CHAMBER));
 
     /** Fabric Ammo Bench: no block entity, the menu keeps the inputs. */
     public static final DeferredBlock<AmmoBenchBlock> AMMO_BENCH = withItem("ammo_bench", () -> new AmmoBenchBlock(machine()));

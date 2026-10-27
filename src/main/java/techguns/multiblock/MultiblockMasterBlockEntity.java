@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import techguns.machine.TGMachineBlock;
 import techguns.machine.TGMachineBlockEntity;
 import techguns.network.FxPayloads;
 import techguns.network.TGNetwork;
@@ -97,7 +98,12 @@ public abstract class MultiblockMasterBlockEntity extends TGMachineBlockEntity {
         }
         formed = true;
         direction = side;
-        level.setBlock(worldPosition, getBlockState().setValue(MultiblockPartBlock.FORMED, true), 3);
+        BlockState formedState = getBlockState().setValue(MultiblockPartBlock.FORMED, true);
+        if (formedState.hasProperty(TGMachineBlock.FACING)) {
+            // formed controllers with a block model (Reaction Chamber OBJ) are turned by the structure direction
+            formedState = formedState.setValue(TGMachineBlock.FACING, side.getOpposite());
+        }
+        level.setBlock(worldPosition, formedState, 3);
         contentsChanged = true;
         setChanged();
         sendUpdate();

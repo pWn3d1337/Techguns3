@@ -39,6 +39,7 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         tag(TGTags.Items.FABRICATOR_POWDERS).addTag(Tags.Items.DUSTS_REDSTONE).add(TGItems.MECHANICAL_PARTS_CARBON.get());
         tag(TGTags.Items.FABRICATOR_PLATES).add(TGItems.PLASTIC_SHEET.get()).addTag(TGTags.Items.plate("carbon"))
                 .addTag(TGTags.Items.plate("titanium")).addTag(TGTags.Items.plate("lead"));
+        tag(TGTags.Items.REACTION_CHAMBER_FOCUSES).add(TGItems.HEAT_RAY_FOCUS.get(), TGItems.UV_EMITTER.get());
         // Ammo Bench inputs (Fabric tags)
         tag(TGTags.Items.BULLET_CORE).addTag(TGTags.Items.ingot("steel")).addTag(TGTags.Items.ingot("lead"));
         tag(TGTags.Items.BULLET_CASING).addTag(Tags.Items.INGOTS_COPPER).addTag(Tags.Items.INGOTS_IRON)

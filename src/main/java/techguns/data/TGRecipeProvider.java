@@ -2,6 +2,10 @@ package techguns.data;
 
 import net.minecraft.resources.ResourceLocation;
 import techguns.recipe.UpgradeBenchRecipe;
+import net.minecraft.tags.FluidTags;
+import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
+import techguns.recipe.ReactionChamberRecipe;
+import techguns.registry.TGFluids;
 import techguns.recipe.CamoChangeRecipe;
 import techguns.recipe.FabricatorRecipe;
 import techguns.recipe.AmmoBenchRecipe;
@@ -522,6 +526,55 @@ public class TGRecipeProvider extends RecipeProvider {
         camoChangeRecipes(output);
         ammoBenchRecipes(output);
         fabricatorRecipes(output);
+        reactionChamberRecipes(output);
+    }
+
+    /** Techguns 2 Reaction Chamber blocks, heat ray focus and {@code TGMachineRecipes} reactions. */
+    private void reactionChamberRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REACTION_CHAMBER_HOUSING.get(), 9)
+                .pattern("sms").pattern("pcp").pattern("ses")
+                .define('s', TGTags.Items.plate("steel")).define('m', TGItems.MECHANICAL_PARTS_CARBON.get()).define('p', TGItems.CYBERNETIC_PARTS.get())
+                .define('c', TGBlocks.CHEM_LAB.get()).define('e', TGItems.CIRCUIT_BOARD_ELITE.get())
+                .unlockedBy(getHasName(TGBlocks.CHEM_LAB.get()), has(TGBlocks.CHEM_LAB.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REACTION_CHAMBER_GLASS.get(), 6)
+                .pattern("rgr").pattern("rgr").pattern("rgr")
+                .define('r', TGBlocks.REACTION_CHAMBER_HOUSING.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(TGBlocks.REACTION_CHAMBER_HOUSING.get()), has(TGBlocks.REACTION_CHAMBER_HOUSING.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REACTION_CHAMBER_CONTROLLER.get())
+                .pattern(" g ").pattern("crc").pattern(" g ")
+                .define('r', TGBlocks.REACTION_CHAMBER_HOUSING.get()).define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(TGBlocks.REACTION_CHAMBER_HOUSING.get()), has(TGBlocks.REACTION_CHAMBER_HOUSING.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.HEAT_RAY_FOCUS.get())
+                .pattern("cwc").pattern("plp").pattern("plp")
+                .define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('w', TGItems.GOLD_WIRE.get()).define('p', TGTags.Items.plate("steel"))
+                .define('l', Items.REDSTONE_LAMP)
+                .unlockedBy(getHasName(TGItems.CIRCUIT_BOARD_ELITE.get()), has(TGItems.CIRCUIT_BOARD_ELITE.get())).save(output);
+
+        Ingredient heatRay = Ingredient.of(TGItems.HEAT_RAY_FOCUS.get());
+        FluidIngredient water = FluidIngredient.tag(FluidTags.WATER);
+        FluidIngredient lava = FluidIngredient.tag(FluidTags.LAVA);
+        reaction(output, "uv_wheat", Ingredient.of(Items.WHEAT_SEEDS), Ingredient.of(TGItems.UV_EMITTER.get()), water,
+                List.of(new ItemStack(Items.WHEAT), new ItemStack(Items.WHEAT_SEEDS, 2)), 10, 5, 3, 1, 1, 1000, 0.5f, ReactionChamberRecipe.Risk.EXPLOSION_LOW, 50000);
+        reaction(output, "laser_focus", Ingredient.of(Tags.Items.GEMS_DIAMOND), heatRay, FluidIngredient.tag(TGTags.Fluids.LIQUID_REDSTONE),
+                List.of(new ItemStack(TGItems.LASER_FOCUS.get())), 10, 5, 3, 1, 4, 4000, 0.5f, ReactionChamberRecipe.Risk.BREAK_ITEM, 100000);
+        reaction(output, "titanium", Ingredient.of(TGTags.Items.ore("titanium")), heatRay, FluidIngredient.single(TGFluids.ACID.get()),
+                List.of(new ItemStack(TGItems.RAW_TITANIUM.get(), 2), new ItemStack(Items.IRON_ORE)), 2, 1, 5, 0, 3, 100, 0.0f,
+                ReactionChamberRecipe.Risk.BREAK_ITEM, 25000);
+        reaction(output, "blaze_rod", Ingredient.of(TGItems.QUARTZ_ROD.get()), heatRay, lava, List.of(new ItemStack(Items.BLAZE_ROD)), 5, 3, 7, 2, 4,
+                1000, 0.5f, ReactionChamberRecipe.Risk.BREAK_ITEM, 250000);
+        reaction(output, "glowstone", Ingredient.of(Tags.Items.STORAGE_BLOCKS_REDSTONE), heatRay, lava, List.of(new ItemStack(Items.GLOWSTONE)), 5, 3, 7,
+                2, 4, 1000, 0.5f, ReactionChamberRecipe.Risk.EXPLOSION_MEDIUM, 250000);
+        reaction(output, "antigrav_core", Ingredient.of(Items.NETHER_STAR), heatRay, FluidIngredient.tag(TGTags.Fluids.LIQUID_ENDER),
+                List.of(new ItemStack(TGItems.ANTIGRAV_CORE.get())), 10, 7, 8, 2, 4, 4000, 1.0f, ReactionChamberRecipe.Risk.EXPLOSION_LOW, 500000);
+        reaction(output, "enriched_uranium", Ingredient.of(TGItems.YELLOWCAKE.get()), heatRay, water,
+                List.of(new ItemStack(TGItems.ENRICHED_URANIUM.get())), 5, 4, 7, 0, 3, 1000, 0.0f, ReactionChamberRecipe.Risk.BREAK_ITEM, 250000);
+    }
+
+    private static void reaction(RecipeOutput output, String name, Ingredient input, Ingredient focus, FluidIngredient fluid, List<ItemStack> outputs,
+                                 int ticks, int requiredCompletion, int intensity, int intensityMargin, int liquidLevel, int liquidConsumption,
+                                 float instability, ReactionChamberRecipe.Risk risk, int powerPerTick) {
+        output.accept(TGIds.id("reaction_chamber/" + name), new ReactionChamberRecipe(input, focus, fluid, outputs, ticks, requiredCompletion,
+                intensity, intensityMargin, liquidLevel, liquidConsumption, instability, risk, powerPerTick), null);
     }
 
     /** Techguns 2 Fabricator blocks and {@code TGMachineRecipes} Fabricator recipes. */
@@ -1010,10 +1063,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('r', Items.REDSTONE).define('w', TGItems.COPPER_WIRE.get()).define('i', iron)
                 .define('m', TGItems.MECHANICAL_PARTS_IRON.get())
                 .unlockedBy("has_mechanical_parts_iron", has(TGItems.MECHANICAL_PARTS_IRON.get())).save(output, TGIds.id("electric_engine"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.LASER_FOCUS.get())
-                .pattern("rrr").pattern("rdr").pattern("rrr")
-                .define('r', Items.REDSTONE).define('d', Items.DIAMOND)
-                .unlockedBy("has_diamond", has(Items.DIAMOND)).save(output, TGIds.id("laser_focus"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.PUMP_MECHANISM.get())
                 .pattern("nnn").pattern("gpg").pattern("nnn")
                 .define('p', Items.PISTON).define('g', Tags.Items.GLASS_BLOCKS).define('n', Items.IRON_INGOT)

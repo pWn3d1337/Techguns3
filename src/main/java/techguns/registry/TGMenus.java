@@ -15,6 +15,7 @@ import techguns.machine.GrinderMenu;
 import techguns.machine.AmmoBenchMenu;
 import techguns.machine.CamoBenchMenu;
 import techguns.machine.FabricatorMenu;
+import techguns.machine.ReactionChamberMenu;
 import techguns.machine.MetalPressMenu;
 import techguns.machine.RepairBenchMenu;
 import techguns.machine.UpgradeBenchMenu;
@@ -54,6 +55,9 @@ public final class TGMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<FabricatorMenu>> FABRICATOR = MENUS.register("fabricator",
             () -> IMenuTypeExtension.create(FabricatorMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ReactionChamberMenu>> REACTION_CHAMBER = MENUS.register("reaction_chamber",
+            () -> IMenuTypeExtension.create(ReactionChamberMenu::new));
 
     private TGMenus() {
     }

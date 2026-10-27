@@ -37,6 +37,7 @@ public final class TGMachineRenderers {
         event.registerBlockEntityRenderer(TGBlockEntities.CHARGING_STATION.get(), ChargingStationRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.BLAST_FURNACE.get(), BlastFurnaceRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.FABRICATOR.get(), FabricatorRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.REACTION_CHAMBER.get(), ReactionChamberRenderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {
