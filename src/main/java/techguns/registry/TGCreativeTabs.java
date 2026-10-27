@@ -30,6 +30,7 @@ public final class TGCreativeTabs {
                 TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
                 TGItems.oreDrillHeads().forEach(item -> output.accept(item.get()));
+                TGNpcs.npcs().forEach(npc -> output.accept(npc.egg().get()));
             })
             .build());
 

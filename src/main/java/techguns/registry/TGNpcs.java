@@ -1,0 +1,116 @@
+package techguns.registry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
+
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
+import techguns.entity.npc.NpcDefinition;
+import techguns.entity.npc.NpcLoadout;
+import techguns.entity.npc.TGNpc;
+import techguns.entity.npc.TGNpcFaction;
+
+/**
+ * Techguns NPCs (Phase 6): entity types, attributes and spawn eggs. Stats, loadouts and egg colours are from the
+ * Techguns 2 NPC classes and {@code TGEntities}.
+ */
+public final class TGNpcs {
+    /** A registered NPC: its type, attributes and spawn egg. */
+    public record Npc(String name, Supplier<EntityType<TGNpc>> type, Supplier<AttributeSupplier.Builder> attributes, DeferredItem<Item> egg) {
+    }
+
+    private static final List<Npc> NPCS = new ArrayList<>();
+    private static final double ALWAYS = 1.0;
+    private static final double HALF = 0.5;
+
+    // --- Undead (Phase 6a) ---
+    public static final Npc ZOMBIE_SOLDIER = npc("zombie_soldier", 0.6f, 1.95f, false, 0x757468, 0x38B038,
+            () -> TGNpc.createAttributes(25, 0.25, 4),
+            new NpcDefinition(5.0f, NpcDefinition.Sounds.ZOMBIE, TGNpcFaction.HOSTILE, false, NpcLoadout.builder()
+                    .armor(EquipmentSlot.HEAD, TGArmors.T1_COMBAT_HELMET, HALF).armor(EquipmentSlot.CHEST, TGArmors.T1_COMBAT_CHESTPLATE, HALF)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T1_COMBAT_LEGGINGS, HALF).armor(EquipmentSlot.FEET, TGArmors.T1_COMBAT_BOOTS, HALF)
+                    .weapon(TGGuns.REVOLVER, 1).weapon(TGGuns.THOMPSON, 1).weapon(() -> Items.IRON_SHOVEL, 1).weapon(() -> Items.STONE_SHOVEL, 1)
+                    .build()));
+    public static final Npc ZOMBIE_FARMER = npc("zombie_farmer", 0.6f, 1.95f, false, 0x757468, 0x38B038,
+            () -> TGNpc.createAttributes(18, 0.20, 3),
+            new NpcDefinition(0.0f, NpcDefinition.Sounds.ZOMBIE, TGNpcFaction.HOSTILE, true, NpcLoadout.builder().camo(NpcLoadout.RANDOM_CAMO)
+                    .armor(EquipmentSlot.CHEST, TGArmors.T1_MINER_CHESTPLATE, ALWAYS).armor(EquipmentSlot.LEGS, TGArmors.T1_MINER_LEGGINGS, HALF)
+                    .armor(EquipmentSlot.FEET, TGArmors.T1_MINER_BOOTS, HALF)
+                    .weapon(() -> Items.WOODEN_HOE, 1).weapon(() -> Items.IRON_HOE, 1).weapon(() -> Items.STONE_HOE, 1).weapon(TGGuns.HAND_CANNON, 1)
+                    .build()));
+    public static final Npc ZOMBIE_MINER = npc("zombie_miner", 0.6f, 1.95f, false, 0x757468, 0x38B038,
+            () -> TGNpc.createAttributes(20, 0.20, 4),
+            new NpcDefinition(0.0f, NpcDefinition.Sounds.ZOMBIE, TGNpcFaction.HOSTILE, true, NpcLoadout.builder().camo(NpcLoadout.RANDOM_CAMO)
+                    .armor(EquipmentSlot.HEAD, TGArmors.T1_MINER_HELMET, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T1_MINER_CHESTPLATE, HALF)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T1_MINER_LEGGINGS, HALF).armor(EquipmentSlot.FEET, TGArmors.T1_MINER_BOOTS, HALF)
+                    .weapon(() -> Items.STONE_PICKAXE, 1).weapon(() -> Items.IRON_PICKAXE, 1).weapon(TGGuns.HAND_CANNON, 1)
+                    .build()));
+    public static final Npc ZOMBIE_POLICEMAN = npc("zombie_policeman", 0.6f, 1.95f, false, 0x303030, 0x0000FF,
+            () -> TGNpc.createAttributes(25, 0.25, 4),
+            new NpcDefinition(5.0f, NpcDefinition.Sounds.ZOMBIE, TGNpcFaction.HOSTILE, true, NpcLoadout.builder().camo(5)
+                    .armor(EquipmentSlot.HEAD, TGArmors.T2_COMBAT_HELMET, HALF).armor(EquipmentSlot.CHEST, TGArmors.T2_COMBAT_CHESTPLATE, HALF)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T2_COMBAT_LEGGINGS, HALF).armor(EquipmentSlot.FEET, TGArmors.T2_COMBAT_BOOTS, HALF)
+                    .weapon(TGGuns.REVOLVER, 1).weapon(TGGuns.PISTOL, 1)
+                    .build()));
+    /** Techguns 2: the helmet's chance check guarded nothing, so the helmet is always worn. */
+    public static final Npc ZOMBIE_PIGMAN_SOLDIER = npc("zombie_pigman_soldier", 0.6f, 1.95f, true, 0xFF1111, 0x770000,
+            () -> TGNpc.createAttributes(25, 0.30, 5),
+            new NpcDefinition(10.0f, NpcDefinition.Sounds.ZOMBIFIED_PIGLIN, TGNpcFaction.HOSTILE, false, NpcLoadout.builder().camo(3)
+                    .armor(EquipmentSlot.HEAD, TGArmors.T2_COMBAT_HELMET, ALWAYS).armor(EquipmentSlot.CHEST, TGArmors.T2_COMBAT_CHESTPLATE, HALF)
+                    .armor(EquipmentSlot.LEGS, TGArmors.T2_COMBAT_LEGGINGS, HALF).armor(EquipmentSlot.FEET, TGArmors.T2_COMBAT_BOOTS, HALF)
+                    .weapon(TGGuns.THOMPSON, 3).weapon(TGGuns.REVOLVER, 2).weapon(TGGuns.AK47, 2).weapon(TGGuns.PISTOL, 2)
+                    .build()));
+    public static final Npc SKELETON_SOLDIER = npc("skeleton_soldier", 0.6f, 1.95f, false, 0x404040, 0xF0F0F0,
+            () -> TGNpc.createAttributes(25, 0.25, 4),
+            new NpcDefinition(0.0f, NpcDefinition.Sounds.SKELETON, TGNpcFaction.HOSTILE, true, NpcLoadout.builder()
+                    .armorChoice(EquipmentSlot.HEAD, TGArmors.T1_SCOUT_HELMET, TGArmors.T1_COMBAT_HELMET, HALF)
+                    .armorChoice(EquipmentSlot.FEET, TGArmors.T1_SCOUT_BOOTS, TGArmors.T1_COMBAT_BOOTS, HALF)
+                    .weapon(TGGuns.REVOLVER, 1).weapon(TGGuns.THOMPSON, 1).weapon(TGGuns.HAND_CANNON, 1)
+                    .build()));
+
+    private TGNpcs() {
+    }
+
+    /** Loads the holders (types into the entity register, eggs into the item register). */
+    public static void init() {
+    }
+
+    private static Npc npc(String name, float width, float height, boolean fireImmune, int eggBackground, int eggSpots,
+                           Supplier<AttributeSupplier.Builder> attributes, NpcDefinition definition) {
+        Supplier<EntityType<TGNpc>> type = TGEntities.ENTITY_TYPES.register(name, () -> {
+            EntityType.Builder<TGNpc> builder = EntityType.Builder.<TGNpc>of((t, level) -> new TGNpc(t, level, definition), MobCategory.MONSTER)
+                    .sized(width, height).eyeHeight(height * 0.85f).clientTrackingRange(8);
+            if (fireImmune) {
+                builder.fireImmune();
+            }
+            return builder.build(name);
+        });
+        DeferredItem<Item> egg = TGItems.ITEMS.register(name + "_spawn_egg",
+                () -> new DeferredSpawnEggItem(type, eggBackground, eggSpots, new Item.Properties()));
+        Npc npc = new Npc(name, type, attributes, egg);
+        NPCS.add(npc);
+        return npc;
+    }
+
+    /** Techguns 2 {@code GenericNPCUndead} subclasses. */
+    public static List<Npc> undead() {
+        return List.of(ZOMBIE_SOLDIER, ZOMBIE_FARMER, ZOMBIE_MINER, ZOMBIE_POLICEMAN, ZOMBIE_PIGMAN_SOLDIER, SKELETON_SOLDIER);
+    }
+
+    public static List<Npc> npcs() {
+        return Collections.unmodifiableList(NPCS);
+    }
+
+    public static void registerAttributes(EntityAttributeCreationEvent event) {
+        NPCS.forEach(npc -> event.put(npc.type().get(), npc.attributes().get().build()));
+    }
+}

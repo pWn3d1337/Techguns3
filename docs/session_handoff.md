@@ -6,7 +6,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ## Where we are
 
-- Branch: `phase5-machines` (base `master`). Phase 4 (PR pWn3d1337/Techguns3#5) is merged into `master`.
+- Branch: `phase6-npcs` (base `master`). Phase 5 (PR pWn3d1337/Techguns3#6) is merged into `master`.
 - Phase 5 progress (one commit per batch):
 
   | Batch | Content | Commit |
@@ -22,13 +22,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 5c2 | Reaction Chamber | `2cf2c17` |
   | 5c3 | Ore Drill + ore clusters | `3c01ee6` |
   | 5d | Explosive charges, turrets (camp flag dropped: no 1.12 implementation) | `a8726f5` |
-  | 5e | JEI plugin (optional) | not committed yet |
+  | 5e | JEI plugin (optional) | `c1d0c5d` (Phase 5 merged, PR #6) |
+  | 6a | NPC framework + undead NPCs | not committed yet |
 
-- All 256 GameTests pass; each batch was checked in game via MCP.
+- All 260 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 5e (when the user asks), then open the Phase 5 PR (base `master`).
+1. Commit 6a (when the user asks), then 6b humans (plan in the design doc, Phase 6 batches).
 2. Later: EMI plugin, JEI views of the special crafting recipes.
 3. Open a Phase 5 PR when Phase 5 is done (or earlier if the user asks).
 

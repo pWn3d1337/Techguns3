@@ -462,6 +462,7 @@ public class TGLanguageProvider extends LanguageProvider {
 
     /** Every block and item gets an English name; title-cased from its registry name unless overridden. */
     private void addItemsAndBlocks() {
+        techguns.registry.TGNpcs.npcs().forEach(npc -> add(npc.type().get(), englishName(npc.name())));
         Set<String> named = new HashSet<>();
         for (DeferredBlock<? extends Block> block : TGBlocks.blocksWithItem()) {
             String path = block.getId().getPath();

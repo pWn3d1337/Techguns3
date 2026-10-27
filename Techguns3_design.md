@@ -510,6 +510,13 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - NPCs wear Techguns armor, slot gear and camos (1.12 `GenericArmorMultiCamo.getRandomCamoIndexFor`), with NPC armor stats (`INpcTGDamageSystem`).
 - Port NPCs in families: zombies → humans (soldiers, bandits, commando, outcast) → mutants → nether/bosses (cyber demon, dictator dave, attack helicopter) → alien bugs. GeckoLib for complex ones (Q3).
 - Spawning via biome modifiers + spawn placement; TG spawner block.
+- Batches (planned 2026-10-27, source Techguns 2):
+  - 6a: NPC framework — `TGNpc` base (gun attack through `GunRangedAttackGoal`, melee fallback, 1.12 difficulty scaling of gun damage/accuracy, NPC armor stat replacing worn armor like 1.12 `INpcTGDamageSystem`, loadout hook, data loot tables, sounds), factions (`TGNpcFaction` hostile / turret / neutral with the 1.12 hostility table, faction-aware hurt-by-target), humanoid renderer with Techguns armor layer and the bow pose for guns, spawn eggs; first family: zombie soldier, farmer, miner, policeman, pigman soldier, skeleton soldier.
+  - 6b: humans — army soldier, bandit, commando, outcast, psycho steve, stormtrooper, dictator dave.
+  - 6c: super mutants (basic, elite, heavy; own model).
+  - 6d: nether and bosses — cyber demon, ghastling, attack helicopter.
+  - 6e: alien bugs.
+  - 6f: natural spawning (1.12 `TGSpawnManager`: danger level from distance to spawn and biome tags picks from the overworld / nether tables; spawn weights in the config) and the TG spawner block.
 - **Exit:** all NPCs spawn naturally and in structures, use guns correctly.
 
 ### Phase 7 — World generation

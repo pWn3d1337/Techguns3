@@ -43,7 +43,9 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new TGItemTagsProvider(output, lookup, blockTags.contentsGetter(), fileHelper));
         generator.addProvider(event.includeServer(), new TGFluidTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
-                List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK)), lookup));
+                List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK),
+                        new LootTableProvider.SubProviderEntry(TGEntityLootProvider::new, LootContextParamSets.ENTITY)), lookup));
+        generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
 
