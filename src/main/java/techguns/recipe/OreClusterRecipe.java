@@ -54,7 +54,11 @@ public record OreClusterRecipe(Block cluster, int miningLevel, float oreMultipli
         }
 
         public ItemStack itemOutput() {
-            ItemStack[] items = item.map(Ingredient::getItems).orElse(new ItemStack[0]);
+            // an empty tag (other mod's ore missing) shows a barrier placeholder: it gives nothing
+            if (item.isEmpty() || item.get().hasNoItems()) {
+                return ItemStack.EMPTY;
+            }
+            ItemStack[] items = item.get().getItems();
             return items.length == 0 ? ItemStack.EMPTY : items[0].copyWithCount(1);
         }
 

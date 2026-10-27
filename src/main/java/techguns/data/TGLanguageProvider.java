@@ -320,6 +320,25 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.ammobench", "Ammo Bench");
         // Phase 5c multiblocks
         add("techguns.container.fabricator", "Fabricator");
+        // recipe viewer categories (Techguns 2 container names)
+        add("techguns.container.metalpress", "Metal Press");
+        add("techguns.container.ammopress", "Ammo Press");
+        add("techguns.container.blastfurnace", "Blast Furnace");
+        add("techguns.container.grinder", "Grinder");
+        add("techguns.container.chargingstation", "Charging Station");
+        add("techguns.jei.chance", "Chance: %s%%");
+        add("techguns.container.chemlab", "Chem Lab");
+        add("techguns.container.upgradebench", "Armor Upgrade Bench");
+        add("techguns.container.camobench", "Camo Bench");
+        add("techguns.jei.oredrill.mininglevel", "Mining level: %s");
+        add("techguns.jei.oredrill.oremult", "Ore multiplier: %s");
+        add("techguns.jei.oredrill.powermult", "Power multiplier: %s");
+        add("techguns.jei.reactionchamber.ticks", "Ticks: %s");
+        add("techguns.jei.reactionchamber.intensity", "Intensity: %s (±%s)");
+        add("techguns.jei.reactionchamber.completion", "Completion: %s in %s ticks");
+        add("techguns.jei.reactionchamber.liquid", "Liquid level: %s, uses %s per success");
+        add("techguns.jei.reactionchamber.instability", "Instability: %s%%");
+        add("techguns.jei.reactionchamber.risk", "Risk: %s");
         add("techguns.container.reactionchamber", "Reaction Chamber");
         add("techguns.reactionchamber.risk.break_item", "Break Item");
         add("techguns.reactionchamber.risk.explosion_low", "Small Explosion");

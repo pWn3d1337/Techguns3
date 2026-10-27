@@ -250,6 +250,9 @@ public class TGOreDrillTests {
         helper.assertTrue(common.entries().stream().map(OreClusterRecipe.Entry::itemOutput).anyMatch(s -> s.is(TGBlocks.TIN_ORE.get().asItem())),
                 "Common metal gives tin ore");
         helper.assertTrue(TGBlocks.ORE_CLUSTER_COAL.get().defaultDestroyTime() < 0, "Clusters are unbreakable");
+        OreClusterRecipe gems = recipes.stream().filter(r -> r.cluster() == TGBlocks.ORE_CLUSTER_COMMON_GEM.get()).findFirst().orElseThrow();
+        helper.assertTrue(gems.entries().stream().noneMatch(e -> e.itemOutput().is(net.minecraft.world.item.Items.BARRIER)),
+                "An empty optional tag (certus quartz without its mod) gives nothing, not a barrier");
         helper.succeed();
     }
 }

@@ -502,6 +502,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 5d1 (done 2026-10-27): explosive charges (Mining Charge, Advanced Mining Charge). Blocks break in the owner's name via a fake player when the owner is offline (1.12 broke nothing). Camp flag dropped: Techguns 2 has no implementation (only a commented-out 1.7 machine type).
   - 5d2 (done 2026-10-27): turrets (turret block entity with gun, ammo and armor slots, the turret entity firing the gun through an NPC fire path; targeting by owner and settings until factions arrive in Phase 6). Gun AI stats are part of `GunStats` (`ai`); `GunRangedAttackGoal` and `GunShooter` are the base for Phase 6 NPCs; the `TeamProvider` facade exists with the no-team default.
 - 5e: JEI (and later EMI) plugins.
+  - Done 2026-10-27 (JEI 19.69, optional): categories for all Techguns machines and benches in `compat/jei`, drawn on the 1.12 GUI textures; EMI follows later.
 - **Exit:** full tech progression craftable in survival.
 
 ### Phase 6 — NPCs & factions

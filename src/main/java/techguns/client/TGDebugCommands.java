@@ -62,6 +62,15 @@ public final class TGDebugCommands {
             return;
         }
         event.getDispatcher().register(Commands.literal("tgdebug")
+                .then(Commands.literal("jei")
+                        .then(Commands.argument("category", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    // opens the recipe viewer category for screenshots (no mouse via MCP)
+                                    String id = StringArgumentType.getString(ctx, "category");
+                                    Minecraft.getInstance().tell(() -> Minecraft.getInstance().player.displayClientMessage(Component.literal(
+                                            RecipeViewerHook.showCategory(id) ? "Showing " + id : "No recipe viewer category " + id), false));
+                                    return 1;
+                                })))
                 .then(Commands.literal("fire")
                         .then(Commands.argument("ticks", IntegerArgumentType.integer(1, 200))
                                 .executes(ctx -> {
