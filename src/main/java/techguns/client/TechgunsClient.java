@@ -57,6 +57,9 @@ public class TechgunsClient {
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);
+        modEventBus.addListener(techguns.client.gui.RadiationOverlay::register);
+        modEventBus.addListener(techguns.client.gui.RadiationOverlay::registerEffectIcon);
+        NeoForge.EVENT_BUS.addListener(techguns.client.gui.RadiationOverlay::onTooltip);
         modEventBus.addListener(ClientAmmoBagTooltip::register);
         modEventBus.addListener(ClientArmorTooltip::register);
         modEventBus.addListener(ExtraSlotsScreen::register);

@@ -18,6 +18,7 @@ import techguns.core.damage.TGDamageCategory;
 import techguns.damage.TGDamageTypes;
 import techguns.registry.TGBlocks;
 import techguns.registry.TGCreativeTabs;
+import techguns.registry.TGMobEffects;
 import techguns.registry.TGItems;
 
 public class TGLanguageProvider extends LanguageProvider {
@@ -293,6 +294,25 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.TOGGLE_STEP_ASSIST.getName(), "Toggle Step Assist");
         addGunTooltips();
         addMachines();
+        addRadiation();
+    }
+
+    /** Techguns 2 radiation effects, potions, HUD and tooltip. */
+    private void addRadiation() {
+        add(TGMobEffects.RADIATION.get(), "Radiation");
+        add(TGMobEffects.RAD_REGENERATION.get(), "Rad Regeneration");
+        add(TGMobEffects.RAD_RESISTANCE.get(), "Rad Resistance");
+        String[][] potions = {{"techguns.radiation", "Radiation"}, {"techguns.rad_regeneration", "Rad Regeneration"},
+                {"techguns.rad_resistance", "Rad Resistance"}};
+        for (String[] potion : potions) {
+            add("item.minecraft.potion.effect." + potion[0], "Potion of " + potion[1]);
+            add("item.minecraft.splash_potion.effect." + potion[0], "Splash Potion of " + potion[1]);
+            add("item.minecraft.lingering_potion.effect." + potion[0], "Lingering Potion of " + potion[1]);
+            add("item.minecraft.tipped_arrow.effect." + potion[0], "Arrow of " + potion[1]);
+        }
+        add("techguns.hud.radiation", "%s RAD");
+        add("techguns.hud.radiation_rate", "+[%s RAD/s]");
+        add("techguns.tooltip.radiation", "Radiation");
     }
 
     /** Techguns 2 machine screen texts. */

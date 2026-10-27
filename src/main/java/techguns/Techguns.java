@@ -47,6 +47,7 @@ public class Techguns {
         ExtraSlotEvents.init(NeoForge.EVENT_BUS);
         AmmoBagEvents.init(NeoForge.EVENT_BUS);
         TGSpawnManager.init(modEventBus, NeoForge.EVENT_BUS);
+        techguns.radiation.RadiationEvents.init(modEventBus, NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener((PlayerTickEvent.Post event) -> ShooterState.of(event.getEntity()).tick());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TGConfig.COMMON_SPEC);

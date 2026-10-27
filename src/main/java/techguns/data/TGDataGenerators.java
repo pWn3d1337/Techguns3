@@ -65,6 +65,7 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new TGBiomeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
+        generator.addProvider(event.includeServer(), new TGDataMapProvider(output, lookup));
 
         // Client assets
         generator.addProvider(event.includeClient(), new TGBlockStateProvider(output, fileHelper));
