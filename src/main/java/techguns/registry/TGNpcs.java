@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
+import techguns.entity.npc.AlienBug;
 import techguns.entity.npc.AttackHelicopter;
 import techguns.entity.npc.NpcDefinition;
 import techguns.entity.npc.Ghastling;
@@ -155,6 +156,13 @@ public final class TGNpcs {
             (t, level) -> new AttackHelicopter(t, level, new NpcDefinition(16.0f, NpcDefinition.Sounds.HELICOPTER, TGNpcFaction.HOSTILE, false,
                     NpcLoadout.NONE)),
             builder -> builder.eyeHeight(0.5f).clientTrackingRange(13));
+
+    // --- Alien bugs (Phase 6e) ---
+    /** Techguns 2 AlienBug (a vanilla spider subclass), egg colors as in Techguns 2. */
+    public static final Npc ALIEN_BUG = npc("alien_bug", 1.1f, 1.2f, false, 0xc6a96b, 0x71552e, AlienBug::createAlienBugAttributes,
+            (t, level) -> new AlienBug(t, level, new NpcDefinition(0.0f, NpcDefinition.Sounds.ALIEN_BUG, TGNpcFaction.HOSTILE, false,
+                    NpcLoadout.NONE)),
+            builder -> builder.eyeHeight(0.65f));
 
     // --- Super mutants (Phase 6c; Techguns 2 sizes: width, 2 x model scale) ---
     private static final NpcLoadout MUTANT_LOADOUT = NpcLoadout.builder()

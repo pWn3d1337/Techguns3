@@ -40,6 +40,7 @@ import techguns.client.particle.TGParticleManager;
 import techguns.client.particle.TGParticleSystem;
 import techguns.client.particle.TGParticleSystemType;
 import techguns.core.damage.DeathType;
+import techguns.entity.npc.AlienBug;
 import techguns.registry.TGSounds;
 
 /**
@@ -56,6 +57,8 @@ public final class DeathEffects {
     /** Gore settings by entity type; everything else uses {@link #GENERIC_GORE}. */
     private static final Map<EntityType<?>, GoreData> GORE_DATA = new HashMap<>();
     private static final GoreData GENERIC_GORE = new GoreData(160, 21, 31);
+    /** Techguns 2: the alien bug bleeds yellow-green (a class check, the type isn't registered yet when this loads). */
+    private static final GoreData ALIEN_BUG_GORE = new GoreData(235, 255, 70);
 
     static {
         GORE_DATA.put(EntityType.SKELETON, new GoreData(192, 192, 192).setFX("GoreFX_Dust", "GoreTrailFX_Dust").setSound(() -> SoundEvents.SKELETON_DEATH));
@@ -123,7 +126,7 @@ public final class DeathEffects {
     }
 
     private static void gore(ClientLevel level, LivingEntity entity, float motionX, float motionY, float motionZ) {
-        GoreData data = GORE_DATA.getOrDefault(entity.getType(), GENERIC_GORE);
+        GoreData data = entity instanceof AlienBug ? ALIEN_BUG_GORE : GORE_DATA.getOrDefault(entity.getType(), GENERIC_GORE);
         data.refresh();
 
         List<ModelPart> gibs = null;

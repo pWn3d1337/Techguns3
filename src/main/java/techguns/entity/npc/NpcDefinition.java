@@ -38,7 +38,8 @@ public record NpcDefinition(float armor, Sounds sounds, TGNpcFaction faction, bo
         /** Cyber demon and super mutants. */
         CYBER_DEMON(TGSounds.CYBERDEMON_IDLE, TGSounds.CYBERDEMON_HURT, TGSounds.CYBERDEMON_DEATH, TGSounds.CYBERDEMON_STEP),
         /** Attack helicopter: no ambient sound (the rotor plays on its own timer), the hit sound for hurt and death. */
-        HELICOPTER(() -> null, TGSounds.HELICOPTER_HIT, TGSounds.HELICOPTER_HIT, null);
+        HELICOPTER(() -> null, TGSounds.HELICOPTER_HIT, TGSounds.HELICOPTER_HIT, null),
+        ALIEN_BUG(TGSounds.ALIENBUG_IDLE, TGSounds.ALIENBUG_HURT, TGSounds.ALIENBUG_DEATH, TGSounds.ALIENBUG_STEP);
 
         public final Supplier<SoundEvent> ambient;
         public final Supplier<SoundEvent> hurt;

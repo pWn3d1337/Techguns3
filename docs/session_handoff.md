@@ -26,13 +26,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 6a | NPC framework + undead NPCs | `04a9f8b` |
   | 6b | Human NPCs | `32eabb9` |
   | 6c | Super mutants | `200da58` |
-  | 6d | Nether and bosses: cyber demon, ghastling, attack helicopter | not committed yet |
+  | 6d | Nether and bosses: cyber demon, ghastling, attack helicopter | `60bc107` |
+  | 6e | Alien bugs | not committed yet |
 
-- All 266 GameTests pass; each batch was checked in game via MCP.
+- All 268 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 6d (when the user asks), then 6e alien bugs (plan in the design doc, Phase 6 batches), then 6f natural spawning and the TG spawner.
+1. Commit 6e (when the user asks), then 6f natural spawning and the TG spawner (plan in the design doc, Phase 6 batches). The alien bug nest structure belongs to Phase 7.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
 3. Open the Phase 6 PR when 6f is done (or earlier if the user asks).
 

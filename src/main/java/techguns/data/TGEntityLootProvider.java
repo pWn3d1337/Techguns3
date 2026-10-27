@@ -79,6 +79,8 @@ public class TGEntityLootProvider extends EntityLootSubProvider {
         add(TGNpcs.GHASTLING, plainPool(() -> Items.GHAST_TEAR, 0, 1, 1), plainPool(() -> Items.GUNPOWDER, 0, 2, 1));
         add(TGNpcs.ATTACK_HELICOPTER, plainPool(TGItems.CYBERNETIC_PARTS, 2, 4, 1, 2), plainPool(TGAmmo.RIFLE_ROUNDS, 8, 16, 4, 8),
                 plainPool(TGAmmo.ROCKET, 4, 8, 2, 4), plainPool(() -> Items.IRON_BLOCK, 2, 4, 1, 2));
+        // Techguns 2 left the alien bug's loot table as a TODO: no drops
+        add(TGNpcs.ALIEN_BUG);
         // Techguns 2: all super mutants use the basic mutant's table
         for (TGNpcs.Npc mutant : java.util.List.of(TGNpcs.SUPER_MUTANT_BASIC, TGNpcs.SUPER_MUTANT_HEAVY, TGNpcs.SUPER_MUTANT_ELITE)) {
             add(mutant, pool(TGItems.CYBERNETIC_PARTS, 1, 2, 0, 0.75f, LOOTING), pool(() -> Items.BLAZE_ROD, 1, 2, 2, CHANCE, LOOTING),

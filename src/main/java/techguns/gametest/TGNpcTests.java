@@ -5,17 +5,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Husk;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import techguns.Techguns;
 import techguns.core.damage.TGDamageCategory;
+import techguns.entity.npc.AlienBug;
 import techguns.entity.npc.AttackHelicopter;
 import techguns.entity.npc.TGNpc;
 import techguns.entity.npc.TGNpcFaction;
@@ -37,7 +41,8 @@ public class TGNpcTests {
     public static void npcsSpawnWithLoadouts(GameTestHelper helper) {
         for (TGNpcs.Npc type : TGNpcs.npcs()) {
             TGNpc npc = spawn(helper, type, new BlockPos(3, 1, 3));
-            helper.assertTrue(npc != null && (!npc.getMainHandItem().isEmpty() || type == TGNpcs.GHASTLING || type == TGNpcs.ATTACK_HELICOPTER), type.name() + " spawns with a weapon");
+            helper.assertTrue(npc != null && (!npc.getMainHandItem().isEmpty() || type == TGNpcs.GHASTLING || type == TGNpcs.ATTACK_HELICOPTER
+                    || type == TGNpcs.ALIEN_BUG), type.name() + " spawns with a weapon");
             helper.assertFalse(npc.canPickUpLoot(), type.name() + " doesn't pick up loot");
             npc.discard();
         }
@@ -126,6 +131,32 @@ public class TGNpcTests {
             helper.assertTrue(helicopter.isRemoved(), "The wreck explodes after five seconds");
             helper.succeed();
         });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void alienBugBitesItsTarget(GameTestHelper helper) {
+        AlienBug bug = (AlienBug) spawn(helper, TGNpcs.ALIEN_BUG, new BlockPos(1, 1, 3));
+        Husk husk = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(5, 1, 3));
+        husk.getAttribute(Attributes.MAX_HEALTH).setBaseValue(500.0);
+        husk.setHealth(500.0f);
+        bug.setTarget(husk);
+        helper.assertTrue(bug.tgArmorAgainst(TGDamageCategory.POISON) == 20.0f && bug.tgArmorAgainst(TGDamageCategory.FIRE) == 0.0f
+                && bug.getType().is(EntityTypeTags.ARTHROPOD) && !bug.canBeAffected(new MobEffectInstance(MobEffects.POISON, 100)),
+                "Alien bugs: armor 20 against poison, none against fire, arthropods, immune to poison");
+        helper.succeedWhen(() -> helper.assertTrue(husk.getHealth() < 500.0f, "The bug bites its target"));
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 100)
+    public static void alienBugClimbsWalls(GameTestHelper helper) {
+        for (int y = 1; y < 9; y++) {
+            for (int z = 0; z < 8; z++) {
+                helper.setBlock(new BlockPos(5, y, z), Blocks.STONE);
+            }
+        }
+        AlienBug bug = (AlienBug) spawn(helper, TGNpcs.ALIEN_BUG, new BlockPos(3, 1, 3));
+        double startY = bug.getY();
+        helper.onEachTick(() -> bug.getMoveControl().setWantedPosition(bug.getX() + 3.0, bug.getY(), bug.getZ(), 1.0));
+        helper.succeedWhen(() -> helper.assertTrue(bug.getY() > startY + 2.0, "The bug climbs the wall, y " + bug.getY()));
     }
 
     @GameTest(template = ARENA)
