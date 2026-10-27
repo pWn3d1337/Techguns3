@@ -33,6 +33,7 @@ public final class TGRegistries {
         TGBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         TGMenus.MENUS.register(modEventBus);
         TGBiomeModifiers.SERIALIZERS.register(modEventBus);
+        TGStructureProcessors.PROCESSORS.register(modEventBus);
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
         modEventBus.addListener(TGCamos::register);

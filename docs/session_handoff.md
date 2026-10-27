@@ -29,14 +29,20 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 6d | Nether and bosses: cyber demon, ghastling, attack helicopter | `60bc107` |
   | 6e | Alien bugs | `ea56533` |
   | 6f | Natural NPC spawning, TG spawner blocks | `2949812` (Phase 6 merged, PR #7) |
-  | 7a | Ore generation | not committed yet |
+  | 7a | Ore generation | `4391c43` |
+  | 7b | Structure converter, legacy palette processor, chest loot | not committed yet |
 
-- All 275 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 279 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 7a (when the user asks), then 7b: the structure converter (1.12 scanned structures + `MBlock` palettes to `.nbt` templates, legacy block id / meta mapping, spawners and loot chests). Phase 7 batch plan is in the design doc.
+1. Commit 7b (when the user asks), then 7c: small and medium overworld structures (structure types / pieces placing the 7b templates with the `techguns:legacy` processors, Techguns 2 foundation and clean-up, structure sets, biome rules). Phase 7 batch plan is in the design doc; conversion inputs and how to re-dump them: `src/legacy/README.md`.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
+
+## Notes
+
+- The Techguns 2 workspace runs (`./gradlew runClient` in `F:\Techguns3Work\Techguns2`, RetroFuturaGradle, JDK 8). On this PC the 2020 ForgeGradle MCP cache `~/.gradle/caches/minecraft/de/oceanlabs/mcp/mcp_snapshot/20180104` blocked RFG; it was renamed to `20180104.fg2-backup-2020` and RFG re-downloaded the mappings.
+- `TestworldFlat` has the 7b check structures placed at x 100..180, z 0..70.
 
 ## Open decision for the user
 

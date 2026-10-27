@@ -17,8 +17,11 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import techguns.Techguns;
 import techguns.registry.TGBiomeModifiers;
+import techguns.data.legacy.LegacyChestLootProvider;
+import techguns.data.legacy.LegacyStructureProvider;
 import techguns.registry.TGCamos;
 import techguns.registry.TGFeatures;
+import techguns.registry.TGStructureProcessors;
 import techguns.damage.TGDamageTypes;
 
 /**
@@ -38,6 +41,7 @@ public final class TGDataGenerators {
                 .add(TGCamos.KEY, TGCamoProvider::bootstrap)
                 .add(Registries.CONFIGURED_FEATURE, TGFeatures::bootstrapConfigured)
                 .add(Registries.PLACED_FEATURE, TGFeatures::bootstrapPlaced)
+                .add(Registries.PROCESSOR_LIST, TGStructureProcessors::bootstrap)
                 .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TGBiomeModifiers::bootstrap);
         DatapackBuiltinEntriesProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), datapackEntries, Set.of(Techguns.MODID)));
@@ -50,7 +54,10 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new TGFluidTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(TGBlockLootProvider::new, LootContextParamSets.BLOCK),
-                        new LootTableProvider.SubProviderEntry(TGEntityLootProvider::new, LootContextParamSets.ENTITY)), lookup));
+                        new LootTableProvider.SubProviderEntry(TGEntityLootProvider::new, LootContextParamSets.ENTITY),
+                        new LootTableProvider.SubProviderEntry(TGBlockLootProvider.Crates::new, LootContextParamSets.CHEST),
+                        new LootTableProvider.SubProviderEntry(LegacyChestLootProvider::new, LootContextParamSets.CHEST)), lookup));
+        generator.addProvider(event.includeServer(), new LegacyStructureProvider(output));
         generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGBiomeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));

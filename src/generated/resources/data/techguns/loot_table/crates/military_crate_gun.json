@@ -1,0 +1,52 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "techguns:revolver"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:thompson"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:ak47"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:bolt_action"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:m4"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:pistol"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:combat_shotgun"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:mac10"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:aug"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:flamethrower"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "techguns:crates/military_crate_gun"
+}
