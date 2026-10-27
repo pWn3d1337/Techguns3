@@ -484,11 +484,25 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 
 ### Phase 5 — Blocks & machines
 - 5a: Simple decorative blocks (flattened): concrete, metal panels, lamps, neon, ladders, camo nets, sandbags, stairs, slimy blocks, military crates, doors (2x1, 3x3 bunker).
+  - 5a1 (planned 2026-10-26): full cube variants, one block per 1.12 meta variant: concrete (6), metal panels (8), nether metal (10, border_lava glows), neon lights (5, glow), bug nest sand, bug nest eggs (slimy), metal/concrete stairs; 1.12 "camo changeable" groups become block lists the Camo Bench cycles through (Phase 5b).
+  - 5a2: shaped blocks: lamps (4, facing), ladders (4), slimy ladder, camo nets (3 + top), sandbags, military crates (9, break into loot; not containers in 1.12), 2x1 bunker door, 3x3 doors (4, multiblock).
 - 5b: Single-block machines + screens + recipe types: Ammo Press/Bench, Metal Press, Chem Lab, Grinder, Blast Furnace, Charging Station, Repair Bench, Camo Bench, Upgrade/Armor Bench.
+  - 5b1: machine framework (block entity base with inventory, FE energy, redstone mode, owner/security, progress, machine upgrade stack slot; menu + screen base with power bar, redstone and security buttons; data-driven recipe types) + Metal Press end to end + the machine upgrade item.
+  - 5b2a: item machines: Ammo Press, Blast Furnace, Grinder.
+  - 5b2b: Chem Lab (fluid tanks, fluid recipes, the new creeper acid fluid; fuel recipes use lava like 1.12 without fuel mods) and Charging Station (item FE charging; powered armor needs an item energy capability).
+  - 5b3: benches: Repair Bench, Camo Bench, Upgrade Bench (armor upgrades), Ammo Bench (Q6).
+    - Implemented 2026-10-27: benches reuse `TGMachineBlockEntity` without power (screens hide power bar and redstone). Camo Bench = 1.12 screen plus a Fabric-style pick list (`TGRecipeGrid`, shared with the Ammo Bench); block looks are data-driven `techguns:camo_change` groups. Upgrade Bench recipes are data (`techguns:upgrade_bench`: upgrade item, enchantment key, level). Techguns armor joined the vanilla `enchantable/*_armor` tags so armor enchantments apply (1.12 `ItemArmor` behaviour).
   - From Phase 4: the 9 armor upgrade items (protection / projectile / blast protection, tiers 1-3) applied by the Upgrade Bench; Repair Bench repair costs for armor and shields (1.12 `repairMat` counts); gun camo changes at the Camo Bench (armor already cycles with sneak + use); the Ammo Bench and Camo Bench recipe types from Fabric.
 - 5c: Multiblocks: Fabricator, Reaction Chamber, Ore Drill (+ ore clusters).
+  - Batches (planned 2026-10-27, source Techguns 2):
+    - 5c1 (done 2026-10-27): multiblock framework — master block entity on `TGMachineBlockEntity` (formed flag, direction, unform on break), slave block entity (master position, forwards item/fluid/energy capabilities by connector type), a schematic interface (check/form/unform from the clicked side, error messages), forming by using the controller, formed blockstates; then the Fabricator end to end (2x2x2: controller + 3 housings, 4 glass on top; 6 slots, 100000 FE, 80 FE/t, 100 ticks; 6 recipes as a `techguns:fabricator` recipe type; 1.12 GUI, Java model via `convmodel.py`, work sound).
+    - 5c2 (done 2026-10-27; liquid redstone / ender are lava fluid tags like 1.12 without Thermal, no new fluids): Reaction Chamber (3x3x4: housings, item/fluid and energy connectors, 18 glass; input, focus and 4 output slots, 10-bucket tank, intensity and liquid level buttons, reaction ticks of 60 with completion, instability and risk — break item / small / medium explosion; 7 recipes as `techguns:reaction_chamber`; heat ray beam renderer; new fluids liquid redstone and liquid ender).
+    - 5c3: Ore Drill and ore clusters (variable size: engines, rods, frame, scaffold, controller, cluster in front; 9 drill head items, fuel slot and fuel tank, oil output tank; ore per hour and power from size, mining level and cluster type with the 1.12 config multipliers; 9 unbreakable ore cluster blocks with weighted ore lists as data; renderer with the spinning head). Cluster worldgen (spikes, meteors, oil, nether) moves to Phase 7; until then clusters are creative-only. Done: cluster definitions are `techguns:ore_cluster` recipes (data instead of the 1.12 config), the frame/scaffold/drill plate are required parts, the drill waits instead of dropping outputs when full.
 - 5d: Turrets (incl. the 4 turret armor plates: iron, steel, obsidian steel, carbon), explosive charges, camp flag.
+  - 5d1 (done 2026-10-27): explosive charges (Mining Charge, Advanced Mining Charge). Blocks break in the owner's name via a fake player when the owner is offline (1.12 broke nothing). Camp flag dropped: Techguns 2 has no implementation (only a commented-out 1.7 machine type).
+  - 5d2 (done 2026-10-27): turrets (turret block entity with gun, ammo and armor slots, the turret entity firing the gun through an NPC fire path; targeting by owner and settings until factions arrive in Phase 6). Gun AI stats are part of `GunStats` (`ai`); `GunRangedAttackGoal` and `GunShooter` are the base for Phase 6 NPCs; the `TeamProvider` facade exists with the no-team default.
 - 5e: JEI (and later EMI) plugins.
+  - Done 2026-10-27 (JEI 19.69, optional): categories for all Techguns machines and benches in `compat/jei`, drawn on the 1.12 GUI textures; EMI follows later.
 - **Exit:** full tech progression craftable in survival.
 
 ### Phase 6 — NPCs & factions
@@ -564,7 +578,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q3 | ~~Gun models: Java vs GeckoLib?~~ **Decided 2026-10-25: full GeckoLib.** All gun models are GeckoLib geo models (exported from the ported Java models by `TGGeoExporter`, then edited in Blockbench), with keyframed animations. GeckoLib is a required dependency. See §9.1. | ✔ Decided |
 | Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. | ✔ Decided |
 | Q5 | Extra slots: Curios dependency vs own system? | **Decided 2026-10-26:** Curios as a soft dependency; built-in fallback slots (attachment + small screen tab) when Curios is absent. |
-| Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | Discuss. |
+| Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | **Decided 2026-10-26: both.** Ammo Press (powered, 1.12 build plans) and the unpowered Fabric Ammo Bench. Camo Bench: 1.12 scope (blocks, guns, armor) with a Fabric-style list to pick the named camo. |
 | Q7 | Energy: plain FE only? | FE only. |
 | Q8 | Structures: faithful 1.12 rebuilds vs redesign with jigsaw variety? | Faithful first via converter, jigsaw where it adds value. |
 | Q9 | Recipe viewer priority: JEI vs EMI? | JEI first. |

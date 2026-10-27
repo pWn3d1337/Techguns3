@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:plates/iron"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:mechanical_parts_iron"
+  },
+  "second": {
+    "item": "minecraft:flint"
+  }
+}

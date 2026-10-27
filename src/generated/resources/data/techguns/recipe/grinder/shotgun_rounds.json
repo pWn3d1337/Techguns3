@@ -1,0 +1,28 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:shotgun_rounds"
+  },
+  "outputs": [
+    {
+      "chance": 0.5,
+      "item": {
+        "count": 1,
+        "id": "techguns:lead_nugget"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:copper_nugget"
+      }
+    },
+    {
+      "chance": 0.0625,
+      "item": {
+        "count": 1,
+        "id": "minecraft:gunpowder"
+      }
+    }
+  ]
+}

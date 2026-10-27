@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "tag": "c:storage_blocks/iron"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "r": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "ibi",
+    "iei",
+    "iri"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:metal_press"
+  }
+}

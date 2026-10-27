@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "ipi",
+    "ipi",
+    "ipi"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:ore_drill_rod"
+  }
+}

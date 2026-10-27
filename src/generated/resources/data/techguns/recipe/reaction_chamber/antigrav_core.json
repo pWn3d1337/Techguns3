@@ -1,0 +1,27 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "tag": "techguns:liquid_ender"
+  },
+  "focus": {
+    "item": "techguns:heat_ray_focus"
+  },
+  "input": {
+    "item": "minecraft:nether_star"
+  },
+  "instability": 1.0,
+  "intensity": 8,
+  "intensity_margin": 2,
+  "liquid_consumption": 4000,
+  "liquid_level": 4,
+  "outputs": [
+    {
+      "count": 1,
+      "id": "techguns:antigrav_core"
+    }
+  ],
+  "power_per_tick": 500000,
+  "required_completion": 7,
+  "risk": "explosion_low",
+  "ticks": 10
+}

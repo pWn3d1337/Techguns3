@@ -95,7 +95,7 @@ public class TGChargeGunTests {
         Player player = shooter(helper);
         ChargeGunItem gun = (ChargeGunItem) TGGuns.TFG.get();
         ItemStack stack = hold(player, gun, 20);
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(6, 1, 4));
 
         release(helper, player, gun, stack, 200);
 
@@ -109,7 +109,7 @@ public class TGChargeGunTests {
         Player player = shooter(helper);
         ChargeGunItem gun = (ChargeGunItem) TGGuns.BIOGUN.get();
         ItemStack stack = hold(player, gun, 30);
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(5, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(5, 1, 4));
 
         gun.shoot(stack, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
 

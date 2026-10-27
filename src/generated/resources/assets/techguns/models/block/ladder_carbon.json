@@ -1,0 +1,7 @@
+{
+  "parent": "techguns:block/ladder_base",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "texture": "techguns:block/metal_ladder_carbon"
+  }
+}

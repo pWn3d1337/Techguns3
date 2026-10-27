@@ -1,0 +1,10 @@
+{
+  "type": "techguns:camo_change",
+  "entries": [
+    "techguns:neontubes2",
+    "techguns:neontubes2_rotated",
+    "techguns:neontubes4",
+    "techguns:neontubes4_rotated",
+    "techguns:neonsquare_white"
+  ]
+}

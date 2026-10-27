@@ -1,0 +1,27 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "tag": "techguns:liquid_redstone"
+  },
+  "focus": {
+    "item": "techguns:heat_ray_focus"
+  },
+  "input": {
+    "tag": "c:gems/diamond"
+  },
+  "instability": 0.5,
+  "intensity": 3,
+  "intensity_margin": 1,
+  "liquid_consumption": 4000,
+  "liquid_level": 4,
+  "outputs": [
+    {
+      "count": 1,
+      "id": "techguns:laser_focus"
+    }
+  ],
+  "power_per_tick": 100000,
+  "required_completion": 5,
+  "risk": "break_item",
+  "ticks": 10
+}

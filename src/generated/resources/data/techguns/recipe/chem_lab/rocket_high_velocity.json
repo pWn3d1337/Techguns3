@@ -1,0 +1,16 @@
+{
+  "type": "techguns:chem_lab",
+  "first": {
+    "count": 1,
+    "item": "techguns:rocket"
+  },
+  "fluid": {
+    "amount": 250,
+    "tag": "minecraft:lava"
+  },
+  "power_per_tick": 5,
+  "result": {
+    "count": 1,
+    "id": "techguns:rocket_high_velocity"
+  }
+}

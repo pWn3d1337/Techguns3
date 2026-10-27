@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "r": {
+      "item": "techguns:reaction_chamber_housing"
+    }
+  },
+  "pattern": [
+    "rgr",
+    "rgr",
+    "rgr"
+  ],
+  "result": {
+    "count": 6,
+    "id": "techguns:reaction_chamber_glass"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "techguns:door_hangar_down_3x3"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:door_hangar_up_3x3"
+  }
+}

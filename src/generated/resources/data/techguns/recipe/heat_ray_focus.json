@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "l": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "w": {
+      "item": "techguns:gold_wire"
+    }
+  },
+  "pattern": [
+    "cwc",
+    "plp",
+    "plp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:heat_ray_focus"
+  }
+}

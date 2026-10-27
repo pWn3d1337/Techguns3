@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "techguns:block/ore_drill_rod"
+    },
+    "formed=true": {
+      "model": "techguns:block/ore_drill_rod_formed"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "techguns:block/lantern_side_base",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "techguns:block/lantern02_side",
+    "side": "techguns:block/lantern02_side",
+    "top": "techguns:block/lantern02_top"
+  }
+}

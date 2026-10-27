@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "g": {
+      "tag": "c:glass_blocks"
+    },
+    "r": {
+      "item": "techguns:reaction_chamber_housing"
+    }
+  },
+  "pattern": [
+    " g ",
+    "crc",
+    " g "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:reaction_chamber_controller"
+  }
+}

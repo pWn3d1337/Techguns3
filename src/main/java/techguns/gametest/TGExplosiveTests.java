@@ -52,7 +52,7 @@ public class TGExplosiveTests {
 
     /** A zombie well outside the plain rocket's blast (radius 4) but inside the nuke's (radius 20). */
     private static Zombie farBystander(GameTestHelper helper) {
-        return helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 0));
+        return TGTestTargets.husk(helper, new BlockPos(1, 1, 0));
     }
 
     // own batch: the nuke blast would reach the bystanders of neighbouring tests
@@ -60,7 +60,7 @@ public class TGExplosiveTests {
     public static void nukeRocketHasLargerBlast(GameTestHelper helper) {
         Player player = shooter(helper);
         ItemStack gun = hold(player, TGGuns.ROCKET_LAUNCHER.get(), 1, AmmoType.NUKE);
-        helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 4));
+        TGTestTargets.husk(helper, new BlockPos(6, 1, 4));
         Zombie bystander = farBystander(helper);
 
         ((GunItem) gun.getItem()).shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
@@ -73,7 +73,7 @@ public class TGExplosiveTests {
     public static void plainRocketSparesFarBystander(GameTestHelper helper) {
         Player player = shooter(helper);
         ItemStack gun = hold(player, TGGuns.ROCKET_LAUNCHER.get(), 1, AmmoType.DEFAULT);
-        Zombie target = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 4));
+        Zombie target = TGTestTargets.husk(helper, new BlockPos(6, 1, 4));
         Zombie bystander = farBystander(helper);
 
         ((GunItem) gun.getItem()).shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
@@ -125,7 +125,7 @@ public class TGExplosiveTests {
         Player player = shooter(helper);
         ItemStack gun = hold(player, TGGuns.GUIDED_MISSILE_LAUNCHER.get(), 1, AmmoType.DEFAULT);
         // off to the side: an unguided missile flying straight east would miss it
-        Zombie target = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 0));
+        Zombie target = TGTestTargets.husk(helper, new BlockPos(6, 1, 0));
         GunItem item = (GunItem) gun.getItem();
 
         item.shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false, item.acceptTarget(player, target));
@@ -136,7 +136,7 @@ public class TGExplosiveTests {
     @GameTest(template = ARENA)
     public static void guidedMissileLauncherRejectsTargetsOutOfRange(GameTestHelper helper) {
         Player player = shooter(helper);
-        Zombie far = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 0));
+        Zombie far = TGTestTargets.husk(helper, new BlockPos(6, 1, 0));
         far.setPos(far.getX() + 500, far.getY(), far.getZ());
         GunItem item = TGGuns.GUIDED_MISSILE_LAUNCHER.get();
 
@@ -159,7 +159,7 @@ public class TGExplosiveTests {
         Player player = shooter(helper);
         ItemStack grenade = new ItemStack(item, 2);
         player.setItemInHand(InteractionHand.MAIN_HAND, grenade);
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(3, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(3, 1, 4));
 
         // fully wound up (30 ticks)
         item.releaseUsing(grenade, helper.getLevel(), player, item.getUseDuration(grenade, player) - 30);

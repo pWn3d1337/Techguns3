@@ -1,0 +1,8 @@
+{
+  "type": "techguns:camo_change",
+  "entries": [
+    "techguns:camo_net_top_wood",
+    "techguns:camo_net_top_desert",
+    "techguns:camo_net_top_snow"
+  ]
+}

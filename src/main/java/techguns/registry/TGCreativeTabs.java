@@ -29,6 +29,7 @@ public final class TGCreativeTabs {
                 TGSlotItems.components().forEach(item -> output.accept(item.get()));
                 TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
+                TGItems.oreDrillHeads().forEach(item -> output.accept(item.get()));
             })
             .build());
 

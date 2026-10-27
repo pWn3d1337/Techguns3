@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board"
+    },
+    "r": {
+      "item": "techguns:rubber_bar"
+    },
+    "t": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    "rtr",
+    "tct",
+    "rtr"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:explosive_charge"
+  }
+}

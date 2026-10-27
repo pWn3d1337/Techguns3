@@ -33,8 +33,6 @@ public final class TGItems {
     public static final DeferredItem<Item> STEEL_INGOT = simple("steel_ingot");
     public static final DeferredItem<Item> OBSIDIAN_STEEL_INGOT = simple("obsidian_steel_ingot");
     public static final DeferredItem<Item> TITANIUM_INGOT = simple("titanium_ingot");
-    public static final DeferredItem<Item> RAW_STEEL_INGOT = simple("raw_steel_ingot");
-    public static final DeferredItem<Item> RAW_OBSIDIAN_STEEL_INGOT = simple("raw_obsidian_steel_ingot");
 
     // --- Nuggets ---
     public static final DeferredItem<Item> COPPER_NUGGET = simple("copper_nugget");
@@ -116,7 +114,54 @@ public final class TGItems {
     public static final DeferredItem<Item> HEAT_RAY_FOCUS = simple("heat_ray_focus");
     public static final DeferredItem<Item> UV_EMITTER = simple("uv_emitter");
 
+    // --- Machines ---
+    /** Techguns 2 {@code machinestackupgrade}: each one lets a machine run one more operation at once (stack of 7). */
+    public static final DeferredItem<Item> MACHINE_UPGRADE_STACK = simple("machine_upgrade_stack", new Item.Properties().stacksTo(7));
+
+    // --- Armor upgrades (Upgrade Bench: protection, projectile and blast protection I-III) ---
+    public static final DeferredItem<Item> UPGRADE_PROTECTION_1 = simple("upgrade_protection_1");
+    public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_1 = simple("upgrade_projectile_protection_1");
+    public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_1 = simple("upgrade_blast_protection_1");
+    public static final DeferredItem<Item> UPGRADE_PROTECTION_2 = simple("upgrade_protection_2");
+    public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_2 = simple("upgrade_projectile_protection_2");
+    public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_2 = simple("upgrade_blast_protection_2");
+    public static final DeferredItem<Item> UPGRADE_PROTECTION_3 = simple("upgrade_protection_3");
+    public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_3 = simple("upgrade_projectile_protection_3");
+    public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_3 = simple("upgrade_blast_protection_3");
+
+    // --- Turret armor plates (Techguns 2 TURRET_ARMOR_*, tier 1-4) ---
+    public static final DeferredItem<Item> TURRET_ARMOR_IRON = simple("turret_armor_iron");
+    public static final DeferredItem<Item> TURRET_ARMOR_STEEL = simple("turret_armor_steel");
+    public static final DeferredItem<Item> TURRET_ARMOR_OBSIDIAN_STEEL = simple("turret_armor_obsidian_steel");
+    public static final DeferredItem<Item> TURRET_ARMOR_CARBON = simple("turret_armor_carbon");
+
+    // --- Ore Drill heads (Techguns 2 OREDRILLHEAD_*): size by drill, mining level steel 1, obsidian steel 2, carbon 3 ---
+    private static final List<DeferredItem<techguns.item.OreDrillHeadItem>> ORE_DRILL_HEADS = new ArrayList<>();
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_STEEL = drillHead("small_steel", techguns.item.OreDrillHeadItem.Size.SMALL, 1);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_OBSIDIAN_STEEL = drillHead("small_obsidian_steel",
+            techguns.item.OreDrillHeadItem.Size.SMALL, 2);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_CARBON = drillHead("small_carbon", techguns.item.OreDrillHeadItem.Size.SMALL, 3);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_MEDIUM_STEEL = drillHead("medium_steel", techguns.item.OreDrillHeadItem.Size.MEDIUM, 1);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_MEDIUM_OBSIDIAN_STEEL = drillHead("medium_obsidian_steel",
+            techguns.item.OreDrillHeadItem.Size.MEDIUM, 2);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_MEDIUM_CARBON = drillHead("medium_carbon", techguns.item.OreDrillHeadItem.Size.MEDIUM, 3);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_LARGE_STEEL = drillHead("large_steel", techguns.item.OreDrillHeadItem.Size.LARGE, 1);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_LARGE_OBSIDIAN_STEEL = drillHead("large_obsidian_steel",
+            techguns.item.OreDrillHeadItem.Size.LARGE, 2);
+    public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_LARGE_CARBON = drillHead("large_carbon", techguns.item.OreDrillHeadItem.Size.LARGE, 3);
+
     private TGItems() {
+    }
+
+    private static DeferredItem<techguns.item.OreDrillHeadItem> drillHead(String name, techguns.item.OreDrillHeadItem.Size size, int miningLevel) {
+        DeferredItem<techguns.item.OreDrillHeadItem> item = ITEMS.registerItem("ore_drill_head_" + name,
+                props -> new techguns.item.OreDrillHeadItem(props, size, miningLevel));
+        ORE_DRILL_HEADS.add(item);
+        return item;
+    }
+
+    public static List<DeferredItem<techguns.item.OreDrillHeadItem>> oreDrillHeads() {
+        return Collections.unmodifiableList(ORE_DRILL_HEADS);
     }
 
     // --- Ammo Bags (capacity in rounds; a full stack counts 64) ---
@@ -124,7 +169,11 @@ public final class TGItems {
     public static final DeferredItem<Item> AMMO_BOX_LARGE = ITEMS.registerItem("ammo_box_large", props -> new AmmoBagItem(props, 64 * 8));
 
     private static DeferredItem<Item> simple(String name) {
-        DeferredItem<Item> item = ITEMS.registerSimpleItem(name);
+        return simple(name, new Item.Properties());
+    }
+
+    private static DeferredItem<Item> simple(String name, Item.Properties properties) {
+        DeferredItem<Item> item = ITEMS.registerSimpleItem(name, properties);
         SIMPLE_ITEMS.add(item);
         return item;
     }

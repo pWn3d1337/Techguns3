@@ -1,0 +1,31 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "tag": "minecraft:water"
+  },
+  "focus": {
+    "item": "techguns:uv_emitter"
+  },
+  "input": {
+    "item": "minecraft:wheat_seeds"
+  },
+  "instability": 0.5,
+  "intensity": 3,
+  "intensity_margin": 1,
+  "liquid_consumption": 1000,
+  "liquid_level": 1,
+  "outputs": [
+    {
+      "count": 1,
+      "id": "minecraft:wheat"
+    },
+    {
+      "count": 2,
+      "id": "minecraft:wheat_seeds"
+    }
+  ],
+  "power_per_tick": 50000,
+  "required_completion": 5,
+  "risk": "explosion_low",
+  "ticks": 10
+}

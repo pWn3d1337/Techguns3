@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_electric_engine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:electric_engine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:ore_drill_controller"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_electric_engine"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:ore_drill_controller"
+    ]
+  }
+}

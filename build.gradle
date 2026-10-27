@@ -55,6 +55,18 @@ repositories {
             includeGroup 'top.theillusivec4.curios'
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'BlameJared (JEI)'
+                url = 'https://maven.blamejared.com/'
+            }
+        }
+        filter {
+            includeGroup 'mezz.jei'
+            includeGroup 'net.mezzdev.config'
+        }
+    }
 }
 
 base {
@@ -76,6 +88,8 @@ neoForge {
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // dev window (windowed, so MCP testing doesn't take over the screen)
+            programArguments.addAll '--width', '2560', '--height', '1080'
         }
 
         server {
@@ -126,6 +140,11 @@ dependencies {
     // Extra slots (face/back/hand), optional (design doc Q5): compiled against, present in dev runs, not required
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+
+    // Recipe viewer, optional (design doc Q9): the plugin in techguns.compat.jei only loads with JEI
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }

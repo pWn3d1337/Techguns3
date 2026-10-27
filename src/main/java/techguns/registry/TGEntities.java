@@ -82,6 +82,15 @@ public final class TGEntities {
                     .sized(0.25f, 0.25f).clientTrackingRange(PROJECTILE_TRACKING_RANGE).updateInterval(1)
                     .build("grappling_hook_projectile"));
 
+    /** Techguns 2 {@code NPCTurret}: 0.6 x 0.9 (Techguns 2 shrank the creature to 0.9 high). */
+    public static final Supplier<EntityType<techguns.entity.npc.TurretEntity>> TURRET = ENTITY_TYPES.register("turret",
+            () -> EntityType.Builder.<techguns.entity.npc.TurretEntity>of(techguns.entity.npc.TurretEntity::new, MobCategory.MISC)
+                    .sized(0.6f, 0.9f).eyeHeight(0.75f).clientTrackingRange(10).fireImmune().build("turret"));
+
     private TGEntities() {
+    }
+
+    public static void registerAttributes(net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent event) {
+        event.put(TURRET.get(), techguns.entity.npc.TurretEntity.createAttributes().build());
     }
 }

@@ -1,0 +1,27 @@
+{
+  "type": "techguns:ore_cluster",
+  "cluster": "techguns:ore_cluster_shiny_metal",
+  "entries": [
+    {
+      "item": {
+        "item": "techguns:titanium_ore"
+      },
+      "weight": 20
+    },
+    {
+      "item": {
+        "item": "minecraft:gold_ore"
+      },
+      "weight": 40
+    },
+    {
+      "item": {
+        "tag": "c:ores/silver"
+      },
+      "weight": 40
+    }
+  ],
+  "mining_level": 2,
+  "ore_multiplier": 1.0,
+  "power_multiplier": 1.0
+}

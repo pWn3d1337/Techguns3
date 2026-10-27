@@ -1,0 +1,7 @@
+{
+  "parent": "techguns:block/lamp_base",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "texture": "techguns:block/lamp01"
+  }
+}

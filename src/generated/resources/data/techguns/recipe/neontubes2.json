@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "n": {
+      "tag": "c:nuggets/iron"
+    },
+    "s": {
+      "tag": "c:dusts/glowstone"
+    }
+  },
+  "pattern": [
+    "nnn",
+    "gsg",
+    "nnn"
+  ],
+  "result": {
+    "count": 16,
+    "id": "techguns:neontubes2"
+  }
+}

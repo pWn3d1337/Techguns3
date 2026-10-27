@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_obsidian_steel_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:obsidian_steel_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:upgrade_bench"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_obsidian_steel_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:upgrade_bench"
+    ]
+  }
+}

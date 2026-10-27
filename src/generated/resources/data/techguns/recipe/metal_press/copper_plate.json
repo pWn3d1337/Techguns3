@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:ingots/copper"
+  },
+  "result": {
+    "count": 2,
+    "id": "techguns:copper_plate"
+  },
+  "second": {
+    "tag": "c:ingots/copper"
+  }
+}

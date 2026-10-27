@@ -1,0 +1,8 @@
+{
+  "type": "techguns:upgrade_bench",
+  "enchantment": "minecraft:blast_protection",
+  "level": 3,
+  "upgrade": {
+    "item": "techguns:upgrade_blast_protection_3"
+  }
+}

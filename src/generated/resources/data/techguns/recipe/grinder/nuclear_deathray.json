@@ -1,0 +1,32 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:nuclear_deathray"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 6,
+        "id": "techguns:carbon_fibers"
+      }
+    },
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:lead_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:mechanical_parts_carbon"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:circuit_board_elite"
+      }
+    }
+  ]
+}

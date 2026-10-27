@@ -59,6 +59,9 @@ public class TechgunsClient {
         modEventBus.addListener(ClientAmmoBagTooltip::register);
         modEventBus.addListener(ClientArmorTooltip::register);
         modEventBus.addListener(ExtraSlotsScreen::register);
+        modEventBus.addListener(techguns.client.gui.machine.TGMachineScreens::register);
+        techguns.client.render.block.TGMachineRenderers.init(modEventBus);
+        techguns.client.render.block.TGFluidClient.init(modEventBus);
         TGGeoBridge.install(new GeckoLibGunRenderer());
         modEventBus.addListener((RegisterParticleProvidersEvent event) ->
                 event.registerSpecial(TGParticleTypes.NONE.get(), (options, level, x, y, z, dx, dy, dz) -> null));
@@ -76,6 +79,7 @@ public class TechgunsClient {
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(TGEntities.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
+        event.registerEntityRenderer(TGEntities.TURRET.get(), techguns.client.render.entity.TurretRenderer::new);
         event.registerEntityRenderer(TGEntities.GENERIC_BEAM_PROJECTILE.get(), BeamProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.ROCKET_PROJECTILE.get(), RocketProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.GUIDED_MISSILE.get(), RocketProjectileRenderer::new);

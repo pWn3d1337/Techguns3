@@ -1,5 +1,21 @@
 package techguns.data;
 
+import net.minecraft.resources.ResourceLocation;
+import techguns.recipe.UpgradeBenchRecipe;
+import net.minecraft.tags.FluidTags;
+import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
+import techguns.recipe.ReactionChamberRecipe;
+import techguns.registry.TGFluids;
+import techguns.recipe.CamoChangeRecipe;
+import techguns.recipe.FabricatorRecipe;
+import techguns.recipe.AmmoBenchRecipe;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -28,6 +44,14 @@ import techguns.gun.GunData;
 import techguns.gun.MeleeToolItem;
 import techguns.gun.ammo.AmmoType;
 import techguns.recipe.AmmoChangeRecipe;
+import techguns.recipe.AmmoPressRecipe;
+import techguns.recipe.BlastFurnaceRecipe;
+import techguns.recipe.ChargingRecipe;
+import techguns.recipe.ChemLabRecipe;
+import techguns.recipe.OreClusterRecipe;
+import techguns.recipe.GrinderRecipe;
+import techguns.recipe.MetalPressRecipe;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import techguns.recipe.MiningHeadUpgradeRecipe;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
@@ -53,9 +77,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 TGItems.LEAD_INGOT.get(), 0.8f, "lead_ingot");
         blastingOnly(output, List.of(TGItems.RAW_TITANIUM.get(), TGBlocks.TITANIUM_ORE.get(), TGBlocks.DEEPSLATE_TITANIUM_ORE.get()),
                 TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
-        blastingOnly(output, List.of(TGItems.RAW_STEEL_INGOT.get()), TGItems.STEEL_INGOT.get(), 1.2f, 200, "steel_ingot");
-        blastingOnly(output, List.of(TGItems.RAW_OBSIDIAN_STEEL_INGOT.get()), TGItems.OBSIDIAN_STEEL_INGOT.get(), 1.5f, 200,
-                "obsidian_steel_ingot");
         smeltingAndBlasting(output, List.of(TGItems.RAW_RUBBER.get()), TGItems.RUBBER_BAR.get(), 0.5f, "rubber_bar");
 
         buildNuggetRecipes(output);
@@ -65,7 +86,110 @@ public class TGRecipeProvider extends RecipeProvider {
         buildGunRecipes(output);
         buildArmorRecipes(output);
         buildShieldRecipes(output);
+        buildBlockRecipes(output);
+        buildMachineRecipes(output);
         buildSlotItemRecipes(output);
+        buildOreDrillRecipes(output);
+        buildExplosiveChargeRecipes(output);
+        buildTurretRecipes(output);
+    }
+
+    /** Techguns 2 turret base and armor plates. */
+    private void buildTurretRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGBlocks.TURRET.get()).pattern("pip").pattern("cec").pattern("prp")
+                .define('p', TGTags.Items.plate("iron")).define('i', TGItems.CIRCUIT_BOARD.get()).define('c', Tags.Items.CONCRETES)
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        turretArmor(output, TGItems.TURRET_ARMOR_IRON.get(), "iron");
+        turretArmor(output, TGItems.TURRET_ARMOR_STEEL.get(), "steel");
+        turretArmor(output, TGItems.TURRET_ARMOR_OBSIDIAN_STEEL.get(), "obsidian_steel");
+        turretArmor(output, TGItems.TURRET_ARMOR_CARBON.get(), "carbon");
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(TGItems.TURRET_ARMOR_IRON.get()), RecipeCategory.MISC, new ItemStack(Items.IRON_INGOT, 5), 0.0f, 200)
+                .unlockedBy(getHasName(TGItems.TURRET_ARMOR_IRON.get()), has(TGItems.TURRET_ARMOR_IRON.get()))
+                .save(output, TGIds.id("iron_ingot_from_turret_armor"));
+    }
+
+    private void turretArmor(RecipeOutput output, Item plate, String material) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, plate).pattern("ppp").pattern(" p ").pattern(" p ").define('p', TGTags.Items.plate(material))
+                .unlockedBy("has_plate", has(TGTags.Items.plate(material))).save(output);
+    }
+
+    /** Techguns 2 mining charges. */
+    private void buildExplosiveChargeRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.EXPLOSIVE_CHARGE.get(), 8).pattern("rtr").pattern("tct").pattern("rtr")
+                .define('r', TGItems.RUBBER_BAR.get()).define('t', Items.TNT).define('c', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(Items.TNT), has(Items.TNT)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.EXPLOSIVE_CHARGE_ADVANCED.get(), 4).pattern("rtr").pattern("tct").pattern("rtr")
+                .define('r', TGItems.PLASTIC_SHEET.get()).define('t', TGItems.TGX.get()).define('c', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(TGItems.TGX.get()), has(TGItems.TGX.get())).save(output);
+    }
+
+    /** Techguns 2 Ore Drill blocks and heads, and the ore clusters (Techguns 2 {@code TGOreClusters} and its config). */
+    private void buildOreDrillRecipes(RecipeOutput output) {
+        Item engine = TGItems.ELECTRIC_ENGINE.get();
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_FRAME.get(), 8).pattern("pbp").pattern("bpb").pattern("pbp")
+                .define('p', TGTags.Items.plate("iron")).define('b', Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_BARS), has(Items.IRON_BARS)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_SCAFFOLD.get(), 8).pattern("bbb").pattern("bpb").pattern("bbb")
+                .define('p', TGTags.Items.plate("iron")).define('b', Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_BARS), has(Items.IRON_BARS)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_ROD.get(), 4).pattern("ipi").pattern("ipi").pattern("ipi")
+                .define('p', TGTags.Items.plate("iron")).define('i', Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Tags.Items.INGOTS_IRON)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_ENGINE.get(), 4).pattern("bbb").pattern("beb").pattern("bbb")
+                .define('b', Items.IRON_BARS).define('e', engine).unlockedBy(getHasName(engine), has(engine)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ORE_DRILL_CONTROLLER.get()).pattern("pcp").pattern("cec").pattern("pcp")
+                .define('p', TGTags.Items.plate("iron")).define('c', TGItems.CIRCUIT_BOARD.get()).define('e', engine)
+                .unlockedBy(getHasName(engine), has(engine)).save(output);
+
+        drillHeads(output, TGItems.ORE_DRILL_HEAD_SMALL_STEEL.get(), TGItems.ORE_DRILL_HEAD_MEDIUM_STEEL.get(), TGItems.ORE_DRILL_HEAD_LARGE_STEEL.get(),
+                b -> b.pattern("sps").pattern("sps").pattern(" s ").define('s', TGTags.Items.ingot("steel")).define('p', TGTags.Items.plate("steel")),
+                TGItems.STEEL_PLATE.get());
+        drillHeads(output, TGItems.ORE_DRILL_HEAD_SMALL_OBSIDIAN_STEEL.get(), TGItems.ORE_DRILL_HEAD_MEDIUM_OBSIDIAN_STEEL.get(),
+                TGItems.ORE_DRILL_HEAD_LARGE_OBSIDIAN_STEEL.get(), b -> b.pattern("sps").pattern("sps").pattern(" s ")
+                        .define('s', TGTags.Items.ingot("obsidian_steel")).define('p', TGTags.Items.plate("obsidian_steel")),
+                TGItems.OBSIDIAN_STEEL_PLATE.get());
+        drillHeads(output, TGItems.ORE_DRILL_HEAD_SMALL_CARBON.get(), TGItems.ORE_DRILL_HEAD_MEDIUM_CARBON.get(), TGItems.ORE_DRILL_HEAD_LARGE_CARBON.get(),
+                b -> b.pattern("sss").pattern("sss").pattern(" s ").define('s', TGTags.Items.plate("carbon")), TGItems.CARBON_PLATE.get());
+
+        oreCluster(output, TGBlocks.ORE_CLUSTER_COAL, 0, 10.0f, 0.1f, item(Items.COAL_ORE, 99), item(Items.DIAMOND, 1));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_COMMON_METAL, 0, 5.0f, 0.2f, item(Items.IRON_ORE, 45), item(Items.COPPER_ORE, 30),
+                item(TGBlocks.TIN_ORE.get(), 25));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_RARE_METAL, 1, 2.5f, 0.4f, item(TGBlocks.LEAD_ORE.get(), 50), ore("osmium", 50), ore("aluminum", 50));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_SHINY_METAL, 2, 1.0f, 1.0f, item(TGBlocks.TITANIUM_ORE.get(), 20), item(Items.GOLD_ORE, 40),
+                ore("silver", 40));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_URANIUM, 3, 0.5f, 1.0f, item(TGBlocks.URANIUM_ORE.get(), 50));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_COMMON_GEM, 1, 5.0f, 0.2f, item(Items.REDSTONE_ORE, 40), item(Items.LAPIS_ORE, 20),
+                ore("certus_quartz", 40));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_SHINY_GEM, 3, 0.2f, 1.0f, item(Items.DIAMOND_ORE, 40), item(Items.EMERALD_ORE, 20));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_NETHER_CRYSTAL, 2, 4.0f, 0.5f, item(Items.NETHER_QUARTZ_ORE, 50), item(Items.GLOWSTONE, 40),
+                item(Items.BLAZE_ROD, 10));
+        oreCluster(output, TGBlocks.ORE_CLUSTER_OIL, 2, 4.0f, 1.0f, OreClusterRecipe.Entry.fluid(TGTags.Fluids.DRILL_OIL, 10));
+    }
+
+    /** Small head from {@code small}, medium from three small, large from three medium (Techguns 2). */
+    private void drillHeads(RecipeOutput output, Item small, Item medium, Item large,
+                            java.util.function.UnaryOperator<ShapedRecipeBuilder> smallPattern, Item unlock) {
+        smallPattern.apply(ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, small)).unlockedBy(getHasName(unlock), has(unlock)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, medium).pattern("d d").pattern(" d ").define('d', small)
+                .unlockedBy(getHasName(small), has(small)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, large).pattern("d d").pattern(" d ").define('d', medium)
+                .unlockedBy(getHasName(medium), has(medium)).save(output);
+    }
+
+    private static OreClusterRecipe.Entry item(net.minecraft.world.level.ItemLike item, int weight) {
+        return OreClusterRecipe.Entry.item(Ingredient.of(item), weight);
+    }
+
+    /** Another mod's ore by its common tag; skipped while no mod fills the tag. */
+    private static OreClusterRecipe.Entry ore(String material, int weight) {
+        return OreClusterRecipe.Entry.item(Ingredient.of(TGTags.Items.ore(material)), weight);
+    }
+
+    private void oreCluster(RecipeOutput output, net.neoforged.neoforge.registries.DeferredBlock<? extends net.minecraft.world.level.block.Block> cluster,
+                            int miningLevel, float oreMultiplier, float powerMultiplier, OreClusterRecipe.Entry... entries) {
+        output.accept(TGIds.id("ore_cluster/" + cluster.getId().getPath().replace("ore_cluster_", "")),
+                new OreClusterRecipe(cluster.get(), miningLevel, oreMultiplier, powerMultiplier, List.of(entries)), null);
     }
 
     /** Techguns 2 armor recipes. */
@@ -289,6 +413,625 @@ public class TGRecipeProvider extends RecipeProvider {
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
     }
 
+    /** Techguns 2 machines, the machine upgrade and the machine recipes. */
+    private void buildMachineRecipes(RecipeOutput output) {
+        // Metal Press: Techguns 2 has a block-of-iron and an iron-plate version
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.METAL_PRESS.get())
+                .pattern("ibi").pattern("iei").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('b', Tags.Items.STORAGE_BLOCKS_IRON)
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.METAL_PRESS.get())
+                .pattern("ibi").pattern("iei").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('b', TGTags.Items.plate("iron"))
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get()))
+                .save(output, TGIds.id("metal_press_alt"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.MACHINE_UPGRADE_STACK.get())
+                .pattern("pgp").pattern("ncn").pattern("pnp")
+                .define('p', TGTags.Items.plate("iron")).define('n', Tags.Items.INGOTS_GOLD).define('g', Tags.Items.DYES_GREEN)
+                .define('c', Items.CHEST)
+                .unlockedBy(getHasName(TGBlocks.METAL_PRESS.get()), has(TGBlocks.METAL_PRESS.get())).save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.AMMO_PRESS.get())
+                .pattern("ili").pattern("cec").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('l', TGTags.Items.ingot("lead")).define('c', Tags.Items.INGOTS_COPPER)
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.BLAST_FURNACE.get())
+                .pattern("iri").pattern("ifi").pattern("sbs")
+                .define('i', TGTags.Items.plate("iron")).define('r', Tags.Items.DUSTS_REDSTONE).define('f', Items.FURNACE)
+                .define('s', Items.STONE_BRICKS).define('b', Tags.Items.STORAGE_BLOCKS_IRON)
+                .unlockedBy(getHasName(Items.FURNACE), has(Items.FURNACE)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.GRINDER.get())
+                .pattern("imi").pattern("mem").pattern("iri")
+                .define('i', TGTags.Items.plate("iron")).define('m', TGItems.MECHANICAL_PARTS_IRON.get())
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CHEM_LAB.get())
+                .pattern("igi").pattern("geg").pattern("iri")
+                .define('i', Tags.Items.INGOTS_IRON).define('g', Items.GLASS_BOTTLE).define('e', TGItems.ELECTRIC_ENGINE.get())
+                .define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CHARGING_STATION.get())
+                .pattern("sgs").pattern("cbc").pattern("sgs")
+                .define('s', TGTags.Items.plate("steel")).define('g', TGItems.GOLD_WIRE.get()).define('c', TGItems.COIL.get())
+                .define('b', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(TGItems.COIL.get()), has(TGItems.COIL.get())).save(output);
+
+        benchRecipes(output);
+        chemLabRecipes(output);
+        chargingRecipes(output);
+        ammoPressRecipes(output);
+        blastFurnaceRecipes(output);
+        grinderRecipes(output);
+
+        // Techguns 2 TGMachineRecipes, in order; all allow swapped inputs
+        metalPress(output, "tin_plate", ingot("tin"), ingot("tin"), TGItems.TIN_PLATE.get(), 2);
+        metalPress(output, "copper_plate", Ingredient.of(Tags.Items.INGOTS_COPPER), Ingredient.of(Tags.Items.INGOTS_COPPER), TGItems.COPPER_PLATE.get(), 2);
+        metalPress(output, "bronze_plate", ingot("bronze"), ingot("bronze"), TGItems.BRONZE_PLATE.get(), 2);
+        metalPress(output, "iron_plate", Ingredient.of(Tags.Items.INGOTS_IRON), Ingredient.of(Tags.Items.INGOTS_IRON), TGItems.IRON_PLATE.get(), 2);
+        metalPress(output, "steel_plate", ingot("steel"), ingot("steel"), TGItems.STEEL_PLATE.get(), 2);
+        metalPress(output, "lead_plate", ingot("lead"), ingot("lead"), TGItems.LEAD_PLATE.get(), 2);
+        metalPress(output, "mechanical_parts_iron", plate("iron"), Ingredient.of(Items.FLINT), TGItems.MECHANICAL_PARTS_IRON.get(), 1);
+        metalPress(output, "mechanical_parts_obsidian_steel", plate("obsidian_steel"), Ingredient.of(Tags.Items.GEMS_QUARTZ),
+                TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get(), 1);
+        metalPress(output, "mechanical_parts_carbon", plate("carbon"), Ingredient.of(Items.BLAZE_ROD), TGItems.MECHANICAL_PARTS_CARBON.get(), 2);
+        metalPress(output, "copper_wire", plate("copper"), plate("copper"), TGItems.COPPER_WIRE.get(), 8);
+        metalPress(output, "carbon_plate", Ingredient.of(TGItems.CARBON_FIBERS.get()), Ingredient.of(TGItems.CARBON_FIBERS.get()), TGItems.CARBON_PLATE.get(), 2);
+        metalPress(output, "advanced_rounds", plate("obsidian_steel"), Ingredient.of(TGItems.TGX.get()), TGAmmo.ADVANCED_ROUNDS.get(), 16);
+        metalPress(output, "obsidian_steel_plate", ingot("obsidian_steel"), ingot("obsidian_steel"), TGItems.OBSIDIAN_STEEL_PLATE.get(), 2);
+        metalPress(output, "steam_armor_plate", plate("steel"), plate("bronze"), TGItems.STEAM_ARMOR_PLATE.get(), 1);
+        metalPress(output, "gold_wire", Ingredient.of(Tags.Items.INGOTS_GOLD), Ingredient.of(Tags.Items.INGOTS_GOLD), TGItems.GOLD_WIRE.get(), 2);
+        metalPress(output, "grenade_40mm", plate("iron"), Ingredient.of(Items.TNT), TGAmmo.GRENADE_40MM.get(), 16);
+        metalPress(output, "titanium_plate", ingot("titanium"), ingot("titanium"), TGItems.TITANIUM_PLATE.get(), 2);
+        metalPress(output, "gauss_rifle_slugs", plate("obsidian_steel"), plate("titanium"), TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4);
+        metalPress(output, "sniper_rounds_explosive", Ingredient.of(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), Ingredient.of(TGItems.TGX.get()),
+                TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 1);
+    }
+
+    /**
+     * Techguns 2 Chem Lab recipes without fluid mods (lava where Techguns 2 preferred fuel or oil). Uranium ore as in
+     * Techguns 2, and raw uranium, which ores drop since 1.17.
+     */
+    private static void chemLabRecipes(RecipeOutput output) {
+        var water = net.minecraft.tags.FluidTags.WATER;
+        var lava = net.minecraft.tags.FluidTags.LAVA;
+        var acid = techguns.registry.TGFluids.ACID.get();
+        chemLab(output, "gunpowder", sized(Items.REDSTONE, 1), sized(Items.COAL, 1), null, fluid(water, 250),
+                new ItemStack(Items.GUNPOWDER), true, 5);
+        chemLab(output, "raw_plastic", sized(TGItems.RAW_RUBBER.get(), 1), sized(Items.COAL, 1), null, fluid(water, 1000),
+                new ItemStack(TGItems.RAW_PLASTIC.get()), true, 25);
+        chemLabFluid(output, "creeper_acid", sized(TGItems.BIOMASS.get(), 1), sized(Items.GUNPOWDER, 1), fluid(water, 1000),
+                new net.neoforged.neoforge.fluids.FluidStack(acid, 1000), 20);
+        chemLab(output, "tgx", sized(Items.GUNPOWDER, 1), new SizedIngredient(Ingredient.of(Tags.Items.GEMS_LAPIS), 1), null, fluid(lava, 500),
+                new ItemStack(TGItems.TGX.get()), true, 20);
+        // incendiary rounds (Techguns 2: only the Chem Lab makes them; rifle rounds also split from incendiary stacks)
+        chemLab(output, "rifle_rounds_incendiary", sized(TGAmmo.RIFLE_ROUNDS.get(), 1), sized(Items.BLAZE_POWDER, 1), null, fluid(lava, 250),
+                new ItemStack(TGAmmo.RIFLE_ROUNDS_INCENDIARY.get()), false, 25);
+        chemLab(output, "pistol_rounds_incendiary", sized(TGAmmo.PISTOL_ROUNDS.get(), 2), sized(Items.BLAZE_POWDER, 1), null, fluid(lava, 250),
+                new ItemStack(TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), 2), false, 25);
+        chemLab(output, "sniper_rounds_incendiary", sized(TGAmmo.SNIPER_ROUNDS.get(), 1), sized(Items.BLAZE_POWDER, 1), null, fluid(lava, 250),
+                new ItemStack(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), false, 25);
+        chemLab(output, "shotgun_rounds_incendiary", sized(TGAmmo.SHOTGUN_ROUNDS.get(), 8), sized(Items.BLAZE_POWDER, 1), null, fluid(lava, 250),
+                new ItemStack(TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), 8), false, 25);
+        chemLab(output, "fuel_tank", null, null, sized(TGAmmo.FUEL_TANK_EMPTY.get(), 1), fluid(lava, 500),
+                new ItemStack(TGAmmo.FUEL_TANK.get()), false, 1);
+        chemLab(output, "rocket_high_velocity", sized(TGAmmo.ROCKET.get(), 1), null, null, fluid(lava, 250),
+                new ItemStack(TGAmmo.ROCKET_HIGH_VELOCITY.get()), false, 5);
+        chemLab(output, "carbon_fibers", new SizedIngredient(Ingredient.of(Tags.Items.GEMS_DIAMOND), 1), sized(Items.BLAZE_POWDER, 1), null,
+                fluid(lava, 1000), new ItemStack(TGItems.CARBON_FIBERS.get(), 2), true, 25);
+        chemLab(output, "raw_rubber", new SizedIngredient(Ingredient.of(ItemTags.LOGS), 1), null, null, fluid(water, 1000),
+                new ItemStack(TGItems.RAW_RUBBER.get()), false, 20);
+        chemLab(output, "bio_tank", sized(TGItems.BIOMASS.get(), 1), null, sized(TGAmmo.BIO_TANK_EMPTY.get(), 1), fluid(water, 500),
+                new ItemStack(TGAmmo.BIO_TANK.get()), false, 1);
+        chemLab(output, "compressed_air_tank", sized(Items.COAL, 1), null, sized(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get(), 1), fluid(water, 250),
+                new ItemStack(TGAmmo.COMPRESSED_AIR_TANK.get()), true, 5);
+        chemLab(output, "nether_charge", sized(Items.NETHERRACK, 1), sized(Items.SOUL_SAND, 1), null, fluid(lava, 1000),
+                new ItemStack(TGAmmo.NETHER_CHARGE.get(), 4), true, 20);
+        chemLab(output, "yellowcake", new SizedIngredient(Ingredient.fromValues(java.util.stream.Stream.of(
+                        new Ingredient.TagValue(TGTags.Items.ore("uranium")), new Ingredient.TagValue(TGTags.Items.rawMaterial("uranium")))), 1),
+                null, null, net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(acid, 250), new ItemStack(TGItems.YELLOWCAKE.get(), 3), false, 20);
+        chemLab(output, "nuclear_power_cell", sized(TGItems.ENRICHED_URANIUM.get(), 1), null, sized(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get(), 1),
+                fluid(water, 1000), new ItemStack(TGAmmo.NUCLEAR_POWER_CELL.get()), true, 40);
+        chemLab(output, "slime_ball", sized(Items.GREEN_DYE, 1), sized(TGItems.RAW_RUBBER.get(), 1), null,
+                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(Tags.Fluids.MILK, 500), new ItemStack(Items.SLIME_BALL), true, 25);
+        chemLab(output, "treated_leather", sized(Items.LEATHER, 2), new SizedIngredient(Ingredient.of(Tags.Items.SLIME_BALLS), 1), null,
+                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(acid, 500), new ItemStack(TGItems.TREATED_LEATHER.get(), 2), true, 20);
+        chemLab(output, "leather", sized(Items.ROTTEN_FLESH, 1), null, null, fluid(water, 500), new ItemStack(Items.LEATHER), false, 15);
+        chemLab(output, "light_gray_concrete", sized(Items.GRAVEL, 1), sized(Items.SAND, 1), null, fluid(water, 250),
+                new ItemStack(Items.LIGHT_GRAY_CONCRETE, 2), false, 5);
+        chemLab(output, "clay", sized(Items.GRAVEL, 1), sized(Items.DIRT, 1), null, fluid(water, 250), new ItemStack(Items.CLAY, 2), false, 5);
+    }
+
+    private static SizedIngredient sized(ItemLike item, int count) {
+        return new SizedIngredient(Ingredient.of(item), count);
+    }
+
+    private static net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient fluid(TagKey<net.minecraft.world.level.material.Fluid> tag, int amount) {
+        return net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(tag, amount);
+    }
+
+    private static void chemLab(RecipeOutput output, String name, SizedIngredient first, SizedIngredient second, SizedIngredient flask,
+                                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient fluid, ItemStack result, boolean swap, int power) {
+        output.accept(TGIds.id("chem_lab/" + name), new ChemLabRecipe(java.util.Optional.ofNullable(first), java.util.Optional.ofNullable(second),
+                java.util.Optional.ofNullable(flask), java.util.Optional.ofNullable(fluid), result, net.neoforged.neoforge.fluids.FluidStack.EMPTY,
+                swap, power), null);
+    }
+
+    private static void chemLabFluid(RecipeOutput output, String name, SizedIngredient first, SizedIngredient second,
+                                     net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient fluid,
+                                     net.neoforged.neoforge.fluids.FluidStack result, int power) {
+        output.accept(TGIds.id("chem_lab/" + name), new ChemLabRecipe(java.util.Optional.ofNullable(first), java.util.Optional.ofNullable(second),
+                java.util.Optional.empty(), java.util.Optional.ofNullable(fluid), ItemStack.EMPTY, result, true, power), null);
+    }
+
+    /** Techguns 2 {@code ChargingStationRecipe}: energy cell 50000 FE, redstone battery 20000 FE. */
+    private static void chargingRecipes(RecipeOutput output) {
+        output.accept(TGIds.id("charging/energy_cell"), new ChargingRecipe(Ingredient.of(TGAmmo.ENERGY_CELL_EMPTY.get()),
+                new ItemStack(TGAmmo.ENERGY_CELL.get()), 50000), null);
+        output.accept(TGIds.id("charging/redstone_battery"), new ChargingRecipe(Ingredient.of(TGAmmo.REDSTONE_BATTERY_EMPTY.get()),
+                new ItemStack(TGAmmo.REDSTONE_BATTERY.get()), 20000), null);
+    }
+
+    /** Techguns 2 {@code AmmoPressBuildPlans}: bullet metal steel/lead, casing metal copper/tin/iron/bronze, gunpowder. */
+    /** Techguns 2 Repair, Camo and Upgrade Bench, the Fabric Ammo Bench, the armor upgrades and the bench recipes. */
+    private void benchRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REPAIR_BENCH.get())
+                .pattern("pmp").pattern("ici").pattern("iii")
+                .define('p', TGTags.Items.plate("iron")).define('m', TGItems.MECHANICAL_PARTS_IRON.get()).define('c', Items.CRAFTING_TABLE)
+                .define('i', Tags.Items.NUGGETS_IRON)
+                .unlockedBy(getHasName(TGItems.MECHANICAL_PARTS_IRON.get()), has(TGItems.MECHANICAL_PARTS_IRON.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CAMO_BENCH.get())
+                .pattern("ddd").pattern("ici").pattern("iii")
+                .define('d', Tags.Items.DYES).define('c', Items.CRAFTING_TABLE).define('i', Tags.Items.NUGGETS_IRON)
+                .unlockedBy(getHasName(Items.CRAFTING_TABLE), has(Items.CRAFTING_TABLE)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.UPGRADE_BENCH.get())
+                .pattern(" c ").pattern("oeo").pattern("sos")
+                .define('c', Items.CRAFTING_TABLE).define('o', TGTags.Items.plate("obsidian_steel")).define('e', Tags.Items.GEMS_EMERALD)
+                .define('s', Tags.Items.OBSIDIANS)
+                .unlockedBy(getHasName(TGItems.OBSIDIAN_STEEL_PLATE.get()), has(TGItems.OBSIDIAN_STEEL_PLATE.get())).save(output);
+        // Fabric: shapeless crafting table + gunpowder + iron ingot
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGBlocks.AMMO_BENCH.get())
+                .requires(Items.CRAFTING_TABLE).requires(Tags.Items.GUNPOWDERS).requires(Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.GUNPOWDER), has(Items.GUNPOWDER)).save(output);
+
+        // armor upgrades: plates around a gold ingot (diamond for tier 3) with iron plates, steam armor plates or wool
+        Object[][] tiers = {{TGTags.Items.plate("steel"), Tags.Items.INGOTS_GOLD}, {TGTags.Items.plate("obsidian_steel"), Tags.Items.INGOTS_GOLD},
+                {TGTags.Items.plate("carbon"), Tags.Items.GEMS_DIAMOND}};
+        ItemLike[][] upgrades = {
+                {TGItems.UPGRADE_PROTECTION_1.get(), TGItems.UPGRADE_PROJECTILE_PROTECTION_1.get(), TGItems.UPGRADE_BLAST_PROTECTION_1.get()},
+                {TGItems.UPGRADE_PROTECTION_2.get(), TGItems.UPGRADE_PROJECTILE_PROTECTION_2.get(), TGItems.UPGRADE_BLAST_PROTECTION_2.get()},
+                {TGItems.UPGRADE_PROTECTION_3.get(), TGItems.UPGRADE_PROJECTILE_PROTECTION_3.get(), TGItems.UPGRADE_BLAST_PROTECTION_3.get()}};
+        List<ResourceKey<Enchantment>> enchantments = List.of(Enchantments.PROTECTION, Enchantments.PROJECTILE_PROTECTION, Enchantments.BLAST_PROTECTION);
+        for (int tier = 0; tier < 3; tier++) {
+            @SuppressWarnings("unchecked")
+            TagKey<Item> plate = (TagKey<Item>) tiers[tier][0];
+            @SuppressWarnings("unchecked")
+            TagKey<Item> center = (TagKey<Item>) tiers[tier][1];
+            for (int kind = 0; kind < 3; kind++) {
+                ItemLike upgrade = upgrades[tier][kind];
+                ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, upgrade)
+                        .pattern("pip").pattern("igi").pattern("pip").define('p', plate).define('g', center);
+                switch (kind) {
+                    case 0 -> builder.define('i', TGTags.Items.plate("iron"));
+                    case 1 -> builder.define('i', TGItems.STEAM_ARMOR_PLATE.get());
+                    default -> builder.define('i', ItemTags.WOOL);
+                }
+                builder.unlockedBy(getHasName(TGBlocks.UPGRADE_BENCH.get()), has(TGBlocks.UPGRADE_BENCH.get())).save(output);
+                output.accept(TGIds.id("upgrade_bench/" + getItemName(upgrade)),
+                        new UpgradeBenchRecipe(Ingredient.of(upgrade), enchantments.get(kind), tier + 1), null);
+            }
+        }
+
+        camoChangeRecipes(output);
+        ammoBenchRecipes(output);
+        fabricatorRecipes(output);
+        reactionChamberRecipes(output);
+    }
+
+    /** Techguns 2 Reaction Chamber blocks, heat ray focus and {@code TGMachineRecipes} reactions. */
+    private void reactionChamberRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REACTION_CHAMBER_HOUSING.get(), 9)
+                .pattern("sms").pattern("pcp").pattern("ses")
+                .define('s', TGTags.Items.plate("steel")).define('m', TGItems.MECHANICAL_PARTS_CARBON.get()).define('p', TGItems.CYBERNETIC_PARTS.get())
+                .define('c', TGBlocks.CHEM_LAB.get()).define('e', TGItems.CIRCUIT_BOARD_ELITE.get())
+                .unlockedBy(getHasName(TGBlocks.CHEM_LAB.get()), has(TGBlocks.CHEM_LAB.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REACTION_CHAMBER_GLASS.get(), 6)
+                .pattern("rgr").pattern("rgr").pattern("rgr")
+                .define('r', TGBlocks.REACTION_CHAMBER_HOUSING.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(TGBlocks.REACTION_CHAMBER_HOUSING.get()), has(TGBlocks.REACTION_CHAMBER_HOUSING.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REACTION_CHAMBER_CONTROLLER.get())
+                .pattern(" g ").pattern("crc").pattern(" g ")
+                .define('r', TGBlocks.REACTION_CHAMBER_HOUSING.get()).define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(TGBlocks.REACTION_CHAMBER_HOUSING.get()), has(TGBlocks.REACTION_CHAMBER_HOUSING.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.HEAT_RAY_FOCUS.get())
+                .pattern("cwc").pattern("plp").pattern("plp")
+                .define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('w', TGItems.GOLD_WIRE.get()).define('p', TGTags.Items.plate("steel"))
+                .define('l', Items.REDSTONE_LAMP)
+                .unlockedBy(getHasName(TGItems.CIRCUIT_BOARD_ELITE.get()), has(TGItems.CIRCUIT_BOARD_ELITE.get())).save(output);
+
+        Ingredient heatRay = Ingredient.of(TGItems.HEAT_RAY_FOCUS.get());
+        FluidIngredient water = FluidIngredient.tag(FluidTags.WATER);
+        FluidIngredient lava = FluidIngredient.tag(FluidTags.LAVA);
+        reaction(output, "uv_wheat", Ingredient.of(Items.WHEAT_SEEDS), Ingredient.of(TGItems.UV_EMITTER.get()), water,
+                List.of(new ItemStack(Items.WHEAT), new ItemStack(Items.WHEAT_SEEDS, 2)), 10, 5, 3, 1, 1, 1000, 0.5f, ReactionChamberRecipe.Risk.EXPLOSION_LOW, 50000);
+        reaction(output, "laser_focus", Ingredient.of(Tags.Items.GEMS_DIAMOND), heatRay, FluidIngredient.tag(TGTags.Fluids.LIQUID_REDSTONE),
+                List.of(new ItemStack(TGItems.LASER_FOCUS.get())), 10, 5, 3, 1, 4, 4000, 0.5f, ReactionChamberRecipe.Risk.BREAK_ITEM, 100000);
+        reaction(output, "titanium", Ingredient.of(TGTags.Items.ore("titanium")), heatRay, FluidIngredient.single(TGFluids.ACID.get()),
+                List.of(new ItemStack(TGItems.RAW_TITANIUM.get(), 2), new ItemStack(Items.IRON_ORE)), 2, 1, 5, 0, 3, 100, 0.0f,
+                ReactionChamberRecipe.Risk.BREAK_ITEM, 25000);
+        reaction(output, "blaze_rod", Ingredient.of(TGItems.QUARTZ_ROD.get()), heatRay, lava, List.of(new ItemStack(Items.BLAZE_ROD)), 5, 3, 7, 2, 4,
+                1000, 0.5f, ReactionChamberRecipe.Risk.BREAK_ITEM, 250000);
+        reaction(output, "glowstone", Ingredient.of(Tags.Items.STORAGE_BLOCKS_REDSTONE), heatRay, lava, List.of(new ItemStack(Items.GLOWSTONE)), 5, 3, 7,
+                2, 4, 1000, 0.5f, ReactionChamberRecipe.Risk.EXPLOSION_MEDIUM, 250000);
+        reaction(output, "antigrav_core", Ingredient.of(Items.NETHER_STAR), heatRay, FluidIngredient.tag(TGTags.Fluids.LIQUID_ENDER),
+                List.of(new ItemStack(TGItems.ANTIGRAV_CORE.get())), 10, 7, 8, 2, 4, 4000, 1.0f, ReactionChamberRecipe.Risk.EXPLOSION_LOW, 500000);
+        reaction(output, "enriched_uranium", Ingredient.of(TGItems.YELLOWCAKE.get()), heatRay, water,
+                List.of(new ItemStack(TGItems.ENRICHED_URANIUM.get())), 5, 4, 7, 0, 3, 1000, 0.0f, ReactionChamberRecipe.Risk.BREAK_ITEM, 250000);
+    }
+
+    private static void reaction(RecipeOutput output, String name, Ingredient input, Ingredient focus, FluidIngredient fluid, List<ItemStack> outputs,
+                                 int ticks, int requiredCompletion, int intensity, int intensityMargin, int liquidLevel, int liquidConsumption,
+                                 float instability, ReactionChamberRecipe.Risk risk, int powerPerTick) {
+        output.accept(TGIds.id("reaction_chamber/" + name), new ReactionChamberRecipe(input, focus, fluid, outputs, ticks, requiredCompletion,
+                intensity, intensityMargin, liquidLevel, liquidConsumption, instability, risk, powerPerTick), null);
+    }
+
+    /** Techguns 2 Fabricator blocks and {@code TGMachineRecipes} Fabricator recipes. */
+    private void fabricatorRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.FABRICATOR_HOUSING.get(), 4)
+                .pattern("sms").pattern("pep").pattern("scs")
+                .define('s', TGTags.Items.plate("steel")).define('m', TGItems.MECHANICAL_PARTS_CARBON.get())
+                .define('p', TGItems.CYBERNETIC_PARTS.get()).define('e', TGItems.ELECTRIC_ENGINE.get()).define('c', TGItems.CIRCUIT_BOARD_ELITE.get())
+                .unlockedBy(getHasName(TGItems.CIRCUIT_BOARD_ELITE.get()), has(TGItems.CIRCUIT_BOARD_ELITE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.FABRICATOR_GLASS.get(), 4)
+                .pattern("fgf").pattern("g g").pattern("fgf")
+                .define('f', TGBlocks.FABRICATOR_HOUSING.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(TGBlocks.FABRICATOR_HOUSING.get()), has(TGBlocks.FABRICATOR_HOUSING.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.FABRICATOR_CONTROLLER.get())
+                .pattern(" g ").pattern("cfc").pattern(" g ")
+                .define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('f', TGBlocks.FABRICATOR_HOUSING.get()).define('g', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy(getHasName(TGBlocks.FABRICATOR_HOUSING.get()), has(TGBlocks.FABRICATOR_HOUSING.get())).save(output);
+
+        Ingredient redstone = Ingredient.of(Tags.Items.DUSTS_REDSTONE);
+        Ingredient plastic = Ingredient.of(TGItems.PLASTIC_SHEET.get());
+        Ingredient mechanicalParts = Ingredient.of(TGItems.MECHANICAL_PARTS_CARBON.get());
+        Ingredient circuit = Ingredient.of(TGItems.CIRCUIT_BOARD.get());
+        Ingredient eliteCircuit = Ingredient.of(TGItems.CIRCUIT_BOARD_ELITE.get());
+        Ingredient leadPlate = Ingredient.of(TGTags.Items.plate("lead"));
+        fabricator(output, Ingredient.of(Tags.Items.INGOTS_GOLD), 1, Ingredient.of(TGItems.COPPER_WIRE.get()), 1, redstone, 3, plastic, 1,
+                new ItemStack(TGAmmo.ENERGY_CELL_EMPTY.get()));
+        fabricator(output, Ingredient.of(Items.SOUL_SAND), 1, Ingredient.of(TGItems.GOLD_WIRE.get()), 1, redstone, 1, plastic, 1,
+                new ItemStack(TGItems.CYBERNETIC_PARTS.get()));
+        fabricator(output, ingot("titanium"), 2, circuit, 4, mechanicalParts, 1, Ingredient.of(TGTags.Items.plate("carbon")), 4,
+                new ItemStack(TGItems.POWER_PLATING.get(), 2));
+        fabricator(output, Ingredient.of(TGItems.COIL.get()), 1, eliteCircuit, 2, mechanicalParts, 1, Ingredient.of(TGTags.Items.plate("titanium")), 1,
+                new ItemStack(TGItems.SONIC_EMITTER.get()));
+        fabricator(output, Ingredient.of(TGItems.ENRICHED_URANIUM.get()), 1, eliteCircuit, 2, mechanicalParts, 2, leadPlate, 2,
+                new ItemStack(TGItems.RAD_EMITTER.get()));
+        fabricator(output, ingot("steel"), 1, circuit, 1, redstone, 4, leadPlate, 2, new ItemStack(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get()));
+    }
+
+    private static void fabricator(RecipeOutput output, Ingredient input, int inputCount, Ingredient wires, int wireCount, Ingredient powder,
+                                   int powderCount, Ingredient plate, int plateCount, ItemStack result) {
+        output.accept(TGIds.id("fabricator/" + getItemName(result.getItem())), new FabricatorRecipe(new FabricatorRecipe.Input(input, inputCount),
+                new FabricatorRecipe.Input(wires, wireCount), new FabricatorRecipe.Input(powder, powderCount),
+                new FabricatorRecipe.Input(plate, plateCount), result), null);
+    }
+
+    /** Techguns 2 {@code CamoBenchRecipes}: vanilla colour blocks and the camo-changeable Techguns block groups. */
+    private static void camoChangeRecipes(RecipeOutput output) {
+        for (String kind : List.of("wool", "concrete", "concrete_powder", "terracotta", "stained_glass", "stained_glass_pane", "banner", "carpet")) {
+            List<Item> entries = java.util.Arrays.stream(DyeColor.values())
+                    .map(color -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(color.getName() + "_" + kind))).toList();
+            output.accept(TGIds.id("camo_change/minecraft_" + kind), new CamoChangeRecipe(entries), null);
+        }
+        camoChange(output, "concrete", TGBlocks.CONCRETE);
+        camoChange(output, "metal_panel", TGBlocks.METAL_PANEL);
+        camoChange(output, "nether_metal", TGBlocks.NETHER_METAL);
+        camoChange(output, "neon_lights", TGBlocks.NEON_LIGHTS);
+        camoChange(output, "camo_net", TGBlocks.CAMO_NETS);
+        camoChange(output, "camo_net_top", TGBlocks.CAMO_NETS_TOP);
+        camoChange(output, "ladder", TGBlocks.LADDERS);
+        camoChange(output, "lamp", TGBlocks.LAMPS);
+        camoChange(output, "lantern", TGBlocks.LANTERNS);
+    }
+
+    private static void camoChange(RecipeOutput output, String name, List<? extends DeferredBlock<? extends Block>> blocks) {
+        output.accept(TGIds.id("camo_change/" + name), new CamoChangeRecipe(blocks.stream().map(block -> block.get().asItem()).toList()), null);
+    }
+
+    /** Fabric {@code ammobench_crafting} recipes: one core, casing and powder each. */
+    private static void ammoBenchRecipes(RecipeOutput output) {
+        ammoBench(output, TGAmmo.PISTOL_ROUNDS.get(), 12);
+        ammoBench(output, TGAmmo.SHOTGUN_ROUNDS.get(), 16);
+        ammoBench(output, TGAmmo.RIFLE_ROUNDS.get(), 8);
+        ammoBench(output, TGAmmo.RIFLE_ROUNDS_STACK.get(), 2);
+        ammoBench(output, TGAmmo.SNIPER_ROUNDS.get(), 4);
+    }
+
+    private static void ammoBench(RecipeOutput output, ItemLike result, int count) {
+        output.accept(TGIds.id("ammo_bench/" + getItemName(result)), new AmmoBenchRecipe(Ingredient.of(TGTags.Items.BULLET_CORE),
+                Ingredient.of(TGTags.Items.BULLET_CASING), Ingredient.of(TGTags.Items.BULLET_POWDER), new ItemStack(result, count)), null);
+    }
+
+    private static void ammoPressRecipes(RecipeOutput output) {
+        Ingredient bullet = Ingredient.fromValues(java.util.stream.Stream.of(
+                new Ingredient.TagValue(TGTags.Items.ingot("steel")), new Ingredient.TagValue(TGTags.Items.ingot("lead"))));
+        Ingredient casing = Ingredient.fromValues(java.util.stream.Stream.of(
+                new Ingredient.TagValue(Tags.Items.INGOTS_COPPER), new Ingredient.TagValue(TGTags.Items.ingot("tin")),
+                new Ingredient.TagValue(Tags.Items.INGOTS_IRON), new Ingredient.TagValue(TGTags.Items.ingot("bronze"))));
+        Ingredient powder = Ingredient.of(Tags.Items.GUNPOWDERS);
+        ammoPress(output, 0, "pistol_rounds", bullet, casing, powder, TGAmmo.PISTOL_ROUNDS.get(), 12);
+        ammoPress(output, 1, "shotgun_rounds", bullet, casing, powder, TGAmmo.SHOTGUN_ROUNDS.get(), 16);
+        ammoPress(output, 2, "rifle_rounds", bullet, casing, powder, TGAmmo.RIFLE_ROUNDS.get(), 8);
+        ammoPress(output, 3, "sniper_rounds", bullet, casing, powder, TGAmmo.SNIPER_ROUNDS.get(), 4);
+    }
+
+    private static void ammoPress(RecipeOutput output, int order, String name, Ingredient bullet, Ingredient casing, Ingredient powder,
+                                  ItemLike result, int count) {
+        output.accept(TGIds.id("ammo_press/" + name), new AmmoPressRecipe(order, bullet, casing, powder, new ItemStack(result, count)), null);
+    }
+
+    /** Techguns 2 {@code BlastFurnaceRecipes}: power per tick and duration per recipe. */
+    private static void blastFurnaceRecipes(RecipeOutput output) {
+        blastFurnace(output, "steel_ingot", new SizedIngredient(Ingredient.of(Items.IRON_INGOT), 4),
+                new SizedIngredient(Ingredient.of(ItemTags.COALS), 1), new ItemStack(TGItems.STEEL_INGOT.get(), 4), 10, 800);
+        blastFurnace(output, "obsidian_steel_ingot", new SizedIngredient(ingot("steel"), 1),
+                new SizedIngredient(Ingredient.of(Tags.Items.OBSIDIANS), 1), new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get()), 10, 200);
+        blastFurnace(output, "bronze_ingot", new SizedIngredient(Ingredient.of(Tags.Items.INGOTS_COPPER), 3),
+                new SizedIngredient(ingot("tin"), 1), new ItemStack(TGItems.BRONZE_INGOT.get(), 4), 10, 100);
+    }
+
+    private static void blastFurnace(RecipeOutput output, String name, SizedIngredient first, SizedIngredient second, ItemStack result,
+                                     int powerPerTick, int time) {
+        output.accept(TGIds.id("blast_furnace/" + name), new BlastFurnaceRecipe(first, second, result, powerPerTick, time), null);
+    }
+
+    /**
+     * Techguns 2 grinder recipes: guns back into materials, carbon plates into fibers, rounds into nuggets and powder
+     * (with chances). Techguns 2 gave steel ingots for the "nuggets" part of {@code steelAndPlastic}; steel nuggets here.
+     */
+    private static void grinderRecipes(RecipeOutput output) {
+        ItemStack[] barrelStone = {new ItemStack(Items.COBBLESTONE, 3)};
+        ItemStack[] barrelObsidian = {new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 3)};
+        ItemStack gold3 = new ItemStack(Items.GOLD_INGOT, 3);
+        grinder(output, TGGuns.HAND_CANNON.get(), barrelStone, ironAndWood(0, 1, 4));
+        grinder(output, TGGuns.SAWED_OFF.get(), ironAndWood(4, 1, 0), stacks(new ItemStack(Items.FLINT)));
+        grinder(output, TGGuns.REVOLVER.get(), ironAndWood(3, 1, 0));
+        grinder(output, TGGuns.GOLDEN_REVOLVER.get(), ironAndWood(3, 1, 0), stacks(new ItemStack(Items.GOLD_INGOT, 4)));
+        grinder(output, TGGuns.THOMPSON.get(), ironAndWood(4, 1, 0));
+        grinder(output, TGGuns.AK47.get(), barrelObsidian, ironAndWood(4, 1, 0));
+        grinder(output, TGGuns.BOLT_ACTION.get(), barrelObsidian, ironAndWood(4, 1, 0));
+        grinder(output, TGGuns.M4.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.M4_INFILTRATOR.get(), barrelObsidian, steelAndPlastic(3, 2, 0), stacks(new ItemStack(Items.REDSTONE)));
+        grinder(output, TGGuns.PISTOL.get(), barrelObsidian, steelAndPlastic(0, 1, 0), ironAndWood(2, 0, 0));
+        grinder(output, TGGuns.COMBAT_SHOTGUN.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.MAC10.get(), barrelObsidian, steelAndPlastic(1, 0, 5), ironAndWood(1, 0, 0));
+        grinder(output, TGGuns.FLAMETHROWER.get(), steelAndPlastic(0, 2, 0), ironAndWood(2, 0, 0));
+        grinder(output, TGGuns.ROCKET_LAUNCHER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 6)), steelAndPlastic(1, 0, 5));
+        grinder(output, TGGuns.GRIM_REAPER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 32),
+                new ItemStack(TGItems.CIRCUIT_BOARD_ELITE.get()), new ItemStack(TGItems.CARBON_FIBERS.get())));
+        grinder(output, TGGuns.GRENADE_LAUNCHER.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.AUG.get(), barrelObsidian, steelAndPlastic(2, 2, 0));
+        grinder(output, TGGuns.NETHER_BLASTER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 4),
+                new ItemStack(TGItems.CYBERNETIC_PARTS.get(), 2)));
+        grinder(output, TGGuns.BIOGUN.get(), steelAndPlastic(2, 2, 0), stacks(new ItemStack(Items.GLASS, 2)));
+        grinder(output, TGGuns.TESLA_GUN.get(), carbonPlasticAndRedstone(3, 2, 2));
+        grinder(output, TGGuns.LMG.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 6), new ItemStack(TGItems.STEEL_INGOT.get(), 4),
+                new ItemStack(TGItems.PLASTIC_SHEET.get(), 2)));
+        grinder(output, TGGuns.MINIGUN.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 20), new ItemStack(TGItems.STEEL_INGOT.get(), 2),
+                new ItemStack(TGItems.ELECTRIC_ENGINE.get())));
+        grinder(output, TGGuns.AS50.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 9), new ItemStack(TGItems.PLASTIC_SHEET.get(), 2),
+                new ItemStack(Items.DIAMOND)));
+        grinder(output, TGGuns.VECTOR.get(), obsidianAndPlastic(5, 2));
+        grinder(output, TGGuns.SCAR.get(), obsidianAndPlastic(5, 2));
+        grinder(output, TGGuns.LASERGUN.get(), obsidianAndPlastic(2, 2), stacks(new ItemStack(Items.REDSTONE, 20), gold3));
+        grinder(output, TGGuns.BLASTER_RIFLE.get(), carbonPlasticAndRedstone(3, 1, 20), stacks(gold3));
+        grinder(output, TGGuns.SONIC_SHOTGUN.get(), carbonPlasticAndRedstone(3, 2, 2), stacks(new ItemStack(TGItems.TITANIUM_INGOT.get())));
+        grinder(output, TGGuns.PDW.get(), carbonPlasticAndRedstone(6, 1, 0), obsidianAndPlastic(1, 0));
+        grinder(output, TGGuns.PULSE_RIFLE.get(), carbonPlasticAndRedstone(6, 1, 0), obsidianAndPlastic(1, 0));
+        grinder(output, TGGuns.MIB_GUN.get(), stacks(gold3, new ItemStack(TGItems.TITANIUM_INGOT.get()), new ItemStack(Items.REDSTONE, 20)));
+        grinder(output, TGGuns.POWER_HAMMER.get(), ironAndWood(4, 0, 0), stacks(new ItemStack(Items.FLINT)));
+        grinder(output, TGGuns.CHAINSAW.get(), ironAndWood(5, 0, 0), stacks(new ItemStack(TGItems.PLASTIC_SHEET.get())));
+        grinder(output, TGGuns.NUCLEAR_DEATHRAY.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get(), 6), new ItemStack(TGItems.LEAD_INGOT.get(), 3),
+                new ItemStack(TGItems.MECHANICAL_PARTS_CARBON.get()), new ItemStack(TGItems.CIRCUIT_BOARD_ELITE.get())));
+        grinder(output, TGGuns.GAUSS_RIFLE.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get(), 9), new ItemStack(TGItems.TITANIUM_INGOT.get()),
+                new ItemStack(TGItems.PLASTIC_SHEET.get()), new ItemStack(TGItems.CIRCUIT_BOARD_ELITE.get())));
+        grinder(output, TGGuns.GUIDED_MISSILE_LAUNCHER.get(), stacks(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 8),
+                new ItemStack(TGItems.COPPER_WIRE.get())));
+        grinder(output, TGGuns.MINING_DRILL.get(), obsidianAndPlastic(6, 2));
+        grinder(output, TGGuns.TFG.get(), stacks(new ItemStack(TGItems.TITANIUM_INGOT.get(), 5), new ItemStack(TGItems.LEAD_INGOT.get(), 4),
+                new ItemStack(TGItems.CARBON_FIBERS.get(), 4)));
+        grinder(output, TGItems.CARBON_PLATE.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get())));
+
+        // rounds: lead and copper nuggets, sometimes powder (blaze powder / TGX for special rounds)
+        ItemStack lead = new ItemStack(TGItems.LEAD_NUGGET.get());
+        ItemStack copper = new ItemStack(TGItems.COPPER_NUGGET.get());
+        ItemStack powder = new ItemStack(Items.GUNPOWDER);
+        ItemStack blaze = new ItemStack(Items.BLAZE_POWDER);
+        roundsGrinder(output, TGAmmo.RIFLE_ROUNDS.get(), out(lead, 1), out(copper.copyWithCount(2), 1), out(powder, 0.125f));
+        roundsGrinder(output, TGAmmo.PISTOL_ROUNDS.get(), out(lead, 0.75f), out(copper, 1.5f), out(powder, 1.0f / 12.0f));
+        roundsGrinder(output, TGAmmo.SNIPER_ROUNDS.get(), out(lead.copyWithCount(2), 1), out(copper.copyWithCount(4), 1), out(powder, 0.25f));
+        roundsGrinder(output, TGAmmo.SHOTGUN_ROUNDS.get(), out(lead, 0.5f), out(copper, 1), out(powder, 0.0625f));
+        roundsGrinder(output, TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), out(lead, 1), out(copper.copyWithCount(2), 1), out(powder, 0.125f), out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), out(lead, 0.75f), out(copper, 1.5f), out(powder, 1.0f / 12.0f), out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.SNIPER_ROUNDS_INCENDIARY.get(), out(lead.copyWithCount(2), 1), out(copper.copyWithCount(4), 1), out(powder, 0.25f),
+                out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), out(lead, 0.5f), out(copper, 1), out(powder, 0.0625f), out(blaze, 0.125f));
+        roundsGrinder(output, TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), out(lead.copyWithCount(2), 1), out(copper.copyWithCount(4), 1), out(powder, 0.25f),
+                out(blaze, 0.125f), out(new ItemStack(TGItems.TGX.get()), 0.5f));
+    }
+
+    private static ItemStack[] stacks(ItemStack... stacks) {
+        return stacks;
+    }
+
+    private static ItemStack[] ironAndWood(int iron, int wood, int nuggets) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (iron > 0) list.add(new ItemStack(Items.IRON_INGOT, iron));
+        if (wood > 0) list.add(new ItemStack(Items.OAK_LOG, wood));
+        if (nuggets > 0) list.add(new ItemStack(Items.IRON_NUGGET, nuggets));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static ItemStack[] steelAndPlastic(int steel, int plastic, int nuggets) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (steel > 0) list.add(new ItemStack(TGItems.STEEL_INGOT.get(), steel));
+        if (plastic > 0) list.add(new ItemStack(TGItems.PLASTIC_SHEET.get(), plastic));
+        if (nuggets > 0) list.add(new ItemStack(TGItems.STEEL_NUGGET.get(), nuggets));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static ItemStack[] obsidianAndPlastic(int obsidianSteel, int plastic) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (obsidianSteel > 0) list.add(new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), obsidianSteel));
+        if (plastic > 0) list.add(new ItemStack(TGItems.PLASTIC_SHEET.get(), plastic));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static ItemStack[] carbonPlasticAndRedstone(int carbon, int plastic, int redstone) {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (carbon > 0) list.add(new ItemStack(TGItems.CARBON_FIBERS.get(), carbon));
+        if (plastic > 0) list.add(new ItemStack(TGItems.PLASTIC_SHEET.get(), plastic));
+        if (redstone > 0) list.add(new ItemStack(Items.REDSTONE, redstone));
+        return list.toArray(ItemStack[]::new);
+    }
+
+    private static void grinder(RecipeOutput output, ItemLike input, ItemStack[]... outputs) {
+        java.util.List<GrinderRecipe.Output> list = java.util.Arrays.stream(outputs).flatMap(java.util.Arrays::stream)
+                .map(GrinderRecipe.Output::of).toList();
+        output.accept(TGIds.id("grinder/" + getItemName(input)), new GrinderRecipe(Ingredient.of(input), list), null);
+    }
+
+    private static GrinderRecipe.Output out(ItemStack stack, float chance) {
+        return new GrinderRecipe.Output(stack, chance);
+    }
+
+    private static void roundsGrinder(RecipeOutput output, ItemLike input, GrinderRecipe.Output... outputs) {
+        output.accept(TGIds.id("grinder/" + getItemName(input)), new GrinderRecipe(Ingredient.of(input), java.util.List.of(outputs)), null);
+    }
+
+    private static Ingredient ingot(String material) {
+        return Ingredient.of(TGTags.Items.ingot(material));
+    }
+
+    private static Ingredient plate(String material) {
+        return Ingredient.of(TGTags.Items.plate(material));
+    }
+
+    private static void metalPress(RecipeOutput output, String name, Ingredient first, Ingredient second, ItemLike result, int count) {
+        output.accept(TGIds.id("metal_press/" + name), new MetalPressRecipe(first, second, true, new ItemStack(result, count)), null);
+    }
+
+    /** Techguns 2 decorative blocks; other variants of a group come from the Camo Bench. */
+    private void buildBlockRecipes(RecipeOutput output) {
+        Ingredient anyConcrete = Ingredient.of(Items.WHITE_CONCRETE, Items.ORANGE_CONCRETE, Items.MAGENTA_CONCRETE, Items.LIGHT_BLUE_CONCRETE,
+                Items.YELLOW_CONCRETE, Items.LIME_CONCRETE, Items.PINK_CONCRETE, Items.GRAY_CONCRETE, Items.LIGHT_GRAY_CONCRETE, Items.CYAN_CONCRETE,
+                Items.PURPLE_CONCRETE, Items.BLUE_CONCRETE, Items.BROWN_CONCRETE, Items.GREEN_CONCRETE, Items.RED_CONCRETE, Items.BLACK_CONCRETE);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.CONCRETE_BROWN.get(), 16)
+                .pattern("ccc").pattern("cbc").pattern("ccc")
+                .define('c', anyConcrete).define('b', Items.IRON_BARS)
+                .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(output, TGIds.id("concrete_brown"));
+
+        // neon lights: 16 double neon lights
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.NEONTUBES2.get(), 16)
+                .pattern("nnn").pattern("gsg").pattern("nnn")
+                .define('n', Tags.Items.NUGGETS_IRON).define('g', Tags.Items.GLASS_PANES).define('s', Tags.Items.DUSTS_GLOWSTONE)
+                .unlockedBy("has_glowstone_dust", has(Tags.Items.DUSTS_GLOWSTONE)).save(output, TGIds.id("neontubes2"));
+        // nether metal: 16 plates
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.NETHERMETAL_PANEL.get(), 16)
+                .pattern("nsn").pattern("sis").pattern("nsn")
+                .define('n', Items.NETHERRACK).define('s', Items.STONE).define('i', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_netherrack", has(Items.NETHERRACK)).save(output, TGIds.id("nethermetal_panel"));
+        // metal panel: 32 red containers from iron or tin plates
+        for (String plate : List.of("iron", "tin")) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TGBlocks.CONTAINER_RED.get(), 32)
+                    .pattern("sss").pattern("psp").pattern("sss")
+                    .define('s', Items.STONE).define('p', TGTags.Items.plate(plate))
+                    .unlockedBy("has_" + plate + "_plate", has(TGTags.Items.plate(plate))).save(output, TGIds.id("container_red_from_" + plate + "_plate"));
+        }
+        buildShapedBlockRecipes(output);
+        // stairs: 6 from a block, and back
+        stairs(output, TGBlocks.PANEL_LARGE_BORDER_STAIRS.get(), TGBlocks.PANEL_LARGE_BORDER.get());
+        stairs(output, TGBlocks.STEELFRAME_DARK_STAIRS.get(), TGBlocks.STEELFRAME_DARK.get());
+        stairs(output, TGBlocks.CONCRETE_BROWN_LIGHT_STAIRS.get(), TGBlocks.CONCRETE_BROWN_LIGHT.get());
+        stairs(output, TGBlocks.CONCRETE_GREY_DARK_STAIRS.get(), TGBlocks.CONCRETE_GREY_DARK.get());
+    }
+
+    /**
+     * Phase 5a2 (Techguns 2 Recipewriter). Not crafted yet: the desert/snow camo nets and the shiny/rusty/carbon ladders
+     * (Camo Bench), crates and the slimy ladder (no recipe in 1.12).
+     */
+    private void buildShapedBlockRecipes(RecipeOutput output) {
+        // lamps: 16 from iron nuggets, glass panes and redstone; yellow and white convert into each other
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LAMP_YELLOW.get(), 16)
+                .pattern("iii").pattern("grg").pattern("ggg")
+                .define('i', Tags.Items.NUGGETS_IRON).define('r', Tags.Items.DUSTS_REDSTONE).define('g', Tags.Items.GLASS_PANES)
+                .unlockedBy("has_redstone", has(Tags.Items.DUSTS_REDSTONE)).save(output, TGIds.id("lamp_yellow"));
+        swap(output, TGBlocks.LAMP_YELLOW.get(), TGBlocks.LAMP_WHITE.get());
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LAMP_YELLOW_LANTERN.get(), 16)
+                .pattern("iii").pattern("grg").pattern("iii")
+                .define('i', Tags.Items.NUGGETS_IRON).define('r', Tags.Items.DUSTS_REDSTONE).define('g', Tags.Items.GLASS_PANES)
+                .unlockedBy("has_redstone", has(Tags.Items.DUSTS_REDSTONE)).save(output, TGIds.id("lamp_yellow_lantern"));
+        swap(output, TGBlocks.LAMP_YELLOW_LANTERN.get(), TGBlocks.LAMP_WHITE_LANTERN.get());
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TGBlocks.SANDBAGS.get(), 8)
+                .requires(TGItems.RUBBER_BAR.get()).requires(Ingredient.of(Tags.Items.SANDS), 8)
+                .unlockedBy("has_rubber_bar", has(TGItems.RUBBER_BAR.get())).save(output, TGIds.id("sandbags"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.CAMO_NET_WOOD.get(), 8)
+                .pattern("sds").pattern("sds")
+                .define('s', Tags.Items.RODS_WOODEN).define('d', Items.DIRT)
+                .unlockedBy("has_stick", has(Tags.Items.RODS_WOODEN)).save(output, TGIds.id("camo_net_wood"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.CAMO_NET_TOP_WOOD.get(), 16)
+                .pattern("wdw").pattern("dsd").pattern("wdw")
+                .define('w', Tags.Items.RODS_WOODEN).define('d', Items.DIRT).define('s', Tags.Items.STRINGS)
+                .unlockedBy("has_string", has(Tags.Items.STRINGS)).save(output, TGIds.id("camo_net_top_wood"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.BUNKER_DOOR.get(), 2)
+                .pattern("pp").pattern("pp").pattern("pp")
+                .define('p', TGTags.Items.plate("iron"))
+                .unlockedBy("has_iron_plate", has(TGTags.Items.plate("iron"))).save(output, TGIds.id("bunker_door"));
+
+        for (String plate : List.of("iron", "tin")) {
+            TagKey<Item> plates = TGTags.Items.plate(plate);
+            String suffix = "_from_" + plate + "_plate";
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.DOOR_METAL_3X3.get(), 2)
+                    .pattern("ppp").pattern("sps").pattern("ppp").define('s', Items.PISTON).define('p', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("door_metal_3x3" + suffix));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.DOOR_HANGAR_UP_3X3.get(), 2)
+                    .pattern("sps").pattern("ppp").pattern("ppp").define('s', Items.PISTON).define('p', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("door_hangar_up_3x3" + suffix));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.DOOR_HANGAR_DOWN_3X3.get(), 2)
+                    .pattern("ppp").pattern("ppp").pattern("sps").define('s', Items.PISTON).define('p', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("door_hangar_down_3x3" + suffix));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LADDER_METAL.get(), 16)
+                    .pattern("iii").pattern(" i ").pattern("iii").define('i', plates)
+                    .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("ladder_metal" + suffix));
+        }
+        swap(output, TGBlocks.DOOR_HANGAR_UP_3X3.get(), TGBlocks.DOOR_HANGAR_DOWN_3X3.get());
+    }
+
+    /** Two blocks that convert into each other with a shapeless recipe (Techguns 2 lamp/door variants). */
+    private static void swap(RecipeOutput output, ItemLike first, ItemLike second) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, second).requires(first)
+                .unlockedBy(getHasName(first), has(first)).save(output, TGIds.id(getItemName(second) + "_from_" + getItemName(first)));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, first).requires(second)
+                .unlockedBy(getHasName(second), has(second)).save(output, TGIds.id(getItemName(first) + "_from_" + getItemName(second)));
+    }
+
+    /** Techguns 2 stairs recipes: 6 stairs from a block, and one stair back into a block. */
+    private static void stairs(RecipeOutput output, ItemLike stairs, ItemLike block) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, stairs, 6)
+                .pattern("b  ").pattern("bb ").pattern("bbb")
+                .define('b', block).unlockedBy(getHasName(block), has(block)).save(output, TGIds.id(getItemName(stairs)));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, block)
+                .requires(stairs).unlockedBy(getHasName(stairs), has(stairs)).save(output, TGIds.id(getItemName(block) + "_from_stairs"));
+    }
+
     /** Techguns 2 shields: a vanilla shield framed by the material, with glass panes. */
     private void buildShieldRecipes(RecipeOutput output) {
         shield(output, TGArmors.RIOT_SHIELD.get(), TGTags.Items.ingot("steel"), "igi", "isi", "igi");
@@ -327,25 +1070,6 @@ public class TGRecipeProvider extends RecipeProvider {
     }
 
     private void buildMaterialRecipes(RecipeOutput output) {
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_STEEL_INGOT.get(), 2)
-                .requires(Ingredient.of(Tags.Items.INGOTS_IRON), 2).requires(Items.COAL)
-                .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON)).save(output, TGIds.id("raw_steel_ingot"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_STEEL_INGOT.get(), 2)
-                .requires(Ingredient.of(Tags.Items.INGOTS_IRON), 2).requires(Items.CHARCOAL)
-                .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON)).save(output, TGIds.id("raw_steel_ingot_from_charcoal"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_OBSIDIAN_STEEL_INGOT.get())
-                .requires(TGTags.Items.ingot("steel")).requires(Items.OBSIDIAN)
-                .unlockedBy("has_steel_ingot", has(TGTags.Items.ingot("steel"))).save(output, TGIds.id("raw_obsidian_steel_ingot"));
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_RUBBER.get())
-                .requires(ItemTags.LOGS).requires(Items.BOWL)
-                .unlockedBy("has_bowl", has(Items.BOWL)).save(output, TGIds.id("raw_rubber"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.CARBON_FIBERS.get())
-                .requires(Items.DIAMOND).requires(Items.BLAZE_POWDER)
-                .unlockedBy("has_diamond", has(Items.DIAMOND)).save(output, TGIds.id("carbon_fibers"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.TREATED_LEATHER.get())
-                .requires(Items.LEATHER, 2).requires(Tags.Items.SLIME_BALLS).requires(Items.GUNPOWDER)
-                .unlockedBy("has_leather", has(Items.LEATHER)).save(output, TGIds.id("treated_leather"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.BIOMASS.get(), 4)
                 .pattern(" g ").pattern("gbg").pattern(" g ")
@@ -355,23 +1079,10 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" cc").pattern(" c ").pattern("cc ")
                 .define('c', TGTags.Items.nugget("copper"))
                 .unlockedBy("has_copper_nugget", has(TGTags.Items.nugget("copper"))).save(output, TGIds.id("copper_wire"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.GOLD_WIRE.get())
-                .pattern(" cc").pattern(" c ").pattern("cc ")
-                .define('c', Tags.Items.NUGGETS_GOLD)
-                .unlockedBy("has_gold_nugget", has(Tags.Items.NUGGETS_GOLD)).save(output, TGIds.id("gold_wire"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.HEAVY_CLOTH.get(), 3)
                 .pattern(" w ").pattern("wlw").pattern(" w ")
                 .define('w', ItemTags.WOOL).define('l', Items.LEATHER)
                 .unlockedBy("has_leather", has(Items.LEATHER)).save(output, TGIds.id("heavy_cloth"));
-        // TGX has two variants (lapis and gunpowder swapped), as in the original
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.TGX.get(), 4)
-                .pattern("glg").pattern("lbl").pattern("glg")
-                .define('b', Items.BLAZE_POWDER).define('g', Items.GUNPOWDER).define('l', Items.LAPIS_LAZULI)
-                .unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER)).save(output, TGIds.id("tgx"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.TGX.get(), 4)
-                .pattern("glg").pattern("lbl").pattern("glg")
-                .define('b', Items.BLAZE_POWDER).define('g', Items.LAPIS_LAZULI).define('l', Items.GUNPOWDER)
-                .unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER)).save(output, TGIds.id("tgx_alt"));
     }
 
     private void buildComponentRecipes(RecipeOutput output) {
@@ -384,14 +1095,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" i ").pattern("ifi").pattern(" i ")
                 .define('f', Items.FLINT).define('i', Items.IRON_INGOT)
                 .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT)).save(output, TGIds.id("mechanical_parts_iron"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get(), 2)
-                .pattern(" i ").pattern("ifi").pattern(" i ")
-                .define('f', Items.QUARTZ).define('i', obsidianSteel)
-                .unlockedBy("has_obsidian_steel_ingot", has(obsidianSteel)).save(output, TGIds.id("mechanical_parts_obsidian_steel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.MECHANICAL_PARTS_CARBON.get(), 2)
-                .pattern(" i ").pattern("ifi").pattern(" i ")
-                .define('f', Items.BLAZE_ROD).define('i', carbonPlate)
-                .unlockedBy("has_carbon_plate", has(carbonPlate)).save(output, TGIds.id("mechanical_parts_carbon"));
 
         // Receivers
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGItems.IRON_RECEIVER.get())
@@ -457,29 +1160,17 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" wi").pattern("wiw").pattern("iw ")
                 .define('w', TGItems.COPPER_WIRE.get()).define('i', iron)
                 .unlockedBy("has_copper_wire", has(TGItems.COPPER_WIRE.get())).save(output, TGIds.id("coil"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.CYBERNETIC_PARTS.get())
-                .requires(Items.SOUL_SAND).requires(Items.REDSTONE).requires(TGItems.GOLD_WIRE.get()).requires(TGItems.PLASTIC_SHEET.get())
-                .unlockedBy("has_gold_wire", has(TGItems.GOLD_WIRE.get())).save(output, TGIds.id("cybernetic_parts"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.ELECTRIC_ENGINE.get())
                 .pattern("wrw").pattern("imi").pattern("wrw")
                 .define('r', Items.REDSTONE).define('w', TGItems.COPPER_WIRE.get()).define('i', iron)
                 .define('m', TGItems.MECHANICAL_PARTS_IRON.get())
                 .unlockedBy("has_mechanical_parts_iron", has(TGItems.MECHANICAL_PARTS_IRON.get())).save(output, TGIds.id("electric_engine"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.LASER_FOCUS.get())
-                .pattern("rrr").pattern("rdr").pattern("rrr")
-                .define('r', Items.REDSTONE).define('d', Items.DIAMOND)
-                .unlockedBy("has_diamond", has(Items.DIAMOND)).save(output, TGIds.id("laser_focus"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.PUMP_MECHANISM.get())
                 .pattern("nnn").pattern("gpg").pattern("nnn")
                 .define('p', Items.PISTON).define('g', Tags.Items.GLASS_BLOCKS).define('n', Items.IRON_INGOT)
                 .unlockedBy("has_piston", has(Items.PISTON)).save(output, TGIds.id("pump_mechanism"));
 
         // Armor plating
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.POWER_PLATING.get(), 2)
-                .pattern("tmt").pattern("bcb").pattern("pmp")
-                .define('p', carbonPlate).define('b', TGItems.CIRCUIT_BOARD.get()).define('c', TGItems.CYBERNETIC_PARTS.get())
-                .define('t', TGTags.Items.ingot("titanium")).define('m', TGItems.MECHANICAL_PARTS_CARBON.get())
-                .unlockedBy("has_cybernetic_parts", has(TGItems.CYBERNETIC_PARTS.get())).save(output, TGIds.id("power_plating"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.POWER_PLATING_MK2.get(), 4)
                 .pattern("tmt").pattern("bcb").pattern("pmp")
                 .define('p', TGItems.POWER_PLATING.get()).define('b', TGItems.CIRCUIT_BOARD_ADVANCED.get())
@@ -494,17 +1185,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_circuit_board_advanced", has(TGItems.CIRCUIT_BOARD_ADVANCED.get()))
                 .save(output, TGIds.id("nether_armor_plating"));
 
-        // Emitters
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.RAD_EMITTER.get())
-                .pattern(" c ").pattern("lul").pattern("lpl")
-                .define('p', TGItems.MECHANICAL_PARTS_CARBON.get()).define('c', TGItems.CIRCUIT_BOARD_ADVANCED.get())
-                .define('u', TGItems.ENRICHED_URANIUM.get()).define('l', TGTags.Items.ingot("lead"))
-                .unlockedBy("has_enriched_uranium", has(TGItems.ENRICHED_URANIUM.get())).save(output, TGIds.id("rad_emitter"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.SONIC_EMITTER.get())
-                .pattern(" t ").pattern("cpc").pattern("tbt")
-                .define('p', TGItems.MECHANICAL_PARTS_CARBON.get()).define('b', TGItems.CIRCUIT_BOARD_ADVANCED.get())
-                .define('c', TGItems.COIL.get()).define('t', TGTags.Items.ingot("titanium"))
-                .unlockedBy("has_coil", has(TGItems.COIL.get())).save(output, TGIds.id("sonic_emitter"));
     }
 
     private void buildAmmoRecipes(RecipeOutput output) {
@@ -573,78 +1253,25 @@ public class TGRecipeProvider extends RecipeProvider {
                 "as50_magazine_explosive");
         refill(output, TGAmmo.ADVANCED_MAGAZINE.get(), TGAmmo.ADVANCED_MAGAZINE_EMPTY.get(), TGAmmo.ADVANCED_ROUNDS.get(), 3,
                 "advanced_magazine");
-        // shotgun and sniper rounds come from the ammo bench (Phase 5); explosive sniper rounds have no Fabric recipe
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ADVANCED_ROUNDS.get(), 16)
-                .pattern("i").pattern("t")
-                .define('i', obsidianSteel).define('t', TGItems.TGX.get())
-                .unlockedBy("has_tgx", has(TGItems.TGX.get())).save(output, TGIds.id("advanced_rounds"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4)
-                .pattern("i").pattern("t")
-                .define('i', titanium).define('t', obsidianSteel)
-                .unlockedBy("has_titanium_ingot", has(titanium)).save(output, TGIds.id("gauss_rifle_slugs"));
+        // advanced rounds, gauss slugs and filled tanks come from the Metal Press and Chem Lab (Techguns 2)
 
         // Batch 3c power sources
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.REDSTONE_BATTERY.get(), 2)
                 .pattern("nwn").pattern("nrn").pattern("nrn")
                 .define('r', Items.REDSTONE).define('w', TGItems.COPPER_WIRE.get()).define('n', TGTags.Items.nugget("copper"))
                 .unlockedBy("has_copper_wire", has(TGItems.COPPER_WIRE.get())).save(output, TGIds.id("redstone_battery"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.REDSTONE_BATTERY.get())
-                .requires(TGAmmo.REDSTONE_BATTERY_EMPTY.get()).requires(Items.REDSTONE, 2)
-                .unlockedBy("has_redstone_battery_empty", has(TGAmmo.REDSTONE_BATTERY_EMPTY.get()))
-                .save(output, TGIds.id("redstone_battery_refill"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get(), 2)
-                .pattern("wgw").pattern("prp").pattern("prp")
-                .define('p', TGTags.Items.ingot("lead")).define('r', Items.REDSTONE_BLOCK).define('w', TGItems.GOLD_WIRE.get())
-                .define('g', TGItems.CIRCUIT_BOARD.get())
-                .unlockedBy("has_circuit_board", has(TGItems.CIRCUIT_BOARD.get())).save(output, TGIds.id("nuclear_power_cell_empty"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.NUCLEAR_POWER_CELL.get())
-                .requires(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get()).requires(TGItems.ENRICHED_URANIUM.get())
-                .unlockedBy("has_nuclear_power_cell_empty", has(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get()))
-                .save(output, TGIds.id("nuclear_power_cell"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.NETHER_CHARGE.get(), 4)
-                .requires(Items.NETHERRACK).requires(Items.SOUL_SAND).requires(Items.LAVA_BUCKET)
-                .unlockedBy("has_soul_sand", has(Items.SOUL_SAND)).save(output, TGIds.id("nether_charge"));
-
-        // Energy cells
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ENERGY_CELL.get(), 4)
-                .pattern("gwg").pattern("prp").pattern("prp")
-                .define('p', TGItems.PLASTIC_SHEET.get()).define('r', Items.REDSTONE_BLOCK)
-                .define('w', TGItems.COPPER_WIRE.get()).define('g', Tags.Items.INGOTS_GOLD)
-                .unlockedBy("has_copper_wire", has(TGItems.COPPER_WIRE.get())).save(output, TGIds.id("energy_cell"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.ENERGY_CELL.get())
-                .requires(TGAmmo.ENERGY_CELL_EMPTY.get()).requires(Items.REDSTONE, 4)
-                .unlockedBy("has_energy_cell_empty", has(TGAmmo.ENERGY_CELL_EMPTY.get())).save(output, TGIds.id("energy_cell_refill"));
 
         // Rounds and rockets
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.PISTOL_ROUNDS_INCENDIARY.get(), 4)
-                .requires(TGAmmo.PISTOL_ROUNDS.get(), 4).requires(Items.BLAZE_POWDER)
-                .unlockedBy("has_pistol_rounds", has(TGAmmo.PISTOL_ROUNDS.get())).save(output, TGIds.id("pistol_rounds_incendiary"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 4)
-                .requires(TGAmmo.RIFLE_ROUNDS.get(), 4).requires(Items.BLAZE_POWDER)
-                .unlockedBy("has_rifle_rounds", has(TGAmmo.RIFLE_ROUNDS.get())).save(output, TGIds.id("rifle_rounds_incendiary"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), 8)
-                .requires(TGAmmo.SHOTGUN_ROUNDS.get(), 8).requires(Items.BLAZE_POWDER)
-                .unlockedBy("has_shotgun_rounds", has(TGAmmo.SHOTGUN_ROUNDS.get())).save(output, TGIds.id("shotgun_rounds_incendiary"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.SNIPER_ROUNDS_INCENDIARY.get(), 2)
-                .requires(TGAmmo.SNIPER_ROUNDS.get(), 2).requires(Items.BLAZE_POWDER)
-                .unlockedBy("has_sniper_rounds", has(TGAmmo.SNIPER_ROUNDS.get())).save(output, TGIds.id("sniper_rounds_incendiary"));
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.ROCKET.get(), 4)
                 .pattern(" s ").pattern("sts").pattern("sgs")
                 .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER)
                 .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("rocket"));
         // nuke rockets need the tactical nuke warhead, high velocity rockets the chemical laboratory (Phase 5)
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.GRENADE_40MM.get(), 12)
-                .pattern(" i ").pattern("sts").pattern("sgs")
-                .define('s', Tags.Items.NUGGETS_IRON).define('t', Items.TNT).define('g', Items.GUNPOWDER).define('i', Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_tnt", has(Items.TNT)).save(output, TGIds.id("grenade_40mm"));
         // Batch 3e ammo (the magic rifle's bullets have no recipe in Fabric)
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGAmmo.FUEL_TANK_EMPTY.get(), 4)
                 .pattern("p").pattern("g").pattern("p")
                 .define('p', TGItems.PLASTIC_SHEET.get()).define('g', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy("has_plastic_sheet", has(TGItems.PLASTIC_SHEET.get())).save(output, TGIds.id("fuel_tank_empty"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.FUEL_TANK.get(), 2)
-                .requires(TGAmmo.FUEL_TANK_EMPTY.get(), 2).requires(Items.LAVA_BUCKET)
-                .unlockedBy("has_fuel_tank_empty", has(TGAmmo.FUEL_TANK_EMPTY.get())).save(output, TGIds.id("fuel_tank"));
         // Batch 3g: rifle round stacks refill the minigun drum
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_STACK.get())
                 .requires(TGAmmo.RIFLE_ROUNDS.get(), 4)
@@ -653,6 +1280,14 @@ public class TGRecipeProvider extends RecipeProvider {
                 .requires(TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 4)
                 .unlockedBy("has_rifle_rounds_incendiary", has(TGAmmo.RIFLE_ROUNDS_INCENDIARY.get()))
                 .save(output, TGIds.id("rifle_rounds_stack_incendiary"));
+        // Techguns 2: stacks split back into four rounds
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS.get(), 4)
+                .requires(TGAmmo.RIFLE_ROUNDS_STACK.get())
+                .unlockedBy("has_rifle_rounds_stack", has(TGAmmo.RIFLE_ROUNDS_STACK.get())).save(output, TGIds.id("rifle_rounds_from_stack"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.RIFLE_ROUNDS_INCENDIARY.get(), 4)
+                .requires(TGAmmo.RIFLE_ROUNDS_STACK_INCENDIARY.get())
+                .unlockedBy("has_rifle_rounds_stack_incendiary", has(TGAmmo.RIFLE_ROUNDS_STACK_INCENDIARY.get()))
+                .save(output, TGIds.id("rifle_rounds_incendiary_from_stack"));
         refill(output, TGAmmo.MINIGUN_DRUM.get(), TGAmmo.MINIGUN_DRUM_EMPTY.get(), TGAmmo.RIFLE_ROUNDS_STACK.get(), 4, "minigun_drum");
         refill(output, TGAmmo.MINIGUN_DRUM_INCENDIARY.get(), TGAmmo.MINIGUN_DRUM_EMPTY.get(), TGAmmo.RIFLE_ROUNDS_STACK_INCENDIARY.get(), 4,
                 "minigun_drum_incendiary");
@@ -662,10 +1297,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" l ").pattern("i i").pattern("i i")
                 .define('l', Items.LEVER).define('i', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON)).save(output, TGIds.id("compressed_air_tank_empty"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.COMPRESSED_AIR_TANK.get())
-                .requires(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get()).requires(Items.WATER_BUCKET).requires(Items.COAL)
-                .unlockedBy("has_compressed_air_tank_empty", has(TGAmmo.COMPRESSED_AIR_TANK_EMPTY.get()))
-                .save(output, TGIds.id("compressed_air_tank"));
         TagKey<Item> obsidianSteelIngot = TGTags.Items.ingot("obsidian_steel");
         TagKey<Item> carbonPlate = TGTags.Items.plate("carbon");
         miningHead(output, TGItems.CHAINSAW_BLADES_STEEL.get(), steelIngot, TGItems.MECHANICAL_PARTS_IRON.get(), " i", "ip", " i");
@@ -681,9 +1312,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern("sss").pattern("sgs").pattern("sgs")
                 .define('s', steelNugget).define('g', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy("has_steel_nugget", has(steelNugget)).save(output, TGIds.id("bio_tank_empty"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.BIO_TANK.get())
-                .requires(TGAmmo.BIO_TANK_EMPTY.get()).requires(TGItems.BIOMASS.get())
-                .unlockedBy("has_bio_tank_empty", has(TGAmmo.BIO_TANK_EMPTY.get())).save(output, TGIds.id("bio_tank"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.STONE_BULLETS.get(), 16)
                 .requires(Items.COBBLESTONE, 3).requires(Items.GUNPOWDER)
                 .unlockedBy("has_gunpowder", has(Items.GUNPOWDER)).save(output, TGIds.id("stone_bullets"));

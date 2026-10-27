@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/techdoor3x3_opened",
+  "render_type": "minecraft:cutout"
+}

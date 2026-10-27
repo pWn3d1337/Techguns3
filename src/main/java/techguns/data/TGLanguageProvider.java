@@ -28,6 +28,60 @@ public class TGLanguageProvider extends LanguageProvider {
     /** English names that differ from the title-cased registry name. */
     private static final Map<String, String> NAME_OVERRIDES = Map.ofEntries(
             Map.entry("biomass", "Bio Mass"),
+            // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
+            Map.entry("explosive_charge", "Mining Charge"),
+            Map.entry("turret_armor_iron", "Turret Armor (Iron)"),
+            Map.entry("turret_armor_steel", "Turret Armor (Steel)"),
+            Map.entry("turret_armor_obsidian_steel", "Turret Armor (Obsidian Steel)"),
+            Map.entry("turret_armor_carbon", "Turret Armor (Carbon)"),
+            Map.entry("explosive_charge_advanced", "Advanced Mining Charge"),
+            Map.entry("ore_cluster_coal", "Ore Cluster (Coal)"),
+            Map.entry("ore_cluster_common_metal", "Ore Cluster (Common Metal)"),
+            Map.entry("ore_cluster_rare_metal", "Ore Cluster (Rare Metal)"),
+            Map.entry("ore_cluster_shiny_metal", "Ore Cluster (Shiny Metal)"),
+            Map.entry("ore_cluster_uranium", "Ore Cluster (Uranium)"),
+            Map.entry("ore_cluster_common_gem", "Ore Cluster (Common Gem)"),
+            Map.entry("ore_cluster_shiny_gem", "Ore Cluster (Shiny Gem)"),
+            Map.entry("ore_cluster_nether_crystal", "Ore Cluster (Nether Crystal)"),
+            Map.entry("ore_cluster_oil", "Ore Cluster (Oil)"),
+            Map.entry("ore_drill_head_small_steel", "Small Ore Drill (Steel)"),
+            Map.entry("ore_drill_head_small_obsidian_steel", "Small Ore Drill (Obsidian Steel)"),
+            Map.entry("ore_drill_head_small_carbon", "Small Ore Drill (Carbon)"),
+            Map.entry("ore_drill_head_medium_steel", "Medium Ore Drill (Steel)"),
+            Map.entry("ore_drill_head_medium_obsidian_steel", "Medium Ore Drill (Obsidian Steel)"),
+            Map.entry("ore_drill_head_medium_carbon", "Medium Ore Drill (Carbon)"),
+            Map.entry("ore_drill_head_large_steel", "Large Ore Drill (Steel)"),
+            Map.entry("ore_drill_head_large_obsidian_steel", "Large Ore Drill (Obsidian Steel)"),
+            Map.entry("ore_drill_head_large_carbon", "Large Ore Drill (Carbon)"),
+            // Phase 5a2 (Techguns 2 lang: tile.techguns.*)
+            Map.entry("lamp_yellow", "Lamp (Yellow)"),
+            Map.entry("lamp_white", "Lamp (White)"),
+            Map.entry("lamp_yellow_lantern", "Lantern (Yellow)"),
+            Map.entry("lamp_white_lantern", "Lantern (White)"),
+            Map.entry("ladder_metal", "Ladder (Metal)"),
+            Map.entry("ladder_shiny", "Ladder (Shiny)"),
+            Map.entry("ladder_rusty", "Ladder (Rusty)"),
+            Map.entry("ladder_carbon", "Ladder (Carbon)"),
+            Map.entry("slimy_ladder", "Slimy Trail"),
+            Map.entry("camo_net_wood", "Camo Netting (Woodland)"),
+            Map.entry("camo_net_desert", "Camo Netting (Desert)"),
+            Map.entry("camo_net_snow", "Camo Netting (Snow)"),
+            Map.entry("camo_net_top_wood", "Camo Netting Top (Woodland)"),
+            Map.entry("camo_net_top_desert", "Camo Netting Top (Desert)"),
+            Map.entry("camo_net_top_snow", "Camo Netting Top (Snow)"),
+            Map.entry("military_crate_ammo", "Ammo Crate"),
+            Map.entry("military_crate_gun", "Weapon Crate"),
+            Map.entry("military_crate_armor", "Armor Crate"),
+            Map.entry("military_crate_medical", "Medical Crate"),
+            Map.entry("military_crate_explosive", "Explosives Crate"),
+            Map.entry("military_crate_generic_oak", "Supply Crate"),
+            Map.entry("military_crate_generic_jungle", "Supply Crate"),
+            Map.entry("military_crate_generic_birch", "Supply Crate"),
+            Map.entry("military_crate_generic_spruce", "Supply Crate"),
+            Map.entry("door_metal_3x3", "Techdoor"),
+            Map.entry("door_hangar_up_3x3", "Hangar Door (Up)"),
+            Map.entry("door_hangar_down_3x3", "Hangar Door (Down)"),
+            Map.entry("door_nether_3x3", "Techdoor (Nether)"),
             Map.entry("tgx", "TGX"),
             Map.entry("heat_ray_focus", "Reaction Chamber Heat Ray Focus"),
             Map.entry("uv_emitter", "Reaction Chamber UV Emitter"),
@@ -70,6 +124,51 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("pistol_rounds_incendiary", "Pistol Rounds (Incendiary)"),
             Map.entry("rifle_rounds_incendiary", "Rifle Rounds (Incendiary)"),
             Map.entry("ammo_box", "Ammo Box (Small)"),
+            Map.entry("concrete_brown", "Reinforced Concrete"),
+            Map.entry("concrete_brown_light", "Reinforced Concrete (Light)"),
+            Map.entry("concrete_grey", "Reinforced Concrete (Grey)"),
+            Map.entry("concrete_grey_dark", "Reinforced Concrete (Dark)"),
+            Map.entry("concrete_brown_pipes", "Reinforced Concrete (Pipes)"),
+            Map.entry("concrete_brown_light_scaff", "Reinforced Concrete (Steel Bars)"),
+            Map.entry("machine_upgrade_stack", "Machine Upgrade (Stack Operation)"),
+            Map.entry("upgrade_protection_1", "Armor Upgrade: Protection I"),
+            Map.entry("upgrade_blast_protection_1", "Armor Upgrade: Blast Protection I"),
+            Map.entry("upgrade_projectile_protection_1", "Armor Upgrade: Projectile Protection I"),
+            Map.entry("upgrade_protection_2", "Armor Upgrade: Protection II"),
+            Map.entry("upgrade_blast_protection_2", "Armor Upgrade: Blast Protection II"),
+            Map.entry("upgrade_projectile_protection_2", "Armor Upgrade: Projectile Protection II"),
+            Map.entry("upgrade_protection_3", "Armor Upgrade: Protection III"),
+            Map.entry("upgrade_blast_protection_3", "Armor Upgrade: Blast Protection III"),
+            Map.entry("upgrade_projectile_protection_3", "Armor Upgrade: Projectile Protection III"),
+            Map.entry("container_red", "Red Container"),
+            Map.entry("container_green", "Green Container"),
+            Map.entry("container_blue", "Blue Container"),
+            Map.entry("container_orange", "Yellow Container"),
+            Map.entry("panel_large_border", "Steel Panel"),
+            Map.entry("steelframe_blue", "Silver Steel Panel"),
+            Map.entry("steelframe_dark", "Carbon Panel"),
+            Map.entry("steelframe_scaffold", "Dark Scaffold"),
+            Map.entry("nethermetal_panel", "Nether Metal (Plate)"),
+            Map.entry("nethermetal_grate1", "Nether Metal (Grate)"),
+            Map.entry("nethermetal_grate2", "Nether Metal (Small Grate)"),
+            Map.entry("nethermetal_grey_dark", "Nether Metal (Bloody Grey)"),
+            Map.entry("nethermetal_grey", "Nether Metal (Grey)"),
+            Map.entry("nethermetal_grey_tiles", "Nether Metal (Grey Tiles)"),
+            Map.entry("nethermetal_border_red", "Nether Metal (Red Pillar)"),
+            Map.entry("nethermetal_plate_black", "Nether Metal (Dark Pillar)"),
+            Map.entry("nethermetal_plate_red", "Nether Metal (Red Panel)"),
+            Map.entry("nethermetal_border_lava", "Nether Metal (Lava Pillar)"),
+            Map.entry("neontubes2", "Double Neon Lights"),
+            Map.entry("neontubes2_rotated", "Double Neon Lights (Rotated)"),
+            Map.entry("neontubes4", "Quad Neon Lights"),
+            Map.entry("neontubes4_rotated", "Quad Neon Lights (Rotated)"),
+            Map.entry("neonsquare_white", "Square Neon Light"),
+            Map.entry("bugnest_sand", "Hardened Sand"),
+            Map.entry("bugnest_eggs", "Strange Glowing Eggs"),
+            Map.entry("panel_large_border_stairs", "Steel Panel Stairs"),
+            Map.entry("steelframe_dark_stairs", "Carbon Panel Stairs"),
+            Map.entry("concrete_grey_dark_stairs", "Reinforced Concrete Stairs (Dark)"),
+            Map.entry("concrete_brown_light_stairs", "Reinforced Concrete Stairs (Light)"),
             Map.entry("t1_combat_helmet", "Soldier's Helmet"),
             Map.entry("t1_combat_chestplate", "Soldier's Vest"),
             Map.entry("t1_combat_leggings", "Soldier's Pants"),
@@ -185,6 +284,122 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.TOGGLE_SAFE_MODE.getName(), "Toggle Safe Mode");
         add(TGKeyMappings.TOGGLE_STEP_ASSIST.getName(), "Toggle Step Assist");
         addGunTooltips();
+        addMachines();
+    }
+
+    /** Techguns 2 machine screen texts. */
+    private void addMachines() {
+        add("techguns.container.power", "Power");
+        add("techguns.container.power.amount", "Power: %s/%s FE");
+        add("techguns.container.redstone", "Redstone Info");
+        add("techguns.container.redstone.mode", "Required: %s");
+        add("techguns.container.redstone.signal", "Signal: %s");
+        add("techguns.redstonemode.ignore", "ignored");
+        add("techguns.redstonemode.high", "high");
+        add("techguns.redstonemode.low", "low");
+        add("techguns.redstonemode.signal.high", "high");
+        add("techguns.redstonemode.signal.low", "low");
+        add("techguns.container.security.owner", "Owned by: %s");
+        add("techguns.container.security.tooltip", "Security: %s");
+        add("techguns.container.security.tooltip.0", "Public");
+        add("techguns.container.security.tooltip.3", "Owner");
+        add("techguns.container.security.tooltip.description.0", "Anyone can access");
+        add("techguns.container.security.tooltip.description.3", "Only owner can access");
+        add("techguns.container.security.tooltip.descr2", "Only the owner can change this setting");
+        add("techguns.container.security.tooltip.unowned", "Unowned (Replace Block to set ownership)");
+        add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
+        add("techguns.container.metalpress.autosplit", "Stack split:");
+        // Phase 5b3 benches (Techguns 2 / Fabric lang)
+        add("techguns.repairbench.noarmor", "No armor");
+        add("techguns.repairbench.cantrepair", "Can't repair this armor");
+        add("techguns.repairbench.fullcondition", "Armor is fully repaired");
+        add("techguns.repairbench.requiredmats", "Required materials for repair:");
+        add("techguns.item.invalidcamo", "No Camo");
+        add("techguns.gui.xp", "XP: %s");
+        add("techguns.gui.xpcost", "XP Cost: %s");
+        add("techguns.container.ammobench", "Ammo Bench");
+        // Phase 5c multiblocks
+        add("techguns.container.fabricator", "Fabricator");
+        // recipe viewer categories (Techguns 2 container names)
+        add("techguns.container.metalpress", "Metal Press");
+        add("techguns.container.ammopress", "Ammo Press");
+        add("techguns.container.blastfurnace", "Blast Furnace");
+        add("techguns.container.grinder", "Grinder");
+        add("techguns.container.chargingstation", "Charging Station");
+        add("techguns.jei.chance", "Chance: %s%%");
+        add("techguns.container.chemlab", "Chem Lab");
+        add("techguns.container.upgradebench", "Armor Upgrade Bench");
+        add("techguns.container.camobench", "Camo Bench");
+        add("techguns.jei.oredrill.mininglevel", "Mining level: %s");
+        add("techguns.jei.oredrill.oremult", "Ore multiplier: %s");
+        add("techguns.jei.oredrill.powermult", "Power multiplier: %s");
+        add("techguns.jei.reactionchamber.ticks", "Ticks: %s");
+        add("techguns.jei.reactionchamber.intensity", "Intensity: %s (±%s)");
+        add("techguns.jei.reactionchamber.completion", "Completion: %s in %s ticks");
+        add("techguns.jei.reactionchamber.liquid", "Liquid level: %s, uses %s per success");
+        add("techguns.jei.reactionchamber.instability", "Instability: %s%%");
+        add("techguns.jei.reactionchamber.risk", "Risk: %s");
+        add("techguns.container.reactionchamber", "Reaction Chamber");
+        add("techguns.reactionchamber.risk.break_item", "Break Item");
+        add("techguns.reactionchamber.risk.explosion_low", "Small Explosion");
+        add("techguns.reactionchamber.risk.explosion_medium", "Medium Explosion");
+        add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
+        add("entity.techguns.turret", "Turret");
+        add("techguns.container.turretbase", "Turret");
+        add("techguns.turret.health", "Turret Health");
+        add("techguns.turret.targetAnimals", "Target Animals");
+        add("techguns.turret.pvpsetting", "PvP Setting");
+        add("techguns.turret.pvpsetting.0", "§aNo PvP");
+        add("techguns.turret.pvpsetting.1", "Attack §eEnemies");
+        add("techguns.turret.pvpsetting.2", "Attack §6Neutrals");
+        add("techguns.turret.pvpsetting.3", "Attack §cAllies of Team");
+        add("techguns.turret.pvpsetting.4", "Attack §cEveryone except Owner");
+        add("techguns.explosivecharge.radius", "Radius: %s");
+        add("techguns.explosivecharge.length", "Length: %s");
+        add("techguns.explosivecharge.delay", "Delay: %ss");
+        add("techguns.explosivecharge.detonate", "Detonate");
+        add("techguns.configuration.explosiveChargeMaxHardness", "Explosive Charge Max Hardness");
+        add("techguns.configuration.explosiveChargeAdvancedMaxHardness", "Advanced Explosive Charge Max Hardness");
+        add("techguns.container.oredrill", "Ore Drill");
+        add("techguns.container.oredrill.broken", "Multiblock broken");
+        add("techguns.container.oredrill.drillrequired.small", "Requires Small Drill");
+        add("techguns.container.oredrill.drillrequired.medium", "Requires Medium Drill");
+        add("techguns.container.oredrill.drillrequired.large", "Requires Large Drill");
+        add("techguns.msg.error.oredrill.controlleralone", "Can't form multiblock: No connected ore drill engines/rods");
+        add("techguns.msg.error.oredrill.nocluster", "Can't form multiblock: The rods must end at an ore cluster");
+        add("techguns.msg.error.oredrill.rodsize", "Rod must be at least as long as drill diameter and engine size. "
+                + "Engine height must be at least as high as drill radius.");
+        add("techguns.gui.oredrill.rftick", "FE/t");
+        add("techguns.gui.oredrill.orehour", "Ores/h");
+        add("techguns.oredrill.nofuel", "No Fuel");
+        add("techguns.oredrill.currentfuel", "Fuel");
+        add("techguns.oredrill.remaining", "Remaining time");
+        add("techguns.oredrill.ticks", "ticks.");
+        add("techguns.oredrill.drillsize", "Drill Size");
+        add("techguns.oredrill.drillradius", "Drill Radius");
+        add("techguns.oredrill.drillsize.small", "Small Drill");
+        add("techguns.oredrill.drillsize.medium", "Medium Drill");
+        add("techguns.oredrill.drillsize.large", "Large Drill");
+        add("techguns.oredrill.mininglevel", "Ore Drill Mining Level: %s");
+        add("techguns.configuration.ore_drills", "Ore Drills");
+        add("techguns.configuration.oreDrillMultiplierOre", "Ore Drill Ore Multiplier");
+        add("techguns.configuration.oreDrillMultiplierPower", "Ore Drill Power Multiplier");
+        add("techguns.configuration.oreDrillFuelMultiplier", "Ore Drill Fuel Multiplier");
+        add("techguns.configuration.oreDrillFuelValueFuel", "Ore Drill Liquid Fuel Value");
+        add("techguns.container.ammopress.build", "Building:");
+        add("techguns.gui.empty", "Empty");
+        add("techguns.chemlab.dumpinput", "Dump Input Tank");
+        add("techguns.chemlab.dumpoutput", "Dump Output Tank");
+        add("techguns.chemlab.dump.tooltip", "Content will be lost");
+        add("techguns.chemlab.toggledrain", "Toggle drained Tank");
+        add("techguns.chemlab.toggledrain.tooltip.0", "Fluids are drained from Output Tank");
+        add("techguns.chemlab.toggledrain.tooltip.1", "Fluids are drained from Input Tank");
+        add("block.techguns.creeper_acid", "Creeper Acid");
+        add("techguns.container.info.on", "On");
+        add("techguns.container.info.off", "Off");
+        add("techguns.button.switch", "Switch");
+        add("techguns.configuration.machines", "Machines");
+        add("techguns.configuration.machinesNeedNoPower", "Machines Need No Power");
     }
 
     private void addGunTooltips() {

@@ -117,6 +117,11 @@ public final class TGNetwork {
         PacketDistributor.sendToPlayersNear(level, null, x, y, z, radius, payload);
     }
 
+    /** Spawn an FX for one player only (e.g. multiblock error pings). */
+    public static void sendFxTo(net.minecraft.server.level.ServerPlayer player, FxPayloads.SpawnFx payload) {
+        PacketDistributor.sendToPlayer(player, payload);
+    }
+
     /** Spawn an FX at a position for all players within {@code radius} blocks of that position. */
     public static void sendFxNear(ServerLevel level, Vec3 pos, double radius, String name) {
         sendFxNear(level, pos.x, pos.y, pos.z, radius, new FxPayloads.SpawnFx(name, pos.x, pos.y, pos.z));

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "techguns:panel_large_border_stairs"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:panel_large_border"
+  }
+}

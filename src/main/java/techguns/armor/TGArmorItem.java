@@ -37,8 +37,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.crafting.Ingredient;
 import techguns.TGIds;
 import techguns.core.damage.TGDamageCategory;
+import techguns.core.repair.RepairFormula;
 import techguns.registry.TGAttributes;
 
 /**
@@ -47,7 +49,7 @@ import techguns.registry.TGAttributes;
  * attributes add the difference to the category value (see {@code TGArmorFormula}). A worn-out piece (one point of
  * durability left) never breaks but gives no armor and no bonuses until it is repaired.
  */
-public class TGArmorItem extends ArmorItem {
+public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable {
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     /** Bonuses shown as percentages in the tooltip. */
@@ -58,8 +60,13 @@ public class TGArmorItem extends ArmorItem {
     private final TGArmorStats stats;
     /** Bonus attribute -> value of this piece (Techguns 2 armor bonuses), in insertion order for the tooltip. */
     private final Map<Holder<Attribute>, Double> bonuses = new LinkedHashMap<>();
+    /** Techguns 2 {@code setRepairMats}: metal and cloth part, total count and metal share of a full repair. */
     @Nullable
-    private Supplier<? extends ItemLike> repairItem;
+    private Supplier<? extends ItemLike> repairMetal;
+    @Nullable
+    private Supplier<? extends ItemLike> repairCloth;
+    private int repairCount;
+    private float repairMetalRatio;
     /** Custom armor model id (Techguns 2 {@code setArmorModel}), resolved by the client; null = vanilla armor model. */
     @Nullable
     private ResourceLocation armorModel;
@@ -136,10 +143,33 @@ public class TGArmorItem extends ArmorItem {
         return bonus(Attributes.MAX_HEALTH, bonus);
     }
 
-    /** Item that repairs this piece in an anvil (Techguns 2 {@code setRepairMats}: the metal, else the cloth). */
-    public TGArmorItem repairItem(Supplier<? extends ItemLike> item) {
-        this.repairItem = item;
+    /**
+     * Repair Bench materials (Techguns 2 {@code setRepairMats}) with the Techguns 2 defaults per slot: 2 / 4 / 3 / 2
+     * materials, half metal (a third for leggings); without metal or cloth the other part takes all. The anvil
+     * repairs with the metal, else the cloth.
+     */
+    public TGArmorItem repairMats(@Nullable Supplier<? extends ItemLike> metal, @Nullable Supplier<? extends ItemLike> cloth) {
+        this.repairMetal = metal;
+        this.repairCloth = cloth;
+        this.repairCount = switch (getType()) {
+            case CHESTPLATE -> 4;
+            case LEGGINGS -> 3;
+            default -> 2;
+        };
+        this.repairMetalRatio = metal == null ? 0.0f : cloth == null ? 1.0f : getType() == Type.LEGGINGS ? 1.0f / 3.0f : 0.5f;
         return this;
+    }
+
+    /** Overrides the total material count of a full repair. */
+    public TGArmorItem repairCount(int count) {
+        this.repairCount = count;
+        return this;
+    }
+
+    @Nullable
+    private ItemLike anvilRepairItem() {
+        Supplier<? extends ItemLike> item = repairMetal != null ? repairMetal : repairCloth;
+        return item == null ? null : item.get();
     }
 
     /** Renders with a custom armor model, see {@code TGArmorModels}. */
@@ -289,7 +319,31 @@ public class TGArmorItem extends ArmorItem {
 
     @Override
     public boolean isValidRepairItem(ItemStack stack, ItemStack repairCandidate) {
-        return repairItem != null && repairCandidate.is(repairItem.get().asItem());
+        ItemLike item = anvilRepairItem();
+        return item != null && repairCandidate.is(item.asItem());
+    }
+
+    @Override
+    public boolean canRepairOnBench() {
+        return repairCount > 0 && (repairMetal != null || repairCloth != null);
+    }
+
+    /** Techguns 2 {@code getRepairMats}; metal and cloth of the same item are one material. */
+    @Override
+    public List<RepairMaterial> repairCost(int damage, int maxDamage) {
+        int count = RepairFormula.count(damage, maxDamage, repairCount);
+        if (count == 0 || !canRepairOnBench()) {
+            return List.of();
+        }
+        int metal = RepairFormula.metal(count, repairMetalRatio);
+        Map<Item, Integer> counts = new LinkedHashMap<>();
+        if (repairMetal != null && metal > 0) {
+            counts.merge(repairMetal.get().asItem(), metal, Integer::sum);
+        }
+        if (repairCloth != null && count - metal > 0) {
+            counts.merge(repairCloth.get().asItem(), count - metal, Integer::sum);
+        }
+        return counts.entrySet().stream().map(e -> new RepairMaterial(Ingredient.of(e.getKey()), e.getValue())).toList();
     }
 
     // --- Tooltip (Techguns 2 lines, Fabric armor icon row) ---

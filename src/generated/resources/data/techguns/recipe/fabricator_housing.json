@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_carbon"
+    },
+    "p": {
+      "item": "techguns:cybernetic_parts"
+    },
+    "s": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    "sms",
+    "pep",
+    "scs"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:fabricator_housing"
+  }
+}

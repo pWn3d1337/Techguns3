@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:chem_lab"
+    },
+    "e": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "m": {
+      "item": "techguns:mechanical_parts_carbon"
+    },
+    "p": {
+      "item": "techguns:cybernetic_parts"
+    },
+    "s": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    "sms",
+    "pcp",
+    "ses"
+  ],
+  "result": {
+    "count": 9,
+    "id": "techguns:reaction_chamber_housing"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:plates/obsidian_steel"
+  },
+  "result": {
+    "count": 16,
+    "id": "techguns:advanced_rounds"
+  },
+  "second": {
+    "item": "techguns:tgx"
+  }
+}

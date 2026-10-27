@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:iron_bars"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "bbb",
+    "bpb",
+    "bbb"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:ore_drill_scaffold"
+  }
+}

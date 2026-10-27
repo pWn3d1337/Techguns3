@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "formed=false,hidden=false": {
+      "model": "techguns:block/ore_drill_scaffold"
+    },
+    "formed=false,hidden=true": {
+      "model": "techguns:block/ore_drill_scaffold"
+    },
+    "formed=true,hidden=false": {
+      "model": "techguns:block/ore_drill_scaffold_formed"
+    },
+    "formed=true,hidden=true": {
+      "model": "techguns:block/ore_drill_scaffold_hidden"
+    }
+  }
+}

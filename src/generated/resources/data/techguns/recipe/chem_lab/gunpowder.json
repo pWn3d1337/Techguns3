@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "minecraft:redstone"
+  },
+  "fluid": {
+    "amount": 250,
+    "tag": "minecraft:water"
+  },
+  "power_per_tick": 5,
+  "result": {
+    "count": 1,
+    "id": "minecraft:gunpowder"
+  },
+  "second": {
+    "count": 1,
+    "item": "minecraft:coal"
+  }
+}

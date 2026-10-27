@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "pcp",
+    "cec",
+    "pcp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:ore_drill_controller"
+  }
+}

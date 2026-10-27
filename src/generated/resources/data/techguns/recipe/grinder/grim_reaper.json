@@ -1,0 +1,26 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:grim_reaper"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 32,
+        "id": "techguns:obsidian_steel_ingot"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:circuit_board_elite"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:carbon_fibers"
+      }
+    }
+  ]
+}

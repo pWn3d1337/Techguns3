@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "tag": "c:ingots/gold"
+    },
+    "i": {
+      "item": "techguns:steam_armor_plate"
+    },
+    "p": {
+      "tag": "c:plates/obsidian_steel"
+    }
+  },
+  "pattern": [
+    "pip",
+    "igi",
+    "pip"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:upgrade_projectile_protection_2"
+  }
+}

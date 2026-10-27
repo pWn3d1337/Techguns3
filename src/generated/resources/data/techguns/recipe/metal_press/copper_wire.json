@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:plates/copper"
+  },
+  "result": {
+    "count": 8,
+    "id": "techguns:copper_wire"
+  },
+  "second": {
+    "tag": "c:plates/copper"
+  }
+}

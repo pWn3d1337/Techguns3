@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "tag": "c:concretes"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "i": {
+      "item": "techguns:circuit_board"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    },
+    "r": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "pip",
+    "cec",
+    "prp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:turret"
+  }
+}

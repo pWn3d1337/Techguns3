@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:iron_bars"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    }
+  },
+  "pattern": [
+    "bbb",
+    "beb",
+    "bbb"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:ore_drill_engine"
+  }
+}

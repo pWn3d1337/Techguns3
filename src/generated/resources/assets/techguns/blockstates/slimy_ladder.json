@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "techguns:block/slimy_ladder",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "techguns:block/slimy_ladder",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "techguns:block/slimy_ladder",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "techguns:block/slimy_ladder",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "predicates": {
+              "minecraft:enchantments": [
+                {
+                  "enchantments": "minecraft:silk_touch",
+                  "levels": {
+                    "min": 1
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "techguns:military_crate_armor"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "predicates": {
+                "minecraft:enchantments": [
+                  {
+                    "enchantments": "minecraft:silk_touch",
+                    "levels": {
+                      "min": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t1_combat_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_combat_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "techguns:t2_commando_boots"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "techguns:blocks/military_crate_armor"
+}

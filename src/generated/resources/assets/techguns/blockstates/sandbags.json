@@ -1,0 +1,87 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_center"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_side",
+        "uvlock": true
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_side",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_side",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_side",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_corner",
+        "uvlock": true
+      },
+      "when": {
+        "corner_ne": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_corner",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "corner_es": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_corner",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "corner_sw": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/sandbags_corner",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "corner_wn": "true"
+      }
+    }
+  ]
+}

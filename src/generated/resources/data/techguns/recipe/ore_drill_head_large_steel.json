@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "d": {
+      "item": "techguns:ore_drill_head_medium_steel"
+    }
+  },
+  "pattern": [
+    "d d",
+    " d "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:ore_drill_head_large_steel"
+  }
+}

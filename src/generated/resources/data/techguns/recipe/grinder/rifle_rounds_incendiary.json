@@ -1,0 +1,34 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:rifle_rounds_incendiary"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:lead_nugget"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:copper_nugget"
+      }
+    },
+    {
+      "chance": 0.125,
+      "item": {
+        "count": 1,
+        "id": "minecraft:gunpowder"
+      }
+    },
+    {
+      "chance": 0.125,
+      "item": {
+        "count": 1,
+        "id": "minecraft:blaze_powder"
+      }
+    }
+  ]
+}

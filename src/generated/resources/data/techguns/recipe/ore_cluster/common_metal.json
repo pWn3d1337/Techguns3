@@ -1,0 +1,27 @@
+{
+  "type": "techguns:ore_cluster",
+  "cluster": "techguns:ore_cluster_common_metal",
+  "entries": [
+    {
+      "item": {
+        "item": "minecraft:iron_ore"
+      },
+      "weight": 45
+    },
+    {
+      "item": {
+        "item": "minecraft:copper_ore"
+      },
+      "weight": 30
+    },
+    {
+      "item": {
+        "item": "techguns:tin_ore"
+      },
+      "weight": 25
+    }
+  ],
+  "mining_level": 0,
+  "ore_multiplier": 5.0,
+  "power_multiplier": 0.2
+}

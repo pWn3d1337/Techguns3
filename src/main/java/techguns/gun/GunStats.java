@@ -9,7 +9,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * Numeric gun statistics. Immutable and Codec-backed so they can later be loaded from datapacks
  * (design doc Q4). Behaviour that is not a number (projectiles, sounds, special logic) lives on the gun item.
  */
-public record GunStats(Firing firing, Damage damage, Projectile projectile, Optional<Zoom> zoom, GunHandType handType, HoldType holdType) {
+public record GunStats(Firing firing, Damage damage, Projectile projectile, Optional<Zoom> zoom, GunHandType handType, HoldType holdType,
+                       Ai ai) {
 
     public static final Codec<GunStats> CODEC = RecordCodecBuilder.create(i -> i.group(
             Firing.CODEC.fieldOf("firing").forGetter(GunStats::firing),
@@ -17,7 +18,8 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
             Projectile.CODEC.fieldOf("projectile").forGetter(GunStats::projectile),
             Zoom.CODEC.optionalFieldOf("zoom").forGetter(GunStats::zoom),
             GunHandType.CODEC.optionalFieldOf("hand_type", GunHandType.TWO_HANDED).forGetter(GunStats::handType),
-            HoldType.CODEC.optionalFieldOf("hold_type", HoldType.CROSSBOW).forGetter(GunStats::holdType)
+            HoldType.CODEC.optionalFieldOf("hold_type", HoldType.CROSSBOW).forGetter(GunStats::holdType),
+            Ai.CODEC.optionalFieldOf("ai", Ai.DEFAULT).forGetter(GunStats::ai)
     ).apply(i, GunStats::new));
 
     /**
@@ -110,6 +112,25 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
     }
 
     /**
+     * How NPCs and turrets use the gun (Techguns 2 / Fabric {@code setAIStats}, ranged attack AI).
+     *
+     * @param attackRange     distance in blocks the shooter attacks from
+     * @param attackTime      ticks between attacks (bursts)
+     * @param burstCount      extra shots per attack
+     * @param burstAttackTime ticks between the shots of a burst
+     */
+    public record Ai(float attackRange, int attackTime, int burstCount, int burstAttackTime) {
+        /** Techguns 2 {@code GenericGun} defaults. */
+        public static final Ai DEFAULT = new Ai(15.0f, 60, 0, 0);
+        public static final Codec<Ai> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.FLOAT.fieldOf("attack_range").forGetter(Ai::attackRange),
+                Codec.INT.fieldOf("attack_time").forGetter(Ai::attackTime),
+                Codec.INT.optionalFieldOf("burst_count", 0).forGetter(Ai::burstCount),
+                Codec.INT.optionalFieldOf("burst_attack_time", 0).forGetter(Ai::burstAttackTime)
+        ).apply(i, Ai::new));
+    }
+
+    /**
      * Starts a builder with the required base stats, using the Techguns 2 constructor order.
      *
      * @param range maximum range in blocks; damage drop defaults to none
@@ -148,6 +169,7 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
         private Zoom zoom;
         private GunHandType handType = GunHandType.TWO_HANDED;
         private HoldType holdType = HoldType.CROSSBOW;
+        private Ai ai = Ai.DEFAULT;
 
         private Builder(boolean semiAuto, int fireDelay, int clipSize, int reloadTicks, float damage, float range, float spread) {
             this.semiAuto = semiAuto;
@@ -242,12 +264,17 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
             return this;
         }
 
+        public Builder ai(float attackRange, int attackTime, int burstCount, int burstAttackTime) {
+            this.ai = new Ai(attackRange, attackTime, burstCount, burstAttackTime);
+            return this;
+        }
+
         public GunStats build() {
             return new GunStats(
                     new Firing(semiAuto, fireDelay, clipSize, reloadTicks, ammoPerReload, recoilTicks, muzzleFlashTicks, silenced, continuousAnimation),
                     new Damage(damage, damageMin, dropStart, dropEnd, penetration, radius),
                     new Projectile(speed, range, spread, gravity, forwardOffset, pellets, pelletSpread, burst),
-                    Optional.ofNullable(zoom), handType, holdType);
+                    Optional.ofNullable(zoom), handType, holdType, ai);
         }
     }
 }

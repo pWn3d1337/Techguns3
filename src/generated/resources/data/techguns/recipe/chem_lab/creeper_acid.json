@@ -1,0 +1,21 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "techguns:biomass"
+  },
+  "fluid": {
+    "amount": 1000,
+    "tag": "minecraft:water"
+  },
+  "fluid_result": {
+    "amount": 1000,
+    "id": "techguns:creeper_acid"
+  },
+  "power_per_tick": 20,
+  "second": {
+    "count": 1,
+    "item": "minecraft:gunpowder"
+  }
+}

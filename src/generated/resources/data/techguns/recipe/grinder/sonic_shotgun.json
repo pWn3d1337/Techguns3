@@ -1,0 +1,32 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "item": "techguns:sonic_shotgun"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 3,
+        "id": "techguns:carbon_fibers"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:plastic_sheet"
+      }
+    },
+    {
+      "item": {
+        "count": 2,
+        "id": "minecraft:redstone"
+      }
+    },
+    {
+      "item": {
+        "count": 1,
+        "id": "techguns:titanium_ingot"
+      }
+    }
+  ]
+}

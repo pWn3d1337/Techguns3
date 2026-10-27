@@ -50,7 +50,7 @@ public class TGGunTests {
     public static void m4BulletHurtsZombie(GameTestHelper helper) {
         Player player = shooter(helper);
         ItemStack gun = m4(player, 30);
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(5, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(5, 1, 4));
         float health = zombie.getHealth();
 
         ((GunItem) gun.getItem()).shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
@@ -64,7 +64,7 @@ public class TGGunTests {
         Player player = shooter(helper);
         ItemStack gun = new ItemStack(TGGuns.LASERGUN.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, gun);
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 4));
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(6, 1, 4));
         zombie.getAttribute(Attributes.ARMOR).setBaseValue(0.0);
         float health = zombie.getHealth();
 
@@ -82,8 +82,8 @@ public class TGGunTests {
         Player player = shooter(helper);
         ItemStack gun = new ItemStack(TGGuns.ROCKET_LAUNCHER.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, gun);
-        Zombie target = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 4));
-        Zombie bystander = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(6, 1, 5));
+        Zombie target = TGTestTargets.husk(helper, new BlockPos(6, 1, 4));
+        Zombie bystander = TGTestTargets.husk(helper, new BlockPos(6, 1, 5));
 
         ((GunItem) gun.getItem()).shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
 

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "g": {
+      "item": "minecraft:glass_bottle"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    },
+    "r": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "igi",
+    "geg",
+    "iri"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:chem_lab"
+  }
+}

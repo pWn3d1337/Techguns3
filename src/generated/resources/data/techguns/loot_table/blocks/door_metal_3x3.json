@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "techguns:door_metal_3x3",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "col": "1",
+            "row": "1"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "techguns:door_metal_3x3"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "techguns:blocks/door_metal_3x3"
+}

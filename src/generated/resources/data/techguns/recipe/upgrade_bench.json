@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "e": {
+      "tag": "c:gems/emerald"
+    },
+    "o": {
+      "tag": "c:plates/obsidian_steel"
+    },
+    "s": {
+      "tag": "c:obsidians"
+    }
+  },
+  "pattern": [
+    " c ",
+    "oeo",
+    "sos"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:upgrade_bench"
+  }
+}

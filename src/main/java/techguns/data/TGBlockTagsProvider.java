@@ -22,6 +22,36 @@ public class TGBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        // decorative blocks are mined with a pickaxe (Techguns 2 rock/iron materials)
+        TGBlocks.cubeBlocks().stream().filter(block -> block != TGBlocks.BUGNEST_SAND)
+                .forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
+        TGBlocks.stairBlocks().forEach(block -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            tag(BlockTags.STAIRS).add(block.get());
+        });
+        // Techguns 2: hardened bug nest sand is dug with a shovel
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(TGBlocks.BUGNEST_SAND.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TGBlocks.METAL_PRESS.get(), TGBlocks.AMMO_PRESS.get(), TGBlocks.BLAST_FURNACE.get(),
+                TGBlocks.GRINDER.get(), TGBlocks.CHEM_LAB.get(), TGBlocks.CHARGING_STATION.get(), TGBlocks.REPAIR_BENCH.get(),
+                TGBlocks.CAMO_BENCH.get(), TGBlocks.UPGRADE_BENCH.get(), TGBlocks.AMMO_BENCH.get(), TGBlocks.FABRICATOR_HOUSING.get(),
+                TGBlocks.FABRICATOR_GLASS.get(), TGBlocks.FABRICATOR_CONTROLLER.get(), TGBlocks.REACTION_CHAMBER_HOUSING.get(),
+                TGBlocks.REACTION_CHAMBER_GLASS.get(), TGBlocks.REACTION_CHAMBER_CONTROLLER.get(), TGBlocks.ORE_DRILL_FRAME.get(),
+                TGBlocks.ORE_DRILL_SCAFFOLD.get(), TGBlocks.ORE_DRILL_ROD.get(), TGBlocks.ORE_DRILL_ENGINE.get(), TGBlocks.ORE_DRILL_CONTROLLER.get(),
+                TGBlocks.EXPLOSIVE_CHARGE.get(), TGBlocks.EXPLOSIVE_CHARGE_ADVANCED.get(), TGBlocks.TURRET.get());
+        TGBlocks.ORE_CLUSTERS.forEach(block -> tag(techguns.registry.TGTags.Blocks.ORE_CLUSTERS).add(block.get()));
+        // Phase 5a2: Techguns 2 iron blocks are mined with a pickaxe (no tool needed for drops), crates are wood
+        TGBlocks.LAMPS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
+        TGBlocks.LANTERNS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
+        TGBlocks.LADDERS.forEach(block -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            tag(BlockTags.CLIMBABLE).add(block.get());
+        });
+        tag(BlockTags.CLIMBABLE).add(TGBlocks.SLIMY_LADDER.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(TGBlocks.SLIMY_LADDER.get());
+        TGBlocks.MILITARY_CRATES.forEach(block -> tag(BlockTags.MINEABLE_WITH_AXE).add(block.get()));
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TGBlocks.BUNKER_DOOR.get());
+        tag(BlockTags.DOORS).add(TGBlocks.BUNKER_DOOR.get());
+        TGBlocks.DOORS_3X3.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
         // Ores
         ore("tin", TGBlocks.TIN_ORE, TGBlocks.DEEPSLATE_TIN_ORE, BlockTags.NEEDS_STONE_TOOL);
         ore("lead", TGBlocks.LEAD_ORE, TGBlocks.DEEPSLATE_LEAD_ORE, BlockTags.NEEDS_IRON_TOOL);

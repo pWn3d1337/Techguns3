@@ -1,0 +1,28 @@
+{
+  "type": "techguns:fabricator",
+  "input": {
+    "ingredient": {
+      "tag": "c:ingots/gold"
+    }
+  },
+  "plate": {
+    "ingredient": {
+      "item": "techguns:plastic_sheet"
+    }
+  },
+  "powder": {
+    "count": 3,
+    "ingredient": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:energy_cell_empty"
+  },
+  "wires": {
+    "ingredient": {
+      "item": "techguns:copper_wire"
+    }
+  }
+}

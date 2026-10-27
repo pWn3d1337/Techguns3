@@ -1,0 +1,25 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "tag": "minecraft:water"
+  },
+  "focus": {
+    "item": "techguns:heat_ray_focus"
+  },
+  "input": {
+    "item": "techguns:yellowcake"
+  },
+  "intensity": 7,
+  "liquid_consumption": 1000,
+  "liquid_level": 3,
+  "outputs": [
+    {
+      "count": 1,
+      "id": "techguns:enriched_uranium"
+    }
+  ],
+  "power_per_tick": 250000,
+  "required_completion": 4,
+  "risk": "break_item",
+  "ticks": 5
+}

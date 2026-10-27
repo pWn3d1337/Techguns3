@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:plates/iron"
+  },
+  "result": {
+    "count": 16,
+    "id": "techguns:grenade_40mm"
+  },
+  "second": {
+    "item": "minecraft:tnt"
+  }
+}

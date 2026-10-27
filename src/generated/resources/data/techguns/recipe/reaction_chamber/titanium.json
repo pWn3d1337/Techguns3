@@ -1,0 +1,29 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "fluid": "techguns:creeper_acid"
+  },
+  "focus": {
+    "item": "techguns:heat_ray_focus"
+  },
+  "input": {
+    "tag": "c:ores/titanium"
+  },
+  "intensity": 5,
+  "liquid_consumption": 100,
+  "liquid_level": 3,
+  "outputs": [
+    {
+      "count": 2,
+      "id": "techguns:raw_titanium"
+    },
+    {
+      "count": 1,
+      "id": "minecraft:iron_ore"
+    }
+  ],
+  "power_per_tick": 25000,
+  "required_completion": 1,
+  "risk": "break_item",
+  "ticks": 2
+}

@@ -1,0 +1,8 @@
+{
+  "type": "techguns:upgrade_bench",
+  "enchantment": "minecraft:projectile_protection",
+  "level": 2,
+  "upgrade": {
+    "item": "techguns:upgrade_projectile_protection_2"
+  }
+}

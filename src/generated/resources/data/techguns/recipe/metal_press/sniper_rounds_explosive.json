@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "item": "techguns:sniper_rounds_incendiary"
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:sniper_rounds_explosive"
+  },
+  "second": {
+    "item": "techguns:tgx"
+  }
+}
