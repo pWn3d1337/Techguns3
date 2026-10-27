@@ -22,5 +22,7 @@ public final class TGMachineScreens {
         event.register(TGMenus.FABRICATOR.get(), FabricatorScreen::new);
         event.register(TGMenus.REACTION_CHAMBER.get(), ReactionChamberScreen::new);
         event.register(TGMenus.ORE_DRILL.get(), OreDrillScreen::new);
+        event.register(TGMenus.EXPLOSIVE_CHARGE.get(), ExplosiveChargeScreen::new);
+        event.register(TGMenus.TURRET.get(), TurretScreen::new);
     }
 }

@@ -129,6 +129,12 @@ public final class TGItems {
     public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_3 = simple("upgrade_projectile_protection_3");
     public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_3 = simple("upgrade_blast_protection_3");
 
+    // --- Turret armor plates (Techguns 2 TURRET_ARMOR_*, tier 1-4) ---
+    public static final DeferredItem<Item> TURRET_ARMOR_IRON = simple("turret_armor_iron");
+    public static final DeferredItem<Item> TURRET_ARMOR_STEEL = simple("turret_armor_steel");
+    public static final DeferredItem<Item> TURRET_ARMOR_OBSIDIAN_STEEL = simple("turret_armor_obsidian_steel");
+    public static final DeferredItem<Item> TURRET_ARMOR_CARBON = simple("turret_armor_carbon");
+
     // --- Ore Drill heads (Techguns 2 OREDRILLHEAD_*): size by drill, mining level steel 1, obsidian steel 2, carbon 3 ---
     private static final List<DeferredItem<techguns.item.OreDrillHeadItem>> ORE_DRILL_HEADS = new ArrayList<>();
     public static final DeferredItem<techguns.item.OreDrillHeadItem> ORE_DRILL_HEAD_SMALL_STEEL = drillHead("small_steel", techguns.item.OreDrillHeadItem.Size.SMALL, 1);

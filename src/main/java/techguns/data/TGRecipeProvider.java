@@ -90,6 +90,38 @@ public class TGRecipeProvider extends RecipeProvider {
         buildMachineRecipes(output);
         buildSlotItemRecipes(output);
         buildOreDrillRecipes(output);
+        buildExplosiveChargeRecipes(output);
+        buildTurretRecipes(output);
+    }
+
+    /** Techguns 2 turret base and armor plates. */
+    private void buildTurretRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGBlocks.TURRET.get()).pattern("pip").pattern("cec").pattern("prp")
+                .define('p', TGTags.Items.plate("iron")).define('i', TGItems.CIRCUIT_BOARD.get()).define('c', Tags.Items.CONCRETES)
+                .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+        turretArmor(output, TGItems.TURRET_ARMOR_IRON.get(), "iron");
+        turretArmor(output, TGItems.TURRET_ARMOR_STEEL.get(), "steel");
+        turretArmor(output, TGItems.TURRET_ARMOR_OBSIDIAN_STEEL.get(), "obsidian_steel");
+        turretArmor(output, TGItems.TURRET_ARMOR_CARBON.get(), "carbon");
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(TGItems.TURRET_ARMOR_IRON.get()), RecipeCategory.MISC, new ItemStack(Items.IRON_INGOT, 5), 0.0f, 200)
+                .unlockedBy(getHasName(TGItems.TURRET_ARMOR_IRON.get()), has(TGItems.TURRET_ARMOR_IRON.get()))
+                .save(output, TGIds.id("iron_ingot_from_turret_armor"));
+    }
+
+    private void turretArmor(RecipeOutput output, Item plate, String material) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, plate).pattern("ppp").pattern(" p ").pattern(" p ").define('p', TGTags.Items.plate(material))
+                .unlockedBy("has_plate", has(TGTags.Items.plate(material))).save(output);
+    }
+
+    /** Techguns 2 mining charges. */
+    private void buildExplosiveChargeRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.EXPLOSIVE_CHARGE.get(), 8).pattern("rtr").pattern("tct").pattern("rtr")
+                .define('r', TGItems.RUBBER_BAR.get()).define('t', Items.TNT).define('c', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(Items.TNT), has(Items.TNT)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGBlocks.EXPLOSIVE_CHARGE_ADVANCED.get(), 4).pattern("rtr").pattern("tct").pattern("rtr")
+                .define('r', TGItems.PLASTIC_SHEET.get()).define('t', TGItems.TGX.get()).define('c', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(TGItems.TGX.get()), has(TGItems.TGX.get())).save(output);
     }
 
     /** Techguns 2 Ore Drill blocks and heads, and the ore clusters (Techguns 2 {@code TGOreClusters} and its config). */

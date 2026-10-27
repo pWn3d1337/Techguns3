@@ -1,5 +1,6 @@
 package techguns.data;
 
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -320,6 +321,30 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         modelMachine(TGBlocks.UPGRADE_BENCH, "upgrade_bench_base", "upgrade_bench_base");
         modelMachine(TGBlocks.AMMO_BENCH, "ammo_bench_base", "ammo_bench_base");
         multiblocks();
+        machine(TGBlocks.TURRET, "turret_base");
+        explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE, "tnt_charge");
+        explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE_ADVANCED, "c4_charge");
+    }
+
+    /** Techguns 2 charge models (wall side south), turned to the wall they stick to; armed charges change texture. */
+    private void explosiveCharge(DeferredBlock<techguns.block.ExplosiveChargeBlock> block, String texture) {
+        ModelFile parent = new ModelFile.UncheckedModelFile(modLoc("block/" + texture + "_base"));
+        ModelFile unarmed = models().getBuilder("block/" + path(block)).parent(parent).texture("0", tex(texture)).texture("particle", tex(texture));
+        ModelFile armed = models().getBuilder("block/" + path(block) + "_armed").parent(parent).texture("0", tex(texture + "_armed"))
+                .texture("particle", tex(texture + "_armed"));
+        getVariantBuilder(block.get()).forAllStates(state -> {
+            Direction facing = state.getValue(techguns.block.ExplosiveChargeBlock.FACING);
+            return net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()
+                    .modelFile(state.getValue(techguns.block.ExplosiveChargeBlock.ARMED) ? armed : unarmed)
+                    .rotationX(facing == Direction.DOWN ? 270 : facing == Direction.UP ? 90 : 0)
+                    .rotationY(switch (facing) {
+                        case NORTH -> 180;
+                        case EAST -> 270;
+                        case WEST -> 90;
+                        default -> 0;
+                    }).build();
+        });
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
     }
 
     /**

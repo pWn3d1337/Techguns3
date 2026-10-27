@@ -45,6 +45,13 @@ public final class TGConfig {
             .comment("Experience points per enchantment level an Upgrade Bench upgrade costs.")
             .defineInRange("upgradeXpCost", 20, 0, 10000);
 
+    public static final ModConfigSpec.DoubleValue EXPLOSIVE_CHARGE_MAX_HARDNESS = COMMON
+            .comment("Highest block hardness normal explosive charges can break (obsidian is 50).")
+            .defineInRange("explosiveChargeMaxHardness", 30.0, 0.0, Double.MAX_VALUE);
+    public static final ModConfigSpec.DoubleValue EXPLOSIVE_CHARGE_ADVANCED_MAX_HARDNESS = COMMON
+            .comment("Highest block hardness advanced explosive charges can break (obsidian is 50).")
+            .defineInRange("explosiveChargeAdvancedMaxHardness", 100.0, 0.0, Double.MAX_VALUE);
+
     static {
         COMMON.pop();
         COMMON.push("ore_drills");

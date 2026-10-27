@@ -60,6 +60,10 @@ public final class TGMenus {
             () -> IMenuTypeExtension.create(ReactionChamberMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.OreDrillMenu>> ORE_DRILL = MENUS.register("ore_drill",
             () -> IMenuTypeExtension.create(techguns.machine.OreDrillMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.TurretMenu>> TURRET = MENUS.register("turret",
+            () -> IMenuTypeExtension.create(techguns.machine.TurretMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.ExplosiveChargeMenu>> EXPLOSIVE_CHARGE = MENUS.register(
+            "explosive_charge", () -> IMenuTypeExtension.create(techguns.machine.ExplosiveChargeMenu::new));
 
     private TGMenus() {
     }

@@ -149,6 +149,88 @@ public class GunItem extends Item {
         playFireSounds(level, player, hand, state);
     }
 
+    /**
+     * Techguns 2 {@code fireWeaponFromNPC}: one shot of an NPC or turret. The shooter keeps its own attack timing and
+     * ammo; spread is the zoomed spread (NPCs aim) times {@code accuracyScale}. Server only.
+     */
+    public void fireFromNpc(LivingEntity shooter, ItemStack stack, float damageScale, float accuracyScale, FirePos firePos) {
+        Level level = shooter.level();
+        if (level.isClientSide) {
+            return;
+        }
+        float spreadMultiplier = stats.zoom().map(GunStats.Zoom::spreadMultiplier).orElse(1.0f) * accuracyScale;
+        fireProjectiles(level, shooter, stack, spreadMultiplier, damageScale, firePos, null);
+        level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(), sounds.fire().get(), shooter.getSoundSource(), SOUND_VOLUME, 1.0f);
+    }
+
+    /**
+     * Techguns 2 {@code TurretTileEnt.doReload}: loads the gun from the slots {@code from..to} of {@code handler}
+     * (the loaded variant first, then any other); empty magazines go to {@code empties}. False without ammo.
+     */
+    public boolean reloadFrom(ItemStack stack, net.neoforged.neoforge.items.IItemHandler handler, int from, int to,
+                              java.util.function.Consumer<ItemStack> empties) {
+        GunAmmo current = GunData.ammo(stack);
+        String variant = null;
+        if (hasAll(handler, from, to, ammoType().ammoStacks(current.variant()))) {
+            variant = current.variant();
+        } else {
+            for (AmmoType.Variant candidate : ammoType().variants()) {
+                if (hasAll(handler, from, to, ammoType().ammoStacks(candidate.key()))) {
+                    variant = candidate.key();
+                    break;
+                }
+            }
+        }
+        if (variant == null) {
+            return false;
+        }
+        List<ItemStack> ammo = ammoType().ammoStacks(variant);
+        takeAll(handler, from, to, ammo);
+        ammoType().emptyStacks().forEach(empties);
+        GunStats.Firing firing = stats.firing();
+        int loaded = firing.clipSize();
+        if (firing.ammoPerReload() > 1) {
+            int items = 1;
+            while (items < firing.ammoPerReload() && hasAll(handler, from, to, ammo)) {
+                takeAll(handler, from, to, ammo);
+                items++;
+            }
+            loaded = Math.min(firing.clipSize(), items * (firing.clipSize() / firing.ammoPerReload()));
+        }
+        GunData.setAmmo(stack, new GunAmmo(loaded, variant));
+        return true;
+    }
+
+    private static boolean hasAll(net.neoforged.neoforge.items.IItemHandler handler, int from, int to, List<ItemStack> wanted) {
+        if (wanted.isEmpty()) {
+            return false;
+        }
+        for (ItemStack want : wanted) {
+            int count = 0;
+            for (int slot = from; slot <= to; slot++) {
+                ItemStack present = handler.getStackInSlot(slot);
+                if (ItemStack.isSameItemSameComponents(present, want)) {
+                    count += present.getCount();
+                }
+            }
+            if (count < want.getCount()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void takeAll(net.neoforged.neoforge.items.IItemHandler handler, int from, int to, List<ItemStack> wanted) {
+        for (ItemStack want : wanted) {
+            int left = want.getCount();
+            for (int slot = from; slot <= to && left > 0; slot++) {
+                if (ItemStack.isSameItemSameComponents(handler.getStackInSlot(slot), want)) {
+                    left -= handler.extractItem(slot, left, false).getCount();
+                }
+            }
+        }
+    }
+
     private void playFireSounds(Level level, Player player, InteractionHand hand, ShooterState state) {
         if (sounds.maxLoopDelay() > 0 && sounds.fireStart() != null && state.loopSoundDelay(hand) <= 0) {
             playSound(level, player, sounds.fireStart().get(), SOUND_VOLUME);

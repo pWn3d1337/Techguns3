@@ -1,0 +1,7 @@
+{
+  "parent": "techguns:block/tnt_charge_base",
+  "textures": {
+    "0": "techguns:block/tnt_charge",
+    "particle": "techguns:block/tnt_charge"
+  }
+}

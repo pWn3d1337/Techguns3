@@ -29,6 +29,12 @@ public class TGLanguageProvider extends LanguageProvider {
     private static final Map<String, String> NAME_OVERRIDES = Map.ofEntries(
             Map.entry("biomass", "Bio Mass"),
             // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
+            Map.entry("explosive_charge", "Mining Charge"),
+            Map.entry("turret_armor_iron", "Turret Armor (Iron)"),
+            Map.entry("turret_armor_steel", "Turret Armor (Steel)"),
+            Map.entry("turret_armor_obsidian_steel", "Turret Armor (Obsidian Steel)"),
+            Map.entry("turret_armor_carbon", "Turret Armor (Carbon)"),
+            Map.entry("explosive_charge_advanced", "Advanced Mining Charge"),
             Map.entry("ore_cluster_coal", "Ore Cluster (Coal)"),
             Map.entry("ore_cluster_common_metal", "Ore Cluster (Common Metal)"),
             Map.entry("ore_cluster_rare_metal", "Ore Cluster (Rare Metal)"),
@@ -319,6 +325,22 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.reactionchamber.risk.explosion_low", "Small Explosion");
         add("techguns.reactionchamber.risk.explosion_medium", "Medium Explosion");
         add("techguns.msg.error.multiblockinvalid", "Can't form multiblock: Invalid block placement");
+        add("entity.techguns.turret", "Turret");
+        add("techguns.container.turretbase", "Turret");
+        add("techguns.turret.health", "Turret Health");
+        add("techguns.turret.targetAnimals", "Target Animals");
+        add("techguns.turret.pvpsetting", "PvP Setting");
+        add("techguns.turret.pvpsetting.0", "§aNo PvP");
+        add("techguns.turret.pvpsetting.1", "Attack §eEnemies");
+        add("techguns.turret.pvpsetting.2", "Attack §6Neutrals");
+        add("techguns.turret.pvpsetting.3", "Attack §cAllies of Team");
+        add("techguns.turret.pvpsetting.4", "Attack §cEveryone except Owner");
+        add("techguns.explosivecharge.radius", "Radius: %s");
+        add("techguns.explosivecharge.length", "Length: %s");
+        add("techguns.explosivecharge.delay", "Delay: %ss");
+        add("techguns.explosivecharge.detonate", "Detonate");
+        add("techguns.configuration.explosiveChargeMaxHardness", "Explosive Charge Max Hardness");
+        add("techguns.configuration.explosiveChargeAdvancedMaxHardness", "Advanced Explosive Charge Max Hardness");
         add("techguns.container.oredrill", "Ore Drill");
         add("techguns.container.oredrill.broken", "Multiblock broken");
         add("techguns.container.oredrill.drillrequired.small", "Requires Small Drill");

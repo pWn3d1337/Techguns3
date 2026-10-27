@@ -262,6 +262,15 @@ public final class TGBlocks {
     public static final DeferredBlock<MultiblockControllerBlock> ORE_DRILL_CONTROLLER = withItem("ore_drill_controller",
             () -> new MultiblockControllerBlock(machine(), TGBlockEntities.ORE_DRILL));
 
+    /** Techguns 2 turret base; base and turret are drawn by renderers. */
+    public static final DeferredBlock<techguns.block.TurretBlock> TURRET = withItem("turret", () -> new techguns.block.TurretBlock(machine()));
+
+    // --- Explosive charges (Phase 5d; Techguns 2 explosive_charge variants) ---
+    public static final DeferredBlock<techguns.block.ExplosiveChargeBlock> EXPLOSIVE_CHARGE = withItem("explosive_charge",
+            () -> new techguns.block.ExplosiveChargeBlock(charge(), techguns.machine.ExplosiveChargeBlockEntity.Kind.TNT));
+    public static final DeferredBlock<techguns.block.ExplosiveChargeBlock> EXPLOSIVE_CHARGE_ADVANCED = withItem("explosive_charge_advanced",
+            () -> new techguns.block.ExplosiveChargeBlock(charge(), techguns.machine.ExplosiveChargeBlockEntity.Kind.ADVANCED));
+
     // --- Ore clusters (Techguns 2 TGOreClusters): unbreakable Ore Drill targets, placed by worldgen (Phase 7) ---
     public static final DeferredBlock<Block> ORE_CLUSTER_COAL = oreCluster("coal");
     public static final DeferredBlock<Block> ORE_CLUSTER_COMMON_METAL = oreCluster("common_metal");
@@ -353,6 +362,12 @@ public final class TGBlocks {
     /** Full cube blocks with one texture that drop themselves (datagen). */
     public static List<DeferredBlock<? extends Block>> cubeBlocks() {
         return Collections.unmodifiableList(CUBE_BLOCKS);
+    }
+
+    /** Techguns 2 {@code BasicMachine} with the explosive charge's small box: iron, hardness 4, no tool needed. */
+    private static BlockBehaviour.Properties charge() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(4.0f, 20.0f).sound(SoundType.METAL).noOcclusion()
+                .pushReaction(PushReaction.DESTROY);
     }
 
     /** Techguns 2 {@code BlockOreCluster}: unbreakable, no drops. */

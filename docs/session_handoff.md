@@ -20,14 +20,16 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 5b3 | Repair, Camo, Upgrade and Ammo Bench, armor upgrades, Grinder armor recycling | `7341f36` |
   | 5c1 | Multiblock framework + Fabricator, Fabric fallback recipes removed | `af3babb` |
   | 5c2 | Reaction Chamber | `2cf2c17` |
-  | 5c3 | Ore Drill + ore clusters | not committed yet |
+  | 5c3 | Ore Drill + ore clusters | `3c01ee6` |
+  | 5d1 | Explosive charges (camp flag dropped: no 1.12 implementation) | not committed yet |
+  | 5d2 | Turrets (turret entity, NPC gun fire path, gun AI stats, team facade) | not committed yet |
 
-- All 244 GameTests pass; each batch was checked in game via MCP.
+- All 256 GameTests pass; each batch was checked in game via MCP.
 
 ## Next steps
 
-1. Commit 5c3 (when the user asks).
-2. 5d turrets / explosive charges / camp flag, 5e JEI.
+1. Commit 5d (when the user asks).
+2. 5e JEI.
 3. Open a Phase 5 PR when Phase 5 is done (or earlier if the user asks).
 
 ## Open decision for the user

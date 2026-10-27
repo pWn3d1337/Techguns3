@@ -34,6 +34,7 @@ public final class TGRegistries {
 
         modEventBus.addListener(TGAttributes::addToAllLivingEntities);
         modEventBus.addListener(TGCamos::register);
+        modEventBus.addListener(TGEntities::registerAttributes);
         TGBlockEntities.init(modEventBus);
     }
 }

@@ -1,0 +1,7 @@
+{
+  "parent": "techguns:block/c4_charge_base",
+  "textures": {
+    "0": "techguns:block/c4_charge_armed",
+    "particle": "techguns:block/c4_charge_armed"
+  }
+}

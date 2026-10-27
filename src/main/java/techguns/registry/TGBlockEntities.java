@@ -76,6 +76,14 @@ public final class TGBlockEntities {
     public static final Supplier<BlockEntityType<techguns.machine.OreDrillBlockEntity>> ORE_DRILL = BLOCK_ENTITY_TYPES.register("ore_drill",
             () -> BlockEntityType.Builder.of(techguns.machine.OreDrillBlockEntity::new, TGBlocks.ORE_DRILL_CONTROLLER.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.TurretBlockEntity>> TURRET = BLOCK_ENTITY_TYPES.register("turret",
+            () -> BlockEntityType.Builder.of(techguns.machine.TurretBlockEntity::new, TGBlocks.TURRET.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.ExplosiveChargeBlockEntity>> EXPLOSIVE_CHARGE = BLOCK_ENTITY_TYPES.register(
+            "explosive_charge", () -> BlockEntityType.Builder.of(techguns.machine.ExplosiveChargeBlockEntity::new, TGBlocks.EXPLOSIVE_CHARGE.get(),
+                    TGBlocks.EXPLOSIVE_CHARGE_ADVANCED.get()).build(null));
+
     private TGBlockEntities() {
     }
 
@@ -95,6 +103,7 @@ public final class TGBlockEntities {
         machine(event, REACTION_CHAMBER.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, REACTION_CHAMBER.get(), (chamber, side) -> chamber.getMultiblockFluidHandler());
         machine(event, ORE_DRILL.get());
+        machine(event, TURRET.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ORE_DRILL.get(), (drill, side) -> drill.getMultiblockFluidHandler());
         multiblockParts(event);
         // benches have no power; hoppers can fill the Repair Bench materials

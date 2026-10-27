@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board"
+    },
+    "r": {
+      "item": "techguns:plastic_sheet"
+    },
+    "t": {
+      "item": "techguns:tgx"
+    }
+  },
+  "pattern": [
+    "rtr",
+    "tct",
+    "rtr"
+  ],
+  "result": {
+    "count": 4,
+    "id": "techguns:explosive_charge_advanced"
+  }
+}

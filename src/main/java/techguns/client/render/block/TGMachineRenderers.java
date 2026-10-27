@@ -39,12 +39,15 @@ public final class TGMachineRenderers {
         event.registerBlockEntityRenderer(TGBlockEntities.FABRICATOR.get(), FabricatorRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.REACTION_CHAMBER.get(), ReactionChamberRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.ORE_DRILL.get(), OreDrillRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.TURRET.get(), TurretBaseRenderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {
         TGMachineItemRenderer.register(event, TGBlocks.METAL_PRESS.get(), METAL_PRESS);
         TGMachineItemRenderer.register(event, TGBlocks.AMMO_PRESS.get(), AMMO_PRESS);
         TGMachineItemRenderer.register(event, TGBlocks.CHEM_LAB.get(), CHEM_LAB);
+        TGMachineItemRenderer.register(event, TGBlocks.TURRET.get(),
+                (poseStack, buffer, light, overlay) -> TurretBaseRenderer.renderBase(poseStack, buffer, light, overlay, false, 0));
     }
 
     /** Bakes on first use (after resource loading). */
