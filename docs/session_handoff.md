@@ -41,7 +41,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ## Next steps
 
-1. Commit 7f (when the user asks). Phase 7 then covers everything Techguns 2 spawned: the Nether dungeon and the city were commented out of its spawn table (the city only ran from a test tool), so they are not ported unless the user wants them. Next: open the Phase 7 PR against master. Conversion inputs and how to re-dump them: `src/legacy/README.md`.
+1. Commit 7f (when the user asks). Phase 7 then covers everything Techguns 2 spawned: the Nether dungeon and the city were commented out of its spawn table (the city only ran from a test tool), so they move to Phase 9 as improvements over Techguns 2 (design doc §7). Next: open the Phase 7 PR against master. Conversion inputs and how to re-dump them: `src/legacy/README.md`.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
 
 ## Notes

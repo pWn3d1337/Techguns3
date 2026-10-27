@@ -530,7 +530,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 7d: Nether structures (altars, soul platform, loot room, acid hole, ghast spawner, ore cluster castle, dungeon entrance).
   - 7e1: ore cluster structures (spike, meteor basis; the desert oil cluster needs an oil fluid) and the aircraft carrier (water placement, big set every 64 chunks).
   - 7e2: the military base (Techguns 2 `MilitaryCamp`: camp layout, terrain flattening, tents, containers, bunkers, barracks, helipad, tanks, watch towers), generated into a virtual level from sampled generator heights; structure sets keep away from all bigger sets (`techguns:avoiding_spread`).
-  - 7f: maze dungeons: the castle (Techguns 2 maze generator and castle preset, templates dumped from the 1.12 runtime). The Nether dungeon and the city were never spawned by Techguns 2 (commented out) and are not ported.
+  - 7f: maze dungeons: the castle (Techguns 2 maze generator and castle preset, templates dumped from the 1.12 runtime). The Nether dungeon and the city were never spawned by Techguns 2 (commented out); they come in Phase 9 as improvements.
 - **Exit:** structures generate in new worlds with correct loot and spawners.
 
 ### Phase 8 — Remaining systems & integrations
@@ -541,6 +541,9 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - **Exit:** feature parity with Techguns 2.
 
 ### Phase 9 — Polish & first release
+- Improvements over Techguns 2 (after parity, decided 2026-10-27), structures Techguns 2 had but never spawned:
+  - Nether fortress: the Techguns 2 Nether dungeon (maze dungeon preset `PresetNetherDungeonUnderground`, templates `nether_b0`, `nether_b1`, `nether0`, `nether1`, already in `src/legacy/dungeon_dump.json`; the converted `nether_dungeon_entrance` template exists since 7b). Needs the 7f generator's bottom layer and entrance ramp, a Nether placement and its own set or weight.
+  - City: the Techguns 2 procedural city (`world/structures/city`, only run from a test tool), evaluate jigsaw vs a generator port (`CampLevel` shows the virtual-level approach).
 - Balancing pass, performance profiling (projectiles, particles), multiplayer testing, translations, release on CurseForge/Modrinth.
 
 ### Phase 10 — Version updates
