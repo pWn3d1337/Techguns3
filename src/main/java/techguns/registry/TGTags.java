@@ -32,6 +32,10 @@ public final class TGTags {
 
         /** Items that Ammo Bags accept: all ammo items, full and empty (magazines, cells, tanks, rounds, rockets). */
         public static final TagKey<Item> AMMO = TagKey.create(Registries.ITEM, TGIds.id("ammo"));
+        /** Ammo Bench inputs (Fabric tags). */
+        public static final TagKey<Item> BULLET_CORE = TagKey.create(Registries.ITEM, TGIds.id("bullet_metal_core"));
+        public static final TagKey<Item> BULLET_CASING = TagKey.create(Registries.ITEM, TGIds.id("bullet_metal_casing"));
+        public static final TagKey<Item> BULLET_POWDER = TagKey.create(Registries.ITEM, TGIds.id("bullet_powder"));
 
         public static TagKey<Item> ore(String material) {
             return common("ores/" + material);

@@ -1,5 +1,16 @@
 package techguns.data;
 
+import net.minecraft.resources.ResourceLocation;
+import techguns.recipe.UpgradeBenchRecipe;
+import techguns.recipe.CamoChangeRecipe;
+import techguns.recipe.AmmoBenchRecipe;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -60,9 +71,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 TGItems.LEAD_INGOT.get(), 0.8f, "lead_ingot");
         blastingOnly(output, List.of(TGItems.RAW_TITANIUM.get(), TGBlocks.TITANIUM_ORE.get(), TGBlocks.DEEPSLATE_TITANIUM_ORE.get()),
                 TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
-        blastingOnly(output, List.of(TGItems.RAW_STEEL_INGOT.get()), TGItems.STEEL_INGOT.get(), 1.2f, 200, "steel_ingot");
-        blastingOnly(output, List.of(TGItems.RAW_OBSIDIAN_STEEL_INGOT.get()), TGItems.OBSIDIAN_STEEL_INGOT.get(), 1.5f, 200,
-                "obsidian_steel_ingot");
         smeltingAndBlasting(output, List.of(TGItems.RAW_RUBBER.get()), TGItems.RUBBER_BAR.get(), 0.5f, "rubber_bar");
 
         buildNuggetRecipes(output);
@@ -345,6 +353,7 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('b', TGItems.CIRCUIT_BOARD.get())
                 .unlockedBy(getHasName(TGItems.COIL.get()), has(TGItems.COIL.get())).save(output);
 
+        benchRecipes(output);
         chemLabRecipes(output);
         chargingRecipes(output);
         ammoPressRecipes(output);
@@ -451,6 +460,95 @@ public class TGRecipeProvider extends RecipeProvider {
     }
 
     /** Techguns 2 {@code AmmoPressBuildPlans}: bullet metal steel/lead, casing metal copper/tin/iron/bronze, gunpowder. */
+    /** Techguns 2 Repair, Camo and Upgrade Bench, the Fabric Ammo Bench, the armor upgrades and the bench recipes. */
+    private void benchRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.REPAIR_BENCH.get())
+                .pattern("pmp").pattern("ici").pattern("iii")
+                .define('p', TGTags.Items.plate("iron")).define('m', TGItems.MECHANICAL_PARTS_IRON.get()).define('c', Items.CRAFTING_TABLE)
+                .define('i', Tags.Items.NUGGETS_IRON)
+                .unlockedBy(getHasName(TGItems.MECHANICAL_PARTS_IRON.get()), has(TGItems.MECHANICAL_PARTS_IRON.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CAMO_BENCH.get())
+                .pattern("ddd").pattern("ici").pattern("iii")
+                .define('d', Tags.Items.DYES).define('c', Items.CRAFTING_TABLE).define('i', Tags.Items.NUGGETS_IRON)
+                .unlockedBy(getHasName(Items.CRAFTING_TABLE), has(Items.CRAFTING_TABLE)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.UPGRADE_BENCH.get())
+                .pattern(" c ").pattern("oeo").pattern("sos")
+                .define('c', Items.CRAFTING_TABLE).define('o', TGTags.Items.plate("obsidian_steel")).define('e', Tags.Items.GEMS_EMERALD)
+                .define('s', Tags.Items.OBSIDIANS)
+                .unlockedBy(getHasName(TGItems.OBSIDIAN_STEEL_PLATE.get()), has(TGItems.OBSIDIAN_STEEL_PLATE.get())).save(output);
+        // Fabric: shapeless crafting table + gunpowder + iron ingot
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGBlocks.AMMO_BENCH.get())
+                .requires(Items.CRAFTING_TABLE).requires(Tags.Items.GUNPOWDERS).requires(Tags.Items.INGOTS_IRON)
+                .unlockedBy(getHasName(Items.GUNPOWDER), has(Items.GUNPOWDER)).save(output);
+
+        // armor upgrades: plates around a gold ingot (diamond for tier 3) with iron plates, steam armor plates or wool
+        Object[][] tiers = {{TGTags.Items.plate("steel"), Tags.Items.INGOTS_GOLD}, {TGTags.Items.plate("obsidian_steel"), Tags.Items.INGOTS_GOLD},
+                {TGTags.Items.plate("carbon"), Tags.Items.GEMS_DIAMOND}};
+        ItemLike[][] upgrades = {
+                {TGItems.UPGRADE_PROTECTION_1.get(), TGItems.UPGRADE_PROJECTILE_PROTECTION_1.get(), TGItems.UPGRADE_BLAST_PROTECTION_1.get()},
+                {TGItems.UPGRADE_PROTECTION_2.get(), TGItems.UPGRADE_PROJECTILE_PROTECTION_2.get(), TGItems.UPGRADE_BLAST_PROTECTION_2.get()},
+                {TGItems.UPGRADE_PROTECTION_3.get(), TGItems.UPGRADE_PROJECTILE_PROTECTION_3.get(), TGItems.UPGRADE_BLAST_PROTECTION_3.get()}};
+        List<ResourceKey<Enchantment>> enchantments = List.of(Enchantments.PROTECTION, Enchantments.PROJECTILE_PROTECTION, Enchantments.BLAST_PROTECTION);
+        for (int tier = 0; tier < 3; tier++) {
+            @SuppressWarnings("unchecked")
+            TagKey<Item> plate = (TagKey<Item>) tiers[tier][0];
+            @SuppressWarnings("unchecked")
+            TagKey<Item> center = (TagKey<Item>) tiers[tier][1];
+            for (int kind = 0; kind < 3; kind++) {
+                ItemLike upgrade = upgrades[tier][kind];
+                ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, upgrade)
+                        .pattern("pip").pattern("igi").pattern("pip").define('p', plate).define('g', center);
+                switch (kind) {
+                    case 0 -> builder.define('i', TGTags.Items.plate("iron"));
+                    case 1 -> builder.define('i', TGItems.STEAM_ARMOR_PLATE.get());
+                    default -> builder.define('i', ItemTags.WOOL);
+                }
+                builder.unlockedBy(getHasName(TGBlocks.UPGRADE_BENCH.get()), has(TGBlocks.UPGRADE_BENCH.get())).save(output);
+                output.accept(TGIds.id("upgrade_bench/" + getItemName(upgrade)),
+                        new UpgradeBenchRecipe(Ingredient.of(upgrade), enchantments.get(kind), tier + 1), null);
+            }
+        }
+
+        camoChangeRecipes(output);
+        ammoBenchRecipes(output);
+    }
+
+    /** Techguns 2 {@code CamoBenchRecipes}: vanilla colour blocks and the camo-changeable Techguns block groups. */
+    private static void camoChangeRecipes(RecipeOutput output) {
+        for (String kind : List.of("wool", "concrete", "concrete_powder", "terracotta", "stained_glass", "stained_glass_pane", "banner", "carpet")) {
+            List<Item> entries = java.util.Arrays.stream(DyeColor.values())
+                    .map(color -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(color.getName() + "_" + kind))).toList();
+            output.accept(TGIds.id("camo_change/minecraft_" + kind), new CamoChangeRecipe(entries), null);
+        }
+        camoChange(output, "concrete", TGBlocks.CONCRETE);
+        camoChange(output, "metal_panel", TGBlocks.METAL_PANEL);
+        camoChange(output, "nether_metal", TGBlocks.NETHER_METAL);
+        camoChange(output, "neon_lights", TGBlocks.NEON_LIGHTS);
+        camoChange(output, "camo_net", TGBlocks.CAMO_NETS);
+        camoChange(output, "camo_net_top", TGBlocks.CAMO_NETS_TOP);
+        camoChange(output, "ladder", TGBlocks.LADDERS);
+        camoChange(output, "lamp", TGBlocks.LAMPS);
+        camoChange(output, "lantern", TGBlocks.LANTERNS);
+    }
+
+    private static void camoChange(RecipeOutput output, String name, List<? extends DeferredBlock<? extends Block>> blocks) {
+        output.accept(TGIds.id("camo_change/" + name), new CamoChangeRecipe(blocks.stream().map(block -> block.get().asItem()).toList()), null);
+    }
+
+    /** Fabric {@code ammobench_crafting} recipes: one core, casing and powder each. */
+    private static void ammoBenchRecipes(RecipeOutput output) {
+        ammoBench(output, TGAmmo.PISTOL_ROUNDS.get(), 12);
+        ammoBench(output, TGAmmo.SHOTGUN_ROUNDS.get(), 16);
+        ammoBench(output, TGAmmo.RIFLE_ROUNDS.get(), 8);
+        ammoBench(output, TGAmmo.RIFLE_ROUNDS_STACK.get(), 2);
+        ammoBench(output, TGAmmo.SNIPER_ROUNDS.get(), 4);
+    }
+
+    private static void ammoBench(RecipeOutput output, ItemLike result, int count) {
+        output.accept(TGIds.id("ammo_bench/" + getItemName(result)), new AmmoBenchRecipe(Ingredient.of(TGTags.Items.BULLET_CORE),
+                Ingredient.of(TGTags.Items.BULLET_CASING), Ingredient.of(TGTags.Items.BULLET_POWDER), new ItemStack(result, count)), null);
+    }
+
     private static void ammoPressRecipes(RecipeOutput output) {
         Ingredient bullet = Ingredient.fromValues(java.util.stream.Stream.of(
                 new Ingredient.TagValue(TGTags.Items.ingot("steel")), new Ingredient.TagValue(TGTags.Items.ingot("lead"))));
@@ -764,16 +862,6 @@ public class TGRecipeProvider extends RecipeProvider {
     }
 
     private void buildMaterialRecipes(RecipeOutput output) {
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_STEEL_INGOT.get(), 2)
-                .requires(Ingredient.of(Tags.Items.INGOTS_IRON), 2).requires(Items.COAL)
-                .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON)).save(output, TGIds.id("raw_steel_ingot"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_STEEL_INGOT.get(), 2)
-                .requires(Ingredient.of(Tags.Items.INGOTS_IRON), 2).requires(Items.CHARCOAL)
-                .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON)).save(output, TGIds.id("raw_steel_ingot_from_charcoal"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_OBSIDIAN_STEEL_INGOT.get())
-                .requires(TGTags.Items.ingot("steel")).requires(Items.OBSIDIAN)
-                .unlockedBy("has_steel_ingot", has(TGTags.Items.ingot("steel"))).save(output, TGIds.id("raw_obsidian_steel_ingot"));
-
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGItems.RAW_RUBBER.get())
                 .requires(ItemTags.LOGS).requires(Items.BOWL)
                 .unlockedBy("has_bowl", has(Items.BOWL)).save(output, TGIds.id("raw_rubber"));

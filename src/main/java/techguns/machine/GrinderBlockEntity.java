@@ -14,9 +14,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
 import techguns.gun.GunItem;
+import techguns.armor.TGArmorItem;
 import techguns.recipe.GrinderRecipe;
 import techguns.recipe.MachineInput;
 import techguns.registry.TGBlockEntities;
@@ -50,8 +52,22 @@ public class GrinderBlockEntity extends TGMachineBlockEntity {
             return Optional.empty();
         }
         MachineInput input = MachineInput.of(stack);
-        return level.getRecipeManager().getAllRecipesFor(TGRecipes.GRINDER.get()).stream().map(RecipeHolder::value)
+        Optional<GrinderRecipe> recipe = level.getRecipeManager().getAllRecipesFor(TGRecipes.GRINDER.get()).stream().map(RecipeHolder::value)
                 .filter(r -> r.matches(input, level)).findFirst();
+        return recipe.isPresent() ? recipe : armorRecycling(stack);
+    }
+
+    /**
+     * Techguns 2 {@code GrinderRecipeGenericArmor}: Techguns armor gives back its repair materials for the durability
+     * it has left.
+     */
+    private static Optional<GrinderRecipe> armorRecycling(ItemStack stack) {
+        if (!(stack.getItem() instanceof TGArmorItem armor) || !armor.canRepairOnBench()) {
+            return Optional.empty();
+        }
+        List<GrinderRecipe.Output> outputs = armor.repairCost(stack.getMaxDamage() - stack.getDamageValue(), stack.getMaxDamage()).stream()
+                .map(material -> GrinderRecipe.Output.of(material.display())).toList();
+        return outputs.isEmpty() ? Optional.empty() : Optional.of(new GrinderRecipe(Ingredient.of(stack.getItem()), outputs));
     }
 
     @Override

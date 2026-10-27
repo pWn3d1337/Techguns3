@@ -106,6 +106,15 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("concrete_brown_pipes", "Reinforced Concrete (Pipes)"),
             Map.entry("concrete_brown_light_scaff", "Reinforced Concrete (Steel Bars)"),
             Map.entry("machine_upgrade_stack", "Machine Upgrade (Stack Operation)"),
+            Map.entry("upgrade_protection_1", "Armor Upgrade: Protection I"),
+            Map.entry("upgrade_blast_protection_1", "Armor Upgrade: Blast Protection I"),
+            Map.entry("upgrade_projectile_protection_1", "Armor Upgrade: Projectile Protection I"),
+            Map.entry("upgrade_protection_2", "Armor Upgrade: Protection II"),
+            Map.entry("upgrade_blast_protection_2", "Armor Upgrade: Blast Protection II"),
+            Map.entry("upgrade_projectile_protection_2", "Armor Upgrade: Projectile Protection II"),
+            Map.entry("upgrade_protection_3", "Armor Upgrade: Protection III"),
+            Map.entry("upgrade_blast_protection_3", "Armor Upgrade: Blast Protection III"),
+            Map.entry("upgrade_projectile_protection_3", "Armor Upgrade: Projectile Protection III"),
             Map.entry("container_red", "Red Container"),
             Map.entry("container_green", "Green Container"),
             Map.entry("container_blue", "Blue Container"),
@@ -275,6 +284,15 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.tooltip.unowned", "Unowned (Replace Block to set ownership)");
         add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
         add("techguns.container.metalpress.autosplit", "Stack split:");
+        // Phase 5b3 benches (Techguns 2 / Fabric lang)
+        add("techguns.repairbench.noarmor", "No armor");
+        add("techguns.repairbench.cantrepair", "Can't repair this armor");
+        add("techguns.repairbench.fullcondition", "Armor is fully repaired");
+        add("techguns.repairbench.requiredmats", "Required materials for repair:");
+        add("techguns.item.invalidcamo", "No Camo");
+        add("techguns.gui.xp", "XP: %s");
+        add("techguns.gui.xpcost", "XP Cost: %s");
+        add("techguns.container.ammobench", "Ammo Bench");
         add("techguns.container.ammopress.build", "Building:");
         add("techguns.gui.empty", "Empty");
         add("techguns.chemlab.dumpinput", "Dump Input Tank");

@@ -24,13 +24,16 @@ import techguns.machine.TGMachineMenu;
 public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends AbstractContainerScreen<M> {
     /** Shared widget sprites of the Techguns 2 machine screens (power bar, buttons, lights). */
     protected static final ResourceLocation WIDGETS = TGIds.id("textures/gui/ammo_press_gui.png");
-    private static final int SECURITY_BUTTON_Y = 40;
     private static final int TEXT_COLOR = 0x404040;
 
     private final ResourceLocation texture;
     protected boolean hasUpgradeSlot = true;
     protected int upgradeSlotX = 151;
     protected int upgradeSlotY = 59;
+    /** False for the unpowered benches (Techguns 2 {@code OwnedTileEntGui}): only the security button. */
+    protected boolean powered = true;
+    protected int securityButtonY = 40;
+    protected boolean showInventoryTitle = true;
 
     protected TGMachineScreen(M menu, Inventory inventory, Component title, ResourceLocation texture) {
         super(menu, inventory, title);
@@ -40,10 +43,12 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(new IconButton(leftPos - 22, topPos + 10, 20, TGMachineBlockEntity.BUTTON_REDSTONE, WIDGETS, 234,
-                () -> 10 + 16 * menu.redstoneMode().ordinal(), 16));
+        if (powered) {
+            addRenderableWidget(new IconButton(leftPos - 22, topPos + 10, 20, TGMachineBlockEntity.BUTTON_REDSTONE, WIDGETS, 234,
+                    () -> 10 + 16 * menu.redstoneMode().ordinal(), 16));
+        }
         // Techguns 2 security icons: 0 public ... 3 owner only
-        addRenderableWidget(new IconButton(leftPos - 22, topPos + SECURITY_BUTTON_Y, 20, TGMachineBlockEntity.BUTTON_SECURITY, WIDGETS, 234,
+        addRenderableWidget(new IconButton(leftPos - 22, topPos + securityButtonY, 20, TGMachineBlockEntity.BUTTON_SECURITY, WIDGETS, 234,
                 () -> 58 + 16 * (menu.isOwnerOnly() ? 3 : 0), 16));
     }
 
@@ -67,15 +72,17 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
         int y = topPos;
         graphics.blit(texture, x, y, 0, 0, imageWidth, imageHeight);
         // button backgrounds sticking out on the left
-        graphics.blit(WIDGETS, x - 27, y + 5, 195, 0, 27, 30);
-        graphics.blit(WIDGETS, x - 27, y + SECURITY_BUTTON_Y - 5, 195, 0, 27, 30);
-        // redstone lights: green when the machine may work
-        boolean enabled = menu.redstoneMode().allows(menu.hasSignal());
-        graphics.blit(WIDGETS, x + 6, y + 5, 240, enabled ? 0 : 5, 5, 5);
-        graphics.blit(WIDGETS, x + 11, y + 5, 245, enabled ? 5 : 0, 5, 5);
-        // power bar
-        int diff = TGConfig.MACHINES_NEED_NO_POWER.get() ? 0 : 48 - menu.energy() * 48 / Math.max(1, menu.maxEnergy());
-        graphics.blit(WIDGETS, x + 8, y + 17 + diff, 251, 1 + diff, 4, 48 - diff);
+        graphics.blit(WIDGETS, x - 27, y + securityButtonY - 5, 195, 0, 27, 30);
+        if (powered) {
+            graphics.blit(WIDGETS, x - 27, y + 5, 195, 0, 27, 30);
+            // redstone lights: green when the machine may work
+            boolean enabled = menu.redstoneMode().allows(menu.hasSignal());
+            graphics.blit(WIDGETS, x + 6, y + 5, 240, enabled ? 0 : 5, 5, 5);
+            graphics.blit(WIDGETS, x + 11, y + 5, 245, enabled ? 5 : 0, 5, 5);
+            // power bar
+            int diff = TGConfig.MACHINES_NEED_NO_POWER.get() ? 0 : 48 - menu.energy() * 48 / Math.max(1, menu.maxEnergy());
+            graphics.blit(WIDGETS, x + 8, y + 17 + diff, 251, 1 + diff, 4, 48 - diff);
+        }
         if (hasUpgradeSlot) {
             graphics.blit(WIDGETS, x + upgradeSlotX, y + upgradeSlotY, 119, 59, 20, 20);
         }
@@ -99,7 +106,9 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, TEXT_COLOR, false);
-        graphics.drawString(font, playerInventoryTitle, 8, imageHeight - 96 + 2, TEXT_COLOR, false);
+        if (showInventoryTitle) {
+            graphics.drawString(font, playerInventoryTitle, 8, imageHeight - 96 + 2, TEXT_COLOR, false);
+        }
     }
 
     protected void drawText(GuiGraphics graphics, Component text, int x, int y) {
@@ -108,18 +117,18 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
 
     /** Tooltips of the power bar and the side buttons; {@code mx, my} relative to the screen origin. */
     protected void renderMachineTooltips(GuiGraphics graphics, int mx, int my, int mouseX, int mouseY) {
-        if (isIn(mx, my, 7, 17, 5, 49)) {
+        if (powered && isIn(mx, my, 7, 17, 5, 49)) {
             Component power = TGConfig.MACHINES_NEED_NO_POWER.get() ? Component.translatable("techguns.container.power")
                     : Component.translatable("techguns.container.power.amount", menu.energy(), menu.maxEnergy());
             graphics.renderTooltip(font, power, mouseX, mouseY);
-        } else if (isIn(mx, my, 6, 5, 10, 5) || isIn(mx, my, -22, 10, 20, 20)) {
+        } else if (powered && (isIn(mx, my, 6, 5, 10, 5) || isIn(mx, my, -22, 10, 20, 20))) {
             List<Component> lines = new ArrayList<>();
             lines.add(Component.translatable("techguns.container.redstone"));
             lines.add(Component.translatable("techguns.container.redstone.mode", Component.translatable(menu.redstoneMode().translationKey())));
             lines.add(Component.translatable("techguns.container.redstone.signal",
                     Component.translatable(menu.hasSignal() ? "techguns.redstonemode.signal.high" : "techguns.redstonemode.signal.low")));
             graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
-        } else if (isIn(mx, my, -22, SECURITY_BUTTON_Y, 20, 20)) {
+        } else if (isIn(mx, my, -22, securityButtonY, 20, 20)) {
             int level = menu.isOwnerOnly() ? 3 : 0;
             String ownerName = menu.machine().getOwnerName();
             List<Component> lines = new ArrayList<>();

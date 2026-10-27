@@ -41,6 +41,10 @@ public final class TGConfig {
             .comment("Machines don't need power. Activate this if you don't want to install a mod with generators and still use the machines.")
             .define("machinesNeedNoPower", false);
 
+    public static final ModConfigSpec.IntValue UPGRADE_XP_COST = COMMON
+            .comment("Experience points per enchantment level an Upgrade Bench upgrade costs.")
+            .defineInRange("upgradeXpCost", 20, 0, 10000);
+
     static {
         COMMON.pop();
     }

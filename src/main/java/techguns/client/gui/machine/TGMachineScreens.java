@@ -15,5 +15,9 @@ public final class TGMachineScreens {
         event.register(TGMenus.GRINDER.get(), GrinderScreen::new);
         event.register(TGMenus.CHEM_LAB.get(), ChemLabScreen::new);
         event.register(TGMenus.CHARGING_STATION.get(), ChargingStationScreen::new);
+        event.register(TGMenus.REPAIR_BENCH.get(), RepairBenchScreen::new);
+        event.register(TGMenus.CAMO_BENCH.get(), CamoBenchScreen::new);
+        event.register(TGMenus.UPGRADE_BENCH.get(), UpgradeBenchScreen::new);
+        event.register(TGMenus.AMMO_BENCH.get(), AmmoBenchScreen::new);
     }
 }

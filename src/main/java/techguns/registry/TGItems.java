@@ -33,8 +33,6 @@ public final class TGItems {
     public static final DeferredItem<Item> STEEL_INGOT = simple("steel_ingot");
     public static final DeferredItem<Item> OBSIDIAN_STEEL_INGOT = simple("obsidian_steel_ingot");
     public static final DeferredItem<Item> TITANIUM_INGOT = simple("titanium_ingot");
-    public static final DeferredItem<Item> RAW_STEEL_INGOT = simple("raw_steel_ingot");
-    public static final DeferredItem<Item> RAW_OBSIDIAN_STEEL_INGOT = simple("raw_obsidian_steel_ingot");
 
     // --- Nuggets ---
     public static final DeferredItem<Item> COPPER_NUGGET = simple("copper_nugget");
@@ -119,6 +117,17 @@ public final class TGItems {
     // --- Machines ---
     /** Techguns 2 {@code machinestackupgrade}: each one lets a machine run one more operation at once (stack of 7). */
     public static final DeferredItem<Item> MACHINE_UPGRADE_STACK = simple("machine_upgrade_stack", new Item.Properties().stacksTo(7));
+
+    // --- Armor upgrades (Upgrade Bench: protection, projectile and blast protection I-III) ---
+    public static final DeferredItem<Item> UPGRADE_PROTECTION_1 = simple("upgrade_protection_1");
+    public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_1 = simple("upgrade_projectile_protection_1");
+    public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_1 = simple("upgrade_blast_protection_1");
+    public static final DeferredItem<Item> UPGRADE_PROTECTION_2 = simple("upgrade_protection_2");
+    public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_2 = simple("upgrade_projectile_protection_2");
+    public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_2 = simple("upgrade_blast_protection_2");
+    public static final DeferredItem<Item> UPGRADE_PROTECTION_3 = simple("upgrade_protection_3");
+    public static final DeferredItem<Item> UPGRADE_PROJECTILE_PROTECTION_3 = simple("upgrade_projectile_protection_3");
+    public static final DeferredItem<Item> UPGRADE_BLAST_PROTECTION_3 = simple("upgrade_blast_protection_3");
 
     private TGItems() {
     }

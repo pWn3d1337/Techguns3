@@ -491,6 +491,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 5b2a: item machines: Ammo Press, Blast Furnace, Grinder.
   - 5b2b: Chem Lab (fluid tanks, fluid recipes, the new creeper acid fluid; fuel recipes use lava like 1.12 without fuel mods) and Charging Station (item FE charging; powered armor needs an item energy capability).
   - 5b3: benches: Repair Bench, Camo Bench, Upgrade Bench (armor upgrades), Ammo Bench (Q6).
+    - Implemented 2026-10-27: benches reuse `TGMachineBlockEntity` without power (screens hide power bar and redstone). Camo Bench = 1.12 screen plus a Fabric-style pick list (`TGRecipeGrid`, shared with the Ammo Bench); block looks are data-driven `techguns:camo_change` groups. Upgrade Bench recipes are data (`techguns:upgrade_bench`: upgrade item, enchantment key, level). Techguns armor joined the vanilla `enchantable/*_armor` tags so armor enchantments apply (1.12 `ItemArmor` behaviour).
   - From Phase 4: the 9 armor upgrade items (protection / projectile / blast protection, tiers 1-3) applied by the Upgrade Bench; Repair Bench repair costs for armor and shields (1.12 `repairMat` counts); gun camo changes at the Camo Bench (armor already cycles with sneak + use); the Ammo Bench and Camo Bench recipe types from Fabric.
 - 5c: Multiblocks: Fabricator, Reaction Chamber, Ore Drill (+ ore clusters).
 - 5d: Turrets (incl. the 4 turret armor plates: iron, steel, obsidian steel, carbon), explosive charges, camp flag.

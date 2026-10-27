@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/ammo_bench_base",
+  "render_type": "minecraft:cutout"
+}

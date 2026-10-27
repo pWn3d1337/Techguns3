@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -16,6 +17,7 @@ import techguns.TGIds;
 import techguns.Techguns;
 import techguns.slot.TGSlotType;
 import techguns.registry.TGAmmo;
+import techguns.registry.TGArmors;
 import techguns.registry.TGItems;
 import techguns.registry.TGSlotItems;
 import techguns.registry.TGTags;
@@ -31,6 +33,18 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         // everything an Ammo Bag accepts: all ammo items, full and empty
         TGAmmo.flatAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
         TGAmmo.modelAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
+        // Ammo Bench inputs (Fabric tags)
+        tag(TGTags.Items.BULLET_CORE).addTag(TGTags.Items.ingot("steel")).addTag(TGTags.Items.ingot("lead"));
+        tag(TGTags.Items.BULLET_CASING).addTag(Tags.Items.INGOTS_COPPER).addTag(Tags.Items.INGOTS_IRON)
+                .addTag(TGTags.Items.ingot("tin")).addTag(TGTags.Items.ingot("bronze"));
+        tag(TGTags.Items.BULLET_POWDER).addTag(Tags.Items.GUNPOWDERS);
+        // Techguns armor takes armor enchantments like Techguns 2 GenericArmor (books, Upgrade Bench)
+        TGArmors.armors().forEach(item -> tag(switch (item.get().getType()) {
+            case HELMET -> ItemTags.HEAD_ARMOR_ENCHANTABLE;
+            case CHESTPLATE -> ItemTags.CHEST_ARMOR_ENCHANTABLE;
+            case LEGGINGS -> ItemTags.LEG_ARMOR_ENCHANTABLE;
+            default -> ItemTags.FOOT_ARMOR_ENCHANTABLE;
+        }).add(item.get()));
         // Curios slots of the extra slot gear (head = face items)
         TGSlotItems.items().forEach(item -> tag(curiosSlot(item.get().slot())).add(item.get()));
         // Ore blocks: mirror the block tags

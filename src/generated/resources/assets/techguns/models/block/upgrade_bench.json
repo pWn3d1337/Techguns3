@@ -1,0 +1,4 @@
+{
+  "parent": "techguns:block/upgrade_bench_base",
+  "render_type": "minecraft:cutout"
+}

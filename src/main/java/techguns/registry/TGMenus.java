@@ -12,7 +12,11 @@ import techguns.machine.BlastFurnaceMenu;
 import techguns.machine.ChargingStationMenu;
 import techguns.machine.ChemLabMenu;
 import techguns.machine.GrinderMenu;
+import techguns.machine.AmmoBenchMenu;
+import techguns.machine.CamoBenchMenu;
 import techguns.machine.MetalPressMenu;
+import techguns.machine.RepairBenchMenu;
+import techguns.machine.UpgradeBenchMenu;
 import techguns.slot.menu.ExtraSlotsMenu;
 
 /** Container menu types. */
@@ -37,6 +41,15 @@ public final class TGMenus {
             () -> IMenuTypeExtension.create(ChemLabMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<ChargingStationMenu>> CHARGING_STATION = MENUS.register("charging_station",
             () -> IMenuTypeExtension.create(ChargingStationMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<RepairBenchMenu>> REPAIR_BENCH = MENUS.register("repair_bench",
+            () -> IMenuTypeExtension.create(RepairBenchMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<CamoBenchMenu>> CAMO_BENCH = MENUS.register("camo_bench",
+            () -> IMenuTypeExtension.create(CamoBenchMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<UpgradeBenchMenu>> UPGRADE_BENCH = MENUS.register("upgrade_bench",
+            () -> IMenuTypeExtension.create(UpgradeBenchMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<AmmoBenchMenu>> AMMO_BENCH = MENUS.register("ammo_bench",
+            () -> new MenuType<>(AmmoBenchMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
     private TGMenus() {
     }

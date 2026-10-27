@@ -21,6 +21,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
+import techguns.block.AmmoBenchBlock;
 import techguns.block.BioBlobBlock;
 import techguns.block.BunkerDoorBlock;
 import techguns.block.CamoNetBlock;
@@ -228,6 +229,17 @@ public final class TGBlocks {
     /** Techguns 2 OBJ model; the item on top is drawn by the renderer. */
     public static final DeferredBlock<TGMachineBlock> CHARGING_STATION = withItem("charging_station",
             () -> new TGMachineBlock(machine(), TGBlockEntities.CHARGING_STATION, Shapes.block(), RenderShape.MODEL));
+
+    // --- Benches (Phase 5b3; unpowered, Techguns 2 block models) ---
+    public static final DeferredBlock<TGMachineBlock> REPAIR_BENCH = withItem("repair_bench",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.REPAIR_BENCH, Shapes.block(), RenderShape.MODEL));
+    public static final DeferredBlock<TGMachineBlock> CAMO_BENCH = withItem("camo_bench",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.CAMO_BENCH, Shapes.block(), RenderShape.MODEL));
+    /** Techguns 2 {@code UpgradeBenchTileEnt.BLOCK_BB}: 13 pixels high. */
+    public static final DeferredBlock<TGMachineBlock> UPGRADE_BENCH = withItem("upgrade_bench",
+            () -> new TGMachineBlock(machine(), TGBlockEntities.UPGRADE_BENCH, Block.box(0, 0, 0, 16, 13, 16), RenderShape.MODEL));
+    /** Fabric Ammo Bench: no block entity, the menu keeps the inputs. */
+    public static final DeferredBlock<AmmoBenchBlock> AMMO_BENCH = withItem("ammo_bench", () -> new AmmoBenchBlock(machine()));
 
     private TGBlocks() {
     }

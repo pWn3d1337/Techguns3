@@ -1,0 +1,13 @@
+{
+  "type": "techguns:camo_change",
+  "entries": [
+    "techguns:container_red",
+    "techguns:container_green",
+    "techguns:container_blue",
+    "techguns:container_orange",
+    "techguns:panel_large_border",
+    "techguns:steelframe_blue",
+    "techguns:steelframe_dark",
+    "techguns:steelframe_scaffold"
+  ]
+}

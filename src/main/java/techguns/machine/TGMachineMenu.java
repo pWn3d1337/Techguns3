@@ -25,6 +25,8 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
     protected final T machine;
     protected final ContainerData data;
     private int machineSlots;
+    /** End of the player inventory slots; slots after it (worn armor in benches) are not shift-click targets. */
+    private int playerSlotsEnd;
     private final Map<Slot, String> slotIcons = new HashMap<>();
 
     /** Server side: the machine's live data; client side: the client's copy of the machine and a synced data mirror. */
@@ -70,6 +72,7 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(inventory, col, 8 + col * 18, 142));
         }
+        playerSlotsEnd = slots.size();
     }
 
     public T machine() {
@@ -115,6 +118,11 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
         return -1;
     }
 
+    /** Number of machine slots from {@code target} on that shift-clicked items may fill. */
+    protected int targetSlotCount(int target) {
+        return 1;
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = slots.get(index);
@@ -124,13 +132,13 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
         ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
         if (index < machineSlots) {
-            if (!moveItemStackTo(stack, machineSlots, slots.size(), true)) {
+            if (!moveItemStackTo(stack, machineSlots, playerSlotsEnd, true)) {
                 return ItemStack.EMPTY;
             }
             slot.onQuickCraft(stack, copy);
         } else {
             int target = targetSlot(stack);
-            if (target < 0 || !moveItemStackTo(stack, target, target + 1, false)) {
+            if (target < 0 || !moveItemStackTo(stack, target, target + targetSlotCount(target), false)) {
                 return ItemStack.EMPTY;
             }
         }

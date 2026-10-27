@@ -32,7 +32,8 @@ public class TGBlockTagsProvider extends BlockTagsProvider {
         // Techguns 2: hardened bug nest sand is dug with a shovel
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(TGBlocks.BUGNEST_SAND.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TGBlocks.METAL_PRESS.get(), TGBlocks.AMMO_PRESS.get(), TGBlocks.BLAST_FURNACE.get(),
-                TGBlocks.GRINDER.get(), TGBlocks.CHEM_LAB.get(), TGBlocks.CHARGING_STATION.get());
+                TGBlocks.GRINDER.get(), TGBlocks.CHEM_LAB.get(), TGBlocks.CHARGING_STATION.get(), TGBlocks.REPAIR_BENCH.get(),
+                TGBlocks.CAMO_BENCH.get(), TGBlocks.UPGRADE_BENCH.get(), TGBlocks.AMMO_BENCH.get());
         // Phase 5a2: Techguns 2 iron blocks are mined with a pickaxe (no tool needed for drops), crates are wood
         TGBlocks.LAMPS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
         TGBlocks.LANTERNS.forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));

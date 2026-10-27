@@ -313,6 +313,19 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         machine(TGBlocks.CHEM_LAB, "chem_lab");
         chargingStation();
         acid();
+        // benches: Techguns 2 cube models (front north) and block models, Fabric Ammo Bench model
+        cubeMachine(TGBlocks.CAMO_BENCH, "paintmachine_front", "paintmachine_top");
+        cubeMachine(TGBlocks.REPAIR_BENCH, "repairbench_front", "repairbench_top");
+        modelMachine(TGBlocks.UPGRADE_BENCH, "upgrade_bench_base", "upgrade_bench_base");
+        modelMachine(TGBlocks.AMMO_BENCH, "ammo_bench_base", "ammo_bench_base");
+    }
+
+    /** Techguns 2 {@code SimpleMachine} cube: own front and top, the paint machine side everywhere else. */
+    private void cubeMachine(DeferredBlock<? extends Block> block, String front, String top) {
+        ResourceLocation side = tex("paintmachine_side");
+        ModelFile model = models().cube("block/" + path(block), side, tex(top), tex(front), side, side, side).texture("particle", side);
+        horizontalBlock(block.get(), model, 180);
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
     }
 
     /** Techguns 2 OBJ model (flipped v like the 1.12 blockstate), turned by facing; item uses the vanilla block display. */

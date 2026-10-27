@@ -52,6 +52,17 @@ public final class TGRecipes {
     public static final Supplier<RecipeSerializer<techguns.recipe.ChargingRecipe>> CHARGING_SERIALIZER = SERIALIZERS.register("charging",
             techguns.recipe.ChargingRecipe.Serializer::new);
 
+    // --- Benches ---
+    public static final Supplier<RecipeType<techguns.recipe.UpgradeBenchRecipe>> UPGRADE_BENCH = type("upgrade_bench");
+    public static final Supplier<RecipeSerializer<techguns.recipe.UpgradeBenchRecipe>> UPGRADE_BENCH_SERIALIZER = SERIALIZERS.register("upgrade_bench",
+            techguns.recipe.UpgradeBenchRecipe.Serializer::new);
+    public static final Supplier<RecipeType<techguns.recipe.CamoChangeRecipe>> CAMO_CHANGE = type("camo_change");
+    public static final Supplier<RecipeSerializer<techguns.recipe.CamoChangeRecipe>> CAMO_CHANGE_SERIALIZER = SERIALIZERS.register("camo_change",
+            techguns.recipe.CamoChangeRecipe.Serializer::new);
+    public static final Supplier<RecipeType<techguns.recipe.AmmoBenchRecipe>> AMMO_BENCH = type("ammo_bench");
+    public static final Supplier<RecipeSerializer<techguns.recipe.AmmoBenchRecipe>> AMMO_BENCH_SERIALIZER = SERIALIZERS.register("ammo_bench",
+            techguns.recipe.AmmoBenchRecipe.Serializer::new);
+
     private static <T extends net.minecraft.world.item.crafting.Recipe<?>> Supplier<RecipeType<T>> type(String name) {
         return TYPES.register(name, () -> RecipeType.simple(TGIds.id(name)));
     }
