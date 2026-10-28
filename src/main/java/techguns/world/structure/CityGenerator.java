@@ -14,14 +14,17 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import techguns.block.TGLampBlock;
+import techguns.compat.decor.DecorBlocks;
+import techguns.compat.decor.DecorRole;
 import techguns.registry.TGBlocks;
 
 /**
  * Techguns 2 {@code world/structures/city} (new: Techguns 2 only built it with a test tool): a city block split
  * recursively into segments with roads between them (wider near the root), each leaf segment holding a building of
  * stacked floors with windows, a door to its side, stairs or ladders between the floors, ceiling lamps and a roof
- * hatch. Built into a {@link CampLevel}. Techguns 2 drew the walls from Chisel blocks; its {@code MBlockRegister}
- * fallbacks (vanilla stone, bricks, quartz, sandstone) are used.
+ * hatch. Built into a {@link CampLevel}. Techguns 2 drew the walls from Chisel blocks: their counterparts in Factory
+ * Blocks, Chisel Reborn and Laboratory Blocks are used where installed, else its {@code MBlockRegister} fallbacks
+ * (vanilla stone, bricks, quartz, sandstone).
  * <p>
  * Changes: building lots and roads level the ground to the city height (Techguns 2 flattened lots to their median and
  * left roads floating), doors stand in their wall (Techguns 2 turned them a quarter across), the ladders of small
@@ -243,27 +246,39 @@ final class CityGenerator {
 
     /** Techguns 2 {@code BuildingStyle}: block options for walls (0), windows (1), floors (2), borders (3), door decoration (4). */
     private enum Style {
-        STONE(stairs(Blocks.OAK_STAIRS, Blocks.DARK_OAK_PLANKS),
-                of(Blocks.STONE, Blocks.STONE_BRICKS, Blocks.COBBLESTONE, Blocks.COBBLESTONE, Blocks.COBBLESTONE, Blocks.POLISHED_ANDESITE),
+        STONE(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS),
+                List.of(decor(DecorRole.STONE_BRICKS_PANEL, Blocks.STONE), decor(DecorRole.STONE_BRICKS_SMALL, Blocks.STONE_BRICKS),
+                        decor(DecorRole.COBBLESTONE_1, Blocks.COBBLESTONE), decor(DecorRole.COBBLESTONE_2, Blocks.COBBLESTONE),
+                        decor(DecorRole.COBBLESTONE_3, Blocks.COBBLESTONE), decor(DecorRole.ANDESITE_3, Blocks.POLISHED_ANDESITE)),
                 of(Blocks.GLASS_PANE),
-                of(Blocks.POLISHED_ANDESITE, Blocks.STONE_BRICKS, Blocks.POLISHED_ANDESITE, Blocks.DIORITE, Blocks.POLISHED_GRANITE),
-                of(Blocks.POLISHED_ANDESITE, Blocks.POLISHED_ANDESITE, Blocks.STONE_BRICKS, Blocks.STONE_BRICKS, Blocks.POLISHED_ANDESITE)),
-        FACTORY(stairs(Blocks.OAK_STAIRS, Blocks.DARK_OAK_PLANKS), of(Blocks.BRICKS), of(Blocks.LIGHT_GRAY_STAINED_GLASS_PANE),
-                List.of(TGBlocks.CONCRETE_GREY_DARK)),
-        BRICK(stairs(Blocks.OAK_STAIRS, Blocks.DARK_OAK_PLANKS), of(Blocks.BRICKS), of(Blocks.GLASS_PANE),
-                of(Blocks.POLISHED_ANDESITE, Blocks.STONE_BRICKS, Blocks.POLISHED_ANDESITE, Blocks.DIORITE, Blocks.POLISHED_GRANITE), of(Blocks.BRICKS)),
-        LAB(stairs(Blocks.QUARTZ_STAIRS, Blocks.QUARTZ_BLOCK), of(Blocks.QUARTZ_BLOCK), of(Blocks.WHITE_STAINED_GLASS_PANE), of(Blocks.POLISHED_ANDESITE),
-                of(Blocks.QUARTZ_PILLAR), of(Blocks.CHISELED_QUARTZ_BLOCK)),
-        LIME(stairs(Blocks.OAK_STAIRS, Blocks.DARK_OAK_PLANKS), of(Blocks.CUT_SANDSTONE), of(Blocks.GLASS_PANE), of(Blocks.SANDSTONE),
-                of(Blocks.CHISELED_SANDSTONE), of(Blocks.CHISELED_SANDSTONE));
+                stoneFloors(),
+                List.of(decor(DecorRole.ANDESITE_11, Blocks.POLISHED_ANDESITE), decor(DecorRole.ANDESITE_4, Blocks.POLISHED_ANDESITE),
+                        decor(DecorRole.COBBLESTONE_13, Blocks.STONE_BRICKS), decor(DecorRole.COBBLESTONE_15, Blocks.STONE_BRICKS),
+                        decor(DecorRole.ANDESITE1_0, Blocks.POLISHED_ANDESITE))),
+        FACTORY(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS), List.of(decor(DecorRole.FACTORY_PLATE, Blocks.BRICKS)),
+                of(Blocks.LIGHT_GRAY_STAINED_GLASS_PANE), List.of(DecorBlocks.blockOr(DecorRole.FACTORY_WIREFRAME, TGBlocks.CONCRETE_GREY_DARK))),
+        BRICK(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS), List.of(decor(DecorRole.BRICKS_WIDE, Blocks.BRICKS)),
+                of(Blocks.GLASS_PANE), stoneFloors(), List.of(decor(DecorRole.BRICKS_WEATHERED, Blocks.BRICKS))),
+        LAB(Blocks.QUARTZ_STAIRS, decor(DecorRole.LABORATORY_WALL, Blocks.QUARTZ_BLOCK), List.of(decor(DecorRole.LABORATORY_WALL, Blocks.QUARTZ_BLOCK)),
+                of(Blocks.WHITE_STAINED_GLASS_PANE), List.of(decor(DecorRole.LABORATORY_FLOOR, Blocks.POLISHED_ANDESITE)),
+                List.of(decor(DecorRole.LABORATORY_BORDER, Blocks.QUARTZ_PILLAR)), List.of(decor(DecorRole.LABORATORY_DECORATION, Blocks.CHISELED_QUARTZ_BLOCK))),
+        LIME(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS), List.of(decor(DecorRole.LIME_WALL, Blocks.CUT_SANDSTONE)),
+                of(Blocks.GLASS_PANE), List.of(decor(DecorRole.LIME_FLOOR, Blocks.SANDSTONE)),
+                List.of(decor(DecorRole.LIME_BORDER, Blocks.CHISELED_SANDSTONE)), List.of(decor(DecorRole.LIME_DECORATION, Blocks.CHISELED_SANDSTONE)));
 
-        final Block[] stairs;
-        /** Techguns 2 {@code MBlockRegister} fallbacks of its Chisel blocks; suppliers, as the Techguns blocks register later. */
+        final Block stairs;
+        /** The block under the stairs (Techguns 2 {@code stairs_2}). */
+        final Supplier<? extends Block> stairSupport;
+        /**
+         * Techguns 2 {@code MBlockRegister} blocks: the Chisel block's counterpart where a decorative mod is installed,
+         * else the vanilla or Techguns fallback ({@link DecorBlocks}); resolved when a building is placed.
+         */
         final List<List<Supplier<? extends Block>>> blocks;
 
         @SafeVarargs
-        Style(Block[] stairs, List<? extends Supplier<? extends Block>>... blocks) {
+        Style(Block stairs, Supplier<? extends Block> stairSupport, List<? extends Supplier<? extends Block>>... blocks) {
             this.stairs = stairs;
+            this.stairSupport = stairSupport;
             List<List<Supplier<? extends Block>>> lists = new ArrayList<>();
             for (List<? extends Supplier<? extends Block>> options : blocks) {
                 lists.add(List.copyOf(options));
@@ -271,8 +286,14 @@ final class CityGenerator {
             this.blocks = List.copyOf(lists);
         }
 
-        private static Block[] stairs(Block stairs, Block support) {
-            return new Block[] {stairs, support};
+        /** Techguns 2 {@code stoneFloors}, shared by stone and brick buildings. */
+        private static List<Supplier<? extends Block>> stoneFloors() {
+            return List.of(decor(DecorRole.COBBLESTONE_7, Blocks.POLISHED_ANDESITE), decor(DecorRole.STONE_BRICKS_SUNKEN, Blocks.STONE_BRICKS),
+                    () -> Blocks.POLISHED_ANDESITE, () -> Blocks.DIORITE, () -> Blocks.POLISHED_GRANITE);
+        }
+
+        private static Supplier<Block> decor(DecorRole role, Block fallback) {
+            return DecorBlocks.blockOr(role, () -> fallback);
         }
 
         private static List<Supplier<Block>> of(Block... blocks) {
@@ -355,8 +376,8 @@ final class CityGenerator {
             for (List<Supplier<? extends Block>> options : type.style.blocks) {
                 blocks.add(options.get(rand.nextInt(options.size())).get().defaultBlockState());
             }
-            this.stairs = type.style.stairs[0];
-            this.stairSupport = type.style.stairs[1];
+            this.stairs = type.style.stairs;
+            this.stairSupport = type.style.stairSupport.get();
         }
 
         private BlockState block(int index) {

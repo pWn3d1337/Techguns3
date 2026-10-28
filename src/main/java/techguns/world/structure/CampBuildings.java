@@ -26,6 +26,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import techguns.TGIds;
 import techguns.block.TGLampBlock;
 import techguns.block.TGLanternBlock;
+import techguns.compat.decor.DecorBlocks;
+import techguns.compat.decor.DecorRole;
 import techguns.registry.TGBlocks;
 import techguns.world.LegacyPaletteProcessor.BiomeColor;
 
@@ -606,8 +608,8 @@ final class CampBuildings {
         void place(CampLevel level, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ, int direction, BiomeColor color, RandomSource rnd) {
             BlockState pillar = Blocks.OAK_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);
             BlockState wallBlock = Blocks.OAK_PLANKS.defaultBlockState();
-            BlockState floor = Blocks.OAK_PLANKS.defaultBlockState();
-            BlockState scaffold = Blocks.DARK_OAK_PLANKS.defaultBlockState();
+            BlockState floor = DecorBlocks.stateOr(DecorRole.BARRACKS_WOOD_FLOOR, Blocks.OAK_PLANKS.defaultBlockState());
+            BlockState scaffold = DecorBlocks.stateOr(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS.defaultBlockState());
             BlockState roof = Blocks.SPRUCE_PLANKS.defaultBlockState();
             BlockState roofSlab = Blocks.SPRUCE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
             BlockState ground = Blocks.GRAVEL.defaultBlockState();
@@ -773,7 +775,7 @@ final class CampBuildings {
                 posZ += (sizeZ - 9) / 2;
                 sizeZ = 9;
             }
-            BlockState frame = TGBlocks.STEELFRAME_DARK.get().defaultBlockState();
+            BlockState frame = DecorBlocks.stateOr(DecorRole.HELIPAD_WIREFRAME, TGBlocks.STEELFRAME_DARK.get().defaultBlockState());
             if (sizeX == 9 && sizeZ == 9) {
                 for (int z = 1; z < sizeZ - 1; z++) {
                     level.set(posX, posY, posZ + z, frame);
@@ -789,7 +791,7 @@ final class CampBuildings {
             }
             sizeX = 7;
             sizeZ = 7;
-            BlockState hazard = Blocks.YELLOW_CONCRETE.defaultBlockState();
+            BlockState hazard = DecorBlocks.stateOr(DecorRole.HELIPAD_HAZARDBLOCK, Blocks.YELLOW_CONCRETE.defaultBlockState());
             BlockState concrete = TGBlocks.CONCRETE_GREY_DARK.get().defaultBlockState();
             for (int x = 0; x < sizeX; x++) {
                 for (int z = 0; z < sizeZ; z++) {
@@ -832,9 +834,9 @@ final class CampBuildings {
          * block list, written in tank coordinates ({@code l} along, {@code w} across).
          */
         private static void tank(CampLevel level, int x, int y, int z, int length, boolean alongZ) {
-            BlockState base = TGBlocks.STEELFRAME_SCAFFOLD.get().defaultBlockState();
-            BlockState wall = TGBlocks.CONTAINER_RED.get().defaultBlockState();
-            BlockState border = TGBlocks.CONTAINER_ORANGE.get().defaultBlockState();
+            BlockState base = DecorBlocks.stateOr(DecorRole.TANKS_BASE, TGBlocks.STEELFRAME_SCAFFOLD.get().defaultBlockState());
+            BlockState wall = DecorBlocks.stateOr(DecorRole.TANKS_WALL, TGBlocks.CONTAINER_RED.get().defaultBlockState());
+            BlockState border = DecorBlocks.stateOr(DecorRole.TANKS_BORDER, TGBlocks.CONTAINER_ORANGE.get().defaultBlockState());
             BlockState fill = Blocks.LAVA.defaultBlockState();
             Placer p = (l, h, w, state) -> {
                 if (alongZ) {

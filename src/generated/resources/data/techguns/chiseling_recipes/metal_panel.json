@@ -1,0 +1,29 @@
+{
+  "type": "rechiseled:chiseling",
+  "entries": [
+    {
+      "block": "techguns:container_red"
+    },
+    {
+      "block": "techguns:container_green"
+    },
+    {
+      "block": "techguns:container_blue"
+    },
+    {
+      "block": "techguns:container_orange"
+    },
+    {
+      "block": "techguns:panel_large_border"
+    },
+    {
+      "block": "techguns:steelframe_blue"
+    },
+    {
+      "block": "techguns:steelframe_dark"
+    },
+    {
+      "block": "techguns:steelframe_scaffold"
+    }
+  ]
+}

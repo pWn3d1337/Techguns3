@@ -15,7 +15,8 @@ Port of Techguns 2 (1.12.2) to **Minecraft 1.21.1 / NeoForge 21.1**, in alpha.
 Optional: [Curios](https://modrinth.com/mod/curios) (extra slots; Techguns has its own without it),
 [JEI](https://modrinth.com/mod/jei) (machine recipes), [Patchouli](https://modrinth.com/mod/patchouli) or
 [Modonomicon](https://modrinth.com/mod/modonomicon) (guide book). Create, Mekanism, Immersive Engineering, Modern
-Industrialization, Oritech, FTB Teams and Open Parties and Claims get integrations when installed.
+Industrialization, Oritech, FTB Teams and Open Parties and Claims get integrations when installed. With Factory Blocks, Chisel Reborn
+or Laboratory Blocks, structures use their decorative blocks; Rechiseled can chisel between Techguns block variants.
 
 ## Building
 

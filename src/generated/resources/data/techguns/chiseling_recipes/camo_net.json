@@ -1,0 +1,14 @@
+{
+  "type": "rechiseled:chiseling",
+  "entries": [
+    {
+      "block": "techguns:camo_net_wood"
+    },
+    {
+      "block": "techguns:camo_net_desert"
+    },
+    {
+      "block": "techguns:camo_net_snow"
+    }
+  ]
+}

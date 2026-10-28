@@ -1,0 +1,17 @@
+{
+  "type": "rechiseled:chiseling",
+  "entries": [
+    {
+      "block": "techguns:ladder_metal"
+    },
+    {
+      "block": "techguns:ladder_shiny"
+    },
+    {
+      "block": "techguns:ladder_rusty"
+    },
+    {
+      "block": "techguns:ladder_carbon"
+    }
+  ]
+}

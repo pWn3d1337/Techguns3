@@ -197,6 +197,17 @@ dependencies {
         localRuntime("dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}") { transitive = false }
         localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
     }
+    // Decorative block mods (9i), opt-in with -Pdecor_mods=true: Factory Blocks, Chisel Reborn and Laboratory Blocks for the
+    // structure blocks, Rechiseled for the chiseling groups (Modrinth version ids, see gradle.properties)
+    if (project.decor_mods.toBoolean()) {
+        ["rechiseled", "supermartijn642s-core-lib", "supermartijn642s-config-lib", "fusion-connected-textures", "chisel-reborn",
+         "cryonicconfig", "factory-blocks", "artemis-laboratory-blocks"].each { slug ->
+            localRuntime("maven.modrinth:${slug}:${project.property('decor_' + slug.replace('-', '_'))}") { transitive = false }
+        }
+        if (!project.compat_mods.toBoolean()) {
+            localRuntime("maven.modrinth:architectury-api:${compat_architectury_api}") { transitive = false }
+        }
+    }
     // Open Parties and Claims on its own (-Popac=true): it crashes the GameTest server (no profile cache there),
     // so check it in the dev client (/tgdebug teams)
     if (project.opac.toBoolean()) {

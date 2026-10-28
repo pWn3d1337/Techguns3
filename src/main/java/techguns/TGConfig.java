@@ -129,6 +129,10 @@ public final class TGConfig {
             .comment("Generate uranium ore; disable if another mod already adds it and you want only one kind.").define("oreGenUranium", true);
     public static final ModConfigSpec.BooleanValue SPAWN_ORE_CLUSTER_STRUCTURES = COMMON
             .comment("Generate the structures that contain ore clusters (ore spike, meteor, Nether ore clusters).").define("spawnOreClusterStructures", true);
+    // Techguns 2 used Chisel blocks in its structures when Chisel was installed
+    public static final ModConfigSpec.BooleanValue DECOR_MOD_BLOCKS = COMMON
+            .comment("Build structures from the blocks of Factory Blocks, Chisel Reborn and Laboratory Blocks where those mods are installed "
+                    + "(Techguns 2 used Chisel blocks); without them the vanilla and Techguns blocks are used.").define("decorModBlocks", true);
 
     static {
         COMMON.pop();

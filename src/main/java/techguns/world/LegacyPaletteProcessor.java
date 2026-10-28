@@ -26,6 +26,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.neoforged.neoforge.common.Tags;
+import techguns.compat.decor.DecorBlocks;
+import techguns.compat.decor.DecorRole;
 import techguns.registry.TGStructureProcessors;
 
 /**
@@ -54,6 +56,8 @@ public final class LegacyPaletteProcessor extends StructureProcessor {
     public static final String ALT = "alt";
     public static final String ALT_PER_INDEX = "alt_per_index";
     public static final String ALT_CHANCE = "alt_chance";
+    /** A {@link DecorRole}: its mod block when installed, else the rest of the option (Techguns 2 Chisel blocks). */
+    public static final String DECOR = "decor";
 
     /** Techguns 2 {@code BiomeColorType} order of the biome variants. */
     public enum BiomeColor implements StringRepresentable {
@@ -116,6 +120,14 @@ public final class LegacyPaletteProcessor extends StructureProcessor {
      */
     private record Context(RandomSource random, long structureSeed, BiomeColor biome) {
         CompoundTag resolve(CompoundTag option) {
+            if (option.contains(DECOR)) {
+                Optional<BlockState> decor = DecorRole.byId(option.getString(DECOR)).flatMap(DecorBlocks::state);
+                if (decor.isPresent()) {
+                    CompoundTag chosen = new CompoundTag();
+                    chosen.put(STATE, NbtUtils.writeBlockState(decor.get()));
+                    return chosen;
+                }
+            }
             if (option.contains(WEIGHTED)) {
                 ListTag options = option.getList(WEIGHTED, Tag.TAG_COMPOUND);
                 int total = 0;

@@ -50,13 +50,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 9d | Performance profiling and fixes | `d80402f` |
   | 9e | Multiplayer test pass on a dedicated server | `1abc6ae` |
   | 9g | Release preparation (changelog, metadata, publishing setup) | `22235f5` |
-  | 9h | FOV lock client option, datapack gun and armor stat overrides | not committed yet |
+  | 9h | FOV lock client option, datapack gun and armor stat overrides | `8baaf3d` |
+  | 9i | Decorative mod blocks in structures (Factory Blocks, Chisel Reborn, Laboratory Blocks), Rechiseled groups | not committed yet |
 
-- All 314 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 318 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Phase 8 PR #9 is open against master; Phase 9 works on `phase9`, based on `phase8-systems` (rebase onto master once #9 is merged). Commit 9h (when the user asks; nothing is pushed since 9e). Phase 9 is then done except 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
+1. Phase 8 PR #9 is open against master; Phase 9 works on `phase9`, based on `phase8-systems` (rebase onto master once #9 is merged). Commit 9i (when the user asks; `phase9` has never been pushed). Phase 9 is then done except 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
 2. Book content: the manual is the 1.12 text with ids remapped. Outdated topics (crowbar/wrench, TG inventory tab buttons, door config GUI, RF) are for the author to rewrite in `src/legacy/book/techguns_manual` (Patchouli format; `runData` regenerates both books).
 3. Later: EMI plugin, JEI views of the special crafting recipes.
 
@@ -68,6 +69,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 - Run `runData` on its own before `build runGameTestServer` when datagen output changed: in one Gradle call the resources are processed before datagen writes them, so the GameTest server sees the old files.
 - `TestworldFlat` has the 7b check structures placed at x 100..180, z 0..70. Throwaway dedicated-server worlds: `run/world_ore_test_7a*`, `run/world_struct_test_7c*`, `run/world_struct_test_7d`, `run/world_struct_test_7e*` (7e2b and 7e2c share a seed; forest camp at 1392, 96), `run/world_struct_test_7f` (castles at -1904, 2208 and 3440, 1440), `run/world_city_test_9b` (a city at 3152, -576).
 - Profiling (9d): `/tgdebug bench <gun> <shots per tick> <seconds>` in singleplayer (throwaway copy `run/saves/TestworldBench9d`); JFR via `jcmd <pid> JFR.start name=x settings=profile filename=...`, `JFR.dump`, then `jfr print --stack-depth 64 --events jdk.ExecutionSample` (the JSON export is far too big). `run/options.txt` has vsync and a 120 fps cap, so frame times below 8.3 ms don't show. `run/world_perf_9d` is the throwaway worldgen profiling world.
+- Decorative mods (9i): `-Pdecor_mods=true` puts Rechiseled, Chisel Reborn, Factory Blocks and Laboratory Blocks (with their libraries) on the dev runtime; `run/saves/TestworldDecor9i` is a throwaway copy of `TestworldFlat` with placed structures at x 600..720 and 900, cities at 1300, 0 and 1300, 300.
 - Multiplayer (9e): `runServer -Puse_mcpfabric=false`, then `runClient` (MCP, user `Dev`) and `runClient2 -Puse_mcpfabric=false` (second player `Dev2`, game dir `run2/`, joins `localhost` directly; not controllable, equip it with `/item replace entity Dev2 ...` and `/curios replace back 0 Dev2 with ...`). `run/world_mp_9e` is the throwaway test world (point `level-name` in `run/server.properties` at it and restore `world` afterwards).
 - Background `./gradlew` launches sometimes fail with exit 127 right after the shell's working directory moved to `run/`; launching with the absolute wrapper path (`/f/Techguns3Work/Techguns3/gradlew -p /f/Techguns3Work/Techguns3 ...`) works.
 
