@@ -19,6 +19,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ItemLike;
 import techguns.registry.TGAttributes;
 import techguns.registry.TGComponents;
+import techguns.stats.ArmorStatOverride;
+import techguns.stats.StatOverrides;
 
 /**
  * Powered armor piece (Techguns 2 {@code PoweredArmor}). Each piece stores power; the chestplate refills itself from a
@@ -183,11 +185,14 @@ public class TGPoweredArmorItem extends TGArmorItem {
         if (hasPower(stack)) {
             return super.activeBonuses(stack);
         }
+        ArmorStatOverride override = StatOverrides.armor(this);
+        Map<Holder<Attribute>, Double> unpowered = override != null
+                ? StatOverrides.mergeBonuses(unpoweredBonuses, override.unpoweredBonuses()) : unpoweredBonuses;
         double radiation = bonus(TGAttributes.RADIATION_RESISTANCE);
         if (radiation == 0.0) {
-            return unpoweredBonuses;
+            return unpowered;
         }
-        Map<Holder<Attribute>, Double> bonuses = new LinkedHashMap<>(unpoweredBonuses);
+        Map<Holder<Attribute>, Double> bonuses = new LinkedHashMap<>(unpowered);
         bonuses.put(TGAttributes.RADIATION_RESISTANCE, radiation);
         return bonuses;
     }

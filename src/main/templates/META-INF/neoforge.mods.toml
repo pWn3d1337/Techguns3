@@ -9,16 +9,19 @@ version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
 displayURL="https://github.com/pWn3d1337/Techguns3"
+credits="Based on Techguns 2 (1.12.2) by pWn3d_1337 and Th3_St4lk3r and on the Techguns Fabric port"
 # Techguns arm poses (client)
 enumExtensions="META-INF/enumextensions.json"
 description='''
-Techguns 3 - guns, armor, machines, NPCs and structures for modern Minecraft.
+Guns, armor, machines, NPCs and structures. Techguns 3 is the port of Techguns 2 (1.12.2): over 40 guns with ammo, upgrades and effects, powered armor and gear, machines and multiblocks on Forge Energy, NPC factions and bosses, radiation and new world generation.
+
+Optional: Curios (extra slots), JEI (machine recipes), Patchouli or Modonomicon (guide book).
 '''
 
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
-    versionRange="[${neo_version},)"
+    versionRange="[${neo_min_version},)"
     ordering="NONE"
     side="BOTH"
 

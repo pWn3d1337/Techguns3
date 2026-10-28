@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.EventHooks;
+import techguns.TGIds;
 import techguns.entity.npc.TGNpc;
 import techguns.registry.TGBlockEntities;
 
@@ -46,6 +47,9 @@ public class TGSpawnerBlockEntity extends BlockEntity {
     private ItemStack weaponOverride = ItemStack.EMPTY;
     /** Not saved: NPCs re-register on their first tick after loading. */
     private final List<TGNpc> activeMobs = new ArrayList<>();
+    /** Ticks after loading without spawning, so the saved NPCs can re-register first. */
+    private static final int RELINK_TICKS = 40;
+    private int relinkTicks;
 
     public TGSpawnerBlockEntity(BlockPos pos, BlockState state) {
         super(TGBlockEntities.TG_SPAWNER.get(), pos, state);
@@ -110,7 +114,10 @@ public class TGSpawnerBlockEntity extends BlockEntity {
 
     private void tick(ServerLevel level) {
         delay--;
-        if (delay <= 0) {
+        if (relinkTicks > 0) {
+            relinkTicks--;
+            delay = Math.max(delay, 1);
+        } else if (delay <= 0) {
             delay = spawnDelay;
             if (activeMobs.size() < Math.min(maxActive, mobsLeft) && hasMobTypes()) {
                 if (level.getDifficulty() != Difficulty.PEACEFUL) {
@@ -185,6 +192,7 @@ public class TGSpawnerBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         mobsLeft = tag.getInt("mobsLeft");
         delay = tag.getInt("delay");
+        relinkTicks = RELINK_TICKS;
         spawnDelay = tag.getInt("spawnDelay") < 1 ? 200 : tag.getInt("spawnDelay");
         maxActive = Math.max(tag.getInt("maxActive"), 1);
         spawnRange = tag.getInt("spawnRange");
@@ -192,7 +200,7 @@ public class TGSpawnerBlockEntity extends BlockEntity {
         mobTypes.clear();
         for (Tag entry : tag.getList("mobTypes", Tag.TAG_COMPOUND)) {
             CompoundTag type = (CompoundTag) entry;
-            ResourceLocation id = ResourceLocation.tryParse(type.getString("id"));
+            ResourceLocation id = TGIds.tryParse(type.getString("id"));
             if (id != null) {
                 mobTypes.add(new MobType(id, Math.max(type.getInt("weight"), 1)));
             }

@@ -35,8 +35,13 @@ public final class CamoData {
         if (camos.isEmpty()) {
             return Optional.empty();
         }
-        String name = stack.get(TGComponents.CAMO.get());
+        String name = name(stack);
         return Optional.of(camos.stream().filter(camo -> camo.name().equals(name)).findFirst().orElse(camos.getFirst()));
+    }
+
+    /** The camo name stored on the stack ("" without one); may name a camo that no longer exists, see {@link #current}. */
+    public static String name(ItemStack stack) {
+        return stack.getOrDefault(TGComponents.CAMO.get(), "");
     }
 
     /** Switches to the next (or previous) camo, wrapping around; returns the new camo. */

@@ -35,7 +35,7 @@ public class FabricatorRenderer implements BlockEntityRenderer<FabricatorBlockEn
         if (model == null) {
             model = FabricatorModel.bake();
         }
-        float progress = fabricator.isWorking() ? fabricator.getProgress() : 0.0f;
+        float progress = fabricator.isWorking() ? fabricator.getProgress(partialTick) : 0.0f;
         poseStack.pushPose();
         // Techguns 2: models upside down, origin one block above the controller; turned by the form direction
         poseStack.translate(0.5, 1.5, 0.5);

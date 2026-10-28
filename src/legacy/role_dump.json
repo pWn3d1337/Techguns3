@@ -1,0 +1,228 @@
+{
+  "shared": {},
+  "techguns.world.structures.AircraftCarrier": {
+    "blockList": {
+      "0": [
+        "HELIPAD_HAZARDBLOCK"
+      ],
+      "1": [
+        "FACTORY_PLATE_DOTTED_GREY"
+      ],
+      "2": [
+        "FACTORY_PLATE_VERY_RUSTY"
+      ],
+      "3": [
+        "FACTORY_PLATE_WORN_COLUMN"
+      ],
+      "4": [
+        "FACTORY_WIREFRAME"
+      ],
+      "11": [
+        "SUPPLY_CRATES"
+      ],
+      "12": [
+        "SUPPLY_CRATES"
+      ],
+      "14": [
+        "TECHNICAL_PIPES"
+      ],
+      "20": [
+        "FACTORY_SHINY_METAL"
+      ],
+      "23": [
+        "TECHNICAL2_SCAFFOLD_TRANSPARENT"
+      ],
+      "30": [
+        "ALUMINIUM_STAIRS_WEST"
+      ],
+      "31": [
+        "ALUMINIUM_STAIRS_EAST"
+      ],
+      "33": [
+        "IRON_BLOCK_VENTS"
+      ],
+      "34": [
+        "TECHNICAL_GRATE"
+      ],
+      "36": [
+        "TECHNICAL2_FAN"
+      ],
+      "40": [
+        "SUPPLY_CRATES_CHANCE"
+      ]
+    }
+  },
+  "techguns.world.structures.FactoryHouseSmall": {
+    "blockList": {
+      "1": [
+        "TECHNICAL_BLOCK_SCAFFOLD"
+      ],
+      "2": [
+        "FACTORY_PLATE"
+      ],
+      "4": [
+        "TECHNICAL_CONCRETE"
+      ],
+      "5": [
+        "FACTORY_CRATE"
+      ],
+      "10": [
+        "FACTORY_PLATE_DOTTED"
+      ]
+    }
+  },
+  "techguns.world.structures.GasStation": {
+    "blockList": {
+      "1": [
+        "AIR"
+      ],
+      "2": [
+        "AIR"
+      ],
+      "5": [
+        "GAS_STATION_CONSOLE"
+      ],
+      "8": [
+        "COBBLESTONE_7"
+      ]
+    }
+  },
+  "techguns.world.structures.NetherAcidHole": {
+    "blockList": {
+      "0": [
+        "NETHERRACK_ROCKY"
+      ],
+      "1": [
+        "AIR"
+      ]
+    }
+  },
+  "techguns.world.structures.NetherAltarMedium": {
+    "blockList": {
+      "3": [
+        "AIR"
+      ]
+    }
+  },
+  "techguns.world.structures.NetherGhastSpawner": {
+    "blockList": {
+      "0": [
+        "NETHERRACK_C2"
+      ],
+      "1": [
+        "AIR"
+      ],
+      "2": [
+        "NETHERRACK_C1"
+      ],
+      "3": [
+        "NETHERRACK_ROCKY"
+      ],
+      "10": [
+        "NETHERRACK_C12"
+      ],
+      "11": [
+        "NETHERRACK_C8"
+      ]
+    }
+  },
+  "techguns.world.structures.NetherLoot01": {
+    "blockList": {
+      "0": [
+        "NETHERRACK_ROCKY"
+      ],
+      "2": [
+        "AIR"
+      ]
+    }
+  },
+  "techguns.world.structures.NetherOreClusterCastle": {
+    "blockList": {
+      "2": [
+        "NETHERBRICKS_C13"
+      ],
+      "3": [
+        "AIR"
+      ]
+    }
+  },
+  "techguns.world.structures.NetherOreClusterSmall": {
+    "blockList": {
+      "1": [
+        "AIR"
+      ]
+    }
+  },
+  "techguns.world.structures.PoliceStation": {
+    "blockList": {
+      "1": [
+        "IRON_BLOCK_SMALL_INGOTS"
+      ],
+      "2": [
+        "IRON_PANE_MODERN_FENCE"
+      ],
+      "3": [
+        "AIR"
+      ],
+      "7": [
+        "BLUE_CONCRETE_SMALL_BRICKS"
+      ],
+      "11": [
+        "OAK_PLANKS_1"
+      ],
+      "13": [
+        "COBBLESTONE_7"
+      ]
+    }
+  },
+  "techguns.world.structures.SmallTrainstation": {
+    "blockList": {
+      "2": [
+        "COBBLESTONE_MOSSY_RND"
+      ],
+      "3": [
+        "STONEBRICK_STAIRS_EAST_CRACKED_RND"
+      ],
+      "4": [
+        "COBBLESTONE_FLOOR"
+      ],
+      "5": [
+        "BRICKS_CRACKED_RND"
+      ],
+      "8": [
+        "STONEBRICK_STAIRS_WEST_CRACKED_INV_RND"
+      ],
+      "9": [
+        "STONEBRICK_CRACKED_RND"
+      ],
+      "15": [
+        "STONEBRICK_STAIRS_SOUTH_INV"
+      ],
+      "16": [
+        "STONEBRICK_STAIRS_NORTH_INV"
+      ],
+      "19": [
+        "STONEBRICK_STAIRS_EAST_CRACKED_INV_RND"
+      ],
+      "20": [
+        "STONEBRICK_STAIRS_WEST_CRACKED_RND"
+      ]
+    }
+  },
+  "techguns.world.structures.SurvivorHideout": {
+    "blockList": {
+      "2": [
+        "AIR"
+      ],
+      "3": [
+        "SURIVIVOR_HIDEOUT_IRON_BOTTOM"
+      ],
+      "5": [
+        "SURIVIVOR_HIDEOUT_IRON_TOP"
+      ],
+      "16": [
+        "CAMO_NET_TOP"
+      ]
+    }
+  }
+}

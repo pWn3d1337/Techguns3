@@ -49,13 +49,13 @@ public class MilitaryBaseStructure extends Structure {
         int sizeZ = MIN_SIZE + random.nextInt(SIZE_RANGE);
         int x0 = context.chunkPos().getMinBlockX();
         int z0 = context.chunkPos().getMinBlockZ();
-        Sampler sampler = new Sampler(context, x0 - MilitaryBasePiece.MARGIN, z0 - MilitaryBasePiece.MARGIN);
+        GroundSampler sampler = new GroundSampler(context, x0 - CampLevelPiece.MARGIN, z0 - CampLevelPiece.MARGIN);
         // most candidates fail; the biome is cheaper than the heights
         if (!validBiome(context, x0 + sizeX / 2, sampler.height(x0 + sizeX / 2, z0 + sizeZ / 2), z0 + sizeZ / 2)) {
             return Optional.empty();
         }
         Optional<Integer> ground;
-        while ((ground = sampler.validSpawnY(x0, z0, sizeX, sizeZ)).isEmpty()) {
+        while ((ground = sampler.validSpawnY(x0, z0, sizeX, sizeZ, HEIGHT_TOLERANCE, VALID_STEP)).isEmpty()) {
             if (sizeX < MIN_SIZE || sizeZ < MIN_SIZE) {
                 return Optional.empty();
             }
@@ -67,7 +67,7 @@ public class MilitaryBaseStructure extends Structure {
         if (!validBiome(context, centerX, ground.get(), centerZ)) {
             return Optional.empty();
         }
-        HeightGrid grid = sampler.grid(sizeX + 2 * MilitaryBasePiece.MARGIN, sizeZ + 2 * MilitaryBasePiece.MARGIN);
+        HeightGrid grid = sampler.grid(sizeX + 2 * CampLevelPiece.MARGIN, sizeZ + 2 * CampLevelPiece.MARGIN);
         BiomeColor color = campColor(LegacyTemplateStructure.biome(context, centerX, ground.get(), centerZ));
         long seed = random.nextLong();
         int finalSizeX = sizeX;
@@ -96,14 +96,14 @@ public class MilitaryBaseStructure extends Structure {
 
     /** The generator's ground heights (top solid block) every {@link #STEP} blocks from the origin, interpolated between. */
     public record HeightGrid(int originX, int originZ, int countX, int countZ, int[] heights) {
-        static final int STEP = 4;
+        public static final int STEP = 4;
 
         private int at(int i, int j) {
             return heights[Math.clamp(i, 0, countX - 1) * countZ + Math.clamp(j, 0, countZ - 1)];
         }
 
         /** The interpolated top ground block of a column. */
-        int height(int x, int z) {
+        public int height(int x, int z) {
             float fx = (float) (x - originX) / STEP;
             float fz = (float) (z - originZ) / STEP;
             int i = (int) Math.floor(fx);
@@ -113,77 +113,6 @@ public class MilitaryBaseStructure extends Structure {
             float top = at(i, j) * (1 - tx) + at(i + 1, j) * tx;
             float bottom = at(i, j + 1) * (1 - tx) + at(i + 1, j + 1) * tx;
             return Math.round(top * (1 - tz) + bottom * tz);
-        }
-    }
-
-    /**
-     * Samples the generator's ground on the {@link HeightGrid#STEP} lattice from the origin when first asked, so a
-     * candidate that fails early costs only a few columns.
-     */
-    private static final class Sampler {
-        private final GenerationContext context;
-        private final int originX;
-        private final int originZ;
-        private final Map<Long, int[]> samples = new HashMap<>();
-
-        Sampler(GenerationContext context, int originX, int originZ) {
-            this.context = context;
-            this.originX = originX;
-            this.originZ = originZ;
-        }
-
-        /** Top solid block and whether a liquid covers it, at lattice point (i, j). */
-        private int[] sample(int i, int j) {
-            return samples.computeIfAbsent(ChunkPos.asLong(i, j), key -> {
-                int x = originX + i * HeightGrid.STEP;
-                int z = originZ + j * HeightGrid.STEP;
-                int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
-                int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-                return new int[] {floor - 1, surface > floor ? 1 : 0};
-            });
-        }
-
-        /** The top ground block at the lattice point nearest to (x, z). */
-        int height(int x, int z) {
-            return sample(Math.round((float) (x - originX) / HeightGrid.STEP), Math.round((float) (z - originZ) / HeightGrid.STEP))[0];
-        }
-
-        /**
-         * Techguns 2 {@code getValidSpawnYArea}: every {@link #VALID_STEP} blocks from the corner (the far edges only
-         * when on the step), no liquid and at most {@link #HEIGHT_TOLERANCE} apart; the average first free block.
-         */
-        Optional<Integer> validSpawnY(int x0, int z0, int sizeX, int sizeZ) {
-            int min = Integer.MAX_VALUE;
-            int max = Integer.MIN_VALUE;
-            long sum = 0;
-            int count = 0;
-            for (int dx = 0; dx <= sizeX; dx += VALID_STEP) {
-                for (int dz = 0; dz <= sizeZ; dz += VALID_STEP) {
-                    int[] sample = sample((x0 + dx - originX) / HeightGrid.STEP, (z0 + dz - originZ) / HeightGrid.STEP);
-                    int h = sample[0] + 1;
-                    min = Math.min(min, h);
-                    max = Math.max(max, h);
-                    if (sample[1] != 0 || max - min > HEIGHT_TOLERANCE) {
-                        return Optional.empty();
-                    }
-                    sum += h;
-                    count++;
-                }
-            }
-            return Optional.of((int) (sum / count));
-        }
-
-        /** All lattice points over the span from the origin. */
-        HeightGrid grid(int spanX, int spanZ) {
-            int countX = Math.ceilDiv(spanX, HeightGrid.STEP) + 1;
-            int countZ = Math.ceilDiv(spanZ, HeightGrid.STEP) + 1;
-            int[] heights = new int[countX * countZ];
-            for (int i = 0; i < countX; i++) {
-                for (int j = 0; j < countZ; j++) {
-                    heights[i * countZ + j] = sample(i, j)[0];
-                }
-            }
-            return new HeightGrid(originX, originZ, countX, countZ, heights);
         }
     }
 }

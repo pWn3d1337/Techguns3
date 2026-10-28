@@ -3,6 +3,8 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
+    // CurseForge, Modrinth and GitHub uploads (9g); publishMods runs as a dry run without tokens
+    id 'me.modmuss50.mod-publish-plugin' version '2.2.1'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -18,7 +20,7 @@ sourceSets.main.resources {
 
     // Exclude development-only resources from finalized outputs
     exclude("**/*.bbmodel") // Blockbench project files
-    exclude("src/generated/**/.cache") // datagen cache files
+    exclude(".cache/**") // datagen cache files (paths are relative to the resource dirs)
 }
 
 repositories {
@@ -101,6 +103,14 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             // dev window (windowed, so MCP testing doesn't take over the screen)
             programArguments.addAll '--width', '2560', '--height', '1080'
+        }
+
+        // second player for multiplayer checks: run with -Puse_mcpfabric=false next to runServer and runClient
+        // (own game dir, no bridge); joins the local dedicated server directly
+        client2 {
+            client()
+            gameDirectory = project.file('run2')
+            programArguments.addAll '--username', 'Dev2', '--width', '1280', '--height', '720', '--quickPlayMultiplayer', 'localhost'
         }
 
         server {
@@ -187,6 +197,17 @@ dependencies {
         localRuntime("dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}") { transitive = false }
         localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
     }
+    // Decorative block mods (9i), opt-in with -Pdecor_mods=true: Factory Blocks, Chisel Reborn and Laboratory Blocks for the
+    // structure blocks, Rechiseled for the chiseling groups (Modrinth version ids, see gradle.properties)
+    if (project.decor_mods.toBoolean()) {
+        ["rechiseled", "supermartijn642s-core-lib", "supermartijn642s-config-lib", "fusion-connected-textures", "chisel-reborn",
+         "cryonicconfig", "factory-blocks", "artemis-laboratory-blocks"].each { slug ->
+            localRuntime("maven.modrinth:${slug}:${project.property('decor_' + slug.replace('-', '_'))}") { transitive = false }
+        }
+        if (!project.compat_mods.toBoolean()) {
+            localRuntime("maven.modrinth:architectury-api:${compat_architectury_api}") { transitive = false }
+        }
+    }
     // Open Parties and Claims on its own (-Popac=true): it crashes the GameTest server (no profile cache there),
     // so check it in the dev client (/tgdebug teams)
     if (project.opac.toBoolean()) {
@@ -200,6 +221,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
+            neo_min_version        : neo_min_version,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -230,6 +252,64 @@ publishing {
             url = "file://${project.projectDir}/repo"
         }
     }
+}
+
+// Release (9g): ./gradlew publishMods uploads the jar to CurseForge, Modrinth and GitHub with the CHANGELOG.md
+// section of this version. Without the tokens or the project ids (gradle.properties) it is a dry run that writes
+// the release into build/publishMods. The release workflow (.github/workflows/release.yml) runs it on demand.
+var releaseVersion = mod_version
+var releaseChangelog = providers.fileContents(layout.projectDirectory.file('CHANGELOG.md')).asText.map { text ->
+    var section = text =~ /(?ms)^## \[\Q${releaseVersion}\E\][^\n]*\n(.*?)(?=^## \[|\z)/
+    section.find() ? section.group(1).trim() : "See CHANGELOG.md"
+}
+var curseforgeToken = providers.environmentVariable('CURSEFORGE_TOKEN')
+var modrinthToken = providers.environmentVariable('MODRINTH_TOKEN')
+var githubToken = providers.environmentVariable('GITHUB_TOKEN')
+
+publishMods {
+    file = jar.archiveFile
+    changelog = releaseChangelog
+    version = mod_version
+    displayName = "${mod_name} ${mod_version} (${minecraft_version})"
+    type = mod_version.contains('alpha') ? ALPHA : mod_version.contains('beta') ? BETA : STABLE
+    modLoaders.add('neoforge')
+    dryRun = !curseforgeToken.isPresent() || !modrinthToken.isPresent() || !githubToken.isPresent()
+            || curseforge_project_id.isEmpty() || modrinth_project_id.isEmpty()
+
+    curseforge {
+        projectId = curseforge_project_id.isEmpty() ? '0' : curseforge_project_id
+        accessToken = curseforgeToken
+        minecraftVersions.add(minecraft_version)
+        javaVersions.add(JavaVersion.VERSION_21)
+        client = true
+        server = true
+        requires('geckolib')
+        optional('curios', 'jei', 'patchouli', 'modonomicon')
+    }
+    modrinth {
+        projectId = modrinth_project_id.isEmpty() ? '00000000' : modrinth_project_id
+        accessToken = modrinthToken
+        minecraftVersions.add(minecraft_version)
+        requires('geckolib')
+        optional('curios', 'jei', 'patchouli', 'modonomicon')
+    }
+    github {
+        repository = 'pWn3d1337/Techguns3'
+        accessToken = githubToken
+        commitish = providers.environmentVariable('GITHUB_SHA').orElse('master')
+        tagName = "v${mod_version}"
+    }
+}
+
+tasks.named('jar', Jar) {
+    manifest.attributes([
+            'Specification-Title'   : mod_id,
+            'Specification-Vendor'  : mod_authors,
+            'Specification-Version' : '1',
+            'Implementation-Title'  : mod_name,
+            'Implementation-Version': mod_version,
+            'Implementation-Vendor' : mod_authors,
+    ])
 }
 
 tasks.named('test', Test) {

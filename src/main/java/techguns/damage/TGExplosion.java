@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 /**
  * Techguns explosion (Techguns 2 {@code TGExplosion}): full damage within {@code primaryRadius}, falling off to
@@ -171,7 +172,8 @@ public class TGExplosion {
             }
             // no damage through walls
             Vec3 end = entity.position().add(0, entity.getEyeHeight() * 0.5, 0);
-            if (level.clip(new ClipContext(position, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, projectile))
+            if (level.clip(new ClipContext(position, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE,
+                            projectile != null ? CollisionContext.of(projectile) : CollisionContext.empty()))
                     .getType() == HitResult.Type.BLOCK) {
                 continue;
             }

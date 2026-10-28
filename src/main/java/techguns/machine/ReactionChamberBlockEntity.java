@@ -31,6 +31,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import techguns.TGIds;
 import techguns.multiblock.MultiblockMasterBlockEntity;
 import techguns.multiblock.MultiblockSchematic;
 import techguns.network.FxPayloads;
@@ -504,7 +505,9 @@ public class ReactionChamberBlockEntity extends MultiblockMasterBlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         tank.readFromNBT(registries, tag.getCompound("tank"));
-        reactionId = tag.contains("reaction") ? ResourceLocation.tryParse(tag.getString("reaction")) : null;
+        reactionId = tag.contains("reaction") ? TGIds.tryParse(tag.getString("reaction")) : null;
+        // the reacting item is client data, but the server sends it on: keep it over a reload
+        reactingItem = ItemStack.parseOptional(registries, tag.getCompound("reacting_item"));
         completion = tag.getInt("completion");
         nextTick = tag.contains("next_tick") ? tag.getInt("next_tick") : REACTION_TICK;
     }

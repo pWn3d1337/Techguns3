@@ -21,14 +21,17 @@ import techguns.gun.GunItem;
 import techguns.player.TGPlayerData;
 import techguns.slot.ExtraSlots;
 import techguns.slot.FallbackSlots;
+import techguns.slot.TGSlotType;
+import techguns.slot.item.JetpackItem;
 import techguns.slot.menu.ExtraSlotsMenu;
+import techguns.stats.StatOverrides;
 
 /**
  * Registers all Techguns payloads and offers typed send helpers. All payload types live in this package.
  */
 public final class TGNetwork {
     /** Bump when payloads change incompatibly. */
-    public static final String PROTOCOL_VERSION = "1";
+    public static final String PROTOCOL_VERSION = "2";
 
     private TGNetwork() {
     }
@@ -52,6 +55,7 @@ public final class TGNetwork {
         registrar.playToClient(PlayerPayloads.SyncPlayerData.TYPE, PlayerPayloads.SyncPlayerData.STREAM_CODEC, TGNetwork::handleSyncPlayerData);
         registrar.playToClient(PlayerPayloads.SyncExtraSlots.TYPE, PlayerPayloads.SyncExtraSlots.STREAM_CODEC, TGNetwork::handleSyncExtraSlots);
         registrar.playToClient(PlayerPayloads.SyncRadiation.TYPE, PlayerPayloads.SyncRadiation.STREAM_CODEC, TGNetwork::handleSyncRadiation);
+        registrar.playToClient(StatPayloads.SyncStatOverrides.TYPE, StatPayloads.SyncStatOverrides.STREAM_CODEC, TGNetwork::handleSyncStatOverrides);
     }
 
     /** Sends the saved player settings to their client (login, respawn, dimension change). */
@@ -59,8 +63,13 @@ public final class TGNetwork {
         if (player instanceof ServerPlayer serverPlayer) {
             TGPlayerData data = TGPlayerData.of(player);
             PacketDistributor.sendToPlayer(serverPlayer, new PlayerPayloads.SyncPlayerData(data.get(TGPlayerData.Toggle.STEP_ASSIST),
-                    data.get(TGPlayerData.Toggle.NIGHT_VISION), data.get(TGPlayerData.Toggle.JETPACK)));
+                    data.get(TGPlayerData.Toggle.NIGHT_VISION), data.get(TGPlayerData.Toggle.JETPACK), data.get(TGPlayerData.Toggle.SAFE_MODE)));
         }
+    }
+
+    /** Sends the datapack stat overrides to a client (login and {@code /reload}). */
+    public static void syncStatOverrides(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, new StatPayloads.SyncStatOverrides(StatOverrides.gunsById(), StatOverrides.armorById()));
     }
 
     public static void sendSetToggle(TGPlayerData.Toggle toggle, boolean enabled) {
@@ -184,8 +193,11 @@ public final class TGNetwork {
 
     private static void handleJetpackBoost(PlayerPayloads.JetpackBoost payload, IPayloadContext context) {
         Player player = context.player();
-        TGPlayerData.of(player).setJetpackBoost(payload.active());
-        PacketDistributor.sendToPlayersTrackingEntity(player, new PlayerPayloads.JetpackBoostState(player.getId(), payload.active()));
+        // Techguns 2 checked the jetpack toggle on the server; a boost without a worn jetpack is ignored as well
+        boolean active = payload.active() && TGPlayerData.of(player).get(TGPlayerData.Toggle.JETPACK)
+                && ExtraSlots.get(player, TGSlotType.BACK).getItem() instanceof JetpackItem;
+        TGPlayerData.of(player).setJetpackBoost(active);
+        PacketDistributor.sendToPlayersTrackingEntity(player, new PlayerPayloads.JetpackBoostState(player.getId(), active));
     }
 
     private static void handleJetpackBoostState(PlayerPayloads.JetpackBoostState payload, IPayloadContext context) {
@@ -208,6 +220,13 @@ public final class TGNetwork {
         data.set(TGPlayerData.Toggle.STEP_ASSIST, payload.stepAssist());
         data.set(TGPlayerData.Toggle.NIGHT_VISION, payload.nightVision());
         data.set(TGPlayerData.Toggle.JETPACK, payload.jetpack());
+        data.set(TGPlayerData.Toggle.SAFE_MODE, payload.safeMode());
+    }
+
+    private static void handleSyncStatOverrides(StatPayloads.SyncStatOverrides payload, IPayloadContext context) {
+        // on an integrated server these are the values the server already set
+        StatOverrides.setGuns(payload.guns());
+        StatOverrides.setArmor(payload.armor());
     }
 
     private static void handleSyncRadiation(PlayerPayloads.SyncRadiation payload, IPayloadContext context) {

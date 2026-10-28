@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import techguns.client.render.TGMatrixOps;
 
@@ -57,7 +56,6 @@ public class TGParticle3D extends TGParticle {
         this.model = model;
         this.texture = texture;
         this.calcModelBounds(model);
-        this.boundingBox = new AABB(modelMinX, modelMinY, modelMinZ, modelMaxX, modelMaxY, modelMaxZ);
 
         this.anglePitch = FxMath.randomFloat(random, type.anglePitchMin, type.anglePitchMax);
         this.anglePitchRate = FxMath.randomFloat(random, type.anglePitchRateMin, type.anglePitchRateMax);

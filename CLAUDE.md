@@ -20,9 +20,11 @@ Everything is English: code, comments, commit messages, docs, replies.
 | GameTests (headless, exits when done) | `./gradlew runGameTestServer` |
 | Dev client | `./gradlew runClient` |
 | Dedicated server | `./gradlew runServer` |
+| Release upload (dry run without tokens/project ids, see README) | `./gradlew publishMods` |
 
 Disable the dev-only MCP bridge with `-Puse_mcpfabric=false` (CI does this).
-Add `-Pcompat_mods=true` to put the compat mods (Create, Mekanism, IE, MI, Oritech, FTB Teams) on the dev runtime, e.g. to check the compat recipes with `runGameTestServer`; `-Popac=true` adds Open Parties and Claims (dev client only, it crashes the GameTest server).
+The mod declares `neo_min_version` (gradle.properties) as its oldest NeoForge; check it with `-Pneo_version=<neo_min_version>` (CI does this in its own job; MCP Fabric needs a newer NeoForge, so combine with `-Puse_mcpfabric=false`).
+Add `-Pcompat_mods=true` to put the compat mods (Create, Mekanism, IE, MI, Oritech, FTB Teams) on the dev runtime, e.g. to check the compat recipes with `runGameTestServer`; `-Popac=true` adds Open Parties and Claims (dev client only, it crashes the GameTest server); `-Pdecor_mods=true` adds the decorative block mods (Rechiseled, Chisel Reborn, Factory Blocks, Laboratory Blocks) that structures and the chiseling groups use.
 
 ## In-game testing via MCP
 The dev client loads **MCP Fabric** (`mcpfabric`, dev-only `localRuntime` dependency, never shipped).
@@ -32,8 +34,8 @@ Use it to verify rendering, GUIs and gameplay after `runClient`; use GameTests f
 - Test world: `TestworldFlat` (creative, superflat, commands on) — join with `join_world` (`sp:TestworldFlat`) from the title screen.
 - "Pause on lost focus" is disabled in the dev client (F3+P), so the game keeps running while the window is in the background.
 - Call `get_status` first; screenshots need the player in a world with no screen open (`close_screen`).
-- Dev-only `/tgdebug` client commands help where MCP has no input: `fire <ticks>`, `aim <ticks>` (hold use: lock-on, charge guns, grenades), `zoom`, `view` (F5), `fx <name>`, `fxstats`, `projectiles`, `slowbeams <ticks>`, `alwaysdeath`, `geo` (geo/Java model), `exportgeo`, `reloadanim <ticks>`, `teams` (runs every team source on the integrated server), `jei <category>` (opens a JEI category, e.g. `metal_press`; send it with `send_chat`, the screen shows a moment later).
-- Dedicated server test: start `./gradlew runServer -Puse_mcpfabric=false` (the server must not take the client's bridge port), then `runClient` and `join_world` the `localhost` entry in `run/servers.dat`. Server and client share `run/` (offline mode; `Dev` is op via `run/ops.json`). MCP server-side tools don't reach a dedicated server — use chat commands as the op player.
+- Dev-only `/tgdebug` client commands help where MCP has no input: `fire <ticks>`, `aim <ticks>` (hold use: lock-on, charge guns, grenades), `zoom`, `view` (F5), `fx <name>`, `fxstats`, `projectiles`, `slowbeams <ticks>`, `alwaysdeath`, `geo` (geo/Java model), `exportgeo`, `reloadanim <ticks>`, `teams` (runs every team source on the integrated server), `bench <gun> <shots per tick> <seconds>` (load test: fires on the integrated server, reports tick/frame times and peak projectile/particle counts), `stats` (the client's stats of the held gun or armor piece, to check datapack overrides), `key <safe_mode|step_assist|night_vision|jetpack|force_reload>` (presses a Techguns key binding), `jei <category>` (opens a JEI category, e.g. `metal_press`; send it with `send_chat`, the screen shows a moment later).
+- Dedicated server test: start `./gradlew runServer -Puse_mcpfabric=false` (the server must not take the client's bridge port), then `runClient` and `join_world` the `localhost` entry in `run/servers.dat`. For a second player add `./gradlew runClient2 -Puse_mcpfabric=false` (user `Dev2`, game dir `run2/`, joins `localhost` itself). Server and client share `run/` (offline mode; `Dev` is op via `run/ops.json`). MCP server-side tools don't reach a dedicated server — use chat commands as the op player.
 
 ## Code layout (package `techguns`)
 See design doc §4.1. Key rules from §4.7 (migration readiness for 26.x):

@@ -21,7 +21,9 @@ public class TGPlayerData {
         /** Night vision of goggles, masks and helmets (default off). */
         NIGHT_VISION(false),
         /** Jetpack and jump pack boost (default on). */
-        JETPACK(true);
+        JETPACK(true),
+        /** Safe mode: the player's guns and grenades don't damage blocks (default off, Techguns 2 {@code enableSafemode}). */
+        SAFE_MODE(false);
 
         private final boolean defaultValue;
 
@@ -37,12 +39,14 @@ public class TGPlayerData {
     public static final Codec<TGPlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.optionalFieldOf("step_assist", true).forGetter(data -> data.get(Toggle.STEP_ASSIST)),
             Codec.BOOL.optionalFieldOf("night_vision", false).forGetter(data -> data.get(Toggle.NIGHT_VISION)),
-            Codec.BOOL.optionalFieldOf("jetpack", true).forGetter(data -> data.get(Toggle.JETPACK))
-    ).apply(instance, (step, nightVision, jetpack) -> {
+            Codec.BOOL.optionalFieldOf("jetpack", true).forGetter(data -> data.get(Toggle.JETPACK)),
+            Codec.BOOL.optionalFieldOf("safe_mode", false).forGetter(data -> data.get(Toggle.SAFE_MODE))
+    ).apply(instance, (step, nightVision, jetpack, safeMode) -> {
         TGPlayerData data = new TGPlayerData();
         data.set(Toggle.STEP_ASSIST, step);
         data.set(Toggle.NIGHT_VISION, nightVision);
         data.set(Toggle.JETPACK, jetpack);
+        data.set(Toggle.SAFE_MODE, safeMode);
         return data;
     }));
 

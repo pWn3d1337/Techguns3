@@ -35,6 +35,7 @@ import techguns.block.TGLampBlock;
 import techguns.block.TGLanternBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.resources.ResourceLocation;
 import techguns.machine.TGMachineBlock;
 import techguns.multiblock.MultiblockControllerBlock;
 import techguns.multiblock.MultiblockPartBlock;
@@ -49,6 +50,8 @@ public final class TGBlocks {
     private static final List<DeferredBlock<? extends Block>> BLOCKS_WITH_ITEM = new ArrayList<>();
     private static final List<DeferredBlock<? extends Block>> CUBE_BLOCKS = new ArrayList<>();
     private static final List<DeferredBlock<StairBlock>> STAIR_BLOCKS = new ArrayList<>();
+    /** Base block id -> its stairs. */
+    private static final java.util.Map<ResourceLocation, DeferredBlock<StairBlock>> STAIRS_BY_BASE = new java.util.HashMap<>();
 
     // --- Ores ---
     public static final DeferredBlock<DropExperienceBlock> TIN_ORE = withItem("tin_ore",
@@ -350,7 +353,13 @@ public final class TGBlocks {
     private static DeferredBlock<StairBlock> stairs(String name, DeferredBlock<Block> base, BlockBehaviour.Properties properties) {
         DeferredBlock<StairBlock> block = withItem(name, () -> new StairBlock(base.get().defaultBlockState(), properties));
         STAIR_BLOCKS.add(block);
+        STAIRS_BY_BASE.put(base.getId(), block);
         return block;
+    }
+
+    /** The stairs made from {@code base}, if there are any. */
+    public static java.util.Optional<DeferredBlock<StairBlock>> stairsOf(DeferredBlock<? extends Block> base) {
+        return java.util.Optional.ofNullable(STAIRS_BY_BASE.get(base.getId()));
     }
 
     /** Stairs of the decorative blocks (datagen). */

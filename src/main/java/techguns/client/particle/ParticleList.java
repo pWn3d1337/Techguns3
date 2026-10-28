@@ -64,13 +64,13 @@ public class ParticleList<E> implements Iterable<E>{
     
                 while(it.hasNext()) {
                     current = it.next();
-                    if(prev!=null) {
-                        if(comp.compare(prev, current)>0) {
-                            it.swapWithPrev();
-                            changes=true;
-                        }
+                    if(prev!=null && comp.compare(prev, current)>0) {
+                        // after the swap the iterator stands on prev, which stays the left side of the next compare
+                        it.swapWithPrev();
+                        changes=true;
+                    } else {
+                        prev=current;
                     }
-                    prev=current;
                 }
                 
             }

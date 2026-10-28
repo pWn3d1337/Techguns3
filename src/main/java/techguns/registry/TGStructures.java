@@ -29,6 +29,8 @@ import techguns.Techguns;
 import techguns.world.structure.AlienBugNestPiece;
 import techguns.world.structure.AlienBugNestStructure;
 import techguns.world.structure.AvoidingSpreadPlacement;
+import techguns.world.structure.CityPiece;
+import techguns.world.structure.CityStructure;
 import techguns.world.structure.LegacyTemplatePiece;
 import techguns.world.structure.LegacyTemplateStructure;
 import techguns.world.structure.MilitaryBasePiece;
@@ -56,6 +58,7 @@ public final class TGStructures {
             () -> () -> MilitaryBaseStructure.CODEC);
     public static final Supplier<StructureType<MazeDungeonStructure>> MAZE_DUNGEON = STRUCTURE_TYPES.register("maze_dungeon",
             () -> () -> MazeDungeonStructure.CODEC);
+    public static final Supplier<StructureType<CityStructure>> CITY = STRUCTURE_TYPES.register("city", () -> () -> CityStructure.CODEC);
 
     public static final Supplier<StructurePieceType> LEGACY_TEMPLATE_PIECE = PIECE_TYPES.register("legacy_template",
             () -> (StructurePieceType.StructureTemplateType) LegacyTemplatePiece::new);
@@ -63,6 +66,8 @@ public final class TGStructures {
             () -> (StructurePieceType.ContextlessType) AlienBugNestPiece::new);
     public static final Supplier<StructurePieceType> MILITARY_BASE_PIECE = PIECE_TYPES.register("military_base",
             () -> (StructurePieceType.ContextlessType) MilitaryBasePiece::new);
+    public static final Supplier<StructurePieceType> CITY_PIECE = PIECE_TYPES.register("city",
+            () -> (StructurePieceType.ContextlessType) CityPiece::new);
     public static final Supplier<StructurePieceType> DUNGEON_SPAWNER_PIECE = PIECE_TYPES.register("dungeon_spawner",
             () -> (StructurePieceType.ContextlessType) DungeonSpawnerPiece::new);
 
@@ -114,7 +119,9 @@ public final class TGStructures {
      */
     public enum Size {
         SMALL("overworld_small", 16, 51531853, false), MEDIUM("overworld_medium", 32, 51531854, false), BIG("overworld_big", 64, 51531857, false),
-        NETHER_SMALL("nether_small", 16, 51531855, true), NETHER_MEDIUM("nether_medium", 32, 51531856, true);
+        NETHER_SMALL("nether_small", 16, 51531855, true), NETHER_MEDIUM("nether_medium", 32, 51531856, true),
+        /** New: only the Nether fortress (Techguns 2 had no big Nether structures). */
+        NETHER_BIG("nether_big", 48, 51531858, true);
 
         public final ResourceKey<StructureSet> set;
         public final int spacing;
@@ -134,6 +141,7 @@ public final class TGStructures {
                 case SMALL -> Optional.of(MEDIUM);
                 case MEDIUM -> Optional.of(BIG);
                 case NETHER_SMALL -> Optional.of(NETHER_MEDIUM);
+                case NETHER_MEDIUM -> Optional.of(NETHER_BIG);
                 default -> Optional.empty();
             };
         }
@@ -173,10 +181,17 @@ public final class TGStructures {
     public static final ResourceKey<Structure> MILITARY_BASE_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("military_base"));
     /** Techguns 2 weight of the military base in the big table. */
     private static final int MILITARY_BASE_WEIGHT = 1;
+    /** Phase 9: the Techguns 2 city, which Techguns 2 never spawned. */
+    public static final ResourceKey<Structure> CITY_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("city"));
+    private static final int CITY_WEIGHT = 1;
 
     /** Techguns 2 {@code CastleStructure}: the castle maze dungeon. */
     public static final ResourceKey<Structure> CASTLE_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("castle"));
     private static final int CASTLE_WEIGHT = 1;
+    /** Phase 9: the Techguns 2 Nether dungeon, which Techguns 2 never spawned. */
+    public static final ResourceKey<Structure> NETHER_FORTRESS_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("nether_fortress"));
+    /** Chunks the Nether sets keep away from a fortress start: it reaches 3 chunks from it. */
+    private static final int NETHER_BIG_CLEARANCE = 3;
     /**
      * Chunks a smaller structure keeps away from a big one's start: the big ones reach 5 (camp) to 7 (carrier) chunks
      * from it, a medium structure 2.
@@ -202,7 +217,10 @@ public final class TGStructures {
         // after the trees, which the camp clears (Techguns 2 spawned its structures after the decoration)
         context.register(MILITARY_BASE_KEY, new MilitaryBaseStructure(new Structure.StructureSettings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), Map.of(),
                 GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TerrainAdjustment.NONE)));
+        context.register(CITY_KEY, new CityStructure(new Structure.StructureSettings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), Map.of(),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TerrainAdjustment.NONE)));
         context.register(CASTLE_KEY, new MazeDungeonStructure(settings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), false), DungeonPreset.CASTLE));
+        context.register(NETHER_FORTRESS_KEY, new MazeDungeonStructure(settings(biomes.getOrThrow(HAS_NETHER), true), DungeonPreset.NETHER));
     }
 
     private static Structure.StructureSettings settings(HolderSet<Biome> biomes, boolean underground) {
@@ -226,10 +244,19 @@ public final class TGStructures {
             if (size == Size.BIG) {
                 entries.add(StructureSet.entry(structures.getOrThrow(MILITARY_BASE_KEY), MILITARY_BASE_WEIGHT));
                 entries.add(StructureSet.entry(structures.getOrThrow(CASTLE_KEY), CASTLE_WEIGHT));
+                entries.add(StructureSet.entry(structures.getOrThrow(CITY_KEY), CITY_WEIGHT));
+            }
+            if (size == Size.NETHER_BIG) {
+                entries.add(StructureSet.entry(structures.getOrThrow(NETHER_FORTRESS_KEY)));
             }
             List<StructurePlacement.ExclusionZone> avoid = new ArrayList<>();
             for (Optional<Size> bigger = size.bigger(); bigger.isPresent(); bigger = bigger.get().bigger()) {
-                avoid.add(new StructurePlacement.ExclusionZone(sets.getOrThrow(bigger.get().set), bigger.get() == Size.BIG ? BIG_CLEARANCE : 2));
+                int clearance = switch (bigger.get()) {
+                    case BIG -> BIG_CLEARANCE;
+                    case NETHER_BIG -> NETHER_BIG_CLEARANCE;
+                    default -> 2;
+                };
+                avoid.add(new StructurePlacement.ExclusionZone(sets.getOrThrow(bigger.get().set), clearance));
             }
             context.register(size.set, new StructureSet(entries, new AvoidingSpreadPlacement(Vec3i.ZERO,
                     StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0f, size.salt, size.spacing, size.spacing / 2,

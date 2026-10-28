@@ -1,0 +1,25 @@
+{
+  "type": "rechiseled:chiseling",
+  "entries": [
+    {
+      "block": "techguns:concrete_brown"
+    },
+    {
+      "block": "techguns:concrete_brown_light",
+      "stairs": "techguns:concrete_brown_light_stairs"
+    },
+    {
+      "block": "techguns:concrete_grey"
+    },
+    {
+      "block": "techguns:concrete_grey_dark",
+      "stairs": "techguns:concrete_grey_dark_stairs"
+    },
+    {
+      "block": "techguns:concrete_brown_pipes"
+    },
+    {
+      "block": "techguns:concrete_brown_light_scaff"
+    }
+  ]
+}

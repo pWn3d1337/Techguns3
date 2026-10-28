@@ -100,6 +100,7 @@ public class GuidedMissileProjectile extends RocketProjectile {
         super.readAdditionalSaveData(tag);
         // the target is not saved (entity ids don't survive a reload); a reloaded missile flies on unguided
         variant = Variant.GUIDED;
+        gravity = UNGUIDED_GRAVITY;
     }
 
     public record Factory(DamageModifier modifier) implements ProjectileFactory<GuidedMissileProjectile> {

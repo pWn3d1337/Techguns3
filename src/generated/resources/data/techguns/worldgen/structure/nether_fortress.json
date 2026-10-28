@@ -1,0 +1,7 @@
+{
+  "type": "techguns:maze_dungeon",
+  "biomes": "#techguns:has_structure/nether",
+  "preset": "nether",
+  "spawn_overrides": {},
+  "step": "underground_structures"
+}

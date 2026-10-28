@@ -146,6 +146,7 @@ public class TGStructureTests {
         helper.assertTrue(structures.containsKey(TGStructures.ALIEN_BUG_NEST_KEY), "The alien bug nest is a structure");
         helper.assertTrue(structures.containsKey(TGStructures.MILITARY_BASE_KEY), "The military base is a structure");
         helper.assertTrue(structures.containsKey(TGStructures.CASTLE_KEY), "The castle is a structure");
+        helper.assertTrue(structures.containsKey(TGStructures.CITY_KEY), "The city is a structure");
         var sets = registries.registryOrThrow(Registries.STRUCTURE_SET);
         for (TGStructures.Size size : TGStructures.Size.values()) {
             StructureSet set = sets.getOrThrow(size.set);
@@ -154,9 +155,11 @@ public class TGStructureTests {
         }
         helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
                 && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 5
-                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 3
+                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 4
                 && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
-                && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
+                && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3
+                && sets.getOrThrow(TGStructures.Size.NETHER_BIG.set).structures().size() == 1, "Techguns 2 small and medium tables, the fortress");
+        helper.assertTrue(structures.containsKey(TGStructures.NETHER_FORTRESS_KEY), "The Nether fortress is a structure");
         for (TGStructures.Template t : TGStructures.NETHER) {
             helper.assertTrue(structures.containsKey(t.key()), t.name() + " is a structure");
         }
@@ -261,6 +264,39 @@ public class TGStructureTests {
         helper.succeed();
     }
 
+    /** Techguns 2 city on flat or hilly ground: concrete roads, buildings with doors, windows and lamps, rebuilt the same. */
+    @GameTest(template = ARENA)
+    public static void cityGenerates(GameTestHelper helper) {
+        for (long seed = 0; seed < 6; seed++) {
+            int sizeX = 32 + (int) seed * 9;
+            int sizeZ = 79 - (int) seed * 8;
+            boolean hilly = seed % 2 == 1;
+            int countX = (sizeX + 8) / 4 + 2;
+            int countZ = (sizeZ + 8) / 4 + 2;
+            int[] heights = new int[countX * countZ];
+            for (int i = 0; i < countX; i++) {
+                for (int j = 0; j < countZ; j++) {
+                    heights[i * countZ + j] = hilly ? 64 + (int) Math.round(2 + 2 * Math.sin(i * 0.7) * Math.cos(j * 0.5)) : 64;
+                }
+            }
+            var grid = new MilitaryBaseStructure.HeightGrid(-4, -4, countX, countZ, heights);
+            CampLevel city = techguns.world.structure.CityPiece.build(seed, 0, 0, sizeX, sizeZ, 65, grid);
+            String name = "City " + seed + " (" + sizeX + "x" + sizeZ + (hilly ? ", hills" : "") + ")";
+            var blocks = city.blocks().values();
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(TGBlocks.CONCRETE_GREY.get())), name + ": concrete roads");
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(Blocks.OAK_DOOR)), name + ": building doors");
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(TGBlocks.LAMP_WHITE.get())), name + ": ceiling lamps");
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(Blocks.OAK_TRAPDOOR)), name + ": roof hatches");
+            long buildings = blocks.stream().filter(b -> b.is(Blocks.OAK_TRAPDOOR)).count();
+            helper.assertTrue(buildings >= 2, name + ": several buildings, got " + buildings);
+            int maxY = city.blocks().keySet().stream().mapToInt(BlockPos::getY).max().orElse(0);
+            helper.assertTrue(maxY <= 65 + 16 + 2, name + ": at most 16 blocks high, got " + (maxY - 65));
+            CampLevel again = techguns.world.structure.CityPiece.build(seed, 0, 0, sizeX, sizeZ, 65, grid);
+            helper.assertTrue(again.blocks().equals(city.blocks()), name + ": rebuilt the same from its seed");
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = ARENA)
     public static void castleSegmentTemplatesLoad(GameTestHelper helper) {
         var manager = helper.getLevel().getStructureManager();
@@ -272,6 +308,50 @@ public class TGStructureTests {
                 Vec3i size = template.get().getSize();
                 helper.assertTrue(size.equals(new Vec3i(5, 5 * type.height, 5)), id + " is one cell, got " + size);
             }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void netherSegmentTemplatesLoad(GameTestHelper helper) {
+        var manager = helper.getLevel().getStructureManager();
+        for (int level = 0; level < 5; level++) {
+            for (SegmentType type : SegmentType.values()) {
+                var id = DungeonPreset.NETHER.template(type, level, 8);
+                var template = manager.get(id);
+                helper.assertTrue(template.isPresent(), id + " exists");
+                Vec3i size = template.get().getSize();
+                helper.assertTrue(size.equals(new Vec3i(5, 5 * type.height, 5)), id + " is one cell, got " + size);
+            }
+        }
+        helper.succeed();
+    }
+
+    /** The fortress: entered from the top level, where only the entrance is, down a ramp; bottom layer, no roof. */
+    @GameTest(template = ARENA)
+    public static void netherFortressMazeGenerates(GameTestHelper helper) {
+        for (long seed = 0; seed < 20; seed++) {
+            int x = 6 + (int) (seed % 4);
+            int y = 5 + (int) (seed % 5);
+            MazeDungeonPath path = new MazeDungeonPath(x, y, x, RandomSource.create(seed));
+            DungeonPreset.NETHER.init(path);
+            path.generatePath();
+            List<String> top = new java.util.ArrayList<>();
+            boolean[] bottomLayer = {false};
+            boolean[] roof = {false};
+            path.generateDungeon((type, level, cx, cy, cz, rotation) -> {
+                if (cy == y - 1) {
+                    top.add(type.name());
+                }
+                bottomLayer[0] |= cy == 0 && type != SegmentType.FOUNDATION;
+                roof[0] |= level == -1;
+            });
+            String name = "Fortress " + seed + " (" + x + "x" + y + "x" + x + ")";
+            helper.assertTrue(path.unmatched() == 0 && path.numSegments() > 3, name + ": every cell gets a segment, unmatched " + path.unmatched() + " of " + path.numSegments());
+            helper.assertTrue(path.startPos()[1] == y - 1, name + ": the entrance is on the top level");
+            helper.assertTrue(top.equals(List.of(SegmentType.ENTRANCE.name())) || top.stream().allMatch(t -> t.equals("ENTRANCE") || t.equals("RAMP")),
+                    name + ": only the entrance (and its ramp) on the top level, got " + top);
+            helper.assertTrue(bottomLayer[0] && !roof[0], name + ": a bottom layer, no roof");
         }
         helper.succeed();
     }
@@ -306,6 +386,45 @@ public class TGStructureTests {
             helper.assertTrue(placed.stream().anyMatch(p -> p.contains("@-1:")), name + ": a roof");
             helper.assertTrue(placed.equals(castlePlacements(seed, x, y, x, new int[3])), name + ": the same path from the same seed");
         }
+        helper.succeed();
+    }
+
+    /**
+     * 9d: the template ground check reads the liquid on top from two heightmaps instead of the whole noise column; on
+     * the overworld noise generator both give the same answer, over land and sea.
+     */
+    @GameTest(template = ARENA)
+    public static void liquidCheckMatchesNoiseColumn(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        var registries = level.registryAccess();
+        var settings = registries.registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(
+                net.minecraft.world.level.levelgen.NoiseGeneratorSettings.OVERWORLD);
+        var biomes = net.minecraft.world.level.biome.MultiNoiseBiomeSource.createFromPreset(registries
+                .registryOrThrow(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
+                .getHolderOrThrow(net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists.OVERWORLD));
+        var generator = new net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator(biomes, settings);
+        long seed = 9_000_009L;
+        var randomState = net.minecraft.world.level.levelgen.RandomState.create(settings.value(), registries.lookupOrThrow(Registries.NOISE), seed);
+        var context = new net.minecraft.world.level.levelgen.structure.Structure.GenerationContext(registries, generator, biomes, randomState,
+                level.getStructureManager(), seed, ChunkPos.ZERO, level, biome -> true);
+        int liquid = 0;
+        int dry = 0;
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                int x = i * 401 - 3200;
+                int z = j * 401 - 3200;
+                int surface = generator.getBaseHeight(x, z, net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, level, randomState);
+                boolean column = !generator.getBaseColumn(x, z, level, randomState).getBlock(surface - 1).getFluidState().isEmpty();
+                helper.assertTrue(column == techguns.world.structure.LegacyTemplateStructure.liquidOnTop(context, x, z, surface),
+                        "liquid on top at " + x + ", " + z + ": column " + column);
+                if (column) {
+                    liquid++;
+                } else {
+                    dry++;
+                }
+            }
+        }
+        helper.assertTrue(liquid > 0 && dry > 0, "samples over land and sea: " + dry + " dry, " + liquid + " liquid");
         helper.succeed();
     }
 }

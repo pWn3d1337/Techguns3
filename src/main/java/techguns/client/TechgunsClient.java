@@ -14,7 +14,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import techguns.client.render.armor.TGArmorClientExtensions;
 import techguns.client.render.slot.SlotGearFx;
 import techguns.client.render.slot.SlotGearLayer;
-import techguns.client.render.slot.SlotGearRegistry;
 import techguns.Techguns;
 import techguns.client.gui.ClientAmmoBagTooltip;
 import techguns.client.gui.ClientArmorTooltip;
@@ -26,6 +25,7 @@ import techguns.client.gun.GunAmmoDecorator;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.render.geo.GeckoLibGunRenderer;
 import techguns.client.particle.ClientFx;
+import techguns.client.render.CamoTextures;
 import techguns.client.render.entity.BeamProjectileRenderer;
 import techguns.client.render.entity.BioGunProjectileRenderer;
 import techguns.client.render.entity.GenericProjectileRenderer;
@@ -48,6 +48,7 @@ public class TechgunsClient {
     public TechgunsClient(IEventBus modEventBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modEventBus.addListener(TGKeyMappings::register);
+        techguns.compat.fusion.FusionTextures.init(modEventBus);
         modEventBus.addListener(TechgunsClient::registerEntityRenderers);
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGArmorClientExtensions::register);
@@ -76,11 +77,13 @@ public class TechgunsClient {
         ClientFx.init(modEventBus, NeoForge.EVENT_BUS);
         ChargeEffects.init(NeoForge.EVENT_BUS);
         RenderingEntityTracker.init(NeoForge.EVENT_BUS);
-        SlotGearRegistry.init(NeoForge.EVENT_BUS);
+        CamoTextures.init(NeoForge.EVENT_BUS);
         SlotGearFx.init(NeoForge.EVENT_BUS);
         MiningPlaneOutline.init(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(ExtraSlotsScreen::onInventoryScreenInit);
         NeoForge.EVENT_BUS.addListener(TGDebugCommands::register);
+        // a server's stat overrides must not stay active in the next world
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) -> techguns.stats.StatOverrides.clear());
     }
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {

@@ -37,7 +37,7 @@ public class GrinderRenderer implements BlockEntityRenderer<GrinderBlockEntity> 
     public void render(GrinderBlockEntity grinder, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
         Direction facing = grinder.getBlockState().getValue(TGMachineBlock.FACING);
         boolean working = grinder.isWorking();
-        float progress = working ? grinder.getProgress() : 0.0f;
+        float progress = working ? grinder.getProgress(partialTick) : 0.0f;
         float rotation = working ? (45.0f + 1080.0f * progress) % 360.0f : 45.0f;
 
         poseStack.pushPose();

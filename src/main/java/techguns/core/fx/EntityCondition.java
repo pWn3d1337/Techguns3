@@ -1,12 +1,8 @@
 package techguns.core.fx;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import techguns.gun.ChargeGunItem;
-
 /**
  * Condition under which an entity-attached particle system keeps running (Techguns 2 {@code EntityCondition}).
- * Sent over the network as a byte id.
+ * Sent over the network as a byte id; evaluated by {@code techguns.client.particle.EntityConditions}.
  */
 public enum EntityCondition {
     NONE(0),
@@ -26,14 +22,5 @@ public enum EntityCondition {
             }
         }
         return NONE;
-    }
-
-    public boolean evaluate(Entity entity) {
-        return switch (this) {
-            case CHARGING_WEAPON -> entity instanceof LivingEntity living && living.isUsingItem()
-                    && living.getUseItem().getItem() instanceof ChargeGunItem;
-            case ENTITY_ALIVE -> entity.isAlive();
-            default -> true;
-        };
     }
 }

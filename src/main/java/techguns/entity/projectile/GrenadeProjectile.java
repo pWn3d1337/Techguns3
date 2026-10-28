@@ -67,6 +67,10 @@ public class GrenadeProjectile extends GenericProjectile {
         return type;
     }
 
+    public int bouncesLeft() {
+        return bounces;
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult result) {
         explode();
@@ -109,12 +113,15 @@ public class GrenadeProjectile extends GenericProjectile {
     public void writeSpawnData(RegistryFriendlyByteBuf buf) {
         super.writeSpawnData(buf);
         buf.writeByte(type.ordinal());
+        // the client simulates the bounces too; without the count its copy exploded (vanished) on the first one
+        buf.writeByte(bounces);
     }
 
     @Override
     public void readSpawnData(RegistryFriendlyByteBuf buf) {
         super.readSpawnData(buf);
         type = Type.values()[buf.readByte()];
+        bounces = buf.readByte();
         startTrail(type.trailFx);
     }
 

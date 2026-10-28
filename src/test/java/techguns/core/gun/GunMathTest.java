@@ -44,4 +44,23 @@ class GunMathTest {
         // shotgun loading 8 shells individually -> 1 shot per shell
         assertEquals(1f, GunMath.shotsPerBullet(8, 8, 0), EPS);
     }
+
+    @Test
+    void reloadItemsFillTheMissingShots() {
+        // combat shotgun: 8 shells for 8 shots
+        assertEquals(8, GunMath.reloadItems(8, 8, 0));
+        assertEquals(5, GunMath.reloadItems(8, 8, 3));
+        // a clip of 16 loaded 2 shots per shell (stat override): 7 shells for the 14 missing shots
+        assertEquals(2, GunMath.shotsPerReloadItem(16, 8));
+        assertEquals(7, GunMath.reloadItems(16, 8, 2));
+        assertEquals(1, GunMath.reloadItems(16, 8, 15));
+    }
+
+    @Test
+    void reloadItemsAlwaysTakeOneAndNeverDivideByZero() {
+        assertEquals(1, GunMath.reloadItems(8, 8, 8));
+        // more items per reload than shots: one shot per item
+        assertEquals(1, GunMath.shotsPerReloadItem(2, 4));
+        assertEquals(2, GunMath.reloadItems(2, 4, 0));
+    }
 }

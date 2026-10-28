@@ -553,6 +553,17 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - Nether fortress: the Techguns 2 Nether dungeon (maze dungeon preset `PresetNetherDungeonUnderground`, templates `nether_b0`, `nether_b1`, `nether0`, `nether1`, already in `src/legacy/dungeon_dump.json`; the converted `nether_dungeon_entrance` template exists since 7b). Needs the 7f generator's bottom layer and entrance ramp, a Nether placement and its own set or weight.
   - City: the Techguns 2 procedural city (`world/structures/city`, only run from a test tool), evaluate jigsaw vs a generator port (`CampLevel` shows the virtual-level approach).
 - Balancing pass, performance profiling (projectiles, particles), multiplayer testing, translations, release on CurseForge/Modrinth.
+- Batches (planned 2026-10-28):
+  - 9a: Nether fortress: `DungeonPreset.NETHER`, underground placement under a cave floor with the entrance hut, its own `nether_big` set.
+  - 9b: the city: evaluate and port the Techguns 2 procedural city (virtual-level generator like the military base).
+  - 9c: translations: carry the Techguns 2 language files over to the new keys where they still fit.
+  - 9d: performance profiling (projectiles, particles, structure generation) and fixes.
+  - 9e: multiplayer test pass on a dedicated server (all guns, machines, NPCs, structures) and fixes.
+  - 9f: balancing pass (the author's call: gun, armor and machine numbers; Techguns 2 values are the baseline).
+  - 9g: release preparation: metadata, changelog, license, publishing setup (the release itself is the author's).
+  - 9h: Techguns 2 FOV lock as a client option, datapack gun and armor stat overrides (found by comparing with the separate Techguns-1.21 port).
+  - 9i: Techguns 2 Chisel integration, retargeted (decided 2026-10-28) to the All The Mods 10 set: structures use Factory Blocks, Chisel Reborn and Laboratory Blocks where installed (vanilla fallback otherwise), Rechiseled gets the Techguns chiseling groups; all optional.
+  - 9j: Techguns 2 connected textures (CTM mod) through Fusion (decided 2026-10-28: maintained up to 26.x, in All The Mods 10 and required by Rechiseled and Laboratory Blocks; CTM itself has no 26.x version): converted sheets in a built-in pack that loads only with Fusion.
 
 ### Phase 10 — Version updates
 - Jump from 1.21.1 directly to the newest 26.x at that time (no stop at every 1.21.x minor). Its own mini-plan: read NeoForge primers 1.21.2 → 26.x, rewrite the adapter implementations behind the §4.7 interfaces (rendering first), move data to new vanilla components where useful, re-run GameTests.
@@ -602,13 +613,13 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q1 | ~~Base version?~~ **Decided 2026-10-24: 1.21.1 / NeoForge 21.1.x.** Reasons: largest NeoForge mod base (≈21.6k on Modrinth vs ≈3.8k for 1.20.6), all libraries released (incl. EMI, Veil, KubeJS), NeoForge still maintained, closest to the Fabric 1.19.4 render code. Accepted cost: renderer rework on the later 26.x jump, mitigated by §4.7. | ✔ Decided |
 | Q2 | Keep mod id `techguns` and asset paths? | Yes. |
 | Q3 | ~~Gun models: Java vs GeckoLib?~~ **Decided 2026-10-25: full GeckoLib.** All gun models are GeckoLib geo models (exported from the ported Java models by `TGGeoExporter`, then edited in Blockbench), with keyframed animations. GeckoLib is a required dependency. See §9.1. | ✔ Decided |
-| Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. | ✔ Decided |
+| Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. 9h: partial overrides from `data/<ns>/techguns/gun_stats/<item>.json` (and armor in `armor_stats`), merged into the Java defaults, `/reload`-able and synced (`docs/stat_overrides.md`). | ✔ Decided |
 | Q5 | Extra slots: Curios dependency vs own system? | **Decided 2026-10-26:** Curios as a soft dependency; built-in fallback slots (attachment + small screen tab) when Curios is absent. |
 | Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | **Decided 2026-10-26: both.** Ammo Press (powered, 1.12 build plans) and the unpowered Fabric Ammo Bench. Camo Bench: 1.12 scope (blocks, guns, armor) with a Fabric-style list to pick the named camo. |
 | Q7 | Energy: plain FE only? | FE only. |
 | Q8 | Structures: faithful 1.12 rebuilds vs redesign with jigsaw variety? | Faithful first via converter, jigsaw where it adds value. |
 | Q9 | Recipe viewer priority: JEI vs EMI? | JEI first. |
-| Q10 | License for Techguns 3 (1.12 has `LICENSE.txt`, Fabric has `LICENSE`). | Author's call. |
+| Q10 | License for Techguns 3 (1.12 has `LICENSE.txt`, Fabric has `LICENSE`). The Techguns Mod License from 1.12 is in place (`LICENSE.txt`, `mod_license`); 9g kept it. | Author's call. |
 
 ---
 

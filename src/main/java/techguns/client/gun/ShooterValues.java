@@ -31,6 +31,11 @@ public final class ShooterValues {
             return System.currentTimeMillis() < end;
         }
 
+        /** Changes with every start: identifies one flash, recoil or reload. */
+        public long startId() {
+            return end;
+        }
+
         /** 0 at start, 1 when finished. */
         public float progress() {
             if (duration <= 0) {

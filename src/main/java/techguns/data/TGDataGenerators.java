@@ -19,6 +19,7 @@ import techguns.Techguns;
 import techguns.registry.TGBiomeModifiers;
 import techguns.data.legacy.LegacyBookProvider;
 import techguns.data.legacy.LegacyChestLootProvider;
+import techguns.data.legacy.LegacyLanguageProvider;
 import techguns.data.legacy.LegacyStructureProvider;
 import techguns.registry.TGCamos;
 import techguns.registry.TGFeatures;
@@ -62,12 +63,14 @@ public final class TGDataGenerators {
                         new LootTableProvider.SubProviderEntry(TGBlockLootProvider.Crates::new, LootContextParamSets.CHEST),
                         new LootTableProvider.SubProviderEntry(LegacyChestLootProvider::new, LootContextParamSets.CHEST)), lookup));
         generator.addProvider(event.includeServer(), new LegacyStructureProvider(output));
+        generator.addProvider(event.includeClient(), new techguns.data.legacy.LegacyConnectedTextureProvider(output));
         generator.addProvider(event.includeServer(), new LegacyBookProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCompatRecipeProvider(output));
         generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGBiomeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
+        generator.addProvider(event.includeServer(), new TGRechiseledProvider(output));
         generator.addProvider(event.includeServer(), new TGDataMapProvider(output, lookup));
         generator.addProvider(event.includeServer(), new net.neoforged.neoforge.common.data.AdvancementProvider(output, lookup, fileHelper,
                 List.of(new TGAdvancementProvider())));
@@ -77,5 +80,8 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeClient(), new TGShapedBlockStateProvider(output, fileHelper));
         generator.addProvider(event.includeClient(), new TGItemModelProvider(output, fileHelper));
         generator.addProvider(event.includeClient(), new TGLanguageProvider(output));
+        for (String locale : LegacyLanguageProvider.LOCALES) {
+            generator.addProvider(event.includeClient(), new LegacyLanguageProvider(output, locale));
+        }
     }
 }

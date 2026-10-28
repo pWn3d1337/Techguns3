@@ -134,6 +134,11 @@ public final class FabricatorModel implements MachineModel {
     }
 
     @Override
+    public boolean hasTranslucent() {
+        return true;
+    }
+
+    @Override
     public void renderTranslucent(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float progress) {
         glass.render(poseStack, consumer, light, overlay);
     }

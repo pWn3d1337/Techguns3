@@ -234,6 +234,61 @@ public final class TGDebugCommands {
                             }
                             return 1;
                         }))
+                .then(Commands.literal("bench")
+                        .then(Commands.argument("gun", StringArgumentType.word())
+                                .then(Commands.argument("shots", IntegerArgumentType.integer(1, 100))
+                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(1, 120))
+                                                .executes(ctx -> TGBenchmark.start(StringArgumentType.getString(ctx, "gun"),
+                                                        IntegerArgumentType.getInteger(ctx, "shots"),
+                                                        IntegerArgumentType.getInteger(ctx, "seconds")) ? 1 : 0)))))
+                .then(Commands.literal("key")
+                        .then(Commands.argument("name", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    // presses a Techguns key once (MCP has no key input): safe_mode, step_assist, night_vision, jetpack, force_reload
+                                    String name = StringArgumentType.getString(ctx, "name");
+                                    net.minecraft.client.KeyMapping key = switch (name) {
+                                        case "safe_mode" -> TGKeyMappings.TOGGLE_SAFE_MODE;
+                                        case "step_assist" -> TGKeyMappings.TOGGLE_STEP_ASSIST;
+                                        case "night_vision" -> TGKeyMappings.TOGGLE_NIGHT_VISION;
+                                        case "jetpack" -> TGKeyMappings.TOGGLE_JETPACK;
+                                        case "force_reload" -> TGKeyMappings.FORCE_RELOAD;
+                                        default -> null;
+                                    };
+                                    if (key == null) {
+                                        ctx.getSource().sendSystemMessage(Component.literal("Unknown key " + name));
+                                        return 0;
+                                    }
+                                    net.minecraft.client.KeyMapping.click(key.getKey());
+                                    return 1;
+                                })))
+                .then(Commands.literal("stats")
+                        .executes(ctx -> {
+                            // the client's view of the held gun or armor piece, to check datapack overrides and their sync
+                            net.minecraft.world.item.ItemStack held = Minecraft.getInstance().player.getMainHandItem();
+                            String text;
+                            if (held.getItem() instanceof techguns.gun.GunItem gun) {
+                                var stats = gun.stats();
+                                text = String.format(java.util.Locale.ROOT, "%s: damage %.1f (min %.1f), clip %d, fire delay %d, reload %d, speed %.2f, spread %.3f%s",
+                                        held.getHoverName().getString(), stats.damage().damage(), stats.damage().damageMin(),
+                                        stats.firing().clipSize(), stats.firing().fireDelay(), stats.firing().reloadTicks(),
+                                        stats.projectile().speed(), stats.projectile().spread(),
+                                        stats == gun.defaultStats() ? "" : " (override)");
+                            } else if (held.getItem() instanceof techguns.armor.TGArmorItem armor) {
+                                StringBuilder out = new StringBuilder(held.getHoverName().getString() + ":");
+                                for (var category : techguns.core.damage.TGDamageCategory.values()) {
+                                    if (category.isResistable()) {
+                                        out.append(String.format(java.util.Locale.ROOT, " %s %.2f", category.id(), armor.armorValue(category)));
+                                    }
+                                }
+                                out.append(String.format(java.util.Locale.ROOT, ", toughness %.1f%s", armor.toughness(),
+                                        techguns.stats.StatOverrides.armor(armor) == null ? "" : " (override)"));
+                                text = out.toString();
+                            } else {
+                                text = "Hold a Techguns gun or armor piece";
+                            }
+                            ctx.getSource().sendSystemMessage(Component.literal(text));
+                            return 1;
+                        }))
                 .then(Commands.literal("teams")
                         .executes(ctx -> {
                             // runs every team source on the integrated server: you vs yourself and vs a stranger

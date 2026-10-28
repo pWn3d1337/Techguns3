@@ -43,6 +43,7 @@ import techguns.TGIds;
 import techguns.world.structure.dungeon.DungeonPreset;
 import techguns.world.structure.dungeon.SegmentType;
 import techguns.block.Door3x3Block;
+import techguns.compat.decor.DecorRole;
 import techguns.world.LegacyPaletteProcessor;
 
 /**
@@ -105,8 +106,17 @@ public class LegacyStructureProvider implements DataProvider {
             } catch (IOException e) {
                 throw new IllegalStateException("Could not read the structure dump", e);
             }
+            // Techguns 2 Chisel swaps: palette index -> MBlockRegister field names, per structure class
+            JsonObject roles;
+            try (Reader reader = Files.newBufferedReader(dir.resolve("role_dump.json"))) {
+                roles = JsonParser.parseReader(reader).getAsJsonObject();
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not read the role dump", e);
+            }
             STRUCTURES.forEach((className, name) -> {
-                CompoundTag template = new Converter(dump.getAsJsonObject(className)).convert();
+                JsonObject structureRoles = roles.has(className) && roles.getAsJsonObject(className).has("blockList")
+                        ? roles.getAsJsonObject(className).getAsJsonObject("blockList") : new JsonObject();
+                CompoundTag template = new Converter(dump.getAsJsonObject(className), structureRoles).convert();
                 write(output, structures.file(TGIds.id(name), "nbt"), template);
             });
             JsonObject dungeons;
@@ -116,10 +126,10 @@ public class LegacyStructureProvider implements DataProvider {
                 throw new IllegalStateException("Could not read the dungeon dump", e);
             }
             // maze dungeon segments: dungeon/<template>/<segment>, the same palette and block format
-            for (String name : DungeonPreset.CASTLE_TEMPLATES) {
+            for (String name : java.util.Arrays.stream(DungeonPreset.values()).flatMap(p -> p.templates.stream()).toList()) {
                 JsonObject segments = dungeons.getAsJsonObject(name).getAsJsonObject("segments");
                 for (SegmentType type : SegmentType.values()) {
-                    CompoundTag template = new Converter(segments.getAsJsonObject(type.name())).convert();
+                    CompoundTag template = new Converter(segments.getAsJsonObject(type.name()), new JsonObject()).convert();
                     write(output, structures.file(TGIds.id("dungeon/" + name + "/" + type.fileName()), "nbt"), template);
                 }
             }
@@ -152,9 +162,13 @@ public class LegacyStructureProvider implements DataProvider {
         @Nullable
         private int[] rollWeights;
 
-        Converter(JsonObject structure) {
+        /** Palette index -> Techguns 2 {@code MBlockRegister} field names ({@code role_dump.json}). */
+        private final JsonObject roles;
+
+        Converter(JsonObject structure, JsonObject roles) {
             this.palette = structure.getAsJsonArray("palette:blockList");
             this.blocks = structure.getAsJsonArray("blocks:blocks");
+            this.roles = roles;
         }
 
         CompoundTag convert() {
@@ -165,8 +179,8 @@ public class LegacyStructureProvider implements DataProvider {
             upgrade(legacyStates);
 
             List<Entry> entries = new ArrayList<>();
-            for (JsonElement entry : palette) {
-                entries.add(entry(entry.getAsJsonObject()));
+            for (int i = 0; i < palette.size(); i++) {
+                entries.add(withDecor(entry(palette.get(i).getAsJsonObject()), palette.get(i).getAsJsonObject(), Integer.toString(i)));
             }
             Map<BlockPos, Entry> placed = new LinkedHashMap<>();
             int sizeX = 0, sizeY = 0, sizeZ = 0;
@@ -268,6 +282,31 @@ public class LegacyStructureProvider implements DataProvider {
                 case "MBlock", "AlienBugNest$MBlockSlime", "MBlockSkullBlock" -> new Entry(state, null, null);
                 default -> new Entry(state, null, options(json));
             };
+        }
+
+        /**
+         * Techguns 2 used a Chisel block for this entry when Chisel was installed: mark it with its {@link DecorRole},
+         * the processor places the role's mod block if one is installed and the fallback option otherwise.
+         */
+        private Entry withDecor(Entry entry, JsonObject json, String index) {
+            if (!roles.has(index)) {
+                return entry;
+            }
+            for (JsonElement name : roles.getAsJsonArray(index)) {
+                java.util.Optional<DecorRole> role = DecorRole.byLegacyName(name.getAsString());
+                if (role.isPresent()) {
+                    CompoundTag options = entry.options() != null ? entry.options().copy() : stateOnly(json);
+                    options.putString(LegacyPaletteProcessor.DECOR, role.get().id());
+                    return new Entry(entry.state(), entry.blockEntity(), options);
+                }
+            }
+            return entry;
+        }
+
+        private CompoundTag stateOnly(JsonObject json) {
+            CompoundTag option = new CompoundTag();
+            option.put(LegacyPaletteProcessor.STATE, NbtUtils.writeBlockState(states.get(json.get("state").getAsString())));
+            return option;
         }
 
         /** The processor option tree of a palette entry. */

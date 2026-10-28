@@ -433,6 +433,10 @@
         "techguns:guns/cdb_shot_d"
     ]
 },
+"guns.cyberdemonblasterreload": {
+    "category": "player",
+    "sounds": []
+},
 
 "effects.steamarmorjump": {
     "category": "player",
@@ -731,6 +735,10 @@
         "techguns:items/jetpack_start_b",
 		"techguns:items/jetpack_start_c"
     ]
+},
+"jetpack.end": {
+    "category": "player",
+    "sounds": []
 },
 "jetpack.stop": {
     "category": "player",

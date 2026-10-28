@@ -2,28 +2,21 @@ package techguns.client.render.slot;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import techguns.TGIds;
 import techguns.Techguns;
-import techguns.camo.CamoData;
-import techguns.camo.TGCamo;
 import techguns.client.model.slot.SlotGearModel;
 import techguns.client.model.slot.SlotGearModels;
-import techguns.registry.TGComponents;
+import techguns.client.render.CamoTextures;
 
 /**
  * Render setup of the extra-slot items (Techguns 2 {@code AdditionalSlotRenderRegistry} filled in {@code ClientProxy}):
@@ -50,12 +43,7 @@ public final class SlotGearRegistry {
         }
     }
 
-    private record CamoKey(Item item, String camo) {
-    }
-
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
-    /** Resolved camo textures per item and camo name (the camo registry lookup is too slow per frame). */
-    private static final Map<CamoKey, Optional<ResourceLocation>> CAMO_TEXTURES = new HashMap<>();
 
     static {
         entry("gas_mask", SlotGearModels::gasMask, "gasmask");
@@ -72,11 +60,6 @@ public final class SlotGearRegistry {
     }
 
     private SlotGearRegistry() {
-    }
-
-    /** Clears the camo texture cache when the camo registry may have changed (joining a world). */
-    public static void init(IEventBus gameBus) {
-        gameBus.addListener((ClientPlayerNetworkEvent.LoggingIn event) -> CAMO_TEXTURES.clear());
     }
 
     private static void entry(String id, Supplier<SlotGearModel> model, String texture) {
@@ -115,12 +98,6 @@ public final class SlotGearRegistry {
 
     /** The stack's camo texture, else the entry's default texture. */
     public static ResourceLocation texture(Entry entry, ItemStack stack, boolean slim) {
-        var level = Minecraft.getInstance().level;
-        if (level == null) {
-            return entry.defaultTexture(slim);
-        }
-        String camo = stack.get(TGComponents.CAMO.get());
-        return CAMO_TEXTURES.computeIfAbsent(new CamoKey(stack.getItem(), camo == null ? "" : camo),
-                key -> CamoData.current(level.registryAccess(), stack).flatMap(TGCamo::texture)).orElse(entry.defaultTexture(slim));
+        return CamoTextures.of(stack).orElse(entry.defaultTexture(slim));
     }
 }

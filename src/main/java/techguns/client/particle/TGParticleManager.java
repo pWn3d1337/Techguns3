@@ -51,6 +51,15 @@ public class TGParticleManager {
         return "systems=" + listSystems.getSize() + " particles=" + list.getSize() + " unsorted=" + listNoSort.getSize();
     }
 
+    /** Particles alive (sorted and unsorted), for /tgdebug bench. */
+    public int particleCount() {
+        return list.getSize() + listNoSort.getSize();
+    }
+
+    public int systemCount() {
+        return listSystems.getSize();
+    }
+
     public void clear() {
         this.listSystems.clear();
         this.listNoSort.clear();

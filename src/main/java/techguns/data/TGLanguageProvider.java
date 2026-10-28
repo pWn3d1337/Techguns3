@@ -284,6 +284,18 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("power_hammer_head_obsidian", "Power Hammer Head (Obsidian)"),
             Map.entry("power_hammer_head_carbon", "Power Hammer Head (Carbon)"));
 
+    /** All English texts by key, for the translations carried over from Techguns 2. */
+    public static Map<String, String> english(PackOutput output) {
+        Map<String, String> texts = new java.util.TreeMap<>();
+        new TGLanguageProvider(output) {
+            @Override
+            public void add(String key, String value) {
+                texts.put(key, value);
+            }
+        }.addTranslations();
+        return texts;
+    }
+
     @Override
     protected void addTranslations() {
         addConfig();
@@ -478,10 +490,12 @@ public class TGLanguageProvider extends LanguageProvider {
         add("message.techguns.toggle.step_assist", "Step Assist: %s");
         add("message.techguns.toggle.night_vision", "Night Vision: %s");
         add("message.techguns.toggle.jetpack", "Jetpack: %s");
+        add("message.techguns.toggle.safe_mode", "Safe Mode: %s");
         add(TGKeyMappings.TOGGLE_NIGHT_VISION.getName(), "Toggle Night Vision");
         add(TGKeyMappings.TOGGLE_JETPACK.getName(), "Toggle Jetpack");
         add("tooltip.techguns.slot", "Slot: %s");
         add("gui.techguns.extra_slots", "Techguns Gear");
+        add("pack.techguns.fusion", "Techguns Connected Textures");
         add("gui.techguns.extra_slots.button", "TG");
         add("gui.techguns.inventory", "<");
         add("gui.techguns.inventory.tooltip", "Back to inventory");

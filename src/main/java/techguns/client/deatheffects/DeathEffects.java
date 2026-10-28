@@ -31,6 +31,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import techguns.TGIds;
 import techguns.Techguns;
@@ -51,8 +52,14 @@ import techguns.registry.TGSounds;
 public final class DeathEffects {
     public static final ResourceLocation GORE_TEXTURE = TGIds.id("textures/entity/gore.png");
 
-    /** Death type of dying entities on the client; entries vanish with the entity. */
-    private static final Map<LivingEntity, DeathType> DEATH_TYPES = new WeakHashMap<>();
+    /**
+     * Death type of dying entities on the client; entries vanish with the entity. Entities are equal by id, and a
+     * respawned player keeps its id: the entry remembers which object died, so the next (plain) death is not mistaken.
+     */
+    private static final Map<LivingEntity, Death> DEATH_TYPES = new WeakHashMap<>();
+
+    private record Death(DeathType type, int identity) {
+    }
 
     /** Gore settings by entity type; everything else uses {@link #GENERIC_GORE}. */
     private static final Map<EntityType<?>, GoreData> GORE_DATA = new HashMap<>();
@@ -73,11 +80,13 @@ public final class DeathEffects {
 
     public static void init(IEventBus gameBus) {
         gameBus.addListener(DeathEffects::onRenderLivingPre);
+        gameBus.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> DEATH_TYPES.clear());
     }
 
     @Nullable
     public static DeathType deathType(LivingEntity entity) {
-        return DEATH_TYPES.get(entity);
+        Death death = DEATH_TYPES.get(entity);
+        return death != null && death.identity() == System.identityHashCode(entity) ? death.type() : null;
     }
 
     /** Hides the corpse of gored entities (their gibs fly as particles), dissolves laser and bio corpses. */
@@ -87,7 +96,7 @@ public final class DeathEffects {
         if (entity.deathTime <= 0) {
             return;
         }
-        DeathType type = DEATH_TYPES.get(entity);
+        DeathType type = deathType(entity);
         if (type == DeathType.GORE) {
             event.setCanceled(true);
         } else if (type == DeathType.LASER || type == DeathType.BIO) {
@@ -102,7 +111,7 @@ public final class DeathEffects {
         if (!(entity.level() instanceof ClientLevel level) || type == DeathType.DEFAULT) {
             return;
         }
-        DEATH_TYPES.put(entity, type);
+        DEATH_TYPES.put(entity, new Death(type, System.identityHashCode(entity)));
         entity.setDeltaMovement(motionX, motionY, motionZ);
 
         double x = entity.getX();

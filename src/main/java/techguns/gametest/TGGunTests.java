@@ -70,10 +70,16 @@ public class TGGunTests {
 
         ((GunItem) gun.getItem()).shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
 
-        // a beam traces its full length on its first tick and damages exactly once
-        helper.succeedWhen(() -> {
+        // a beam traces its full length on its first tick and damages exactly once: hit right away, and no second
+        // hit after the husk's damage cooldown (10 ticks) has run out
+        helper.runAfterDelay(2, () -> {
+            float loss = health - zombie.getHealth();
+            helper.assertTrue(Math.abs(loss - 12.0f) < 0.01f, "Laser should hit within its first ticks for 12 energy damage, dealt " + loss);
+        });
+        helper.runAfterDelay(20, () -> {
             float loss = health - zombie.getHealth();
             helper.assertTrue(Math.abs(loss - 12.0f) < 0.01f, "Laser should deal 12 energy damage once, dealt " + loss);
+            helper.succeed();
         });
     }
 

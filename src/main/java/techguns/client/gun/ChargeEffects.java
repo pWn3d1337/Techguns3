@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import techguns.client.particle.ClientFx;
+import techguns.client.particle.EntityConditions;
 import techguns.core.fx.EntityCondition;
 import techguns.gun.ChargeGunItem;
 
@@ -78,7 +79,7 @@ public final class ChargeEffects {
 
         @Override
         public void tick() {
-            if (!EntityCondition.CHARGING_WEAPON.evaluate(entity)) {
+            if (!EntityConditions.holds(EntityCondition.CHARGING_WEAPON, entity)) {
                 stop();
                 return;
             }

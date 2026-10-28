@@ -89,6 +89,8 @@ public class TGParticle implements ITGParticle {
 
     float brightness;
     Vec3 worldLightColor;
+    /** Block of the last {@link #worldLightColor} lookup. */
+    private long worldLightPos;
     Vec3 worldLightColorPrev;
 
     public TGParticle(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed,
@@ -276,7 +278,12 @@ public class TGParticle implements ITGParticle {
 
         // Brightness
         this.worldLightColorPrev = this.worldLightColor;
-        this.worldLightColor = lightColorAt(this.level, this.x, this.y, this.z);
+        // the light only changes when the particle enters another block (particles live too short for the day cycle)
+        long lightPos = BlockPos.asLong(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z));
+        if (this.worldLightColor == null || lightPos != this.worldLightPos) {
+            this.worldLightColor = lightColorAt(this.level, this.x, this.y, this.z);
+            this.worldLightPos = lightPos;
+        }
         if (this.worldLightColorPrev == null) {
             this.worldLightColorPrev = worldLightColor;
         }
@@ -477,8 +484,8 @@ public class TGParticle implements ITGParticle {
         float p = (progress - c1.time) / (c2.time - c1.time);
         if (c1 != c2) {
             // interpolate in HSB space
-            float[] hsb1 = Color.RGBtoHSB((int) (c1.r * 255), (int) (c1.g * 255), (int) (c1.b * 255), null);
-            float[] hsb2 = Color.RGBtoHSB((int) (c2.r * 255), (int) (c2.g * 255), (int) (c2.b * 255), null);
+            float[] hsb1 = c1.hsb();
+            float[] hsb2 = c2.hsb();
             int rgb = Color.HSBtoRGB(hsb1[0] * (1f - p) + hsb2[0] * p, hsb1[1] * (1f - p) + hsb2[1] * p, hsb1[2] * (1f - p) + hsb2[2] * p);
             this.red = (((rgb >> 16) & 0xFF) / 255.0f) * bR;
             this.green = (((rgb >> 8) & 0xFF) / 255.0f) * bG;

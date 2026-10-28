@@ -21,13 +21,24 @@ public final class TGConfig {
                     "and Techguns armor penetration applies. If false, vanilla armor calculation is used.")
             .define("tgArmorSystem", true);
 
+    // Techguns 2 "Damage Factors" (same defaults)
     public static final ModConfigSpec.DoubleValue DAMAGE_PVP = COMMON
             .comment("Damage multiplier for Techguns damage dealt by players to players (only if PvP is enabled).")
-            .defineInRange("damagePvP", 1.0, 0.0, 100.0);
+            .defineInRange("damagePvP", 0.5, 0.0, 100.0);
+
+    public static final ModConfigSpec.DoubleValue DAMAGE_TURRET_TO_PLAYER = COMMON
+            .comment("Damage multiplier for Techguns turrets hitting players.")
+            .defineInRange("damageTurretToPlayer", 0.5, 0.0, 100.0);
 
     public static final ModConfigSpec.DoubleValue DAMAGE_FACTOR_NPC = COMMON
-            .comment("Damage multiplier for Techguns damage dealt by non-players (NPCs, turrets).")
+            .comment("Damage multiplier for Techguns damage dealt by NPCs and turrets (turrets against players: damageTurretToPlayer). "
+                    + "Damage without an attacker (radiation, acid) is not scaled.")
             .defineInRange("damageFactorNPC", 1.0, 0.0, 100.0);
+
+    public static final ModConfigSpec.BooleanValue ALLOW_UNSAFE_MODE = COMMON
+            .comment("Players may switch off safe mode, so their guns and grenades damage blocks. When false, players are always in safe mode "
+                    + "(Techguns 2 permission canUseUnsafeMode).")
+            .define("allowUnsafeMode", true);
 
     static {
         COMMON.pop();
@@ -129,6 +140,10 @@ public final class TGConfig {
             .comment("Generate uranium ore; disable if another mod already adds it and you want only one kind.").define("oreGenUranium", true);
     public static final ModConfigSpec.BooleanValue SPAWN_ORE_CLUSTER_STRUCTURES = COMMON
             .comment("Generate the structures that contain ore clusters (ore spike, meteor, Nether ore clusters).").define("spawnOreClusterStructures", true);
+    // Techguns 2 used Chisel blocks in its structures when Chisel was installed
+    public static final ModConfigSpec.BooleanValue DECOR_MOD_BLOCKS = COMMON
+            .comment("Build structures from the blocks of Factory Blocks, Chisel Reborn and Laboratory Blocks where those mods are installed "
+                    + "(Techguns 2 used Chisel blocks); without them the vanilla and Techguns blocks are used.").define("decorModBlocks", true);
 
     static {
         COMMON.pop();
@@ -145,6 +160,20 @@ public final class TGConfig {
     }
 
     static final ModConfigSpec COMMON_SPEC = COMMON.build();
+
+    // --- client (Techguns 2 CLIENTSIDE category) ---
+
+    private static final ModConfigSpec.Builder CLIENT = new ModConfigSpec.Builder();
+
+    public static final ModConfigSpec.BooleanValue LOCK_SPEED_FOV = CLIENT
+            .comment("Counters the speed dependent FOV change, so speed bonuses (power armor, potions) don't change the view. "
+                    + "This also stops the FOV change while sprinting. Don't enable it if another mod does this too.")
+            .define("lockSpeedDependentFov", true);
+    public static final ModConfigSpec.DoubleValue FIXED_SPRINT_FOV = CLIENT
+            .comment("Multiplies the FOV while sprinting by this value, independent of the actual speed. Only used with lockSpeedDependentFov.")
+            .defineInRange("fixedSprintFovMultiplier", 1.15, 1.0, 10.0);
+
+    static final ModConfigSpec CLIENT_SPEC = CLIENT.build();
 
     private TGConfig() {
     }

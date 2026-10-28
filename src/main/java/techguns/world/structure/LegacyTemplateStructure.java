@@ -160,7 +160,7 @@ public class LegacyTemplateStructure extends Structure {
             int x = x0 + corner[0];
             int z = z0 + corner[1];
             int height = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-            if (context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState()).getBlock(height - 1).getFluidState().isEmpty()) {
+            if (!liquidOnTop(context, x, z, height)) {
                 return Optional.empty();
             }
             heights[i++] = height;
@@ -174,8 +174,17 @@ public class LegacyTemplateStructure extends Structure {
         return Optional.of((heights[1] + heights[2]) / 2);
     }
 
+    /**
+     * Whether the top block of the generator's column (below {@code surface}, the first free block) is a liquid. A noise
+     * column holds only the default block, liquids and air, so the top is a liquid exactly when the first motion blocking
+     * block lies lower; two early-stopping heightmap scans instead of computing the whole column.
+     */
+    public static boolean liquidOnTop(GenerationContext context, int x, int z, int surface) {
+        return context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState()) < surface;
+    }
+
     /** Techguns 2 {@code getCaveHeight}: the cave floor at the four chunk corners, if all are close enough. */
-    static Optional<Integer> caveHeight(GenerationContext context, int x0, int z0) {
+    public static Optional<Integer> caveHeight(GenerationContext context, int x0, int z0) {
         int[] heights = {airFloor(context, x0, z0), airFloor(context, x0 + 15, z0), airFloor(context, x0, z0 + 15), airFloor(context, x0 + 15, z0 + 15)};
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
@@ -223,8 +232,7 @@ public class LegacyTemplateStructure extends Structure {
                 int x = x0 + dx;
                 int z = z0 + dz;
                 int height = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-                if (!context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState()).getBlock(height - 1)
-                        .getFluidState().isEmpty()) {
+                if (liquidOnTop(context, x, z, height)) {
                     return Optional.empty();
                 }
                 min = Math.min(min, height);

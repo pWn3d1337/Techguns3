@@ -12,6 +12,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import techguns.TGConfig;
+import techguns.core.view.FovMath;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -84,8 +88,15 @@ public final class ClientGunController implements GunClientEffects {
         gameBus.addListener(INSTANCE::onComputeFov);
         gameBus.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
             ShooterValues.clear();
+            LockOnTracker.reset();
             INSTANCE.zoom = 1.0f;
+            INSTANCE.zoomTicks = 0;
             INSTANCE.jetpackBoosting = false;
+            INSTANCE.lastMainHand = ItemStack.EMPTY;
+            INSTANCE.attackWasDown = false;
+            INSTANCE.useWasDown = false;
+            INSTANCE.forcedFireTicks = 0;
+            INSTANCE.forcedUseTicks = 0;
         });
     }
 
@@ -211,7 +222,10 @@ public final class ClientGunController implements GunClientEffects {
                 LockOnTracker.reset();
             }
             LockOnTracker.tick(player, lockOnGun);
-        } else if (!(mainHand.getItem() instanceof LockOnGunItem)) {
+        } else if (mainHand.getItem() instanceof LockOnGunItem) {
+            // use key released: the lock fades like a lost target, so it does not stay forever
+            LockOnTracker.decay();
+        } else {
             LockOnTracker.reset();
         }
 
@@ -225,8 +239,7 @@ public final class ClientGunController implements GunClientEffects {
 
         // off-hand guns fire with the use key, unless the main hand gun uses it for zooming
         ItemStack offHand = player.getOffhandItem();
-        boolean mainUsesRightClick = mainHand.getItem() instanceof GunItem mainGun && mainGun.stats().zoom().isPresent();
-        if (offHand.getItem() instanceof GunItem gun && gun.shootsWithLeftClick() && !mainUsesRightClick
+        if (offHandGunUsesUseKey(player) && offHand.getItem() instanceof GunItem gun
                 && useDown && (!gun.stats().firing().semiAuto() || !useWasDown)) {
             tryShoot(player, gun, offHand, InteractionHand.OFF_HAND);
         }
@@ -239,6 +252,9 @@ public final class ClientGunController implements GunClientEffects {
         }
         while (TGKeyMappings.TOGGLE_JETPACK.consumeClick()) {
             toggle(player, TGPlayerData.Toggle.JETPACK);
+        }
+        while (TGKeyMappings.TOGGLE_SAFE_MODE.consumeClick()) {
+            toggle(player, TGPlayerData.Toggle.SAFE_MODE);
         }
         while (TGKeyMappings.FORCE_RELOAD.consumeClick()) {
             for (InteractionHand hand : InteractionHand.values()) {
@@ -275,11 +291,29 @@ public final class ClientGunController implements GunClientEffects {
             event.setCanceled(true);
             event.setSwingHand(false);
         }
+        // a main hand gun keeps its own use (charging, lock-on); anything else would place, eat or use as well
+        if (event.isUseItem() && !(player.getMainHandItem().getItem() instanceof GunItem) && offHandGunUsesUseKey(player)) {
+            event.setCanceled(true);
+            event.setSwingHand(false);
+        }
+    }
+
+    /** The off-hand gun fires with the use key, unless the main hand gun uses that key for zooming. */
+    private static boolean offHandGunUsesUseKey(LocalPlayer player) {
+        boolean mainUsesRightClick = player.getMainHandItem().getItem() instanceof GunItem mainGun && mainGun.stats().zoom().isPresent();
+        return player.getOffhandItem().getItem() instanceof GunItem gun && gun.shootsWithLeftClick() && !mainUsesRightClick;
     }
 
     private void onComputeFov(ComputeFovModifierEvent event) {
-        if (zoom != 1.0f) {
-            event.setNewFovModifier(event.getNewFovModifier() * zoom);
+        float modifier = event.getNewFovModifier();
+        if (TGConfig.LOCK_SPEED_FOV.get()) {
+            Player player = event.getPlayer();
+            modifier = FovMath.lockSpeedFov(modifier, (float) player.getAttributeValue(Attributes.MOVEMENT_SPEED),
+                    player.getAbilities().getWalkingSpeed(), player.isSprinting(), TGConfig.FIXED_SPRINT_FOV.get().floatValue());
         }
+        if (zoom != 1.0f) {
+            modifier *= zoom;
+        }
+        event.setNewFovModifier(modifier);
     }
 }

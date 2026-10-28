@@ -2,6 +2,8 @@ package techguns.client.gui.machine;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -42,12 +44,51 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
         return menu.machine().getInventory().getStackInSlot(CamoBenchBlockEntity.SLOT_INPUT);
     }
 
+    // the camo lookups stream and sort the camo registry: computed again only when the input or an armor piece changes
+    @Nullable
+    private ItemStack cachedInput;
+    private List<ItemStack> cachedVariants = List.of();
+    private int cachedCurrent = -1;
+    private Component cachedName = Component.empty();
+    private final ItemStack[] cachedArmor = new ItemStack[RepairBenchBlockEntity.ARMOR_SLOTS.size()];
+    private final int[] cachedArmorCamo = new int[RepairBenchBlockEntity.ARMOR_SLOTS.size()];
+
+    private void refreshInput() {
+        ItemStack input = input();
+        if (cachedInput != null && ItemStack.matches(input, cachedInput)) {
+            return;
+        }
+        cachedInput = input.copy();
+        if (minecraft == null || minecraft.level == null) {
+            cachedVariants = List.of();
+            cachedCurrent = -1;
+            cachedName = Component.empty();
+            return;
+        }
+        cachedVariants = CamoBenchBlockEntity.variants(minecraft.level, input);
+        cachedCurrent = CamoBenchBlockEntity.currentVariant(minecraft.level, input);
+        cachedName = CamoData.current(minecraft.level.registryAccess(), input).map(camo -> camo.display()).orElse(Component.empty());
+    }
+
     private List<ItemStack> variants() {
-        return minecraft == null || minecraft.level == null ? List.of() : CamoBenchBlockEntity.variants(minecraft.level, input());
+        refreshInput();
+        return cachedVariants;
     }
 
     private int currentVariant() {
-        return minecraft == null || minecraft.level == null ? -1 : CamoBenchBlockEntity.currentVariant(minecraft.level, input());
+        refreshInput();
+        return cachedCurrent;
+    }
+
+    /** Camo number (1-based, 0 = no camos) of the worn armor piece {@code i}. */
+    private int armorCamo(int i, ItemStack armor) {
+        if (cachedArmor[i] == null || !ItemStack.matches(armor, cachedArmor[i])) {
+            cachedArmor[i] = armor.copy();
+            cachedArmorCamo[i] = minecraft == null || minecraft.level == null ? 0
+                    : CamoData.camos(minecraft.level.registryAccess(), armor).indexOf(
+                            CamoData.current(minecraft.level.registryAccess(), armor).orElse(null)) + 1;
+        }
+        return cachedArmorCamo[i];
     }
 
     private int panelX() {
@@ -110,21 +151,19 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
-        ItemStack input = input();
         List<ItemStack> variants = variants();
         Component name = Component.translatable("techguns.item.invalidcamo");
         String index = "";
-        if (!variants.isEmpty() && minecraft != null && minecraft.level != null) {
+        if (!variants.isEmpty()) {
             index = (currentVariant() + 1) + "/" + variants.size();
-            name = CamoData.current(minecraft.level.registryAccess(), input).map(camo -> camo.display()).orElse(Component.empty());
+            name = cachedName;
         }
         drawText(graphics, Component.literal(index), 10, 40);
         drawText(graphics, name, 10, 50);
         if (minecraft != null && minecraft.player != null) {
             for (int i = 0; i < RepairBenchBlockEntity.ARMOR_SLOTS.size(); i++) {
                 ItemStack armor = minecraft.player.getItemBySlot(RepairBenchBlockEntity.ARMOR_SLOTS.get(i));
-                int camo = CamoData.camos(minecraft.level.registryAccess(), armor).indexOf(
-                        CamoData.current(minecraft.level.registryAccess(), armor).orElse(null)) + 1;
+                int camo = armorCamo(i, armor);
                 drawText(graphics, Component.literal(String.valueOf(camo)), 104 + i * 18, 38);
             }
         }

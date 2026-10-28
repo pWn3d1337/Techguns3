@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import techguns.TGIds;
 
 /**
  * Stonecutter-style list of item choices (Fabric {@code StoneCutterStyleScreen}): 4 columns, 3 rows of 16x18 cells and
@@ -20,11 +21,11 @@ import net.minecraft.world.item.ItemStack;
  */
 // MIGRATION(26.x): blitSprite and item rendering through GuiGraphics change with deferred GUI rendering (1.21.6).
 public class TGRecipeGrid {
-    private static final ResourceLocation CELL = ResourceLocation.withDefaultNamespace("container/stonecutter/recipe");
-    private static final ResourceLocation CELL_SELECTED = ResourceLocation.withDefaultNamespace("container/stonecutter/recipe_selected");
-    private static final ResourceLocation CELL_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("container/stonecutter/recipe_highlighted");
-    private static final ResourceLocation SCROLLER = ResourceLocation.withDefaultNamespace("container/stonecutter/scroller");
-    private static final ResourceLocation SCROLLER_DISABLED = ResourceLocation.withDefaultNamespace("container/stonecutter/scroller_disabled");
+    private static final ResourceLocation CELL = TGIds.vanilla("container/stonecutter/recipe");
+    private static final ResourceLocation CELL_SELECTED = TGIds.vanilla("container/stonecutter/recipe_selected");
+    private static final ResourceLocation CELL_HIGHLIGHTED = TGIds.vanilla("container/stonecutter/recipe_highlighted");
+    private static final ResourceLocation SCROLLER = TGIds.vanilla("container/stonecutter/scroller");
+    private static final ResourceLocation SCROLLER_DISABLED = TGIds.vanilla("container/stonecutter/scroller_disabled");
     private static final int COLUMNS = 4;
     private static final int ROWS = 3;
     private static final int CELL_WIDTH = 16;
