@@ -462,6 +462,8 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         tag.putFloat("speed", speed);
         tag.putInt("lifetime", lifetime);
         tag.putDouble("gravity", gravity);
+        tag.putFloat("radius", radius);
+        tag.putBoolean("block_damage", blockDamage);
         tag.putByte("kind", (byte) kind.ordinal());
     }
 
@@ -476,6 +478,8 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
         speed = tag.getFloat("speed");
         lifetime = tag.getInt("lifetime");
         gravity = tag.getDouble("gravity");
+        radius = tag.getFloat("radius");
+        blockDamage = tag.getBoolean("block_damage");
         kind = Kind.values()[Mth.clamp(tag.getByte("kind"), 0, Kind.values().length - 1)];
         start = position();
     }

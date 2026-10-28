@@ -35,6 +35,7 @@ public final class ExtraSlotEvents {
     private static final float DEFAULT_FLY_SPEED = 0.05f;
     /** Night vision effect length; refreshed while active (Techguns 2: 220). */
     private static final int NIGHT_VISION_TICKS = 220;
+    private static final int NIGHT_VISION_REFRESH_TICKS = 205;
     /**
      * Modifiers currently applied per player: modifier id -> attribute. One map per side: the tick runs on the client
      * and the integrated server thread at the same time, and the maps are not thread-safe.
@@ -96,10 +97,17 @@ public final class ExtraSlotEvents {
         flySpeed(player);
     }
 
-    /** Night vision bonus and the toggle on: keep the effect up (Techguns 2 refreshed it to 220 ticks). */
+    /**
+     * Night vision bonus and the toggle on: keep the effect up (Techguns 2 refreshed it to 220 ticks every tick). It is
+     * only refreshed before it drops to the 200 ticks where the screen starts to flicker: every refresh sends a packet.
+     */
     private static void nightVision(Player player) {
         if (!player.level().isClientSide && player.getAttributeValue(TGAttributes.NIGHT_VISION) > 0.0
                 && TGPlayerData.of(player).get(TGPlayerData.Toggle.NIGHT_VISION)) {
+            MobEffectInstance current = player.getEffect(MobEffects.NIGHT_VISION);
+            if (current != null && !current.endsWithin(NIGHT_VISION_REFRESH_TICKS)) {
+                return;
+            }
             player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_TICKS, 0, false, false));
         }
     }

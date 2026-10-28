@@ -15,9 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import techguns.TGIds;
-import techguns.camo.CamoData;
-import techguns.camo.TGCamo;
 import techguns.client.model.shield.TGShieldModel;
+import techguns.client.render.CamoTextures;
 import techguns.registry.TGArmors;
 
 /**
@@ -54,11 +53,7 @@ public final class TGShieldRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack poseStack, MultiBufferSource buffer,
                              int packedLight, int packedOverlay) {
-        ResourceLocation texture = defaultTexture;
-        if (Minecraft.getInstance().level != null) {
-            texture = CamoData.current(Minecraft.getInstance().level.registryAccess(), stack)
-                    .flatMap(TGCamo::texture).orElse(defaultTexture);
-        }
+        ResourceLocation texture = CamoTextures.of(stack).orElse(defaultTexture);
         TGShieldModel m = model.get();
         poseStack.pushPose();
         poseStack.scale(1.0F, -1.0F, -1.0F);

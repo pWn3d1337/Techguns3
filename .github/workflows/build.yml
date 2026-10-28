@@ -48,3 +48,22 @@ jobs:
 
       - name: Build and run GameTests on the minimum NeoForge
         run: ./gradlew build runGameTestServer -Puse_mcpfabric=false -Pneo_version=${{ env.NEO_MIN }}
+
+  # The compat GameTests (Mekanism radiation, compat machine recipes) only assert with the compat mods on the runtime
+  compat-mods:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Run GameTests with the compat mods
+        run: ./gradlew runGameTestServer -Puse_mcpfabric=false -Pcompat_mods=true

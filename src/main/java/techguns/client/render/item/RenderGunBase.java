@@ -1,10 +1,6 @@
 package techguns.client.render.item;
 
-import techguns.camo.TGCamo;
-import techguns.camo.CamoData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import java.util.Optional;
 import java.util.Random;
 
@@ -15,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import techguns.client.model.TGModel;
+import techguns.client.render.CamoTextures;
 import techguns.client.render.TGMatrixOps;
 import techguns.client.render.fx.GunEffect;
 import techguns.client.render.fx.IScreenEffect;
@@ -49,9 +46,10 @@ public class RenderGunBase extends RenderItemBase {
 
     protected float chargeTranslation = 0.25f;
 
-    // local muzzle flash jitter offsets, re-rolled when a new flash starts (-1.0 to 1.0)
+    // local muzzle flash jitter offsets (-1.0 to 1.0), derived from the flash's seed: the renderer is shared by every
+    // holder of this gun, so the jitter must not depend on what was drawn before
     private final Random jitterRandom = new Random();
-    private float lastFlashProgress = 0f;
+    private long jitterSeed = Long.MIN_VALUE;
     private float jitterX = 0f;
     private float jitterY = 0f;
     private float jitterScale = 0f;
@@ -271,7 +269,7 @@ public class RenderGunBase extends RenderItemBase {
 
             // Draw muzzle FX (in the hand pose, without the gun's own transforms)
             if (muzzleFlashProgress > 0) {
-                updateJitter(muzzleFlashProgress);
+                updateJitter(state.muzzleFlashSeed());
                 if (firstPerson) {
                     if (state.zooming() && this.scope == null) {
                         this.transformADS(poseStack, zoomProgress);
@@ -284,7 +282,6 @@ public class RenderGunBase extends RenderItemBase {
                     poseStack.popPose();
                 }
             } else {
-                lastFlashProgress = 0f;
                 if (reloadProgress <= 0) {
                     if (firstPerson) {
                         this.drawIdleFx(entity, poseStack, buffers, leftHand, ammoVariant);
@@ -326,21 +323,18 @@ public class RenderGunBase extends RenderItemBase {
 
     /** Texture of the stack's camo, if its item has camos (datapack registry {@code techguns:camo}). */
     protected static Optional<ResourceLocation> camoTexture(ItemStack stack) {
-        ClientLevel level = Minecraft.getInstance().level;
-        if (level == null) {
-            return Optional.empty();
-        }
-        return CamoData.current(level.registryAccess(), stack).flatMap(TGCamo::texture);
+        return CamoTextures.of(stack);
     }
 
-    /** Re-rolls the muzzle flash jitter whenever a new flash starts. */
-    private void updateJitter(float flashProgress) {
-        if (flashProgress < lastFlashProgress || lastFlashProgress == 0f) {
+    /** Sets the muzzle flash jitter of the flash with this seed (one roll per flash). */
+    private void updateJitter(long seed) {
+        if (seed != jitterSeed) {
+            jitterSeed = seed;
+            jitterRandom.setSeed(seed);
             jitterX = 1.0f - (jitterRandom.nextFloat() * 2.0f);
             jitterY = 1.0f - (jitterRandom.nextFloat() * 2.0f);
             jitterScale = 1.0f - (jitterRandom.nextFloat() * 2.0f);
         }
-        lastFlashProgress = flashProgress;
     }
 
     // idle / charge particle FX need systems that are not ported yet

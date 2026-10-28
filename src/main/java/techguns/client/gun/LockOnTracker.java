@@ -59,6 +59,17 @@ public final class LockOnTracker {
         useTicks = 0;
     }
 
+    /** Called every client tick while a lock-on gun is held without the use key: the lock runs out. */
+    public static void decay() {
+        if (target != null && !target.isAlive()) {
+            reset();
+        } else if (ticks > 0) {
+            ticks--;
+        } else {
+            target = null;
+        }
+    }
+
     /** Called every client tick while the use key is held with a lock-on gun. */
     public static void tick(LocalPlayer player, LockOnGunItem gun) {
         Entity seen = trace(player);

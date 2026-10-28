@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import techguns.TGIds;
 import techguns.Techguns;
 import techguns.armor.TGArmorItem;
 import techguns.core.damage.TGDamageCategory;
@@ -84,7 +85,7 @@ public class TGStatOverrideTests {
     @GameTest(template = ARENA)
     public static void brokenOverridesAreSkipped(GameTestHelper helper) {
         Map<ResourceLocation, GunStats> guns = StatOverrideLoader.loadGuns(Map.of(
-                ResourceLocation.withDefaultNamespace("stone"), json("{\"damage\": {\"damage\": 20.0}}"),
+                TGIds.vanilla("stone"), json("{\"damage\": {\"damage\": 20.0}}"),
                 id(TGGuns.M4.get()), json("{\"firing\": {\"clip_size\": \"many\"}}"),
                 id(TGGuns.AK47.get()), json("[1, 2]")));
         helper.assertTrue(guns.isEmpty(), "Overrides for a non-gun, a wrong type and a non-object should be skipped: " + guns.keySet());

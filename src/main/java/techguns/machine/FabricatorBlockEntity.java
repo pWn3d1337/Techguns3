@@ -151,12 +151,21 @@ public class FabricatorBlockEntity extends MultiblockMasterBlockEntity {
     }
 
     @Override
-    protected void loadClientData(CompoundTag tag) {
-        super.loadClientData(tag);
-        if (level != null) {
-            workPiece = ItemStack.parseOptional(level.registryAccess(), tag.getCompound("work_piece"));
-            workResult = ItemStack.parseOptional(level.registryAccess(), tag.getCompound("work_result"));
-        }
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        // the level is not set yet while a chunk loads: read the shown stacks with the given registries
+        loadWorkStacks(tag, registries);
+    }
+
+    @Override
+    protected void loadUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadUpdateTag(tag, registries);
+        loadWorkStacks(tag, registries);
+    }
+
+    private void loadWorkStacks(CompoundTag tag, HolderLookup.Provider registries) {
+        workPiece = ItemStack.parseOptional(registries, tag.getCompound("work_piece"));
+        workResult = ItemStack.parseOptional(registries, tag.getCompound("work_result"));
     }
 
     @Override

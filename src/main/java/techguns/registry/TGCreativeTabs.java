@@ -19,6 +19,8 @@ public final class TGCreativeTabs {
             .icon(() -> TGItems.STEEL_INGOT.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 TGGuns.guns().forEach(gun -> output.accept(gun.get()));
+                output.accept(TGGuns.STIELGRANATE.get());
+                output.accept(TGGuns.FRAG_GRENADE.get());
                 TGAmmo.flatAmmo().forEach(item -> output.accept(item.get()));
                 TGAmmo.modelAmmo().forEach(item -> output.accept(item.get()));
                 output.accept(TGItems.AMMO_BOX.get());
@@ -29,6 +31,7 @@ public final class TGCreativeTabs {
                 TGSlotItems.components().forEach(item -> output.accept(item.get()));
                 TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
+                output.accept(TGFluids.ACID_BUCKET.get());
                 TGItems.oreDrillHeads().forEach(item -> output.accept(item.get()));
                 TGNpcs.npcs().forEach(npc -> output.accept(npc.egg().get()));
             })

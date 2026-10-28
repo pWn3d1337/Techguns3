@@ -38,7 +38,7 @@ public class TGMachineRenderer<T extends TGMachineBlockEntity> implements BlockE
     public void render(T machine, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
         BlockState state = machine.getBlockState();
         Direction facing = state.hasProperty(TGMachineBlock.FACING) ? state.getValue(TGMachineBlock.FACING) : Direction.SOUTH;
-        renderModel(poseStack, buffer, light, overlay, facing, machine.isWorking() ? machine.getProgress() : 0.0f);
+        renderModel(poseStack, buffer, light, overlay, facing, machine.isWorking() ? machine.getProgress(partialTick) : 0.0f);
     }
 
     /** Item / static version: facing south, no job. */

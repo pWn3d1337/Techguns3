@@ -60,9 +60,12 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
         // one animation state per holder and hand; static copies (GUI, ground) never animate
         GunAnimatable animatable = renderer.animatables.computeIfAbsent(animationKey, k -> new GunAnimatable());
+        long gameTime = mc.level != null ? mc.level.getGameTime() : 0;
+        animatable.lastSeen = gameTime;
+        renderer.prune(gameTime);
         animatable.reloading = animationKey >= 0 && reloadProgress > 0f
                 && GeckoLibCache.getBakedAnimations().containsKey(renderer.gunModel.animation);
-        animatable.tick = (mc.level != null ? mc.level.getGameTime() : 0) + partialTick;
+        animatable.tick = gameTime + partialTick;
         animatable.bones = bones;
 
         poseStack.pushPose();
@@ -81,6 +84,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
         boolean reloading;
         double tick;
+        /** Game time of the last draw; holders not drawn for a while are dropped. */
+        long lastSeen;
         /** Code-driven bone changes for the current frame. */
         Consumer<GeoBones> bones = b -> {
         };
@@ -167,10 +172,22 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
 
     private static final class GunRenderer extends GeoObjectRenderer<GunAnimatable> {
         final GunModel gunModel;
-        /** Keyed by holder and hand; entity ids are only reused after a relog, so the map stays small. */
+        /** Keyed by holder and hand; holders not drawn for {@link #STALE_TICKS} are dropped (entity ids are never reused). */
         final Map<Long, GunAnimatable> animatables = new HashMap<>();
+        private long lastPrune;
         /** Missing model logged once. */
         boolean warned;
+
+        private static final int STALE_TICKS = 200;
+
+        /** Drops the animation states of holders not drawn recently; at most once every {@link #STALE_TICKS}. */
+        void prune(long gameTime) {
+            if (Math.abs(gameTime - lastPrune) < STALE_TICKS) {
+                return;
+            }
+            lastPrune = gameTime;
+            animatables.values().removeIf(a -> Math.abs(gameTime - a.lastSeen) > STALE_TICKS);
+        }
 
         GunRenderer(String id) {
             this(new GunModel(id));

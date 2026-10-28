@@ -131,7 +131,7 @@ public class TGParticleSystem implements ITGParticle {
         }
 
         if (this.entity != null) {
-            if (!condition.evaluate(entity)) {
+            if (!EntityConditions.holds(condition, entity)) {
                 this.markDead();
                 return;
             }

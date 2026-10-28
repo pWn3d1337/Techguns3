@@ -80,11 +80,11 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
     }
 
     public int progress() {
-        return data.get(TGMachineBlockEntity.DATA_PROGRESS);
+        return (data.get(TGMachineBlockEntity.DATA_PROGRESS_HIGH) & 0xFFFF) << 16 | (data.get(TGMachineBlockEntity.DATA_PROGRESS) & 0xFFFF);
     }
 
     public int totalTime() {
-        return data.get(TGMachineBlockEntity.DATA_TOTAL_TIME);
+        return (data.get(TGMachineBlockEntity.DATA_TOTAL_TIME_HIGH) & 0xFFFF) << 16 | (data.get(TGMachineBlockEntity.DATA_TOTAL_TIME) & 0xFFFF);
     }
 
     public int energy() {

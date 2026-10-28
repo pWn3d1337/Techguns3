@@ -19,9 +19,11 @@ import techguns.gun.GunItem;
  * @param zooming             the local player is zoomed with this gun
  * @param loadedAmmo          rounds in the gun
  * @param ammoVariant         loaded ammo variant key
+ * @param muzzleFlashSeed     differs for every muzzle flash (holder, hand and flash start): seeds the flash jitter
  */
 public record GunRenderState(float fireProgress, float reloadProgress, float muzzleFlashProgress, float chargeProgress,
-                             float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant) {
+                             float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant,
+                             long muzzleFlashSeed) {
 
     public static GunRenderState extract(ItemRenderContext context, GunItem gun) {
         float fire = 0f;
@@ -29,6 +31,7 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
         float flash = 0f;
         float charge = 0f;
         float chargeFull = 0f;
+        long flashSeed = 0L;
         if (gun instanceof ChargeGunItem chargeGun && context.isInHand() && !context.isOffhand() && context.entity() != null
                 && context.entity().isUsingItem() && context.entity().getUseItem().getItem() == gun) {
             chargeFull = Math.max(0f, chargeGun.chargeFull(context.entity()));
@@ -49,6 +52,7 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             ShooterValues.Timer flashTimer = values.muzzleFlash(context.hand());
             if (flashTimer.isActive()) {
                 flash = Mth.clamp(flashTimer.progress(), 0.0001f, 1f);
+                flashSeed = flashTimer.startId() * 31L + context.entity().getId() * 2L + context.hand().ordinal();
             }
         }
 
@@ -59,6 +63,7 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             zooming = controller.isZooming() && gun.stats().zoom().isPresent();
             zoomProgress = controller.zoomProgress(context.partialTick());
         }
-        return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()));
+        return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()),
+                flashSeed);
     }
 }

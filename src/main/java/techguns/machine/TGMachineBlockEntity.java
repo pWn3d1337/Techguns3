@@ -48,7 +48,10 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     public static final int DATA_REDSTONE = 4;
     public static final int DATA_SIGNAL = 5;
     public static final int DATA_SECURITY = 6;
-    public static final int DATA_COUNT = 7;
+    /** Progress and total time are synced as two 16 bit halves like the energy (ore drill jobs exceed a short). */
+    public static final int DATA_PROGRESS_HIGH = 7;
+    public static final int DATA_TOTAL_TIME_HIGH = 8;
+    public static final int DATA_COUNT = 9;
 
     /** Menu button ids ({@link #pressButton}); machine buttons start at {@link #BUTTON_MACHINE}. */
     public static final int BUTTON_REDSTONE = 0;
@@ -84,8 +87,10 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         @Override
         public int get(int index) {
             return switch (index) {
-                case DATA_PROGRESS -> progress;
-                case DATA_TOTAL_TIME -> totalTime;
+                case DATA_PROGRESS -> progress & 0xFFFF;
+                case DATA_TOTAL_TIME -> totalTime & 0xFFFF;
+                case DATA_PROGRESS_HIGH -> progress >>> 16;
+                case DATA_TOTAL_TIME_HIGH -> totalTime >>> 16;
                 case DATA_ENERGY_LOW -> energy.getEnergyStored() & 0xFFFF;
                 case DATA_ENERGY_HIGH -> energy.getEnergyStored() >>> 16;
                 case DATA_REDSTONE -> redstoneMode.ordinal();
@@ -481,6 +486,15 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     /** Job progress 0..1 (client: for the renderer). */
     public float getProgress() {
         return totalTime > 0 ? (float) progress / totalTime : 0.0f;
+    }
+
+    /** Client: the job progress between two ticks, so the renderers animate smoothly instead of at 20 steps a second. */
+    public float getProgress(float partialTick) {
+        if (totalTime <= 0) {
+            return 0.0f;
+        }
+        boolean advancing = working && !stalled && redstoneMode.allows(signal) && progress < totalTime && canWork();
+        return Math.min(1.0f, (progress + (advancing ? partialTick : 0.0f)) / totalTime);
     }
 
     @Override

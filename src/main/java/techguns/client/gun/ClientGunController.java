@@ -88,8 +88,15 @@ public final class ClientGunController implements GunClientEffects {
         gameBus.addListener(INSTANCE::onComputeFov);
         gameBus.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
             ShooterValues.clear();
+            LockOnTracker.reset();
             INSTANCE.zoom = 1.0f;
+            INSTANCE.zoomTicks = 0;
             INSTANCE.jetpackBoosting = false;
+            INSTANCE.lastMainHand = ItemStack.EMPTY;
+            INSTANCE.attackWasDown = false;
+            INSTANCE.useWasDown = false;
+            INSTANCE.forcedFireTicks = 0;
+            INSTANCE.forcedUseTicks = 0;
         });
     }
 
@@ -215,7 +222,10 @@ public final class ClientGunController implements GunClientEffects {
                 LockOnTracker.reset();
             }
             LockOnTracker.tick(player, lockOnGun);
-        } else if (!(mainHand.getItem() instanceof LockOnGunItem)) {
+        } else if (mainHand.getItem() instanceof LockOnGunItem) {
+            // use key released: the lock fades like a lost target, so it does not stay forever
+            LockOnTracker.decay();
+        } else {
             LockOnTracker.reset();
         }
 
@@ -229,8 +239,7 @@ public final class ClientGunController implements GunClientEffects {
 
         // off-hand guns fire with the use key, unless the main hand gun uses it for zooming
         ItemStack offHand = player.getOffhandItem();
-        boolean mainUsesRightClick = mainHand.getItem() instanceof GunItem mainGun && mainGun.stats().zoom().isPresent();
-        if (offHand.getItem() instanceof GunItem gun && gun.shootsWithLeftClick() && !mainUsesRightClick
+        if (offHandGunUsesUseKey(player) && offHand.getItem() instanceof GunItem gun
                 && useDown && (!gun.stats().firing().semiAuto() || !useWasDown)) {
             tryShoot(player, gun, offHand, InteractionHand.OFF_HAND);
         }
@@ -282,6 +291,17 @@ public final class ClientGunController implements GunClientEffects {
             event.setCanceled(true);
             event.setSwingHand(false);
         }
+        // a main hand gun keeps its own use (charging, lock-on); anything else would place, eat or use as well
+        if (event.isUseItem() && !(player.getMainHandItem().getItem() instanceof GunItem) && offHandGunUsesUseKey(player)) {
+            event.setCanceled(true);
+            event.setSwingHand(false);
+        }
+    }
+
+    /** The off-hand gun fires with the use key, unless the main hand gun uses that key for zooming. */
+    private static boolean offHandGunUsesUseKey(LocalPlayer player) {
+        boolean mainUsesRightClick = player.getMainHandItem().getItem() instanceof GunItem mainGun && mainGun.stats().zoom().isPresent();
+        return player.getOffhandItem().getItem() instanceof GunItem gun && gun.shootsWithLeftClick() && !mainUsesRightClick;
     }
 
     private void onComputeFov(ComputeFovModifierEvent event) {

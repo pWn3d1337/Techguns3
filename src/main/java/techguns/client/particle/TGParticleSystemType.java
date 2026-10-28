@@ -414,12 +414,14 @@ public class TGParticleSystemType extends TGFXType{
         this.frames = other.frames;
         this.gravity = other.gravity;
         this.hasVariations = other.hasVariations;
-        this.initialDelayMax = other.initialDelayMin;
+        this.initialDelayMin = other.initialDelayMin;
+        this.initialDelayMax = other.initialDelayMax;
         this.isHollow = other.isHollow;
         this.lifetimeMax = other.lifetimeMax;
         this.lifetimeMin = other.lifetimeMin;
         this.systemLifetimeMin = other.systemLifetimeMin;
         this.systemLifetimeMax = other.systemLifetimeMax;
+        this.particleCountMin = other.particleCountMin;
         this.particleCountMax = other.particleCountMax;
         //this.randomRotation = other.randomRotation;
         this.angleMin = other.angleMin;
@@ -470,6 +472,11 @@ public class TGParticleSystemType extends TGFXType{
         this.volumeType = other.volumeType;
         this.offset = new Vec3(other.offset.x, other.offset.y, other.offset.z);
         this.particlesMoveWithSystem = other.particlesMoveWithSystem;
+        this.particlesStickToSystem = other.particlesStickToSystem;
+        this.startSizeRateMin = other.startSizeRateMin;
+        this.startSizeRateMax = other.startSizeRateMax;
+        this.startSizeRateDampingMin = other.startSizeRateDampingMin;
+        this.startSizeRateDampingMax = other.startSizeRateDampingMax;
         this.streak = other.streak;
         this.is3d = other.is3d;
         this.groundAligned = other.groundAligned;

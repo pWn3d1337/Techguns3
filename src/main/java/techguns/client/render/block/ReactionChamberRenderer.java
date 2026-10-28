@@ -99,7 +99,9 @@ public class ReactionChamberRenderer implements BlockEntityRenderer<ReactionCham
         int color = ext.getTintColor(fluid);
         float level = fluid.getAmount() / (float) ReactionChamberBlockEntity.TANK_CAPACITY;
         float top = BOTTOM + HEIGHT * level;
-        int fluidLight = Math.max(light, LightTexture.pack(fluid.getFluid().getFluidType().getLightLevel(fluid), 0));
+        // block light raised to the fluid's glow, sky light kept (a max of the packed values compares sky light first)
+        int fluidLight = LightTexture.pack(Math.max(LightTexture.block(light), fluid.getFluid().getFluidType().getLightLevel(fluid)),
+                LightTexture.sky(light));
         VertexConsumer c = buffer.getBuffer(RenderType.translucent());
         PoseStack.Pose pose = poseStack.last();
         float w = HALF_WIDTH;

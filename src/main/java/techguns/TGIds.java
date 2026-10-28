@@ -1,5 +1,7 @@
 package techguns;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -28,5 +30,11 @@ public final class TGIds {
     /** Identifier from its {@code namespace:path} string (no namespace: minecraft). */
     public static ResourceLocation parse(String id) {
         return ResourceLocation.parse(id);
+    }
+
+    /** Like {@link #parse}, but null for a malformed string (save data, configs). */
+    @Nullable
+    public static ResourceLocation tryParse(String id) {
+        return ResourceLocation.tryParse(id);
     }
 }
