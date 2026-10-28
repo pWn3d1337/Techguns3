@@ -18,11 +18,14 @@ import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
+import javax.annotation.Nullable;
+
 import techguns.TGConfig;
 import techguns.core.damage.DeathEffectRules;
 import techguns.core.damage.DeathType;
 import techguns.core.damage.TGArmorFormula;
 import techguns.core.damage.TGDamageCategory;
+import techguns.entity.npc.TurretEntity;
 import techguns.gun.MeleeToolItem;
 import techguns.network.TGNetwork;
 import techguns.registry.TGAttributes;
@@ -140,13 +143,22 @@ public final class TGDamageEvents {
         return instance == null ? 0.0f : (float) instance.getValue();
     }
 
-    /** Damage multiplier for Techguns damage depending on who hits whom (config). */
-    private static float damageFactor(Entity attacker, LivingEntity target) {
+    /**
+     * Damage multiplier for Techguns damage depending on who hits whom (config, Techguns 2 {@code DamageSystem.getDamageFactor}).
+     * Damage without an attacker (radiation, acid, ownerless shots) is not scaled.
+     */
+    public static float damageFactor(@Nullable Entity attacker, LivingEntity target) {
+        if (attacker == null) {
+            return 1.0f;
+        }
         if (attacker instanceof Player && target instanceof Player) {
             return target.getServer() != null && target.getServer().isPvpAllowed() ? TGConfig.DAMAGE_PVP.get().floatValue() : 0.0f;
         }
         if (attacker instanceof Player) {
             return 1.0f;
+        }
+        if (attacker instanceof TurretEntity && target instanceof Player) {
+            return TGConfig.DAMAGE_TURRET_TO_PLAYER.get().floatValue();
         }
         return TGConfig.DAMAGE_FACTOR_NPC.get().floatValue();
     }

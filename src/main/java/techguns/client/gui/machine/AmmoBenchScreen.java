@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import techguns.machine.AmmoBenchMenu;
+import techguns.TGIds;
 
 /**
  * Ammo Bench screen (Fabric {@code AmmoBenchScreen}): the vanilla stonecutter screen with three input slots and the
@@ -13,7 +14,7 @@ import techguns.machine.AmmoBenchMenu;
  */
 // MIGRATION(26.x): GuiGraphics#blit and screen rendering change with deferred GUI rendering (1.21.6).
 public class AmmoBenchScreen extends AbstractContainerScreen<AmmoBenchMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/stonecutter.png");
+    private static final ResourceLocation TEXTURE = TGIds.vanilla("textures/gui/container/stonecutter.png");
 
     private final TGRecipeGrid grid;
 

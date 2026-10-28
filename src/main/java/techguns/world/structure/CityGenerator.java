@@ -245,8 +245,11 @@ final class CityGenerator {
     }
 
     /** Techguns 2 {@code BuildingStyle}: block options for walls (0), windows (1), floors (2), borders (3), door decoration (4). */
+    /** Techguns 2 {@code woodStair[1]}, shared by the stone, factory, brick and lime styles. */
+    private static final Supplier<Block> WOOD_STAIR_SUPPORT = DecorBlocks.blockOr(DecorRole.BARRACKS_WOOD_SCAFFOLD, () -> Blocks.DARK_OAK_PLANKS);
+
     private enum Style {
-        STONE(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS),
+        STONE(Blocks.OAK_STAIRS, WOOD_STAIR_SUPPORT,
                 List.of(decor(DecorRole.STONE_BRICKS_PANEL, Blocks.STONE), decor(DecorRole.STONE_BRICKS_SMALL, Blocks.STONE_BRICKS),
                         decor(DecorRole.COBBLESTONE_1, Blocks.COBBLESTONE), decor(DecorRole.COBBLESTONE_2, Blocks.COBBLESTONE),
                         decor(DecorRole.COBBLESTONE_3, Blocks.COBBLESTONE), decor(DecorRole.ANDESITE_3, Blocks.POLISHED_ANDESITE)),
@@ -255,14 +258,14 @@ final class CityGenerator {
                 List.of(decor(DecorRole.ANDESITE_11, Blocks.POLISHED_ANDESITE), decor(DecorRole.ANDESITE_4, Blocks.POLISHED_ANDESITE),
                         decor(DecorRole.COBBLESTONE_13, Blocks.STONE_BRICKS), decor(DecorRole.COBBLESTONE_15, Blocks.STONE_BRICKS),
                         decor(DecorRole.ANDESITE1_0, Blocks.POLISHED_ANDESITE))),
-        FACTORY(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS), List.of(decor(DecorRole.FACTORY_PLATE, Blocks.BRICKS)),
+        FACTORY(Blocks.OAK_STAIRS, WOOD_STAIR_SUPPORT, List.of(decor(DecorRole.FACTORY_PLATE, Blocks.BRICKS)),
                 of(Blocks.LIGHT_GRAY_STAINED_GLASS_PANE), List.of(DecorBlocks.blockOr(DecorRole.FACTORY_WIREFRAME, TGBlocks.CONCRETE_GREY_DARK))),
-        BRICK(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS), List.of(decor(DecorRole.BRICKS_WIDE, Blocks.BRICKS)),
+        BRICK(Blocks.OAK_STAIRS, WOOD_STAIR_SUPPORT, List.of(decor(DecorRole.BRICKS_WIDE, Blocks.BRICKS)),
                 of(Blocks.GLASS_PANE), stoneFloors(), List.of(decor(DecorRole.BRICKS_WEATHERED, Blocks.BRICKS))),
         LAB(Blocks.QUARTZ_STAIRS, decor(DecorRole.LABORATORY_WALL, Blocks.QUARTZ_BLOCK), List.of(decor(DecorRole.LABORATORY_WALL, Blocks.QUARTZ_BLOCK)),
                 of(Blocks.WHITE_STAINED_GLASS_PANE), List.of(decor(DecorRole.LABORATORY_FLOOR, Blocks.POLISHED_ANDESITE)),
                 List.of(decor(DecorRole.LABORATORY_BORDER, Blocks.QUARTZ_PILLAR)), List.of(decor(DecorRole.LABORATORY_DECORATION, Blocks.CHISELED_QUARTZ_BLOCK))),
-        LIME(Blocks.OAK_STAIRS, decor(DecorRole.BARRACKS_WOOD_SCAFFOLD, Blocks.DARK_OAK_PLANKS), List.of(decor(DecorRole.LIME_WALL, Blocks.CUT_SANDSTONE)),
+        LIME(Blocks.OAK_STAIRS, WOOD_STAIR_SUPPORT, List.of(decor(DecorRole.LIME_WALL, Blocks.CUT_SANDSTONE)),
                 of(Blocks.GLASS_PANE), List.of(decor(DecorRole.LIME_FLOOR, Blocks.SANDSTONE)),
                 List.of(decor(DecorRole.LIME_BORDER, Blocks.CHISELED_SANDSTONE)), List.of(decor(DecorRole.LIME_DECORATION, Blocks.CHISELED_SANDSTONE)));
 

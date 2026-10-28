@@ -244,6 +244,9 @@ public final class ClientGunController implements GunClientEffects {
         while (TGKeyMappings.TOGGLE_JETPACK.consumeClick()) {
             toggle(player, TGPlayerData.Toggle.JETPACK);
         }
+        while (TGKeyMappings.TOGGLE_SAFE_MODE.consumeClick()) {
+            toggle(player, TGPlayerData.Toggle.SAFE_MODE);
+        }
         while (TGKeyMappings.FORCE_RELOAD.consumeClick()) {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack stack = player.getItemInHand(hand);

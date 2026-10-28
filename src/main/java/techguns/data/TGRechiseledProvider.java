@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -50,7 +49,7 @@ public class TGRechiseledProvider implements DataProvider {
             for (DeferredBlock<? extends Block> block : blocks) {
                 JsonObject entry = new JsonObject();
                 entry.addProperty("block", block.getId().toString());
-                stairsOf(block.get()).ifPresent(stairs -> entry.addProperty("stairs", BuiltInRegistries.BLOCK.getKey(stairs).toString()));
+                TGBlocks.stairsOf(block).ifPresent(stairs -> entry.addProperty("stairs", stairs.getId().toString()));
                 entries.add(entry);
             }
             json.add("entries", entries);
@@ -58,16 +57,6 @@ public class TGRechiseledProvider implements DataProvider {
             writes.add(DataProvider.saveStable(cache, json, path));
         });
         return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
-    }
-
-    private static java.util.Optional<Block> stairsOf(Block block) {
-        if (block == TGBlocks.CONCRETE_GREY_DARK.get()) {
-            return java.util.Optional.of(TGBlocks.CONCRETE_GREY_DARK_STAIRS.get());
-        }
-        if (block == TGBlocks.CONCRETE_BROWN_LIGHT.get()) {
-            return java.util.Optional.of(TGBlocks.CONCRETE_BROWN_LIGHT_STAIRS.get());
-        }
-        return java.util.Optional.empty();
     }
 
     @Override

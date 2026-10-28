@@ -21,13 +21,24 @@ public final class TGConfig {
                     "and Techguns armor penetration applies. If false, vanilla armor calculation is used.")
             .define("tgArmorSystem", true);
 
+    // Techguns 2 "Damage Factors" (same defaults)
     public static final ModConfigSpec.DoubleValue DAMAGE_PVP = COMMON
             .comment("Damage multiplier for Techguns damage dealt by players to players (only if PvP is enabled).")
-            .defineInRange("damagePvP", 1.0, 0.0, 100.0);
+            .defineInRange("damagePvP", 0.5, 0.0, 100.0);
+
+    public static final ModConfigSpec.DoubleValue DAMAGE_TURRET_TO_PLAYER = COMMON
+            .comment("Damage multiplier for Techguns turrets hitting players.")
+            .defineInRange("damageTurretToPlayer", 0.5, 0.0, 100.0);
 
     public static final ModConfigSpec.DoubleValue DAMAGE_FACTOR_NPC = COMMON
-            .comment("Damage multiplier for Techguns damage dealt by non-players (NPCs, turrets).")
+            .comment("Damage multiplier for Techguns damage dealt by NPCs and turrets (turrets against players: damageTurretToPlayer). "
+                    + "Damage without an attacker (radiation, acid) is not scaled.")
             .defineInRange("damageFactorNPC", 1.0, 0.0, 100.0);
+
+    public static final ModConfigSpec.BooleanValue ALLOW_UNSAFE_MODE = COMMON
+            .comment("Players may switch off safe mode, so their guns and grenades damage blocks. When false, players are always in safe mode "
+                    + "(Techguns 2 permission canUseUnsafeMode).")
+            .define("allowUnsafeMode", true);
 
     static {
         COMMON.pop();

@@ -14,13 +14,15 @@
       "block": "techguns:container_orange"
     },
     {
-      "block": "techguns:panel_large_border"
+      "block": "techguns:panel_large_border",
+      "stairs": "techguns:panel_large_border_stairs"
     },
     {
       "block": "techguns:steelframe_blue"
     },
     {
-      "block": "techguns:steelframe_dark"
+      "block": "techguns:steelframe_dark",
+      "stairs": "techguns:steelframe_dark_stairs"
     },
     {
       "block": "techguns:steelframe_scaffold"

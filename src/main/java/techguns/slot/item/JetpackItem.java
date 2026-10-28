@@ -21,7 +21,8 @@ public class JetpackItem extends TGSlotItem {
             SlotItemSupport.recharge(this, player, stack);
             return;
         }
-        if (TGPlayerData.of(player).jetpackBoost()) {
+        TGPlayerData data = TGPlayerData.of(player);
+        if (data.jetpackBoost() && data.get(TGPlayerData.Toggle.JETPACK)) {
             applyBoost(player, stack);
         }
         SlotItemSupport.glide(player);

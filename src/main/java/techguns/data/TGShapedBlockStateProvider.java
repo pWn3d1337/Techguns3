@@ -19,6 +19,7 @@ import techguns.block.Door3x3Block;
 import techguns.block.SandbagsBlock;
 import techguns.block.TGLampBlock;
 import techguns.registry.TGBlocks;
+import techguns.TGIds;
 
 /**
  * Block states, block models and item models of the shaped decorative blocks (Phase 5a2). The geometry of the Techguns 2
@@ -453,7 +454,7 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         ModelFile model = models().getBuilder("block/creeper_acid").texture("particle", tex("acid_still"));
         getVariantBuilder(techguns.registry.TGFluids.ACID_BLOCK.get()).partialState().setModels(
                 new net.neoforged.neoforge.client.model.generators.ConfiguredModel(model));
-        itemModels().withExistingParent("creeper_acid_bucket", ResourceLocation.fromNamespaceAndPath("neoforge", "item/bucket"))
+        itemModels().withExistingParent("creeper_acid_bucket", TGIds.of("neoforge", "item/bucket"))
                 .customLoader(net.neoforged.neoforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder::begin)
                 .fluid(techguns.registry.TGFluids.ACID.get()).end();
     }

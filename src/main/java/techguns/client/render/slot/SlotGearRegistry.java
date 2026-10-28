@@ -23,7 +23,6 @@ import techguns.camo.CamoData;
 import techguns.camo.TGCamo;
 import techguns.client.model.slot.SlotGearModel;
 import techguns.client.model.slot.SlotGearModels;
-import techguns.registry.TGComponents;
 
 /**
  * Render setup of the extra-slot items (Techguns 2 {@code AdditionalSlotRenderRegistry} filled in {@code ClientProxy}):
@@ -119,8 +118,7 @@ public final class SlotGearRegistry {
         if (level == null) {
             return entry.defaultTexture(slim);
         }
-        String camo = stack.get(TGComponents.CAMO.get());
-        return CAMO_TEXTURES.computeIfAbsent(new CamoKey(stack.getItem(), camo == null ? "" : camo),
+        return CAMO_TEXTURES.computeIfAbsent(new CamoKey(stack.getItem(), CamoData.name(stack)),
                 key -> CamoData.current(level.registryAccess(), stack).flatMap(TGCamo::texture)).orElse(entry.defaultTexture(slim));
     }
 }

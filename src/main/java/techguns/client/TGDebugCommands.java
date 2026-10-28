@@ -241,6 +241,26 @@ public final class TGDebugCommands {
                                                 .executes(ctx -> TGBenchmark.start(StringArgumentType.getString(ctx, "gun"),
                                                         IntegerArgumentType.getInteger(ctx, "shots"),
                                                         IntegerArgumentType.getInteger(ctx, "seconds")) ? 1 : 0)))))
+                .then(Commands.literal("key")
+                        .then(Commands.argument("name", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    // presses a Techguns key once (MCP has no key input): safe_mode, step_assist, night_vision, jetpack, force_reload
+                                    String name = StringArgumentType.getString(ctx, "name");
+                                    net.minecraft.client.KeyMapping key = switch (name) {
+                                        case "safe_mode" -> TGKeyMappings.TOGGLE_SAFE_MODE;
+                                        case "step_assist" -> TGKeyMappings.TOGGLE_STEP_ASSIST;
+                                        case "night_vision" -> TGKeyMappings.TOGGLE_NIGHT_VISION;
+                                        case "jetpack" -> TGKeyMappings.TOGGLE_JETPACK;
+                                        case "force_reload" -> TGKeyMappings.FORCE_RELOAD;
+                                        default -> null;
+                                    };
+                                    if (key == null) {
+                                        ctx.getSource().sendSystemMessage(Component.literal("Unknown key " + name));
+                                        return 0;
+                                    }
+                                    net.minecraft.client.KeyMapping.click(key.getKey());
+                                    return 1;
+                                })))
                 .then(Commands.literal("stats")
                         .executes(ctx -> {
                             // the client's view of the held gun or armor piece, to check datapack overrides and their sync

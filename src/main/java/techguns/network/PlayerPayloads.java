@@ -32,11 +32,11 @@ public final class PlayerPayloads {
     }
 
     /** Server to client: the saved player toggles. */
-    public record SyncPlayerData(boolean stepAssist, boolean nightVision, boolean jetpack) implements CustomPacketPayload {
+    public record SyncPlayerData(boolean stepAssist, boolean nightVision, boolean jetpack, boolean safeMode) implements CustomPacketPayload {
         public static final Type<SyncPlayerData> TYPE = new Type<>(TGIds.id("sync_player_data"));
         public static final StreamCodec<ByteBuf, SyncPlayerData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, SyncPlayerData::stepAssist, ByteBufCodecs.BOOL, SyncPlayerData::nightVision,
-                ByteBufCodecs.BOOL, SyncPlayerData::jetpack, SyncPlayerData::new);
+                ByteBufCodecs.BOOL, SyncPlayerData::jetpack, ByteBufCodecs.BOOL, SyncPlayerData::safeMode, SyncPlayerData::new);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {

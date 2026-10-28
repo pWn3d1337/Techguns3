@@ -736,7 +736,7 @@ public class TGRecipeProvider extends RecipeProvider {
     private static void camoChangeRecipes(RecipeOutput output) {
         for (String kind : List.of("wool", "concrete", "concrete_powder", "terracotta", "stained_glass", "stained_glass_pane", "banner", "carpet")) {
             List<Item> entries = java.util.Arrays.stream(DyeColor.values())
-                    .map(color -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(color.getName() + "_" + kind))).toList();
+                    .map(color -> BuiltInRegistries.ITEM.get(TGIds.vanilla(color.getName() + "_" + kind))).toList();
             output.accept(TGIds.id("camo_change/minecraft_" + kind), new CamoChangeRecipe(entries), null);
         }
         camoChange(output, "concrete", TGBlocks.CONCRETE);

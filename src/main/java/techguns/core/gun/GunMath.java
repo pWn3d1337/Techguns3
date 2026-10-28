@@ -39,4 +39,19 @@ public final class GunMath {
         float bullets = bulletsPerMag == 0 ? ammoPerReload : bulletsPerMag;
         return clipSize / bullets;
     }
+
+    /** Shots one ammo item loads in a multi-item reload (shotgun shells, 40 mm grenades); at least 1. */
+    public static int shotsPerReloadItem(int clipSize, int ammoPerReload) {
+        return Math.max(1, clipSize / Math.max(1, ammoPerReload));
+    }
+
+    /**
+     * Ammo items a multi-item reload takes to fill the gun from {@code loaded} shots; at least 1 (the reload always
+     * takes one). Shots and items are different units once a clip holds more shots than items (stat overrides).
+     */
+    public static int reloadItems(int clipSize, int ammoPerReload, int loaded) {
+        int shotsPerItem = shotsPerReloadItem(clipSize, ammoPerReload);
+        int missing = Math.max(0, clipSize - loaded);
+        return Math.max(1, (missing + shotsPerItem - 1) / shotsPerItem);
+    }
 }

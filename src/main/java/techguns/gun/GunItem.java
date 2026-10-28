@@ -23,7 +23,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import techguns.TGConfig;
 import techguns.core.damage.TGDamageCategory;
+import techguns.player.TGPlayerData;
 import techguns.stats.StatOverrides;
 import techguns.gun.ammo.AmmoType;
 import techguns.gun.ammo.DamageModifier;
@@ -198,11 +200,12 @@ public class GunItem extends Item {
         int loaded = firing.clipSize();
         if (firing.ammoPerReload() > 1) {
             int items = 1;
-            while (items < firing.ammoPerReload() && hasAll(handler, from, to, ammo)) {
+            int wanted = techguns.core.gun.GunMath.reloadItems(firing.clipSize(), firing.ammoPerReload(), 0);
+            while (items < wanted && hasAll(handler, from, to, ammo)) {
                 takeAll(handler, from, to, ammo);
                 items++;
             }
-            loaded = Math.min(firing.clipSize(), items * (firing.clipSize() / firing.ammoPerReload()));
+            loaded = Math.min(firing.clipSize(), items * techguns.core.gun.GunMath.shotsPerReloadItem(firing.clipSize(), firing.ammoPerReload()));
         }
         GunData.setAmmo(stack, new GunAmmo(loaded, variant));
         return true;
@@ -317,10 +320,13 @@ public class GunItem extends Item {
                 blockDamage(shooter), firePos, target);
     }
 
-    /** Players in safe mode never damage blocks. */
+    /**
+     * Techguns 2 {@code getDoBlockDamage}: only players damage blocks, unless they switched on safe mode or the server
+     * doesn't allow unsafe mode; NPC and turret shots never do.
+     */
     public static boolean blockDamage(LivingEntity shooter) {
-        // TODO Phase 4: safe mode toggle in player data; until then guns never damage blocks
-        return !(shooter instanceof Player);
+        return shooter instanceof Player player && TGConfig.ALLOW_UNSAFE_MODE.get()
+                && !TGPlayerData.of(player).get(TGPlayerData.Toggle.SAFE_MODE);
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -357,10 +363,11 @@ public class GunItem extends Item {
         if (firing.ammoPerReload() > 1) {
             int items = 1;
             int start = forced ? current.loaded() : 0;
-            while (items < firing.ammoPerReload() - start && AmmoInventory.consume(player, ammoType().ammoStacks(variant))) {
+            int wanted = techguns.core.gun.GunMath.reloadItems(firing.clipSize(), firing.ammoPerReload(), start);
+            while (items < wanted && AmmoInventory.consume(player, ammoType().ammoStacks(variant))) {
                 items++;
             }
-            loaded = Math.min(firing.clipSize(), start + items * (firing.clipSize() / firing.ammoPerReload()));
+            loaded = Math.min(firing.clipSize(), start + items * techguns.core.gun.GunMath.shotsPerReloadItem(firing.clipSize(), firing.ammoPerReload()));
         }
         GunData.setAmmo(stack, new GunAmmo(loaded, variant));
         state.setFireDelay(hand, firing.reloadTicks());

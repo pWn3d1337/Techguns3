@@ -490,6 +490,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("message.techguns.toggle.step_assist", "Step Assist: %s");
         add("message.techguns.toggle.night_vision", "Night Vision: %s");
         add("message.techguns.toggle.jetpack", "Jetpack: %s");
+        add("message.techguns.toggle.safe_mode", "Safe Mode: %s");
         add(TGKeyMappings.TOGGLE_NIGHT_VISION.getName(), "Toggle Night Vision");
         add(TGKeyMappings.TOGGLE_JETPACK.getName(), "Toggle Jetpack");
         add("tooltip.techguns.slot", "Slot: %s");

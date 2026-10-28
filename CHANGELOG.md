@@ -41,6 +41,7 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
   blocks like Techguns 2 used Chisel's (factory plates, hazard stripes, scaffolds, lab walls, patterned stone); Rechiseled
   can chisel between the Techguns camo net, metal panel, neon light, concrete and ladder variants. All optional, with
   the vanilla look as fallback (config `decorModBlocks`).
+- Safe mode (key B, like Techguns 2): with it on, your guns and grenades don't damage blocks; NPC and turret shots never do.
 - Connected textures with Fusion installed, like Techguns 2 had with CTM: containers, steel frames, border panels,
   concrete, nether metal and the ore drill join into larger textures.
 
