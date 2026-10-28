@@ -22,6 +22,7 @@ Everything is English: code, comments, commit messages, docs, replies.
 | Dedicated server | `./gradlew runServer` |
 
 Disable the dev-only MCP bridge with `-Puse_mcpfabric=false` (CI does this).
+Add `-Pcompat_mods=true` to put the tier 2 compat mods (Create, Mekanism, IE, MI, Oritech) on the dev runtime, e.g. to check the compat recipes with `runGameTestServer`.
 
 ## In-game testing via MCP
 The dev client loads **MCP Fabric** (`mcpfabric`, dev-only `localRuntime` dependency, never shipped).

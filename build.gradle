@@ -156,6 +156,15 @@ dependencies {
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }
     }
+
+    // Tier 2 compat check (8e), opt-in with -Pcompat_mods=true: the mods whose machines get conditional Techguns
+    // recipes, so the GameTests can check those recipes load (Modrinth version ids, see gradle.properties)
+    if (project.compat_mods.toBoolean()) {
+        ["create", "mekanism", "immersiveengineering", "modern-industrialization", "oritech",
+         "guideme", "architectury-api", "athena-ctm"].each { slug ->
+            localRuntime("maven.modrinth:${slug}:${project.property('compat_' + slug.replace('-', '_'))}") { transitive = false }
+        }
+    }
 }
 
 // Expands the declared properties in src/main/templates (neoforge.mods.toml).

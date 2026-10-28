@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "mekanism:metallurgic_infusing",
+  "chemical_input": {
+    "amount": 20,
+    "tag": "mekanism:refined_obsidian"
+  },
+  "item_input": {
+    "count": 1,
+    "tag": "c:ingots/steel"
+  },
+  "output": {
+    "id": "techguns:obsidian_steel_ingot"
+  },
+  "per_tick_usage": false
+}

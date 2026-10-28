@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "oritech"
+    }
+  ],
+  "type": "oritech:foundry",
+  "ingredients": [
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "tag": "c:obsidians"
+    }
+  ],
+  "results": [
+    {
+      "id": "techguns:obsidian_steel_ingot"
+    }
+  ],
+  "time": 80
+}

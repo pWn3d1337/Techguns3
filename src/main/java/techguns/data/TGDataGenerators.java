@@ -63,6 +63,7 @@ public final class TGDataGenerators {
                         new LootTableProvider.SubProviderEntry(LegacyChestLootProvider::new, LootContextParamSets.CHEST)), lookup));
         generator.addProvider(event.includeServer(), new LegacyStructureProvider(output));
         generator.addProvider(event.includeServer(), new LegacyBookProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new TGCompatRecipeProvider(output));
         generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGBiomeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
