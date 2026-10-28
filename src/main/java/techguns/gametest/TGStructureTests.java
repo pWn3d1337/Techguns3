@@ -146,6 +146,7 @@ public class TGStructureTests {
         helper.assertTrue(structures.containsKey(TGStructures.ALIEN_BUG_NEST_KEY), "The alien bug nest is a structure");
         helper.assertTrue(structures.containsKey(TGStructures.MILITARY_BASE_KEY), "The military base is a structure");
         helper.assertTrue(structures.containsKey(TGStructures.CASTLE_KEY), "The castle is a structure");
+        helper.assertTrue(structures.containsKey(TGStructures.CITY_KEY), "The city is a structure");
         var sets = registries.registryOrThrow(Registries.STRUCTURE_SET);
         for (TGStructures.Size size : TGStructures.Size.values()) {
             StructureSet set = sets.getOrThrow(size.set);
@@ -154,7 +155,7 @@ public class TGStructureTests {
         }
         helper.assertTrue(sets.getOrThrow(TGStructures.Size.SMALL.set).structures().size() == 4
                 && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 5
-                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 3
+                && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 4
                 && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
                 && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3
                 && sets.getOrThrow(TGStructures.Size.NETHER_BIG.set).structures().size() == 1, "Techguns 2 small and medium tables, the fortress");
@@ -260,6 +261,39 @@ public class TGStructureTests {
             }
         }
         helper.assertTrue(chests > 0, "Bunkers and barracks have loot chests");
+        helper.succeed();
+    }
+
+    /** Techguns 2 city on flat or hilly ground: concrete roads, buildings with doors, windows and lamps, rebuilt the same. */
+    @GameTest(template = ARENA)
+    public static void cityGenerates(GameTestHelper helper) {
+        for (long seed = 0; seed < 6; seed++) {
+            int sizeX = 32 + (int) seed * 9;
+            int sizeZ = 79 - (int) seed * 8;
+            boolean hilly = seed % 2 == 1;
+            int countX = (sizeX + 8) / 4 + 2;
+            int countZ = (sizeZ + 8) / 4 + 2;
+            int[] heights = new int[countX * countZ];
+            for (int i = 0; i < countX; i++) {
+                for (int j = 0; j < countZ; j++) {
+                    heights[i * countZ + j] = hilly ? 64 + (int) Math.round(2 + 2 * Math.sin(i * 0.7) * Math.cos(j * 0.5)) : 64;
+                }
+            }
+            var grid = new MilitaryBaseStructure.HeightGrid(-4, -4, countX, countZ, heights);
+            CampLevel city = techguns.world.structure.CityPiece.build(seed, 0, 0, sizeX, sizeZ, 65, grid);
+            String name = "City " + seed + " (" + sizeX + "x" + sizeZ + (hilly ? ", hills" : "") + ")";
+            var blocks = city.blocks().values();
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(TGBlocks.CONCRETE_GREY.get())), name + ": concrete roads");
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(Blocks.OAK_DOOR)), name + ": building doors");
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(TGBlocks.LAMP_WHITE.get())), name + ": ceiling lamps");
+            helper.assertTrue(blocks.stream().anyMatch(b -> b.is(Blocks.OAK_TRAPDOOR)), name + ": roof hatches");
+            long buildings = blocks.stream().filter(b -> b.is(Blocks.OAK_TRAPDOOR)).count();
+            helper.assertTrue(buildings >= 2, name + ": several buildings, got " + buildings);
+            int maxY = city.blocks().keySet().stream().mapToInt(BlockPos::getY).max().orElse(0);
+            helper.assertTrue(maxY <= 65 + 16 + 2, name + ": at most 16 blocks high, got " + (maxY - 65));
+            CampLevel again = techguns.world.structure.CityPiece.build(seed, 0, 0, sizeX, sizeZ, 65, grid);
+            helper.assertTrue(again.blocks().equals(city.blocks()), name + ": rebuilt the same from its seed");
+        }
         helper.succeed();
     }
 

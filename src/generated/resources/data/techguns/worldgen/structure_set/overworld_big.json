@@ -18,6 +18,10 @@
     {
       "structure": "techguns:castle",
       "weight": 1
+    },
+    {
+      "structure": "techguns:city",
+      "weight": 1
     }
   ]
 }

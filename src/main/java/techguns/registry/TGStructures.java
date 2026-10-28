@@ -29,6 +29,8 @@ import techguns.Techguns;
 import techguns.world.structure.AlienBugNestPiece;
 import techguns.world.structure.AlienBugNestStructure;
 import techguns.world.structure.AvoidingSpreadPlacement;
+import techguns.world.structure.CityPiece;
+import techguns.world.structure.CityStructure;
 import techguns.world.structure.LegacyTemplatePiece;
 import techguns.world.structure.LegacyTemplateStructure;
 import techguns.world.structure.MilitaryBasePiece;
@@ -56,6 +58,7 @@ public final class TGStructures {
             () -> () -> MilitaryBaseStructure.CODEC);
     public static final Supplier<StructureType<MazeDungeonStructure>> MAZE_DUNGEON = STRUCTURE_TYPES.register("maze_dungeon",
             () -> () -> MazeDungeonStructure.CODEC);
+    public static final Supplier<StructureType<CityStructure>> CITY = STRUCTURE_TYPES.register("city", () -> () -> CityStructure.CODEC);
 
     public static final Supplier<StructurePieceType> LEGACY_TEMPLATE_PIECE = PIECE_TYPES.register("legacy_template",
             () -> (StructurePieceType.StructureTemplateType) LegacyTemplatePiece::new);
@@ -63,6 +66,8 @@ public final class TGStructures {
             () -> (StructurePieceType.ContextlessType) AlienBugNestPiece::new);
     public static final Supplier<StructurePieceType> MILITARY_BASE_PIECE = PIECE_TYPES.register("military_base",
             () -> (StructurePieceType.ContextlessType) MilitaryBasePiece::new);
+    public static final Supplier<StructurePieceType> CITY_PIECE = PIECE_TYPES.register("city",
+            () -> (StructurePieceType.ContextlessType) CityPiece::new);
     public static final Supplier<StructurePieceType> DUNGEON_SPAWNER_PIECE = PIECE_TYPES.register("dungeon_spawner",
             () -> (StructurePieceType.ContextlessType) DungeonSpawnerPiece::new);
 
@@ -176,6 +181,9 @@ public final class TGStructures {
     public static final ResourceKey<Structure> MILITARY_BASE_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("military_base"));
     /** Techguns 2 weight of the military base in the big table. */
     private static final int MILITARY_BASE_WEIGHT = 1;
+    /** Phase 9: the Techguns 2 city, which Techguns 2 never spawned. */
+    public static final ResourceKey<Structure> CITY_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("city"));
+    private static final int CITY_WEIGHT = 1;
 
     /** Techguns 2 {@code CastleStructure}: the castle maze dungeon. */
     public static final ResourceKey<Structure> CASTLE_KEY = ResourceKey.create(Registries.STRUCTURE, TGIds.id("castle"));
@@ -209,6 +217,8 @@ public final class TGStructures {
         // after the trees, which the camp clears (Techguns 2 spawned its structures after the decoration)
         context.register(MILITARY_BASE_KEY, new MilitaryBaseStructure(new Structure.StructureSettings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), Map.of(),
                 GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TerrainAdjustment.NONE)));
+        context.register(CITY_KEY, new CityStructure(new Structure.StructureSettings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), Map.of(),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TerrainAdjustment.NONE)));
         context.register(CASTLE_KEY, new MazeDungeonStructure(settings(biomes.getOrThrow(HAS_OVERWORLD_SURFACE), false), DungeonPreset.CASTLE));
         context.register(NETHER_FORTRESS_KEY, new MazeDungeonStructure(settings(biomes.getOrThrow(HAS_NETHER), true), DungeonPreset.NETHER));
     }
@@ -234,6 +244,7 @@ public final class TGStructures {
             if (size == Size.BIG) {
                 entries.add(StructureSet.entry(structures.getOrThrow(MILITARY_BASE_KEY), MILITARY_BASE_WEIGHT));
                 entries.add(StructureSet.entry(structures.getOrThrow(CASTLE_KEY), CASTLE_WEIGHT));
+                entries.add(StructureSet.entry(structures.getOrThrow(CITY_KEY), CITY_WEIGHT));
             }
             if (size == Size.NETHER_BIG) {
                 entries.add(StructureSet.entry(structures.getOrThrow(NETHER_FORTRESS_KEY)));
