@@ -24,6 +24,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import techguns.core.damage.TGDamageCategory;
+import techguns.stats.StatOverrides;
 import techguns.gun.ammo.AmmoType;
 import techguns.gun.ammo.DamageModifier;
 import techguns.core.fx.EntityCondition;
@@ -42,7 +43,8 @@ public class GunItem extends Item {
     /** Max distance (blocks) at which other players hear the gun. */
     public static final float SOUND_VOLUME = 4.0f;
 
-    private final GunStats stats;
+    /** The built-in stats; datapacks can override them ({@link StatOverrides}). */
+    private final GunStats defaultStats;
     private final GunSounds sounds;
     private final ProjectileSelector projectiles;
     /** Particle system attached to the shooter on every shot (NDR muzzle beam); null = none. */
@@ -54,7 +56,7 @@ public class GunItem extends Item {
 
     public GunItem(Properties properties, GunStats stats, GunSounds sounds, ProjectileSelector projectiles) {
         super(properties.stacksTo(1).component(TGComponents.GUN_AMMO.get(), new GunAmmo(stats.firing().clipSize(), AmmoType.DEFAULT)));
-        this.stats = stats;
+        this.defaultStats = stats;
         this.sounds = sounds;
         this.projectiles = projectiles;
     }
@@ -72,8 +74,13 @@ public class GunItem extends Item {
         return sounds;
     }
 
+    /** Current stats: the datapack override if there is one, else the built-in stats. */
     public GunStats stats() {
-        return stats;
+        return StatOverrides.gunStats(this, defaultStats);
+    }
+
+    public GunStats defaultStats() {
+        return defaultStats;
     }
 
     public AmmoType ammoType() {
@@ -92,7 +99,7 @@ public class GunItem extends Item {
     }
 
     public boolean isFullyLoaded(ItemStack stack) {
-        return GunData.loaded(stack) >= stats.firing().clipSize();
+        return GunData.loaded(stack) >= stats().firing().clipSize();
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -118,7 +125,7 @@ public class GunItem extends Item {
             return;
         }
 
-        GunStats.Firing firing = stats.firing();
+        GunStats.Firing firing = stats().firing();
         state.setFireDelay(hand, firing.fireDelay());
         if (!player.getAbilities().instabuild) {
             GunData.consume(stack, 1);
@@ -128,13 +135,13 @@ public class GunItem extends Item {
             float spreadMultiplier = 1.0f;
             // shooting while blocking with a shield is inaccurate
             if (hand == InteractionHand.MAIN_HAND && player.isBlocking()) {
-                spreadMultiplier *= stats.handType() == GunHandType.ONE_HANDED ? 4.0f : 8.0f;
+                spreadMultiplier *= stats().handType() == GunHandType.ONE_HANDED ? 4.0f : 8.0f;
             }
             // armor gun accuracy bonus (Techguns 2 GUN_ACCURACY)
             spreadMultiplier *= (float) Math.clamp(1.0 - player.getAttributeValue(TGAttributes.GUN_ACCURACY), 0.0, 1.0);
             FirePos firePos = firePos(player, hand);
-            if (zooming && stats.zoom().isPresent()) {
-                spreadMultiplier *= stats.zoom().get().spreadMultiplier();
+            if (zooming && stats().zoom().isPresent()) {
+                spreadMultiplier *= stats().zoom().get().spreadMultiplier();
                 firePos = FirePos.CENTER;
             }
             fireProjectiles(level, player, stack, spreadMultiplier, 1.0f, firePos, target);
@@ -158,7 +165,7 @@ public class GunItem extends Item {
         if (level.isClientSide) {
             return;
         }
-        float spreadMultiplier = stats.zoom().map(GunStats.Zoom::spreadMultiplier).orElse(1.0f) * accuracyScale;
+        float spreadMultiplier = stats().zoom().map(GunStats.Zoom::spreadMultiplier).orElse(1.0f) * accuracyScale;
         fireProjectiles(level, shooter, stack, spreadMultiplier, damageScale, firePos, null);
         level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(), sounds.fire().get(), shooter.getSoundSource(), SOUND_VOLUME, 1.0f);
     }
@@ -187,7 +194,7 @@ public class GunItem extends Item {
         List<ItemStack> ammo = ammoType().ammoStacks(variant);
         takeAll(handler, from, to, ammo);
         ammoType().emptyStacks().forEach(empties);
-        GunStats.Firing firing = stats.firing();
+        GunStats.Firing firing = stats().firing();
         int loaded = firing.clipSize();
         if (firing.ammoPerReload() > 1) {
             int items = 1;
@@ -261,7 +268,7 @@ public class GunItem extends Item {
     /** Spawns the projectile(s) of one shot. Server side only. */
     protected void fireProjectiles(Level level, LivingEntity shooter, ItemStack stack, float spreadMultiplier, float damageMultiplier, FirePos firePos,
                                    @Nullable Entity target) {
-        GunStats.Projectile projectile = stats.projectile();
+        GunStats.Projectile projectile = stats().projectile();
         spawnProjectile(level, shooter, stack, projectile.spread() * spreadMultiplier, projectile.forwardOffset(), damageMultiplier, firePos, target);
 
         if (projectile.pellets() > 0) {
@@ -277,7 +284,7 @@ public class GunItem extends Item {
                                    @Nullable Entity target) {
         Projectile entity = createProjectile(level, shooter, stack, spread, damageMultiplier, firePos, target);
         if (forwardOffset > 0.0f) {
-            float speed = projectiles.factory(GunData.variant(stack)).modifier().velocity(stats.projectile().speed());
+            float speed = projectiles.factory(GunData.variant(stack)).modifier().velocity(stats().projectile().speed());
             entity.setPos(entity.position().add(entity.getDeltaMovement().scale(forwardOffset / speed)));
         }
         level.addFreshEntity(entity);
@@ -298,8 +305,8 @@ public class GunItem extends Item {
     protected ShotParams shotParams(Level level, LivingEntity shooter, ItemStack stack, float spread, float damageMultiplier, FirePos firePos,
                                     @Nullable Entity target) {
         DamageModifier mod = factory(stack).modifier();
-        GunStats.Damage damage = stats.damage();
-        GunStats.Projectile projectile = stats.projectile();
+        GunStats.Damage damage = stats().damage();
+        GunStats.Projectile projectile = stats().projectile();
 
         float speed = mod.velocity(projectile.speed());
         int lifetime = Math.round(projectile.lifetimeTicks() * mod.rangeMul() + mod.rangeAdd());
@@ -345,7 +352,7 @@ public class GunItem extends Item {
         }
         ammoType().emptyStacks().forEach(empty -> AmmoInventory.give(player, empty));
 
-        GunStats.Firing firing = stats.firing();
+        GunStats.Firing firing = stats().firing();
         int loaded = firing.clipSize();
         if (firing.ammoPerReload() > 1) {
             int items = 1;
@@ -382,11 +389,11 @@ public class GunItem extends Item {
 
     /** On a forced reload of a magazine gun, rounds left in the old magazine come back as loose bullets. */
     private void returnLooseRounds(Player player, GunAmmo current) {
-        if (current.loaded() <= 0 || stats.firing().ammoPerReload() > 1) {
+        if (current.loaded() <= 0 || stats().firing().ammoPerReload() > 1) {
             return;
         }
         AmmoType.Variant variant = ammoType().variant(current.variant());
-        float shotsPerBullet = techguns.core.gun.GunMath.shotsPerBullet(stats.firing().clipSize(), stats.firing().ammoPerReload(), ammoType().bulletsPerMag());
+        float shotsPerBullet = techguns.core.gun.GunMath.shotsPerBullet(stats().firing().clipSize(), stats().firing().ammoPerReload(), ammoType().bulletsPerMag());
         int bullets = (int) Math.floor(current.loaded() / shotsPerBullet);
         if (bullets > 0) {
             variant.bullet().stream().filter(java.util.Objects::nonNull)
@@ -402,7 +409,7 @@ public class GunItem extends Item {
         List<ItemStack> items = new java.util.ArrayList<>();
         AmmoType type = ammoType();
         AmmoType.Variant variant = type.variant(current.variant());
-        GunStats.Firing firing = stats.firing();
+        GunStats.Firing firing = stats().firing();
         float shotsPerBullet = techguns.core.gun.GunMath.shotsPerBullet(firing.clipSize(), firing.ammoPerReload(), type.bulletsPerMag());
         int bullets = (int) Math.floor(current.loaded() / shotsPerBullet);
         List<ItemStack> empties = type.emptyStacks();
@@ -434,8 +441,8 @@ public class GunItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (level.isClientSide && stats.zoom().isPresent() && stats.zoom().get().toggle() && ShooterState.of(player).fireDelay(hand) <= 0) {
-            GunClientEffects.get().toggleZoom(stats.zoom().get().fovMultiplier());
+        if (level.isClientSide && stats().zoom().isPresent() && stats().zoom().get().toggle() && ShooterState.of(player).fireDelay(hand) <= 0) {
+            GunClientEffects.get().toggleZoom(stats().zoom().get().fovMultiplier());
         }
         return InteractionResultHolder.pass(stack);
     }
@@ -469,19 +476,19 @@ public class GunItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         GunAmmo ammo = GunData.ammo(stack);
-        tooltip.add(Component.translatable("tooltip.techguns.gun.ammo", ammo.loaded(), stats.firing().clipSize()).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.techguns.gun.ammo", ammo.loaded(), stats().firing().clipSize()).withStyle(ChatFormatting.GRAY));
         for (ItemStack ammoItem : ammoType().ammoStacks(ammo.variant())) {
             tooltip.add(Component.translatable("tooltip.techguns.gun.ammo_item", ammoItem.getHoverName()).withStyle(ChatFormatting.GRAY));
         }
-        GunStats.Damage damage = stats.damage();
+        GunStats.Damage damage = stats().damage();
         String dmg = damage.damageMin() < damage.damage() ? "%.1f-%.1f".formatted(damage.damage(), damage.damageMin()) : "%.1f".formatted(damage.damage());
-        String pellets = stats.projectile().pellets() > 0 ? " (x" + (stats.projectile().pellets() + 1) + ")" : "";
+        String pellets = stats().projectile().pellets() > 0 ? " (x" + (stats().projectile().pellets() + 1) + ")" : "";
         tooltip.add(Component.translatable("tooltip.techguns.gun.damage", dmg + pellets).withStyle(ChatFormatting.GRAY));
         if (GunClientEffects.get().hasShiftDown()) {
             tooltip.add(Component.translatable("tooltip.techguns.gun.damage_type",
                     Component.translatable("techguns.damage_category." + damageCategory(stack).id())).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("tooltip.techguns.gun.range", "%.0f".formatted(stats.projectile().range())).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("tooltip.techguns.gun.reload_time", "%.2f".formatted(stats.firing().reloadTicks() * 0.05f)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.techguns.gun.range", "%.0f".formatted(stats().projectile().range())).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.techguns.gun.reload_time", "%.2f".formatted(stats().firing().reloadTicks() * 0.05f)).withStyle(ChatFormatting.GRAY));
             if (damage.penetration() > 0.0f) {
                 tooltip.add(Component.translatable("tooltip.techguns.gun.penetration", "%.1f".formatted(damage.penetration())).withStyle(ChatFormatting.GRAY));
             }

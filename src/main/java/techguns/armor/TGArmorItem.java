@@ -40,6 +40,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.item.crafting.Ingredient;
 import techguns.TGIds;
 import techguns.core.damage.TGDamageCategory;
+import techguns.stats.ArmorStatOverride;
+import techguns.stats.StatOverrides;
 import techguns.core.repair.RepairFormula;
 import techguns.registry.TGAttributes;
 
@@ -256,14 +258,35 @@ public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable 
         return stats;
     }
 
+    /** Armor of this piece against a category, with a datapack override applied. */
+    public float armorValue(TGDamageCategory category) {
+        ArmorStatOverride override = StatOverrides.armor(this);
+        if (override != null && override.armor().containsKey(category)) {
+            return override.armor().get(category);
+        }
+        return stats.armor(getType(), category);
+    }
+
+    /** Armor toughness of this piece, with a datapack override applied. */
+    public float toughness() {
+        ArmorStatOverride override = StatOverrides.armor(this);
+        return override != null ? override.toughness().orElse(stats.toughness()) : stats.toughness();
+    }
+
+    /** This piece's bonuses, with a datapack override applied. */
+    protected Map<Holder<Attribute>, Double> bonuses() {
+        ArmorStatOverride override = StatOverrides.armor(this);
+        return override != null ? StatOverrides.mergeBonuses(bonuses, override.bonuses()) : bonuses;
+    }
+
     /** Value of one of this piece's bonuses, 0 if it has none. */
     public double bonus(Holder<Attribute> attribute) {
-        return bonuses.getOrDefault(attribute, 0.0);
+        return bonuses().getOrDefault(attribute, 0.0);
     }
 
     /** Bonuses this stack gives now (powered armor: depends on its power). */
     protected Map<Holder<Attribute>, Double> activeBonuses(ItemStack stack) {
-        return bonuses;
+        return bonuses();
     }
 
     /** Worn out: one point of durability left, no armor and no bonuses. */
@@ -280,7 +303,7 @@ public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable 
         }
         EquipmentSlotGroup slot = EquipmentSlotGroup.bySlot(getEquipmentSlot());
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        float physical = stats.armor(getType(), TGDamageCategory.PHYSICAL);
+        float physical = armorValue(TGDamageCategory.PHYSICAL);
         builder.add(Attributes.ARMOR, modifier("armor", physical), slot);
         for (TGDamageCategory category : TGDamageCategory.values()) {
             Holder<Attribute> attribute = TGAttributes.bonusArmor(category);
@@ -288,13 +311,13 @@ public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable 
                 continue;
             }
             // regular armor already counts with the category's factor; the attribute adds the rest
-            double bonus = stats.armor(getType(), category) - physical * category.armorFactor(false);
+            double bonus = armorValue(category) - physical * category.armorFactor(false);
             if (bonus != 0.0) {
                 builder.add(attribute, modifier("armor." + category.id(), bonus), slot);
             }
         }
-        if (stats.toughness() > 0.0f) {
-            builder.add(Attributes.ARMOR_TOUGHNESS, modifier("toughness", stats.toughness()), slot);
+        if (toughness() > 0.0f) {
+            builder.add(Attributes.ARMOR_TOUGHNESS, modifier("toughness", toughness()), slot);
         }
         activeBonuses(stack).forEach((attribute, value) -> builder.add(attribute,
                 modifier(attribute.unwrapKey().map(key -> key.location().getPath()).orElse("bonus"), value), slot));
@@ -357,8 +380,8 @@ public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable 
             CamoData.current(context.registries(), stack).ifPresent(camo ->
                     tooltip.add(Component.translatable("tooltip.techguns.camo", camo.display()).withStyle(ChatFormatting.GRAY)));
         }
-        if (stats.toughness() > 0.0f) {
-            tooltip.add(Component.translatable("tooltip.techguns.armor.toughness", FORMAT.format(stats.toughness())).withStyle(ChatFormatting.GRAY));
+        if (toughness() > 0.0f) {
+            tooltip.add(Component.translatable("tooltip.techguns.armor.toughness", FORMAT.format(toughness())).withStyle(ChatFormatting.GRAY));
         }
         activeBonuses(stack).forEach((attribute, value) -> tooltip.add(bonusLine(attribute, value)));
     }
@@ -366,7 +389,7 @@ public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable 
     /** Armor values as a row of category icons (see {@code ClientArmorTooltip}). */
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        return Optional.of(new TGArmorTooltip(TGArmorTooltip.CATEGORIES.stream().map(category -> stats.armor(getType(), category)).toList()));
+        return Optional.of(new TGArmorTooltip(TGArmorTooltip.CATEGORIES.stream().map(this::armorValue).toList()));
     }
 
     private static Component bonusLine(Holder<Attribute> attribute, double value) {

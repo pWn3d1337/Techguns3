@@ -12,6 +12,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import techguns.TGConfig;
+import techguns.core.view.FovMath;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -278,8 +282,15 @@ public final class ClientGunController implements GunClientEffects {
     }
 
     private void onComputeFov(ComputeFovModifierEvent event) {
-        if (zoom != 1.0f) {
-            event.setNewFovModifier(event.getNewFovModifier() * zoom);
+        float modifier = event.getNewFovModifier();
+        if (TGConfig.LOCK_SPEED_FOV.get()) {
+            Player player = event.getPlayer();
+            modifier = FovMath.lockSpeedFov(modifier, (float) player.getAttributeValue(Attributes.MOVEMENT_SPEED),
+                    player.getAbilities().getWalkingSpeed(), player.isSprinting(), TGConfig.FIXED_SPRINT_FOV.get().floatValue());
         }
+        if (zoom != 1.0f) {
+            modifier *= zoom;
+        }
+        event.setNewFovModifier(modifier);
     }
 }

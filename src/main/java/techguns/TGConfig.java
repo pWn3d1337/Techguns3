@@ -146,6 +146,20 @@ public final class TGConfig {
 
     static final ModConfigSpec COMMON_SPEC = COMMON.build();
 
+    // --- client (Techguns 2 CLIENTSIDE category) ---
+
+    private static final ModConfigSpec.Builder CLIENT = new ModConfigSpec.Builder();
+
+    public static final ModConfigSpec.BooleanValue LOCK_SPEED_FOV = CLIENT
+            .comment("Counters the speed dependent FOV change, so speed bonuses (power armor, potions) don't change the view. "
+                    + "This also stops the FOV change while sprinting. Don't enable it if another mod does this too.")
+            .define("lockSpeedDependentFov", true);
+    public static final ModConfigSpec.DoubleValue FIXED_SPRINT_FOV = CLIENT
+            .comment("Multiplies the FOV while sprinting by this value, independent of the actual speed. Only used with lockSpeedDependentFov.")
+            .defineInRange("fixedSprintFovMultiplier", 1.15, 1.0, 10.0);
+
+    static final ModConfigSpec CLIENT_SPEC = CLIENT.build();
+
     private TGConfig() {
     }
 }

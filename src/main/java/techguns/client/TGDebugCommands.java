@@ -241,6 +241,34 @@ public final class TGDebugCommands {
                                                 .executes(ctx -> TGBenchmark.start(StringArgumentType.getString(ctx, "gun"),
                                                         IntegerArgumentType.getInteger(ctx, "shots"),
                                                         IntegerArgumentType.getInteger(ctx, "seconds")) ? 1 : 0)))))
+                .then(Commands.literal("stats")
+                        .executes(ctx -> {
+                            // the client's view of the held gun or armor piece, to check datapack overrides and their sync
+                            net.minecraft.world.item.ItemStack held = Minecraft.getInstance().player.getMainHandItem();
+                            String text;
+                            if (held.getItem() instanceof techguns.gun.GunItem gun) {
+                                var stats = gun.stats();
+                                text = String.format(java.util.Locale.ROOT, "%s: damage %.1f (min %.1f), clip %d, fire delay %d, reload %d, speed %.2f, spread %.3f%s",
+                                        held.getHoverName().getString(), stats.damage().damage(), stats.damage().damageMin(),
+                                        stats.firing().clipSize(), stats.firing().fireDelay(), stats.firing().reloadTicks(),
+                                        stats.projectile().speed(), stats.projectile().spread(),
+                                        stats == gun.defaultStats() ? "" : " (override)");
+                            } else if (held.getItem() instanceof techguns.armor.TGArmorItem armor) {
+                                StringBuilder out = new StringBuilder(held.getHoverName().getString() + ":");
+                                for (var category : techguns.core.damage.TGDamageCategory.values()) {
+                                    if (category.isResistable()) {
+                                        out.append(String.format(java.util.Locale.ROOT, " %s %.2f", category.id(), armor.armorValue(category)));
+                                    }
+                                }
+                                out.append(String.format(java.util.Locale.ROOT, ", toughness %.1f%s", armor.toughness(),
+                                        techguns.stats.StatOverrides.armor(armor) == null ? "" : " (override)"));
+                                text = out.toString();
+                            } else {
+                                text = "Hold a Techguns gun or armor piece";
+                            }
+                            ctx.getSource().sendSystemMessage(Component.literal(text));
+                            return 1;
+                        }))
                 .then(Commands.literal("teams")
                         .executes(ctx -> {
                             // runs every team source on the integrated server: you vs yourself and vs a stranger

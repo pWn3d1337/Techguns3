@@ -81,6 +81,8 @@ public class TechgunsClient {
         MiningPlaneOutline.init(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(ExtraSlotsScreen::onInventoryScreenInit);
         NeoForge.EVENT_BUS.addListener(TGDebugCommands::register);
+        // a server's stat overrides must not stay active in the next world
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) -> techguns.stats.StatOverrides.clear());
     }
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {

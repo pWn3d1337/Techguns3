@@ -22,6 +22,7 @@ import techguns.player.TGPlayerData;
 import techguns.slot.ExtraSlots;
 import techguns.slot.FallbackSlots;
 import techguns.slot.menu.ExtraSlotsMenu;
+import techguns.stats.StatOverrides;
 
 /**
  * Registers all Techguns payloads and offers typed send helpers. All payload types live in this package.
@@ -52,6 +53,7 @@ public final class TGNetwork {
         registrar.playToClient(PlayerPayloads.SyncPlayerData.TYPE, PlayerPayloads.SyncPlayerData.STREAM_CODEC, TGNetwork::handleSyncPlayerData);
         registrar.playToClient(PlayerPayloads.SyncExtraSlots.TYPE, PlayerPayloads.SyncExtraSlots.STREAM_CODEC, TGNetwork::handleSyncExtraSlots);
         registrar.playToClient(PlayerPayloads.SyncRadiation.TYPE, PlayerPayloads.SyncRadiation.STREAM_CODEC, TGNetwork::handleSyncRadiation);
+        registrar.playToClient(StatPayloads.SyncStatOverrides.TYPE, StatPayloads.SyncStatOverrides.STREAM_CODEC, TGNetwork::handleSyncStatOverrides);
     }
 
     /** Sends the saved player settings to their client (login, respawn, dimension change). */
@@ -61,6 +63,11 @@ public final class TGNetwork {
             PacketDistributor.sendToPlayer(serverPlayer, new PlayerPayloads.SyncPlayerData(data.get(TGPlayerData.Toggle.STEP_ASSIST),
                     data.get(TGPlayerData.Toggle.NIGHT_VISION), data.get(TGPlayerData.Toggle.JETPACK)));
         }
+    }
+
+    /** Sends the datapack stat overrides to a client (login and {@code /reload}). */
+    public static void syncStatOverrides(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, new StatPayloads.SyncStatOverrides(StatOverrides.gunsById(), StatOverrides.armorById()));
     }
 
     public static void sendSetToggle(TGPlayerData.Toggle toggle, boolean enabled) {
@@ -208,6 +215,12 @@ public final class TGNetwork {
         data.set(TGPlayerData.Toggle.STEP_ASSIST, payload.stepAssist());
         data.set(TGPlayerData.Toggle.NIGHT_VISION, payload.nightVision());
         data.set(TGPlayerData.Toggle.JETPACK, payload.jetpack());
+    }
+
+    private static void handleSyncStatOverrides(StatPayloads.SyncStatOverrides payload, IPayloadContext context) {
+        // on an integrated server these are the values the server already set
+        StatOverrides.setGuns(payload.guns());
+        StatOverrides.setArmor(payload.armor());
     }
 
     private static void handleSyncRadiation(PlayerPayloads.SyncRadiation payload, IPayloadContext context) {

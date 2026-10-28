@@ -25,6 +25,9 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
 - Radiation with sources, shielding and cures.
 - Advancements as a progression guide and the Techguns manual as a guide book.
 - English, German and Russian translations.
+- Datapack overrides for gun and armor stats ([docs/stat_overrides.md](docs/stat_overrides.md)), replacing the Techguns 2
+  CraftTweaker tweakers.
+- Client option to keep the FOV steady with speed bonuses and while sprinting (on by default, like Techguns 2).
 
 ### New in Techguns 3 (not in Techguns 2)
 - Nether fortress: the Techguns 2 Nether dungeon, now generated underground with an entrance hut.
