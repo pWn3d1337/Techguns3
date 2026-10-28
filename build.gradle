@@ -164,6 +164,9 @@ dependencies {
     compileOnly "maven.modrinth:modonomicon:${modonomicon_version}"
     localRuntime "maven.modrinth:modonomicon:${modonomicon_version}"
 
+    // Mekanism, optional (8f2): the radiation bridge uses its API (in the mod jar); dev runtime with compat_mods
+    compileOnly("maven.modrinth:mekanism:${compat_mekanism}") { transitive = false }
+
     // Team mods, optional (8f1): compat/team providers compile against them and load only when the mod is there
     compileOnly("dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}") { transitive = false }
     compileOnly("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }

@@ -1,0 +1,16 @@
+{
+  "type": "techguns:chem_lab",
+  "flask": {
+    "count": 1,
+    "item": "techguns:fuel_tank_empty"
+  },
+  "fluid": {
+    "amount": 250,
+    "tag": "techguns:fuel"
+  },
+  "power_per_tick": 1,
+  "result": {
+    "count": 1,
+    "id": "techguns:fuel_tank"
+  }
+}

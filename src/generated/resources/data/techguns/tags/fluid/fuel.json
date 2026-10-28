@@ -1,0 +1,56 @@
+{
+  "values": [
+    {
+      "id": "#c:fuel",
+      "required": false
+    },
+    {
+      "id": "#c:refined_fuel",
+      "required": false
+    },
+    {
+      "id": "#c:biofuel",
+      "required": false
+    },
+    {
+      "id": "#c:biodiesel",
+      "required": false
+    },
+    {
+      "id": "#c:high_power_biodiesel",
+      "required": false
+    },
+    {
+      "id": "#c:diesel",
+      "required": false
+    },
+    {
+      "id": "#c:boosted_diesel",
+      "required": false
+    },
+    {
+      "id": "#c:gasoline",
+      "required": false
+    },
+    {
+      "id": "#c:kerosene",
+      "required": false
+    },
+    {
+      "id": "#c:light_fuel",
+      "required": false
+    },
+    {
+      "id": "#c:heavy_fuel",
+      "required": false
+    },
+    {
+      "id": "#c:turbofuel",
+      "required": false
+    },
+    {
+      "id": "#c:rocket_fuel",
+      "required": false
+    }
+  ]
+}

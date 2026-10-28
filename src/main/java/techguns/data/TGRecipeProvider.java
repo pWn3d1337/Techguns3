@@ -523,6 +523,9 @@ public class TGRecipeProvider extends RecipeProvider {
                 new ItemStack(TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), 8), false, 25);
         chemLab(output, "fuel_tank", null, null, sized(TGAmmo.FUEL_TANK_EMPTY.get(), 1), fluid(lava, 500),
                 new ItemStack(TGAmmo.FUEL_TANK.get()), false, 1);
+        // Techguns 2: 250 mB of any fuel of another mod (lava stays, Techguns 2 dropped it once a fuel existed)
+        chemLab(output, "fuel_tank_from_fuel", null, null, sized(TGAmmo.FUEL_TANK_EMPTY.get(), 1), fluid(TGTags.Fluids.FUEL, 250),
+                new ItemStack(TGAmmo.FUEL_TANK.get()), false, 1);
         chemLab(output, "rocket_high_velocity", sized(TGAmmo.ROCKET.get(), 1), null, null, fluid(lava, 250),
                 new ItemStack(TGAmmo.ROCKET_HIGH_VELOCITY.get()), false, 5);
         chemLab(output, "carbon_fibers", new SizedIngredient(Ingredient.of(Tags.Items.GEMS_DIAMOND), 1), sized(Items.BLAZE_POWDER, 1), null,

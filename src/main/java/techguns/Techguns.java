@@ -37,6 +37,9 @@ public class Techguns {
         modEventBus.addListener(TGNetwork::registerPayloads);
         modEventBus.addListener(TGDataGenerators::gatherData);
         modEventBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> techguns.compat.team.TGTeams.registerProviders());
+        if (net.neoforged.fml.ModList.get().isLoaded("mekanism")) {
+            techguns.compat.mekanism.MekanismRadiation.register(modEventBus);
+        }
 
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingDeath);

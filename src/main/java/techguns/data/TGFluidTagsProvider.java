@@ -22,8 +22,13 @@ public class TGFluidTagsProvider extends FluidTagsProvider {
         tag(TGTags.Fluids.LIQUID_REDSTONE).addTag(FluidTags.LAVA).addOptionalTag(TGIds.of("c", "redstone"));
         tag(TGTags.Fluids.LIQUID_ENDER).addTag(FluidTags.LAVA).addOptionalTag(TGIds.of("c", "ender"));
         // Techguns 2 read the fuels and oil from other mods' Forge fluids
-        tag(TGTags.Fluids.DRILL_FUEL).addOptionalTag(TGIds.of("c", "fuel")).addOptionalTag(TGIds.of("c", "diesel"))
-                .addOptionalTag(TGIds.of("c", "biodiesel"));
+        var fuel = tag(TGTags.Fluids.FUEL);
+        // the Techguns 2 list, and the fuels of Immersive Engineering, Modern Industrialization, Oritech, Immersive
+        // Petroleum and Create: Diesel Generators (8f2)
+        for (String name : new String[] {"fuel", "refined_fuel", "biofuel", "biodiesel", "high_power_biodiesel", "diesel", "boosted_diesel",
+                "gasoline", "kerosene", "light_fuel", "heavy_fuel", "turbofuel", "rocket_fuel"}) {
+            fuel.addOptionalTag(TGIds.of("c", name));
+        }
         tag(TGTags.Fluids.DRILL_OIL).addOptionalTag(TGIds.of("c", "oil")).addOptionalTag(TGIds.of("c", "crude_oil"));
     }
 }
