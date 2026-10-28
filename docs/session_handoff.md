@@ -37,13 +37,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 7e2 | Military base | `1d90379` |
   | 7f | Maze dungeons (castle) | `38b66b1` (Phase 7 merged, PR #8) |
   | 8a1 | Radiation core | `7570517` |
-  | 8a2 | Radiation sources and cures | not committed yet |
+  | 8a2 | Radiation sources and cures | `d680ea5` |
+  | 8b | Knockback multipliers, elytra gun pose | not committed yet |
 
-- All 295 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 296 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 8a2 (when the user asks), then 8b: leftovers from earlier phases (nuke and tesla knockback multipliers, gun posing during elytra flight). Phase 8 batch plan in the design doc (8a1 to 8f); the guide book library (8d) is the author's decision.
+1. Commit 8b (when the user asks), then 8c: advancements as a progression guide (vanilla advancement datagen). Then 8d, the guide book: the library (Patchouli, Modonomicon or GuideME, design doc §5) is the author's decision. Phase 8 batch plan in the design doc.
 2. Later: EMI plugin, JEI views of the special crafting recipes.
 
 ## Notes

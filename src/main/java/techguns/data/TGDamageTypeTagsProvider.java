@@ -46,6 +46,7 @@ public class TGDamageTypeTagsProvider extends TagsProvider<DamageType> {
         tag(DamageTypeTags.BYPASSES_COOLDOWN).add(
                 TGDamageTypes.BULLET, TGDamageTypes.FIRE, TGDamageTypes.ENERGY, TGDamageTypes.POISON, TGDamageTypes.ICE,
                 TGDamageTypes.LIGHTNING, TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING, TGDamageTypes.DARK);
-        tag(DamageTypeTags.NO_KNOCKBACK).add(TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING, TGDamageTypes.POISON);
+        // poison knocks back like Fabric's bio gun; acid and bio blobs have no direct entity, so they push nothing
+        tag(DamageTypeTags.NO_KNOCKBACK).add(TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING);
     }
 }

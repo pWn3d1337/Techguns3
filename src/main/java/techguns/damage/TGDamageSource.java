@@ -17,6 +17,8 @@ public class TGDamageSource extends DamageSource {
     private DeathType deathType = DeathType.DEFAULT;
     /** Chance for gore death effects when this hit kills. */
     private float goreChance = 0.5f;
+    /** Scales the knockback of the hit (Techguns 2 / Fabric {@code knockbackMultiplier}, 0: none). */
+    private float knockbackMultiplier = 1.0f;
 
     TGDamageSource(Holder<DamageType> type, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
         super(type, directEntity, causingEntity);
@@ -46,6 +48,15 @@ public class TGDamageSource extends DamageSource {
 
     public TGDamageSource setGoreChance(float goreChance) {
         this.goreChance = goreChance;
+        return this;
+    }
+
+    public float getKnockbackMultiplier() {
+        return knockbackMultiplier;
+    }
+
+    public TGDamageSource setKnockbackMultiplier(float knockbackMultiplier) {
+        this.knockbackMultiplier = knockbackMultiplier;
         return this;
     }
 }

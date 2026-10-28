@@ -28,6 +28,8 @@ import techguns.registry.TGSounds;
  * {@code dropEnd} blocks, see {@link TGExplosion}.
  */
 public class RocketProjectile extends GenericProjectile {
+    /** Fabric {@code RocketProjectile} knockback multiplier. */
+    private static final float KNOCKBACK = 3.0f;
 
     public enum Variant {
         ROCKET("RocketExplosion", 50.0, "RocketLauncherExhaust", 0.5, DeathType.GORE),
@@ -101,8 +103,9 @@ public class RocketProjectile extends GenericProjectile {
 
     @Override
     protected TGDamageSource createDamageSource() {
-        // Techguns 2 also tripled the knockback of nukes; that follows with the knockback multiplier
-        return TGDamage.explosion(level(), this, getOwner(), variant.deathType).setGoreChance(1.0f).setArmorPenetration(penetration);
+        // Fabric RocketProjectile: rocket explosions (guided missiles included) knock back three times as far
+        return TGDamage.explosion(level(), this, getOwner(), variant.deathType).setGoreChance(1.0f).setArmorPenetration(penetration)
+                .setKnockbackMultiplier(KNOCKBACK);
     }
 
     @Override

@@ -39,6 +39,7 @@ public class Techguns {
 
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingDeath);
+        NeoForge.EVENT_BUS.addListener(TGDamageEvents::onKnockback);
         MeleeToolEvents.init(NeoForge.EVENT_BUS);
         ArmorBonusEvents.init(NeoForge.EVENT_BUS);
         ArmorPowerEvents.init(NeoForge.EVENT_BUS);

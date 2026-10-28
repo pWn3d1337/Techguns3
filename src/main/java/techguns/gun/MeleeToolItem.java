@@ -73,6 +73,8 @@ public class MeleeToolItem extends ChargeGunItem {
     private DeathType meleeDeathType = DeathType.GORE;
     private float meleeGoreChance = 1.0f;
     private boolean meleeIgnites;
+    /** Knockback of a powered hit (Fabric {@code PowerHammer}: 1.5). */
+    private float meleeKnockback = 1.0f;
     @Nullable
     private Supplier<SoundEvent> hitSound;
 
@@ -106,6 +108,16 @@ public class MeleeToolItem extends ChargeGunItem {
     }
 
     /** Powered hits set the target on fire (shishkebap). */
+    public MeleeToolItem meleeKnockback(float multiplier) {
+        this.meleeKnockback = multiplier;
+        return this;
+    }
+
+    /** Knockback multiplier of a hit with this stack (unpowered: normal). */
+    public float meleeKnockback(ItemStack stack) {
+        return isPowered(stack) ? meleeKnockback : 1.0f;
+    }
+
     public MeleeToolItem meleeIgnites() {
         this.meleeIgnites = true;
         return this;

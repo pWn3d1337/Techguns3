@@ -106,4 +106,30 @@ public class TGDamageTests {
                 "bullet should be projectile");
         helper.succeed();
     }
+
+    /** Horizontal speed a husk gets from a hit by a source pushing from 2 blocks west of it. */
+    private static double knockbackSpeed(GameTestHelper helper, int z, java.util.function.Function<net.minecraft.world.entity.Entity,
+            techguns.damage.TGDamageSource> source) {
+        Zombie zombie = TGTestTargets.husk(helper, new BlockPos(3, 2, z));
+        net.minecraft.world.entity.Entity pusher = helper.spawn(net.minecraft.world.entity.EntityType.ARMOR_STAND, new BlockPos(1, 2, z));
+        zombie.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+        zombie.hurt(source.apply(pusher), 1.0f);
+        return zombie.getDeltaMovement().horizontalDistance();
+    }
+
+    @GameTest(template = "empty")
+    public static void knockbackMultiplierScalesKnockback(GameTestHelper helper) {
+        double normal = knockbackSpeed(helper, 0, pusher -> TGDamage.explosion(helper.getLevel(), pusher, null, DeathType.DEFAULT));
+        double tripled = knockbackSpeed(helper, 2, pusher -> TGDamage.explosion(helper.getLevel(), pusher, null, DeathType.DEFAULT)
+                .setKnockbackMultiplier(3.0f));
+        double none = knockbackSpeed(helper, 4, pusher -> TGDamage.explosion(helper.getLevel(), pusher, null, DeathType.DEFAULT)
+                .setKnockbackMultiplier(0.0f));
+        double poison = knockbackSpeed(helper, 6, pusher -> TGDamage.poison(helper.getLevel(), pusher, null, DeathType.BIO));
+        helper.assertTrue(normal > 0.1, "Normal knockback, got " + normal);
+        helper.assertTrue(Math.abs(tripled / normal - 3.0) < 0.05, "Multiplier 3 triples the knockback, got " + tripled + " vs " + normal);
+        helper.assertTrue(none < 1.0e-6, "Multiplier 0 removes the knockback, got " + none);
+        helper.assertTrue(Math.abs(poison - normal) < 1.0e-6, "Poison (bio gun) knocks back normally, got " + poison);
+        helper.succeed();
+    }
 }
+

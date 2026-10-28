@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "TECHGUNS_ELYTRA_AIM",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "techguns/client/render/item/TGArmPoses",
+        "field": "ELYTRA_AIM"
+      }
+    }
+  ]
+}

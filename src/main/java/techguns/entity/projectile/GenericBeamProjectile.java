@@ -173,7 +173,7 @@ public class GenericBeamProjectile extends GenericProjectile {
     protected TGDamageSource createDamageSource() {
         TGDamageSource source = switch (beamType) {
             case NDR -> TGDamage.radiation(level(), this, getOwner(), DeathType.LASER);
-            // Fabric TeslaProjectile also disables knockback; follows with the knockback multiplier
+            // Fabric beams took the knockback off their damage but pushed with a separate hit: normal knockback
             case TESLA -> TGDamage.lightning(level(), this, getOwner(), DeathType.LASER);
             default -> TGDamage.energy(level(), this, getOwner(), DeathType.LASER);
         };
