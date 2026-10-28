@@ -103,6 +103,14 @@ neoForge {
             programArguments.addAll '--width', '2560', '--height', '1080'
         }
 
+        // second player for multiplayer checks: run with -Puse_mcpfabric=false next to runServer and runClient
+        // (own game dir, no bridge); joins the local dedicated server directly
+        client2 {
+            client()
+            gameDirectory = project.file('run2')
+            programArguments.addAll '--username', 'Dev2', '--width', '1280', '--height', '720', '--quickPlayMultiplayer', 'localhost'
+        }
+
         server {
             server()
             programArgument '--nogui'

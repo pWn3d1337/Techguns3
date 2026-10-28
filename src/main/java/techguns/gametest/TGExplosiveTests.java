@@ -2,9 +2,11 @@ package techguns.gametest;
 
 import java.util.List;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Zombie;
@@ -24,6 +26,7 @@ import techguns.gun.GunAmmo;
 import techguns.gun.GunData;
 import techguns.gun.GunItem;
 import techguns.gun.ammo.AmmoType;
+import techguns.registry.TGEntities;
 import techguns.registry.TGGuns;
 
 /**
@@ -118,6 +121,28 @@ public class TGExplosiveTests {
                     new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8));
             helper.assertTrue(grenades.size() == 1 && grenades.getFirst().getDeltaMovement().x < 0, "Grenade should bounce back off the wall");
         });
+    }
+
+    /** The client copy simulates the bounces too, so the spawn data must carry the bounce count (9e: it vanished on the first bounce). */
+    @GameTest(template = ARENA)
+    public static void grenadeSpawnDataKeepsBounces(GameTestHelper helper) {
+        Player player = shooter(helper);
+        ItemStack gun = hold(player, TGGuns.GRENADE_LAUNCHER.get(), 6, AmmoType.DEFAULT);
+        ((GunItem) gun.getItem()).shoot(gun, helper.getLevel(), player, InteractionHand.MAIN_HAND, false);
+        List<GrenadeProjectile> grenades = helper.getLevel().getEntitiesOfClass(GrenadeProjectile.class,
+                new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8));
+        helper.assertTrue(grenades.size() == 1, "Expected one grenade, got " + grenades.size());
+        GrenadeProjectile grenade = grenades.getFirst();
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+        grenade.writeSpawnData(buf);
+        grenade.discard();
+
+        GrenadeProjectile copy = new GrenadeProjectile(TGEntities.GRENADE_PROJECTILE.get(), helper.getLevel());
+        copy.readSpawnData(buf);
+        helper.assertTrue(copy.grenadeType() == grenade.grenadeType(), "Grenade type should survive the spawn data");
+        helper.assertTrue(copy.bouncesLeft() == grenade.bouncesLeft() && copy.bouncesLeft() > 0,
+                "Bounce count should survive the spawn data: " + grenade.bouncesLeft() + " -> " + copy.bouncesLeft());
+        helper.succeed();
     }
 
     @GameTest(template = ARENA)
