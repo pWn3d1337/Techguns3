@@ -1,0 +1,26 @@
+{
+  "category": "techguns:armors",
+  "icon": "techguns:t1_miner_chestplate",
+  "name": "T1 : Miner's Armor",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Miner's Armor is a Tier 1 armor and intended to be used for mining in early game. It provides the best mining speed bonus out of all T1 armors."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "minecraft:armor_stand{ShowArms:1,NoBasePlate:1,ArmorItems:[{count:1,id:'techguns:t1_miner_boots'}, {count:1,id:'techguns:t1_miner_leggings'}, {count:1,id:'techguns:t1_miner_chestplate'}, {count:1,id:'techguns:t1_miner_helmet'}]}",
+      "name": "Miner's Armor"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:t1_miner_helmet",
+      "recipe2": "techguns:t1_miner_chestplate"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:t1_miner_leggings",
+      "recipe2": "techguns:t1_miner_boots"
+    }
+  ]
+}

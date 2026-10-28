@@ -17,6 +17,7 @@ import techguns.client.TGKeyMappings;
 import techguns.core.damage.TGDamageCategory;
 import techguns.damage.TGDamageTypes;
 import techguns.registry.TGBlocks;
+import techguns.data.legacy.LegacyBook;
 import techguns.registry.TGCreativeTabs;
 import techguns.registry.TGMobEffects;
 import techguns.registry.TGItems;
@@ -300,6 +301,8 @@ public class TGLanguageProvider extends LanguageProvider {
             add("advancements.techguns." + entry[0] + ".title", entry[1]);
             add("advancements.techguns." + entry[0] + ".description", entry[2]);
         }
+        // the Modonomicon manual's texts (Patchouli has its own en_us folder)
+        LegacyBook.load().ifPresent(book -> LegacyBook.lang(book, this::add));
     }
 
     /** Techguns 2 radiation effects, potions, HUD and tooltip. */

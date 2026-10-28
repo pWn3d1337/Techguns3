@@ -1,0 +1,191 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "multiblock_machines",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:reaction_chamber_controller"
+  },
+  "name": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page0.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:multiblock",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "multiblock_id": "book/reaction_chamber_1",
+      "multiblock_name": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page1.name",
+      "show_visualize_button": true,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:reaction_chamber_housing",
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page2.text",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:reaction_chamber_glass",
+      "recipe_id_2": "techguns:reaction_chamber_controller",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:image",
+      "anchor": "",
+      "border": true,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "images": [
+        "techguns:textures/gui/manual/reactionchamber_image.png"
+      ],
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page4.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page4.title",
+      "use_legacy_rendering": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page5.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page5.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:image",
+      "anchor": "",
+      "border": true,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "images": [
+        "techguns:textures/gui/manual/rc_gui_manual.png"
+      ],
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page6.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page6.title",
+      "use_legacy_rendering": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page7.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page7.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "focus",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "techguns:heat_ray_focus"
+      },
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page8.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page8.title"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "intensity",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page9.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page9.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "liquid",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page10.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page10.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page11.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page11.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "reaction_minigame",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page12.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page12.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page13.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page13.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page14.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.reaction_chamber.page14.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

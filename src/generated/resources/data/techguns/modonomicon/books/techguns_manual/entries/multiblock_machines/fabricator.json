@@ -1,0 +1,87 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "multiblock_machines",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:fabricator_controller"
+  },
+  "name": "book.techguns.techguns_manual.multiblock_machines.fabricator.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.fabricator.page0.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.fabricator.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:multiblock",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "multiblock_id": "book/fabricator_1",
+      "multiblock_name": "book.techguns.techguns_manual.multiblock_machines.fabricator.page1.name",
+      "show_visualize_button": true,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:fabricator_housing",
+      "text": "book.techguns.techguns_manual.multiblock_machines.fabricator.page2.text",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:fabricator_glass",
+      "recipe_id_2": "techguns:fabricator_controller",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:image",
+      "anchor": "",
+      "border": true,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "images": [
+        "techguns:textures/gui/manual/fabricator_image.png"
+      ],
+      "text": "book.techguns.techguns_manual.multiblock_machines.fabricator.page4.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.fabricator.page4.title",
+      "use_legacy_rendering": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.multiblock_machines.fabricator.page5.text",
+      "title": "book.techguns.techguns_manual.multiblock_machines.fabricator.page5.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

@@ -1,0 +1,155 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "ore_drills",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:ore_drill_controller"
+  },
+  "name": "book.techguns.techguns_manual.ore_drills.ore_drills.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_drills.page0.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_drills.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:ore_drill_frame",
+      "recipe_id_2": "techguns:ore_drill_scaffold",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:ore_drill_rod",
+      "recipe_id_2": "techguns:ore_drill_engine",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:ore_drill_controller",
+      "text": "book.techguns.techguns_manual.ore_drills.ore_drills.page3.text",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:multiblock",
+      "anchor": "tinydrill",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "multiblock_id": "book/ore_drills_4",
+      "multiblock_name": "book.techguns.techguns_manual.ore_drills.ore_drills.page4.name",
+      "show_visualize_button": true,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_drills.page5.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_drills.page5.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:multiblock",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "multiblock_id": "book/ore_drills_6",
+      "multiblock_name": "book.techguns.techguns_manual.ore_drills.ore_drills.page6.name",
+      "show_visualize_button": true,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:multiblock",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "multiblock_id": "book/ore_drills_7",
+      "multiblock_name": "book.techguns.techguns_manual.ore_drills.ore_drills.page7.name",
+      "show_visualize_button": true,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:multiblock",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "multiblock_id": "book/ore_drills_8",
+      "multiblock_name": "book.techguns.techguns_manual.ore_drills.ore_drills.page8.name",
+      "show_visualize_button": true,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "drill",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "techguns:ore_drill_head_medium_steel"
+      },
+      "text": "book.techguns.techguns_manual.ore_drills.ore_drills.page9.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_drills.page9.title"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "drill",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "techguns:ore_drill_head_medium_obsidian_steel"
+      },
+      "text": "book.techguns.techguns_manual.ore_drills.ore_drills.page10.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_drills.page10.title"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_drills.page11.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_drills.page11.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

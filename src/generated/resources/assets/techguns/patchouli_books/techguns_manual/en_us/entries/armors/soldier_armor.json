@@ -1,0 +1,26 @@
+{
+  "category": "techguns:armors",
+  "icon": "techguns:t1_combat_chestplate",
+  "name": "T1 : Soldier's Armor",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Soldier's Armor is a Tier 1 armor and intended to be used for combat in early game. It provides the best defenses out of all T1 armors."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "minecraft:armor_stand{ShowArms:1,NoBasePlate:1,ArmorItems:[{count:1,id:'techguns:t1_combat_boots'}, {count:1,id:'techguns:t1_combat_leggings'}, {count:1,id:'techguns:t1_combat_chestplate'}, {count:1,id:'techguns:t1_combat_helmet'}]}",
+      "name": "Soldier's Armor"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:t1_combat_helmet",
+      "recipe2": "techguns:t1_combat_chestplate"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:t1_combat_leggings",
+      "recipe2": "techguns:t1_combat_boots"
+    }
+  ]
+}

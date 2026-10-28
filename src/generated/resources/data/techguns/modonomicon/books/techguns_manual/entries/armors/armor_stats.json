@@ -1,0 +1,149 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "armors",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:t2_combat_chestplate"
+  },
+  "name": "book.techguns.techguns_manual.armors.armor_stats.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page0.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "bonus",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page1.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "power_type",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page2.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "durability_toughness",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page3.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page3.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "armor",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page4.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page4.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "move_mine_speed",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page5.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page5.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "fall_damage",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page6.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page6.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "accuracy",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page7.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page7.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "nightvision",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page8.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page8.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "knockback",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page9.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page9.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "oxygen",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page10.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page10.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "cooling",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_stats.page11.text",
+      "title": "book.techguns.techguns_manual.armors.armor_stats.page11.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

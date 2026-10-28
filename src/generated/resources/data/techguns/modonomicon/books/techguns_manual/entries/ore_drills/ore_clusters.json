@@ -1,0 +1,105 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "ore_drills",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:ore_cluster_common_metal"
+  },
+  "name": "book.techguns.techguns_manual.ore_drills.ore_clusters.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page0.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "types",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page1.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "formulas",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page2.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "formulas2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page3.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page3.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "formulas3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page4.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page4.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "formulas4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page5.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page5.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "ores_per_hour",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page6.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page6.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "power",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.ore_drills.ore_clusters.page7.text",
+      "title": "book.techguns.techguns_manual.ore_drills.ore_clusters.page7.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

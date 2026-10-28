@@ -1,0 +1,93 @@
+{
+  "type": "modonomicon:dense",
+  "mapping": {
+    "*": {
+      "type": "modonomicon:display",
+      "display": "minecraft:basalt"
+    },
+    "+": {
+      "type": "modonomicon:display",
+      "display": "minecraft:stone"
+    },
+    "0": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_controller"
+    },
+    "C": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_cluster_common_metal"
+    },
+    "E": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_engine"
+    },
+    "F": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_frame"
+    },
+    "R": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_rod"
+    },
+    "S": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_scaffold"
+    }
+  },
+  "pattern": [
+    [
+      "____________",
+      "__FFFFFFFF__",
+      "__FSSSSSSF__",
+      "__FSSSSSSF__",
+      "__FSSSSSSF__",
+      "__FFFFFFFF__",
+      "____________"
+    ],
+    [
+      "____________",
+      "__FSSSSSSF__",
+      "__S____EEE__",
+      "__S____EEE__",
+      "__S____EEE__",
+      "__FSSSSSSF__",
+      "____________"
+    ],
+    [
+      "____________",
+      "__FSSSSSSF__",
+      "__S____EEE__",
+      "_CRRRRREEE0_",
+      "__S____EEE__",
+      "__FSSSSSSF__",
+      "____________"
+    ],
+    [
+      "____________",
+      "__FSSSSSSF__",
+      "__S____EEE__",
+      "__S____EEE__",
+      "__S____EEE__",
+      "__FSSSSSSF__",
+      "____________"
+    ],
+    [
+      "____________",
+      "__FFFFFFFF__",
+      "__FSSSSSSF__",
+      "__FSSSSSSF__",
+      "__FSSSSSSF__",
+      "__FFFFFFFF__",
+      "____________"
+    ],
+    [
+      "*+*+*+*+*+*+",
+      "+*+*+*+*+*+*",
+      "*+*+*+*+*+*+",
+      "+*+*+*+*+*+*",
+      "*+*+*+*+*+*+",
+      "+*+*+*+*+*+*",
+      "*+*+*+*+*+*+"
+    ]
+  ]
+}

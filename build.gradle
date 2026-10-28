@@ -148,6 +148,11 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
+    // Guide book, optional, both supported (8d): the manual is generated for each, players get it with either mod
+    localRuntime "maven.modrinth:patchouli:${patchouli_version}"
+    compileOnly "maven.modrinth:modonomicon:${modonomicon_version}"
+    localRuntime "maven.modrinth:modonomicon:${modonomicon_version}"
+
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }
     }
@@ -167,6 +172,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_authors            : mod_authors,
             geckolib_version       : geckolib_version,
             curios_version         : curios_version,
+            patchouli_version      : patchouli_version,
+            modonomicon_version    : modonomicon_version,
     ]
     inputs.properties replaceProperties
     expand replaceProperties

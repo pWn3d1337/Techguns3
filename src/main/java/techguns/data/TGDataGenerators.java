@@ -17,6 +17,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import techguns.Techguns;
 import techguns.registry.TGBiomeModifiers;
+import techguns.data.legacy.LegacyBookProvider;
 import techguns.data.legacy.LegacyChestLootProvider;
 import techguns.data.legacy.LegacyStructureProvider;
 import techguns.registry.TGCamos;
@@ -61,6 +62,7 @@ public final class TGDataGenerators {
                         new LootTableProvider.SubProviderEntry(TGBlockLootProvider.Crates::new, LootContextParamSets.CHEST),
                         new LootTableProvider.SubProviderEntry(LegacyChestLootProvider::new, LootContextParamSets.CHEST)), lookup));
         generator.addProvider(event.includeServer(), new LegacyStructureProvider(output));
+        generator.addProvider(event.includeServer(), new LegacyBookProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGBiomeTagsProvider(output, lookup, fileHelper));
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));

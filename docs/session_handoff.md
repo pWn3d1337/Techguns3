@@ -39,14 +39,16 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 8a1 | Radiation core | `7570517` |
   | 8a2 | Radiation sources and cures | `d680ea5` |
   | 8b | Knockback multipliers, elytra gun pose | `02d5c0e` |
-  | 8c | Advancements | not committed yet |
+  | 8c | Advancements | `53e3d3e` |
+  | 8d | Guide book (Patchouli and Modonomicon from one source) | not committed yet |
 
-- All 297 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 299 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Commit 8c (when the user asks), then 8d: the guide book. The library is the author's decision first (Patchouli: fastest port of the Techguns 2 book but beta on 26.1 and missing on 26.2+; Modonomicon: full 26.x coverage; GuideME: modern, markdown; design doc §5). Phase 8 batch plan in the design doc.
-2. Later: EMI plugin, JEI views of the special crafting recipes.
+1. Commit 8d (when the user asks), then 8e: tier 2 compat recipes. Phase 8 batch plan in the design doc.
+2. Book content: the manual is the 1.12 text with ids remapped. Outdated topics (crowbar/wrench, TG inventory tab buttons, door config GUI, RF) are for the author to rewrite in `src/legacy/book/techguns_manual` (Patchouli format; `runData` regenerates both books).
+3. Later: EMI plugin, JEI views of the special crafting recipes.
 
 ## Notes
 

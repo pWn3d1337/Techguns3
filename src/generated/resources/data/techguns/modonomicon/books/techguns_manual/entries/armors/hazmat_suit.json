@@ -1,0 +1,66 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "armors",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:hazmat_chestplate"
+  },
+  "name": "book.techguns.techguns_manual.armors.hazmat_suit.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.hazmat_suit.page0.text",
+      "title": "book.techguns.techguns_manual.armors.hazmat_suit.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": -45.0,
+      "entity_id": "minecraft:armor_stand{ShowArms:1,NoBasePlate:1,ArmorItems:[{count:1,id:'techguns:hazmat_boots'}, {count:1,id:'techguns:hazmat_leggings'}, {count:1,id:'techguns:hazmat_chestplate'}, {count:1,id:'techguns:hazmat_helmet'}]}",
+      "name": "book.techguns.techguns_manual.armors.hazmat_suit.page1.name",
+      "offset": 0.0,
+      "rotate": true,
+      "scale": 1.0,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:hazmat_helmet",
+      "recipe_id_2": "techguns:hazmat_chestplate",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:hazmat_leggings",
+      "recipe_id_2": "techguns:hazmat_boots",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 3,
+  "x": 0,
+  "y": 0
+}

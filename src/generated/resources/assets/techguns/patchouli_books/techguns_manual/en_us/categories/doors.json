@@ -1,0 +1,6 @@
+{
+  "description": "Techguns adds special doors that can be configured for manual use, redstone signals or automatic player detection",
+  "icon": "techguns:door_metal_3x3",
+  "name": "Tech Doors",
+  "sortnum": 7
+}

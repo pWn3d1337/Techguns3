@@ -1,0 +1,116 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "weapons",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:mechanical_parts_obsidian_steel"
+  },
+  "name": "book.techguns.techguns_manual.weapons.weapon_stats.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page0.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "handtype_ammo",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page1.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "damage_type",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page2.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "range",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page3.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page3.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "velocity",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page4.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page4.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "spread",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page5.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page5.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "clipsize_reload",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page6.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page6.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "armorpen",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page7.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page7.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "zoom",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_stats.page8.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_stats.page8.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

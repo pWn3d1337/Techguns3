@@ -1,0 +1,72 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "tg_inventory",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:pistol_rounds"
+  },
+  "name": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page0.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page1.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page2.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page3.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page3.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "buttons",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page4.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_inventory_tab.page4.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 1,
+  "x": 0,
+  "y": 0
+}

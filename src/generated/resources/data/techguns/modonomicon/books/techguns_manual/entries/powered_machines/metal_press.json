@@ -1,0 +1,51 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "powered_machines",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:metal_press"
+  },
+  "name": "book.techguns.techguns_manual.powered_machines.metal_press.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.metal_press.page0.text",
+      "title": "book.techguns.techguns_manual.powered_machines.metal_press.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.metal_press.page1.text",
+      "title": "book.techguns.techguns_manual.powered_machines.metal_press.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:metal_press",
+      "recipe_id_2": "techguns:metal_press_alt",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 6,
+  "x": 0,
+  "y": 0
+}

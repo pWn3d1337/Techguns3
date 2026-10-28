@@ -543,7 +543,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 8a2: radiation sources and cures: rad away and rad pills (Chem Lab recipes, crate loot), the lingering radiation area of nukes, NDR beam hits, the Reaction Chamber focus radiation; gas mask resistance check.
   - 8b: leftovers: nuke / tesla knockback multipliers, gun posing during elytra flight.
   - 8c: advancements as a progression guide.
-  - 8d: guide book (library decision: Patchouli vs Modonomicon vs GuideME, §5), port of the Techguns 2 book.
+  - 8d: guide book, port of the Techguns 2 book. Decision: both Patchouli and Modonomicon, optional, generated from the one 1.12 book source (Patchouli keeps the 1.12 look; Modonomicon has the 26.x versions and wins when both are installed).
   - 8e: mod compat tier 2: conditional recipes for Create, Mekanism, Immersive Engineering, Modern Industrialization, Oritech.
   - 8f: mod compat tier 3: Mekanism radiation bridge, fuel mods, team mods; Create Big Cannons if cheap.
 - **Exit:** feature parity with Techguns 2.

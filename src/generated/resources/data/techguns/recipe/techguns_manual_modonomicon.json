@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "modonomicon"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:glass_pane"
+    },
+    [
+      {
+        "item": "techguns:stone_bullets"
+      },
+      {
+        "item": "techguns:pistol_rounds"
+      }
+    ]
+  ],
+  "result": {
+    "components": {
+      "modonomicon:book_id": "techguns:techguns_manual"
+    },
+    "count": 1,
+    "id": "modonomicon:modonomicon"
+  }
+}

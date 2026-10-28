@@ -1,0 +1,42 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "tg_inventory",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:pistol_rounds"
+  },
+  "name": "book.techguns.techguns_manual.tg_inventory.tg_hud.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_hud.page0.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_hud.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:image",
+      "anchor": "images",
+      "border": true,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "images": [
+        "techguns:textures/gui/manual/tg_hud_symbols.png"
+      ],
+      "text": "book.techguns.techguns_manual.tg_inventory.tg_hud.page1.text",
+      "title": "book.techguns.techguns_manual.tg_inventory.tg_hud.page1.title",
+      "use_legacy_rendering": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

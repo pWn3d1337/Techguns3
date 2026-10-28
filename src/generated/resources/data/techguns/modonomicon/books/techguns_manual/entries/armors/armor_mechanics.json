@@ -1,0 +1,61 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "armors",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:t1_scout_chestplate"
+  },
+  "name": "book.techguns.techguns_manual.armors.armor_mechanics.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_mechanics.page0.text",
+      "title": "book.techguns.techguns_manual.armors.armor_mechanics.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "repairing",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_mechanics.page1.text",
+      "title": "book.techguns.techguns_manual.armors.armor_mechanics.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "powered_armors",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_mechanics.page2.text",
+      "title": "book.techguns.techguns_manual.armors.armor_mechanics.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "armor_reloading",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.armor_mechanics.page3.text",
+      "title": "book.techguns.techguns_manual.armors.armor_mechanics.page3.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

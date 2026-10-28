@@ -1,0 +1,26 @@
+{
+  "category": "techguns:armors",
+  "icon": "techguns:hazmat_chestplate",
+  "name": "T1 : Hazmat Suit",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Hazmat Suit is a Tier 1 armor to provide protection against radiation."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "minecraft:armor_stand{ShowArms:1,NoBasePlate:1,ArmorItems:[{count:1,id:'techguns:hazmat_boots'}, {count:1,id:'techguns:hazmat_leggings'}, {count:1,id:'techguns:hazmat_chestplate'}, {count:1,id:'techguns:hazmat_helmet'}]}",
+      "name": "Hazmat Suit"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:hazmat_helmet",
+      "recipe2": "techguns:hazmat_chestplate"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:hazmat_leggings",
+      "recipe2": "techguns:hazmat_boots"
+    }
+  ]
+}

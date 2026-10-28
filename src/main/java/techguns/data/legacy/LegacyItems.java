@@ -16,17 +16,21 @@ final class LegacyItems {
      * (structure dump), Techguns 3 names flattened.
      */
     private static final Map<Integer, String> SHARED = Map.ofEntries(
-            Map.entry(1, "pistol_rounds"), Map.entry(2, "shotgun_rounds"), Map.entry(3, "rifle_rounds"), Map.entry(4, "sniper_rounds"),
+            Map.entry(0, "stone_bullets"), Map.entry(1, "pistol_rounds"), Map.entry(2, "shotgun_rounds"), Map.entry(3, "rifle_rounds"), Map.entry(4, "sniper_rounds"),
             Map.entry(9, "smg_magazine"), Map.entry(11, "pistol_magazine"), Map.entry(13, "assault_rifle_magazine"),
             Map.entry(27, "fuel_tank"), Map.entry(28, "fuel_tank_empty"), Map.entry(55, "plastic_sheet"), Map.entry(56, "rubber_bar"),
             Map.entry(57, "mechanical_parts_iron"), Map.entry(58, "mechanical_parts_obsidian_steel"), Map.entry(60, "heavy_cloth"),
-            Map.entry(65, "circuit_board"), Map.entry(69, "cybernetic_parts"), Map.entry(84, "obsidian_steel_ingot"),
+            Map.entry(65, "circuit_board"), Map.entry(69, "cybernetic_parts"), Map.entry(70, "electric_engine"),
+            Map.entry(84, "obsidian_steel_ingot"), Map.entry(94, "machine_upgrade_stack"), Map.entry(99, "turret_armor_iron"),
+            Map.entry(104, "heat_ray_focus"), Map.entry(137, "ore_drill_head_medium_steel"),
+            Map.entry(138, "ore_drill_head_medium_obsidian_steel"), Map.entry(147, "upgrade_protection_1"),
             Map.entry(106, "shotgun_rounds_incendiary"), Map.entry(108, "sniper_rounds_incendiary"), Map.entry(109, "pistol_rounds_incendiary"),
             Map.entry(110, "rifle_rounds_incendiary"), Map.entry(112, "smg_magazine_incendiary"), Map.entry(113, "pistol_magazine_incendiary"),
             Map.entry(115, "assault_rifle_magazine_incendiary"));
 
     /** Techguns 2 item names that changed. */
-    private static final Map<String, String> RENAMED = Map.of("boltaction", "bolt_action", "combatshotgun", "combat_shotgun", "radaway", "rad_away", "radpills", "rad_pills");
+    private static final Map<String, String> RENAMED = Map.of("boltaction", "bolt_action", "combatshotgun", "combat_shotgun", "radaway", "rad_away", "radpills", "rad_pills",
+            "handcannon", "hand_cannon");
 
     private LegacyItems() {
     }

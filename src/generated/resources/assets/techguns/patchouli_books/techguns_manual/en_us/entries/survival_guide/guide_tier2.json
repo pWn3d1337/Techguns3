@@ -1,0 +1,21 @@
+{
+  "category": "techguns:survival_guide",
+  "icon": "techguns:lmg",
+  "name": "2. Nether Expedition",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The first nether expedition should involve collecting some 'Nether Quartz' which opens up new crafting options. It is recommended to not stay in the nether too long and use the mined quartz to further gear up."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Building a Jetpack allows to easier navigate in the nether. After that collecting some blaze rods and 'Cybernetic Parts' that drop from Cyber Demons should be the next objective.",
+      "title": "Progressing"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "After enough cybernetic parts are collected to build a $(l:multiblock_machines/fabricator)Fabricator$(/l) and a $(l:multiblock_machines/reaction_chamber)Reaction Chamber$(/l) it is possible to advance to the next tech-tier. The Fabricator can produce cybernetic parts so it is recommended to build that one first.",
+      "title": "Advanced Machines"
+    }
+  ]
+}
