@@ -388,4 +388,43 @@ public class TGStructureTests {
         }
         helper.succeed();
     }
+
+    /**
+     * 9d: the template ground check reads the liquid on top from two heightmaps instead of the whole noise column; on
+     * the overworld noise generator both give the same answer, over land and sea.
+     */
+    @GameTest(template = ARENA)
+    public static void liquidCheckMatchesNoiseColumn(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        var registries = level.registryAccess();
+        var settings = registries.registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(
+                net.minecraft.world.level.levelgen.NoiseGeneratorSettings.OVERWORLD);
+        var biomes = net.minecraft.world.level.biome.MultiNoiseBiomeSource.createFromPreset(registries
+                .registryOrThrow(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
+                .getHolderOrThrow(net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists.OVERWORLD));
+        var generator = new net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator(biomes, settings);
+        long seed = 9_000_009L;
+        var randomState = net.minecraft.world.level.levelgen.RandomState.create(settings.value(), registries.lookupOrThrow(Registries.NOISE), seed);
+        var context = new net.minecraft.world.level.levelgen.structure.Structure.GenerationContext(registries, generator, biomes, randomState,
+                level.getStructureManager(), seed, ChunkPos.ZERO, level, biome -> true);
+        int liquid = 0;
+        int dry = 0;
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                int x = i * 401 - 3200;
+                int z = j * 401 - 3200;
+                int surface = generator.getBaseHeight(x, z, net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, level, randomState);
+                boolean column = !generator.getBaseColumn(x, z, level, randomState).getBlock(surface - 1).getFluidState().isEmpty();
+                helper.assertTrue(column == techguns.world.structure.LegacyTemplateStructure.liquidOnTop(context, x, z, surface),
+                        "liquid on top at " + x + ", " + z + ": column " + column);
+                if (column) {
+                    liquid++;
+                } else {
+                    dry++;
+                }
+            }
+        }
+        helper.assertTrue(liquid > 0 && dry > 0, "samples over land and sea: " + dry + " dry, " + liquid + " liquid");
+        helper.succeed();
+    }
 }

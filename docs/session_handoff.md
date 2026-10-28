@@ -46,13 +46,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 8f2 | Mekanism radiation bridge, fuel tag and fuel tank recipe | `20aa707` (Phase 8 PR #9) |
   | 9a | Nether fortress (branch `phase9`, based on `phase8-systems`) | `8a8a36c` |
   | 9b | City | `1b21def` |
-  | 9c | Translations (German, Russian from Techguns 2) | not committed yet |
+  | 9c | Translations (German, Russian from Techguns 2) | `b4fe6ce` |
+  | 9d | Performance profiling and fixes | not committed yet |
 
-- All 308 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 309 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Phase 8 PR #9 is open against master; Phase 9 works on `phase9`, based on `phase8-systems` (rebase onto master once #9 is merged). Commit 9c (when the user asks), then 9d: performance profiling. Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
+1. Phase 8 PR #9 is open against master; Phase 9 works on `phase9`, based on `phase8-systems` (rebase onto master once #9 is merged). Commit 9d (when the user asks), then 9e: multiplayer test pass on a dedicated server. Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
 2. Book content: the manual is the 1.12 text with ids remapped. Outdated topics (crowbar/wrench, TG inventory tab buttons, door config GUI, RF) are for the author to rewrite in `src/legacy/book/techguns_manual` (Patchouli format; `runData` regenerates both books).
 3. Later: EMI plugin, JEI views of the special crafting recipes.
 
@@ -63,6 +64,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 - `-Pcompat_mods=true` adds Create, Mekanism, Immersive Engineering, Modern Industrialization and Oritech (plus GuideME, Architectury, Athena) and FTB Teams + FTB Library to the dev runtime (Mekanism is also `compileOnly` for the radiation bridge) to check the tier 2 compat recipes (`runGameTestServer -Pcompat_mods=true`); off by default.
 - Run `runData` on its own before `build runGameTestServer` when datagen output changed: in one Gradle call the resources are processed before datagen writes them, so the GameTest server sees the old files.
 - `TestworldFlat` has the 7b check structures placed at x 100..180, z 0..70. Throwaway dedicated-server worlds: `run/world_ore_test_7a*`, `run/world_struct_test_7c*`, `run/world_struct_test_7d`, `run/world_struct_test_7e*` (7e2b and 7e2c share a seed; forest camp at 1392, 96), `run/world_struct_test_7f` (castles at -1904, 2208 and 3440, 1440), `run/world_city_test_9b` (a city at 3152, -576).
+- Profiling (9d): `/tgdebug bench <gun> <shots per tick> <seconds>` in singleplayer (throwaway copy `run/saves/TestworldBench9d`); JFR via `jcmd <pid> JFR.start name=x settings=profile filename=...`, `JFR.dump`, then `jfr print --stack-depth 64 --events jdk.ExecutionSample` (the JSON export is far too big). `run/options.txt` has vsync and a 120 fps cap, so frame times below 8.3 ms don't show. `run/world_perf_9d` is the throwaway worldgen profiling world.
 - Background `./gradlew` launches sometimes fail with exit 127 right after the shell's working directory moved to `run/`; launching with the absolute wrapper path (`/f/Techguns3Work/Techguns3/gradlew -p /f/Techguns3Work/Techguns3 ...`) works.
 
 ## Open decision for the user

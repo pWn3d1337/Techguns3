@@ -129,7 +129,16 @@ public class TGParticleSystemType extends TGFXType{
             this.g = g;
             this.b = b;
         }
-    
+
+        private float[] hsb;
+
+        /** The color in HSB space (particles interpolate between entries there), computed once. */
+        public float[] hsb() {
+            if (hsb == null) {
+                hsb = java.awt.Color.RGBtoHSB((int) (r * 255), (int) (g * 255), (int) (b * 255), null);
+            }
+            return hsb;
+        }
     }
     
     //This is now also used for brightness entries

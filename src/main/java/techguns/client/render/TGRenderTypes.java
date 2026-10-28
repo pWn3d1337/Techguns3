@@ -44,9 +44,12 @@ public final class TGRenderTypes {
         }
     }
 
-    /** Muzzle flashes, beams, glowing FX: additive blending, custom shader, no culling, no depth write. */
+    /**
+     * Muzzle flashes, beams, glowing FX: additive blending, custom shader, no culling, no depth write. Additive blending
+     * without depth writes does not depend on the draw order, so the quads are not sorted on upload.
+     */
     private static final Function<ResourceLocation, RenderType> FX_ADDITIVE = Util.memoize(texture -> RenderType.create(
-            "techguns_fx_additive", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true,
+            "techguns_fx_additive", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
                     .setShaderState(PARTICLE_ALPHA_SHADER)
                     .setTextureState(new RenderStateShard.TextureStateShard(texture, true, true))

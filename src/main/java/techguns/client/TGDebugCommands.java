@@ -234,6 +234,13 @@ public final class TGDebugCommands {
                             }
                             return 1;
                         }))
+                .then(Commands.literal("bench")
+                        .then(Commands.argument("gun", StringArgumentType.word())
+                                .then(Commands.argument("shots", IntegerArgumentType.integer(1, 100))
+                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(1, 120))
+                                                .executes(ctx -> TGBenchmark.start(StringArgumentType.getString(ctx, "gun"),
+                                                        IntegerArgumentType.getInteger(ctx, "shots"),
+                                                        IntegerArgumentType.getInteger(ctx, "seconds")) ? 1 : 0)))))
                 .then(Commands.literal("teams")
                         .executes(ctx -> {
                             // runs every team source on the integrated server: you vs yourself and vs a stranger

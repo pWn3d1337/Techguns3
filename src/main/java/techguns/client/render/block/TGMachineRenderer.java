@@ -53,8 +53,11 @@ public class TGMachineRenderer<T extends TGMachineBlockEntity> implements BlockE
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0f * facing.get2DDataValue()));
-        model.get().render(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(texture)), light, overlay, progress);
-        model.get().renderTranslucent(poseStack, buffer.getBuffer(RenderType.entityTranslucent(texture)), light, overlay, progress);
+        MachineModel machineModel = model.get();
+        machineModel.render(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(texture)), light, overlay, progress);
+        if (machineModel.hasTranslucent()) {
+            machineModel.renderTranslucent(poseStack, buffer.getBuffer(RenderType.entityTranslucent(texture)), light, overlay, progress);
+        }
         poseStack.popPose();
     }
 }
