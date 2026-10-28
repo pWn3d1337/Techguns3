@@ -12,15 +12,14 @@ import techguns.registry.TGNpcs;
 /**
  * Techguns 2 maze dungeon presets ({@code IDungeonPreset}): the converted templates per level, the path settings and
  * the spawners. Templates are {@code techguns:dungeon/<template>/<segment>} (converted from the Techguns 2 {@code .ser}
- * dungeon templates). Techguns 2 also had a Nether dungeon preset, but never spawned it (its structure was commented
- * out); it is not ported.
+ * dungeon templates).
  */
 public enum DungeonPreset implements StringRepresentable {
     /**
      * Techguns 2 {@code PresetCastle}: dungeon level at the bottom, then lower, mid, upper and top floors, a roof; 2
      * zombie or skeleton soldiers per spawner.
      */
-    CASTLE(5, 5, path -> {
+    CASTLE(5, 5, false, List.of("ncdung1", "nclower1", "ncmid1", "ncupper1", "nctop1", "ncroof1"), path -> {
         path.startHeightLevel = 1;
         path.chanceStraight = 0.8f;
         path.chanceRamp = 0.5f;
@@ -30,15 +29,35 @@ public enum DungeonPreset implements StringRepresentable {
         path.useFoundations = true;
         path.usePillars = true;
         path.useRoof = true;
+    }, List.of(TGNpcs.ZOMBIE_SOLDIER, TGNpcs.SKELETON_SOLDIER)),
+    /**
+     * Techguns 2 {@code PresetNetherDungeonUnderground} (new: Techguns 2 never spawned it): a fortress under the Nether
+     * floor, entered from a hut on the top level and a ramp three levels down; bottom, lower, mid and upper floors, the
+     * bottom layer doubled, no roof; the castle spawners.
+     */
+    NETHER(5, 5, true, List.of("nether_b0", "nether_b1", "nether0", "nether1"), path -> {
+        path.startHeightLevel = -1;
+        path.chanceStraight = 0.7f;
+        path.chanceRamp = 0.4f;
+        path.chanceRoom = 0.35f;
+        path.chanceFork = 0.5f;
+        path.chanceUp = 0.6f;
+        path.useFoundations = true;
+        path.usePillars = false;
+        path.useRoof = false;
+        path.useBottomLayer = true;
+        path.entranceRampLength = 3;
     }, List.of(TGNpcs.ZOMBIE_SOLDIER, TGNpcs.SKELETON_SOLDIER));
 
     public static final StringRepresentable.EnumCodec<DungeonPreset> CODEC = StringRepresentable.fromEnum(DungeonPreset::values);
-    /** Techguns 2 castle templates; the layers the castle preset picks from. */
-    public static final List<String> CASTLE_TEMPLATES = List.of("ncdung1", "nclower1", "ncmid1", "ncupper1", "nctop1", "ncroof1");
 
     /** Blocks per cell side and per level. */
     public final int sizeXZ;
     public final int sizeY;
+    /** Below the ground (the Nether fortress) instead of on it. */
+    public final boolean underground;
+    /** The Techguns 2 templates the preset picks its levels from. */
+    public final List<String> templates;
     private final Consumer<MazeDungeonPath> pathSettings;
     /** Mob types of the spawners, weight 1 each. */
     public final List<TGNpcs.Npc> spawnerMobs;
@@ -52,9 +71,12 @@ public enum DungeonPreset implements StringRepresentable {
     /** Techguns 2 {@code getSpawnYOffset}: the spawner stands on the floor, 1 above the cell's base. */
     public static final int SPAWN_Y_OFFSET = 1;
 
-    DungeonPreset(int sizeXZ, int sizeY, Consumer<MazeDungeonPath> pathSettings, List<TGNpcs.Npc> spawnerMobs) {
+    DungeonPreset(int sizeXZ, int sizeY, boolean underground, List<String> templates, Consumer<MazeDungeonPath> pathSettings,
+                  List<TGNpcs.Npc> spawnerMobs) {
         this.sizeXZ = sizeXZ;
         this.sizeY = sizeY;
+        this.underground = underground;
+        this.templates = templates;
         this.pathSettings = pathSettings;
         this.spawnerMobs = spawnerMobs;
     }
@@ -64,24 +86,15 @@ public enum DungeonPreset implements StringRepresentable {
     }
 
     /**
-     * Techguns 2 {@code PresetCastle.getSegment}: the template of a segment on a level (-1: roof) of a dungeon
-     * {@code levels} high.
+     * Techguns 2 {@code getSegment}: the template of a segment on a level (-1: roof) of a dungeon {@code levels} high.
+     * Castle: dungeon, lower, mid, upper, top, roof. Nether: bottom, lower, mid, then upper floors.
      */
     public ResourceLocation template(SegmentType type, int level, int levels) {
-        String template;
-        if (level == -1) {
-            template = "ncroof1";
-        } else if (level == 0) {
-            template = "ncdung1";
-        } else if (level <= 1) {
-            template = "nclower1";
-        } else if (level < levels - 2) {
-            template = "ncmid1";
-        } else if (level < levels - 1) {
-            template = "ncupper1";
-        } else {
-            template = "nctop1";
-        }
+        String template = switch (this) {
+            case CASTLE -> level == -1 ? "ncroof1" : level == 0 ? "ncdung1" : level <= 1 ? "nclower1" : level < levels - 2 ? "ncmid1"
+                    : level < levels - 1 ? "ncupper1" : "nctop1";
+            case NETHER -> level <= 0 ? "nether_b0" : level <= 1 ? "nether_b1" : level <= 2 ? "nether0" : "nether1";
+        };
         return TGIds.id("dungeon/" + template + "/" + type.fileName());
     }
 

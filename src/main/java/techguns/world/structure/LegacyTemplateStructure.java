@@ -175,7 +175,7 @@ public class LegacyTemplateStructure extends Structure {
     }
 
     /** Techguns 2 {@code getCaveHeight}: the cave floor at the four chunk corners, if all are close enough. */
-    static Optional<Integer> caveHeight(GenerationContext context, int x0, int z0) {
+    public static Optional<Integer> caveHeight(GenerationContext context, int x0, int z0) {
         int[] heights = {airFloor(context, x0, z0), airFloor(context, x0 + 15, z0), airFloor(context, x0, z0 + 15), airFloor(context, x0 + 15, z0 + 15)};
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;

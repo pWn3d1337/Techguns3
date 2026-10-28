@@ -11,6 +11,7 @@ import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+import techguns.TGIds;
 import techguns.registry.TGStructures;
 import techguns.world.LegacyPaletteProcessor;
 import techguns.world.structure.LegacyTemplatePiece;
@@ -32,6 +33,12 @@ public class MazeDungeonStructure extends Structure {
     private static final int HEIGHT_TOLERANCE = 10;
     /** Techguns 2 {@code Dungeon.GENERATE_ATTEMPTS}. */
     private static final int ATTEMPTS = 5;
+    /** Underground: the lowest level stays this far above the world's floor (the Nether bedrock). */
+    private static final int MIN_FLOOR_OFFSET = 6;
+    /** Underground: the entrance and its ramp take 4 levels, the maze needs at least one more. */
+    private static final int MIN_UNDERGROUND_LEVELS = 5;
+    /** The entrance hut's Nether foundation (Techguns 2 {@code placeFoundationNether}). */
+    private static final int ENTRANCE_FOUNDATION = 16;
 
     private final DungeonPreset preset;
 
@@ -42,6 +49,9 @@ public class MazeDungeonStructure extends Structure {
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        if (preset.underground) {
+            return findUnderground(context);
+        }
         WorldgenRandom random = context.random();
         int cellsX = (32 + random.nextInt(16)) / preset.sizeXZ;
         int cellsZ = (32 + random.nextInt(16)) / preset.sizeXZ;
@@ -61,8 +71,62 @@ public class MazeDungeonStructure extends Structure {
                 pieces -> build(pieces, context, random, cellsX, levels, cellsZ, new BlockPos(x0, y0, z0))));
     }
 
+    /**
+     * Techguns 2 test tool for the Nether dungeon (never spawned in Techguns 2): 24 to 48 blocks of levels under a cave
+     * floor, the top level holding only the entrance, whose hut stands on the floor. The floor is checked around the
+     * entrance; the bottom stays 6 above the world's floor (fewer levels on low floors, none below 5).
+     */
+    private Optional<GenerationStub> findUnderground(GenerationContext context) {
+        WorldgenRandom random = context.random();
+        int x0 = context.chunkPos().getMinBlockX();
+        int z0 = context.chunkPos().getMinBlockZ();
+        Optional<Integer> estimate = LegacyTemplateStructure.caveHeight(context, x0, z0);
+        if (estimate.isEmpty()) {
+            return Optional.empty();
+        }
+        int bottom = context.heightAccessor().getMinBuildHeight() + MIN_FLOOR_OFFSET;
+        int levels = Math.min((24 + random.nextInt(25)) / preset.sizeY, (estimate.get() - bottom) / preset.sizeY + 1);
+        if (levels < MIN_UNDERGROUND_LEVELS) {
+            return Optional.empty();
+        }
+        int cellsX = (32 + random.nextInt(16)) / preset.sizeXZ;
+        int cellsZ = (32 + random.nextInt(16)) / preset.sizeXZ;
+        MazeDungeonPath path = bestPath(random, cellsX, levels, cellsZ);
+        int[] start = path.startPos();
+        int entranceX = x0 + start[0] * preset.sizeXZ + preset.sizeXZ / 2;
+        int entranceZ = z0 + start[2] * preset.sizeXZ + preset.sizeXZ / 2;
+        Optional<Integer> floor = LegacyTemplateStructure.caveHeight(context, entranceX - 8, entranceZ - 8);
+        if (floor.isEmpty() || floor.get() - start[1] * preset.sizeY < bottom) {
+            return Optional.empty();
+        }
+        BlockPos origin = new BlockPos(x0, floor.get() - start[1] * preset.sizeY, z0);
+        return Optional.of(new GenerationStub(new BlockPos(entranceX, floor.get(), entranceZ), pieces -> {
+            place(pieces, context, path, origin);
+            // Techguns 2 NetherDungeonEntrance on the start cell: one block out of the cell, turned about (3, 3)
+            BlockPos cell = cell(origin, start[0], start[1], start[2]);
+            pieces.addPiece(new LegacyTemplatePiece(context.structureTemplateManager(), TGIds.id("nether_dungeon_entrance"), cell.offset(-1, 0, -1),
+                    counterClockwise(legacyRotation(path.startFacing())), new BlockPos(3, 0, 3), LegacyPaletteProcessor.BiomeColor.WOODLAND,
+                    ENTRANCE_FOUNDATION, 0, true));
+        }));
+    }
+
+    /** Techguns 2 {@code facingToRotation} of the entrance direction (west 0, south 1, east 2, north 3). */
+    static int legacyRotation(int direction2d) {
+        return switch (direction2d) {
+            case 0 -> 1;
+            case 1 -> 0;
+            case 3 -> 2;
+            default -> 3;
+        };
+    }
+
     private void build(StructurePiecesBuilder pieces, GenerationContext context, WorldgenRandom random, int cellsX, int levels, int cellsZ,
                        BlockPos origin) {
+        place(pieces, context, bestPath(random, cellsX, levels, cellsZ), origin);
+    }
+
+    /** Techguns 2 {@code Dungeon.generate}: the path with the most cells of a few attempts. */
+    private MazeDungeonPath bestPath(WorldgenRandom random, int cellsX, int levels, int cellsZ) {
         MazeDungeonPath path = null;
         for (int i = 0; i < ATTEMPTS; i++) {
             MazeDungeonPath p = new MazeDungeonPath(cellsX, levels, cellsZ, random);
@@ -72,8 +136,11 @@ public class MazeDungeonStructure extends Structure {
                 path = p;
             }
         }
+        return path;
+    }
+
+    private void place(StructurePiecesBuilder pieces, GenerationContext context, MazeDungeonPath dungeon, BlockPos origin) {
         BlockPos pivot = new BlockPos(preset.sizeXZ / 2, 0, preset.sizeXZ / 2);
-        MazeDungeonPath dungeon = path;
         dungeon.generateDungeon((type, level, x, y, z, rotation) -> pieces.addPiece(new LegacyTemplatePiece(context.structureTemplateManager(),
                 preset.template(type, level, dungeon.sY), cell(origin, x, y, z), counterClockwise(rotation), pivot,
                 LegacyPaletteProcessor.BiomeColor.WOODLAND, 0, 0, false)));

@@ -484,7 +484,8 @@ public final class MazeDungeonPath {
                     if (seg != null) {
                         shifted[i][j + 1][k] = seg;
                         seg.y++;
-                        if (j == 0) {
+                        // Techguns 2 also copied ramps, whose empty pattern no segment matches; their cell gets a foundation
+                        if (j == 0 && !seg.isRamp) {
                             Cell copy = new Cell(i, j, k);
                             copy.pattern = seg.pattern;
                             shifted[i][j][k] = copy;

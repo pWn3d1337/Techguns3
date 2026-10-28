@@ -1,0 +1,15 @@
+{
+  "placement": {
+    "type": "techguns:avoiding_spread",
+    "avoid": [],
+    "salt": 51531858,
+    "separation": 24,
+    "spacing": 48
+  },
+  "structures": [
+    {
+      "structure": "techguns:nether_fortress",
+      "weight": 1
+    }
+  ]
+}

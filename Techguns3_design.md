@@ -553,6 +553,14 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - Nether fortress: the Techguns 2 Nether dungeon (maze dungeon preset `PresetNetherDungeonUnderground`, templates `nether_b0`, `nether_b1`, `nether0`, `nether1`, already in `src/legacy/dungeon_dump.json`; the converted `nether_dungeon_entrance` template exists since 7b). Needs the 7f generator's bottom layer and entrance ramp, a Nether placement and its own set or weight.
   - City: the Techguns 2 procedural city (`world/structures/city`, only run from a test tool), evaluate jigsaw vs a generator port (`CampLevel` shows the virtual-level approach).
 - Balancing pass, performance profiling (projectiles, particles), multiplayer testing, translations, release on CurseForge/Modrinth.
+- Batches (planned 2026-10-28):
+  - 9a: Nether fortress: `DungeonPreset.NETHER`, underground placement under a cave floor with the entrance hut, its own `nether_big` set.
+  - 9b: the city: evaluate and port the Techguns 2 procedural city (virtual-level generator like the military base).
+  - 9c: translations: carry the Techguns 2 language files over to the new keys where they still fit.
+  - 9d: performance profiling (projectiles, particles, structure generation) and fixes.
+  - 9e: multiplayer test pass on a dedicated server (all guns, machines, NPCs, structures) and fixes.
+  - 9f: balancing pass (the author's call: gun, armor and machine numbers; Techguns 2 values are the baseline).
+  - 9g: release preparation: metadata, changelog, license, publishing setup (the release itself is the author's).
 
 ### Phase 10 — Version updates
 - Jump from 1.21.1 directly to the newest 26.x at that time (no stop at every 1.21.x minor). Its own mini-plan: read NeoForge primers 1.21.2 → 26.x, rewrite the adapter implementations behind the §4.7 interfaces (rendering first), move data to new vanilla components where useful, re-run GameTests.

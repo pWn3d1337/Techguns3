@@ -5,6 +5,10 @@
       {
         "chunk_count": 2,
         "other_set": "techguns:nether_medium"
+      },
+      {
+        "chunk_count": 3,
+        "other_set": "techguns:nether_big"
       }
     ],
     "salt": 51531855,

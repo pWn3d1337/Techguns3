@@ -116,7 +116,7 @@ public class LegacyStructureProvider implements DataProvider {
                 throw new IllegalStateException("Could not read the dungeon dump", e);
             }
             // maze dungeon segments: dungeon/<template>/<segment>, the same palette and block format
-            for (String name : DungeonPreset.CASTLE_TEMPLATES) {
+            for (String name : java.util.Arrays.stream(DungeonPreset.values()).flatMap(p -> p.templates.stream()).toList()) {
                 JsonObject segments = dungeons.getAsJsonObject(name).getAsJsonObject("segments");
                 for (SegmentType type : SegmentType.values()) {
                     CompoundTag template = new Converter(segments.getAsJsonObject(type.name())).convert();

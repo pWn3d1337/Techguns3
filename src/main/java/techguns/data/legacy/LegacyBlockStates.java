@@ -44,6 +44,8 @@ final class LegacyBlockStates {
             Map.entry("simplemachine", type -> "techguns:" + type),
             Map.entry("stairs_metal", type -> type.equals("true") ? "techguns:steelframe_dark_stairs" : "techguns:panel_large_border_stairs"),
             Map.entry("block_creeper_acid", type -> "techguns:creeper_acid"),
+            // Techguns 2 editor markers left in the unfinished Nether dungeon templates; nothing read them at generation
+            Map.entry("debugblock", type -> type.equals("antiairmarker") ? "minecraft:structure_void" : "minecraft:air"),
             Map.entry("tg_spawner", type -> type.equals("soldier_spawn") ? "techguns:military_spawn_point" : "techguns:monster_hole"));
 
     /** The legacy property that selects the block, per legacy block. */

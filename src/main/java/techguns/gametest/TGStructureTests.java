@@ -156,7 +156,9 @@ public class TGStructureTests {
                 && sets.getOrThrow(TGStructures.Size.MEDIUM.set).structures().size() == 5
                 && sets.getOrThrow(TGStructures.Size.BIG.set).structures().size() == 3
                 && sets.getOrThrow(TGStructures.Size.NETHER_SMALL.set).structures().size() == 5
-                && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3, "Techguns 2 small and medium tables");
+                && sets.getOrThrow(TGStructures.Size.NETHER_MEDIUM.set).structures().size() == 3
+                && sets.getOrThrow(TGStructures.Size.NETHER_BIG.set).structures().size() == 1, "Techguns 2 small and medium tables, the fortress");
+        helper.assertTrue(structures.containsKey(TGStructures.NETHER_FORTRESS_KEY), "The Nether fortress is a structure");
         for (TGStructures.Template t : TGStructures.NETHER) {
             helper.assertTrue(structures.containsKey(t.key()), t.name() + " is a structure");
         }
@@ -272,6 +274,50 @@ public class TGStructureTests {
                 Vec3i size = template.get().getSize();
                 helper.assertTrue(size.equals(new Vec3i(5, 5 * type.height, 5)), id + " is one cell, got " + size);
             }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void netherSegmentTemplatesLoad(GameTestHelper helper) {
+        var manager = helper.getLevel().getStructureManager();
+        for (int level = 0; level < 5; level++) {
+            for (SegmentType type : SegmentType.values()) {
+                var id = DungeonPreset.NETHER.template(type, level, 8);
+                var template = manager.get(id);
+                helper.assertTrue(template.isPresent(), id + " exists");
+                Vec3i size = template.get().getSize();
+                helper.assertTrue(size.equals(new Vec3i(5, 5 * type.height, 5)), id + " is one cell, got " + size);
+            }
+        }
+        helper.succeed();
+    }
+
+    /** The fortress: entered from the top level, where only the entrance is, down a ramp; bottom layer, no roof. */
+    @GameTest(template = ARENA)
+    public static void netherFortressMazeGenerates(GameTestHelper helper) {
+        for (long seed = 0; seed < 20; seed++) {
+            int x = 6 + (int) (seed % 4);
+            int y = 5 + (int) (seed % 5);
+            MazeDungeonPath path = new MazeDungeonPath(x, y, x, RandomSource.create(seed));
+            DungeonPreset.NETHER.init(path);
+            path.generatePath();
+            List<String> top = new java.util.ArrayList<>();
+            boolean[] bottomLayer = {false};
+            boolean[] roof = {false};
+            path.generateDungeon((type, level, cx, cy, cz, rotation) -> {
+                if (cy == y - 1) {
+                    top.add(type.name());
+                }
+                bottomLayer[0] |= cy == 0 && type != SegmentType.FOUNDATION;
+                roof[0] |= level == -1;
+            });
+            String name = "Fortress " + seed + " (" + x + "x" + y + "x" + x + ")";
+            helper.assertTrue(path.unmatched() == 0 && path.numSegments() > 3, name + ": every cell gets a segment, unmatched " + path.unmatched() + " of " + path.numSegments());
+            helper.assertTrue(path.startPos()[1] == y - 1, name + ": the entrance is on the top level");
+            helper.assertTrue(top.equals(List.of(SegmentType.ENTRANCE.name())) || top.stream().allMatch(t -> t.equals("ENTRANCE") || t.equals("RAMP")),
+                    name + ": only the entrance (and its ramp) on the top level, got " + top);
+            helper.assertTrue(bottomLayer[0] && !roof[0], name + ": a bottom layer, no roof");
         }
         helper.succeed();
     }
