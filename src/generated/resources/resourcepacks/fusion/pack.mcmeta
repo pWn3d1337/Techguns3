@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "description": "Techguns connected textures (Fusion)",
+    "pack_format": 34
+  },
+  "fusion": {
+    "min_version": "1.3.0"
+  }
+}

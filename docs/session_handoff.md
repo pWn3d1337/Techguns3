@@ -51,13 +51,14 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 9e | Multiplayer test pass on a dedicated server | `1abc6ae` |
   | 9g | Release preparation (changelog, metadata, publishing setup) | `22235f5` |
   | 9h | FOV lock client option, datapack gun and armor stat overrides | `8baaf3d` |
-  | 9i | Decorative mod blocks in structures (Factory Blocks, Chisel Reborn, Laboratory Blocks), Rechiseled groups | not committed yet |
+  | 9i | Decorative mod blocks in structures (Factory Blocks, Chisel Reborn, Laboratory Blocks), Rechiseled groups | `d3b94bd` |
+  | 9j | Connected textures through Fusion (the 19 Techguns 2 CTM textures) | not committed yet |
 
 - All 318 GameTests pass (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Phase 8 PR #9 is open against master; Phase 9 works on `phase9`, based on `phase8-systems` (rebase onto master once #9 is merged). Commit 9i (when the user asks; `phase9` has never been pushed). Phase 9 is then done except 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
+1. Phase 8 PR #9 is open against master; Phase 9 works on `phase9`, based on `phase8-systems` (rebase onto master once #9 is merged). Commit 9j (when the user asks; `phase9` has never been pushed). Phase 9 is then done except 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
 2. Book content: the manual is the 1.12 text with ids remapped. Outdated topics (crowbar/wrench, TG inventory tab buttons, door config GUI, RF) are for the author to rewrite in `src/legacy/book/techguns_manual` (Patchouli format; `runData` regenerates both books).
 3. Later: EMI plugin, JEI views of the special crafting recipes.
 

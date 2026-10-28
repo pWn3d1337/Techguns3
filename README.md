@@ -16,7 +16,8 @@ Optional: [Curios](https://modrinth.com/mod/curios) (extra slots; Techguns has i
 [JEI](https://modrinth.com/mod/jei) (machine recipes), [Patchouli](https://modrinth.com/mod/patchouli) or
 [Modonomicon](https://modrinth.com/mod/modonomicon) (guide book). Create, Mekanism, Immersive Engineering, Modern
 Industrialization, Oritech, FTB Teams and Open Parties and Claims get integrations when installed. With Factory Blocks, Chisel Reborn
-or Laboratory Blocks, structures use their decorative blocks; Rechiseled can chisel between Techguns block variants.
+or Laboratory Blocks, structures use their decorative blocks; Rechiseled can chisel between Techguns block variants;
+[Fusion](https://modrinth.com/mod/fusion-connected-textures) adds connected textures.
 
 ## Building
 

@@ -563,6 +563,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 9g: release preparation: metadata, changelog, license, publishing setup (the release itself is the author's).
   - 9h: Techguns 2 FOV lock as a client option, datapack gun and armor stat overrides (found by comparing with the separate Techguns-1.21 port).
   - 9i: Techguns 2 Chisel integration, retargeted (decided 2026-10-28) to the All The Mods 10 set: structures use Factory Blocks, Chisel Reborn and Laboratory Blocks where installed (vanilla fallback otherwise), Rechiseled gets the Techguns chiseling groups; all optional.
+  - 9j: Techguns 2 connected textures (CTM mod) through Fusion (decided 2026-10-28: maintained up to 26.x, in All The Mods 10 and required by Rechiseled and Laboratory Blocks; CTM itself has no 26.x version): converted sheets in a built-in pack that loads only with Fusion.
 
 ### Phase 10 — Version updates
 - Jump from 1.21.1 directly to the newest 26.x at that time (no stop at every 1.21.x minor). Its own mini-plan: read NeoForge primers 1.21.2 → 26.x, rewrite the adapter implementations behind the §4.7 interfaces (rendering first), move data to new vanilla components where useful, re-run GameTests.

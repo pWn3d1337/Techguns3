@@ -494,6 +494,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.TOGGLE_JETPACK.getName(), "Toggle Jetpack");
         add("tooltip.techguns.slot", "Slot: %s");
         add("gui.techguns.extra_slots", "Techguns Gear");
+        add("pack.techguns.fusion", "Techguns Connected Textures");
         add("gui.techguns.extra_slots.button", "TG");
         add("gui.techguns.inventory", "<");
         add("gui.techguns.inventory.tooltip", "Back to inventory");

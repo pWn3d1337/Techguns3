@@ -897,6 +897,7 @@
   "message.techguns.toggle.jetpack": "Jetpack: %s",
   "message.techguns.toggle.night_vision": "Night Vision: %s",
   "message.techguns.toggle.step_assist": "Step Assist: %s",
+  "pack.techguns.fusion": "Techguns Connected Textures",
   "techguns.button.switch": "Switch",
   "techguns.chemlab.dump.tooltip": "Content will be lost",
   "techguns.chemlab.dumpinput": "Dump Input Tank",

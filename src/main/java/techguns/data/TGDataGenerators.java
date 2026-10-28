@@ -63,6 +63,7 @@ public final class TGDataGenerators {
                         new LootTableProvider.SubProviderEntry(TGBlockLootProvider.Crates::new, LootContextParamSets.CHEST),
                         new LootTableProvider.SubProviderEntry(LegacyChestLootProvider::new, LootContextParamSets.CHEST)), lookup));
         generator.addProvider(event.includeServer(), new LegacyStructureProvider(output));
+        generator.addProvider(event.includeClient(), new techguns.data.legacy.LegacyConnectedTextureProvider(output));
         generator.addProvider(event.includeServer(), new LegacyBookProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCompatRecipeProvider(output));
         generator.addProvider(event.includeServer(), new TGEntityTypeTagsProvider(output, lookup, fileHelper));

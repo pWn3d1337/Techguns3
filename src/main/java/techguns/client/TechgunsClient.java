@@ -48,6 +48,7 @@ public class TechgunsClient {
     public TechgunsClient(IEventBus modEventBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modEventBus.addListener(TGKeyMappings::register);
+        techguns.compat.fusion.FusionTextures.init(modEventBus);
         modEventBus.addListener(TechgunsClient::registerEntityRenderers);
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGArmorClientExtensions::register);
