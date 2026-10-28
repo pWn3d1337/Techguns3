@@ -104,8 +104,9 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
         return data.get(TGMachineBlockEntity.DATA_SIGNAL) != 0;
     }
 
-    public boolean isOwnerOnly() {
-        return data.get(TGMachineBlockEntity.DATA_OWNER_ONLY) != 0;
+    /** {@link techguns.compat.team.TGTeams} security level, 0 public ... 3 owner. */
+    public int getSecurity() {
+        return data.get(TGMachineBlockEntity.DATA_SECURITY);
     }
 
     /** Machine slot for shift-clicked {@code stack}, or -1 (Techguns 2 {@code getValidSlotForItemInMachine}). */

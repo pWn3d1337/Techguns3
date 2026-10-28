@@ -3,8 +3,9 @@ package techguns.compat.team;
 import java.util.UUID;
 
 /**
- * Answers who belongs together (design doc §3, "TeamProvider"): Techguns 2 asked FTB Lib these questions; a team mod
- * integration implements them. Without one, every player is on their own.
+ * Answers who belongs together (design doc §5.4, "TeamProvider"): Techguns 2 asked FTB Lib these questions; each team
+ * source (vanilla scoreboard teams, a team mod) implements them and {@link TGTeams} combines all of them. Called on the
+ * server only; a player without a team in this source is a member and ally of nobody.
  */
 public interface TeamProvider {
     /** Same team. */
@@ -16,21 +17,8 @@ public interface TeamProvider {
     /** Declared enemies. */
     boolean isEnemy(UUID a, UUID b);
 
-    /** No team mod: only the same player is a member or ally, nobody is an enemy. */
-    TeamProvider NONE = new TeamProvider() {
-        @Override
-        public boolean isMember(UUID a, UUID b) {
-            return a.equals(b);
-        }
-
-        @Override
-        public boolean isAlly(UUID a, UUID b) {
-            return a.equals(b);
-        }
-
-        @Override
-        public boolean isEnemy(UUID a, UUID b) {
-            return false;
-        }
-    };
+    /** Whether this source has teams right now (turrets and machines then offer the team settings). */
+    default boolean isActive() {
+        return true;
+    }
 }

@@ -339,7 +339,11 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.owner", "Owned by: %s");
         add("techguns.container.security.tooltip", "Security: %s");
         add("techguns.container.security.tooltip.0", "Public");
+        add("techguns.container.security.tooltip.1", "Allies");
+        add("techguns.container.security.tooltip.2", "Team");
         add("techguns.container.security.tooltip.3", "Owner");
+        add("techguns.container.security.tooltip.description.1", "Allies of the owner's team can access");
+        add("techguns.container.security.tooltip.description.2", "Team members can access");
         add("techguns.container.security.tooltip.description.0", "Anyone can access");
         add("techguns.container.security.tooltip.description.3", "Only owner can access");
         add("techguns.container.security.tooltip.descr2", "Only the owner can change this setting");

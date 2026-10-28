@@ -49,7 +49,7 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
         }
         // Techguns 2 security icons: 0 public ... 3 owner only
         addRenderableWidget(new IconButton(leftPos - 22, topPos + securityButtonY, 20, TGMachineBlockEntity.BUTTON_SECURITY, WIDGETS, 234,
-                () -> 58 + 16 * (menu.isOwnerOnly() ? 3 : 0), 16));
+                () -> 58 + 16 * menu.getSecurity(), 16));
     }
 
     /** Sends a machine button press to the server menu ({@link TGMachineMenu#clickMenuButton}). */
@@ -129,7 +129,7 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
                     Component.translatable(menu.hasSignal() ? "techguns.redstonemode.signal.high" : "techguns.redstonemode.signal.low")));
             graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
         } else if (isIn(mx, my, -22, securityButtonY, 20, 20)) {
-            int level = menu.isOwnerOnly() ? 3 : 0;
+            int level = menu.getSecurity();
             String ownerName = menu.machine().getOwnerName();
             List<Component> lines = new ArrayList<>();
             lines.add(Component.translatable("techguns.container.security.owner", ownerName.isEmpty()

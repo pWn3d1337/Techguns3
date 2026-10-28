@@ -545,7 +545,7 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
   - 8c: advancements as a progression guide.
   - 8d: guide book, port of the Techguns 2 book. Decision: both Patchouli and Modonomicon, optional, generated from the one 1.12 book source (Patchouli keeps the 1.12 look; Modonomicon has the 26.x versions and wins when both are installed).
   - 8e: mod compat tier 2: conditional recipes for Create, Mekanism, Immersive Engineering, Modern Industrialization, Oritech. Done as gap-filling only (TG plates their presses lack, obsidian steel alloying); the rest already works through `c:` tags.
-  - 8f: mod compat tier 3: Mekanism radiation bridge, fuel mods, team mods; Create Big Cannons if cheap.
+  - 8f: mod compat tier 3, split: 8f1 team mods (vanilla teams, FTB Teams, Open Parties and Claims through `TGTeams`; machine security levels), 8f2 Mekanism radiation bridge and fuel mods; Create Big Cannons if cheap.
 - **Exit:** feature parity with Techguns 2.
 
 ### Phase 9 — Polish & first release

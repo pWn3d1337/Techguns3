@@ -36,6 +36,7 @@ public class Techguns {
         net.neoforged.neoforge.common.NeoForgeMod.enableMilkFluid();
         modEventBus.addListener(TGNetwork::registerPayloads);
         modEventBus.addListener(TGDataGenerators::gatherData);
+        modEventBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> techguns.compat.team.TGTeams.registerProviders());
 
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingDeath);

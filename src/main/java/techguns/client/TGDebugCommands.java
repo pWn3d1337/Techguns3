@@ -234,6 +234,33 @@ public final class TGDebugCommands {
                             }
                             return 1;
                         }))
+                .then(Commands.literal("teams")
+                        .executes(ctx -> {
+                            // runs every team source on the integrated server: you vs yourself and vs a stranger
+                            var server = Minecraft.getInstance().getSingleplayerServer();
+                            var self = Minecraft.getInstance().player.getUUID();
+                            if (server == null) {
+                                ctx.getSource().sendSystemMessage(Component.literal("Needs the integrated server"));
+                                return 0;
+                            }
+                            server.execute(() -> {
+                                StringBuilder out = new StringBuilder("Team sources (active: " + techguns.compat.team.TGTeams.hasTeams() + "):");
+                                var stranger = java.util.UUID.randomUUID();
+                                for (var provider : techguns.compat.team.TGTeams.providers()) {
+                                    try {
+                                        out.append(' ').append(provider.getClass().getSimpleName()).append(" self member ")
+                                                .append(provider.isMember(self, self)).append(", stranger member/ally/enemy ")
+                                                .append(provider.isMember(self, stranger)).append('/').append(provider.isAlly(self, stranger))
+                                                .append('/').append(provider.isEnemy(self, stranger)).append(';');
+                                    } catch (RuntimeException | LinkageError e) {
+                                        out.append(' ').append(provider.getClass().getSimpleName()).append(" FAILED ").append(e).append(';');
+                                    }
+                                }
+                                Minecraft.getInstance().tell(() -> Minecraft.getInstance().player.displayClientMessage(
+                                        Component.literal(out.toString()), false));
+                            });
+                            return 1;
+                        }))
                 .then(Commands.literal("view")
                         .executes(ctx -> {
                             // cycles first person / third person back / third person front (F5); MCP has no key input
