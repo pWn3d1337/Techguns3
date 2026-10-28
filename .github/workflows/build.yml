@@ -26,3 +26,25 @@ jobs:
 
       - name: Run GameTests
         run: ./gradlew runGameTestServer -Puse_mcpfabric=false
+
+  # The mod declares neo_min_version as its oldest NeoForge: build and run the GameTests on that version too
+  minimum-neoforge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Read the minimum NeoForge version
+        run: echo "NEO_MIN=$(grep '^neo_min_version=' gradle.properties | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Build and run GameTests on the minimum NeoForge
+        run: ./gradlew build runGameTestServer -Puse_mcpfabric=false -Pneo_version=${{ env.NEO_MIN }}

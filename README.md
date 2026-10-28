@@ -9,7 +9,7 @@ Port of Techguns 2 (1.12.2) to **Minecraft 1.21.1 / NeoForge 21.1**, in alpha.
 
 ## Requirements
 
-- Minecraft 1.21.1 with NeoForge 21.1.264 or newer
+- Minecraft 1.21.1 with NeoForge 21.1.238 or newer
 - [GeckoLib](https://modrinth.com/mod/geckolib) 4.9.3 or newer
 
 Optional: [Curios](https://modrinth.com/mod/curios) (extra slots; Techguns has its own without it),
