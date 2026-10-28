@@ -1,0 +1,91 @@
+{
+  "criteria": {
+    "ammo": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#techguns:ammo"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "gun": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:m4",
+              "techguns:revolver",
+              "techguns:golden_revolver",
+              "techguns:pistol",
+              "techguns:ak47",
+              "techguns:m4_infiltrator",
+              "techguns:aug",
+              "techguns:scar",
+              "techguns:thompson",
+              "techguns:mac10",
+              "techguns:vector",
+              "techguns:lmg",
+              "techguns:bolt_action",
+              "techguns:minigun",
+              "techguns:lasergun",
+              "techguns:rocket_launcher",
+              "techguns:sawed_off",
+              "techguns:combat_shotgun",
+              "techguns:as50",
+              "techguns:gauss_rifle",
+              "techguns:blaster_rifle",
+              "techguns:blaster_shotgun",
+              "techguns:pulse_rifle",
+              "techguns:pdw",
+              "techguns:laser_pistol",
+              "techguns:nuclear_deathray",
+              "techguns:tesla_gun",
+              "techguns:alien_blaster",
+              "techguns:mib_gun",
+              "techguns:nether_blaster",
+              "techguns:sonic_shotgun",
+              "techguns:grenade_launcher",
+              "techguns:guided_missile_launcher",
+              "techguns:grim_reaper",
+              "techguns:flamethrower",
+              "techguns:biogun",
+              "techguns:tfg",
+              "techguns:magic_rifle",
+              "techguns:hand_cannon",
+              "techguns:chainsaw",
+              "techguns:mining_drill",
+              "techguns:power_hammer",
+              "techguns:shishkebap",
+              "techguns:grappling_hook"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "techguns:textures/block/concrete_grey.png",
+    "description": {
+      "translate": "advancements.techguns.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:pistol"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.techguns.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "gun",
+      "ammo"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -36,6 +36,17 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
+                name = 'FTB'
+                url = 'https://maven.ftb.dev/releases'
+            }
+        }
+        filter {
+            includeGroup 'dev.ftb.mods'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
                 name = 'GeckoLib'
                 url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
             }
@@ -148,8 +159,38 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
+    // Guide book, optional, both supported (8d): the manual is generated for each, players get it with either mod
+    localRuntime "maven.modrinth:patchouli:${patchouli_version}"
+    compileOnly "maven.modrinth:modonomicon:${modonomicon_version}"
+    localRuntime "maven.modrinth:modonomicon:${modonomicon_version}"
+
+    // Mekanism, optional (8f2): the radiation bridge uses its API (in the mod jar); dev runtime with compat_mods
+    compileOnly("maven.modrinth:mekanism:${compat_mekanism}") { transitive = false }
+
+    // Team mods, optional (8f1): compat/team providers compile against them and load only when the mod is there
+    compileOnly("dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}") { transitive = false }
+    compileOnly("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
+    compileOnly("maven.modrinth:open-parties-and-claims:${opac_version}") { transitive = false }
+
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }
+    }
+
+    // Tier 2 compat check (8e), opt-in with -Pcompat_mods=true: the mods whose machines get conditional Techguns
+    // recipes, so the GameTests can check those recipes load (Modrinth version ids, see gradle.properties)
+    if (project.compat_mods.toBoolean()) {
+        ["create", "mekanism", "immersiveengineering", "modern-industrialization", "oritech",
+         "guideme", "architectury-api", "athena-ctm"].each { slug ->
+            localRuntime("maven.modrinth:${slug}:${project.property('compat_' + slug.replace('-', '_'))}") { transitive = false }
+        }
+        // team mods (8f1); FTB Teams also needs Architectury (above)
+        localRuntime("dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}") { transitive = false }
+        localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
+    }
+    // Open Parties and Claims on its own (-Popac=true): it crashes the GameTest server (no profile cache there),
+    // so check it in the dev client (/tgdebug teams)
+    if (project.opac.toBoolean()) {
+        localRuntime("maven.modrinth:open-parties-and-claims:${opac_version}") { transitive = false }
     }
 }
 
@@ -167,6 +208,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_authors            : mod_authors,
             geckolib_version       : geckolib_version,
             curios_version         : curios_version,
+            patchouli_version      : patchouli_version,
+            modonomicon_version    : modonomicon_version,
     ]
     inputs.properties replaceProperties
     expand replaceProperties

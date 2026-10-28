@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "modern_industrialization"
+    }
+  ],
+  "type": "modern_industrialization:blast_furnace",
+  "duration": 400,
+  "eu": 4,
+  "item_inputs": [
+    {
+      "amount": 1,
+      "tag": "c:ingots/steel"
+    },
+    {
+      "amount": 1,
+      "tag": "c:obsidians"
+    }
+  ],
+  "item_outputs": [
+    {
+      "amount": 1,
+      "item": "techguns:obsidian_steel_ingot"
+    }
+  ]
+}

@@ -132,6 +132,16 @@ public final class TGConfig {
 
     static {
         COMMON.pop();
+        COMMON.push("radiation");
+    }
+
+    // Techguns 2 "WIP_disableRadiationSystem" (there on by default, so players never collected radiation)
+    public static final ModConfigSpec.BooleanValue RADIATION_ENABLED = COMMON
+            .comment("Players collect radiation from radioactive items, nukes, the NDR and the Reaction Chamber, and get sick from it. "
+                    + "When off, radiation effects still hurt mobs but players collect none.").define("enabled", true);
+
+    static {
+        COMMON.pop();
     }
 
     static final ModConfigSpec COMMON_SPEC = COMMON.build();

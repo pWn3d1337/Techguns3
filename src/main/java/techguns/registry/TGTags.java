@@ -49,8 +49,11 @@ public final class TGTags {
         public static final TagKey<net.minecraft.world.level.material.Fluid> LIQUID_REDSTONE = TagKey.create(Registries.FLUID,
                 TGIds.id("liquid_redstone"));
         public static final TagKey<net.minecraft.world.level.material.Fluid> LIQUID_ENDER = TagKey.create(Registries.FLUID, TGIds.id("liquid_ender"));
-        /** Liquid fuels the Ore Drill burns (Techguns 2 {@code fluidListFuel}); lava always works. */
-        public static final TagKey<net.minecraft.world.level.material.Fluid> DRILL_FUEL = TagKey.create(Registries.FLUID, TGIds.id("drill_fuel"));
+        /**
+         * Liquid fuels of other mods (Techguns 2 {@code fluidListFuel}): the Ore Drill burns them (lava always works) and the
+         * Chem Lab fills fuel tanks with them.
+         */
+        public static final TagKey<net.minecraft.world.level.material.Fluid> FUEL = TagKey.create(Registries.FLUID, TGIds.id("fuel"));
         /** What the oil cluster pumps; Techguns 2 used the Forge {@code oil} fluid, here the common oil tags. */
         public static final TagKey<net.minecraft.world.level.material.Fluid> DRILL_OIL = TagKey.create(Registries.FLUID, TGIds.id("drill_oil"));
     }

@@ -1,0 +1,25 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 1,
+    "item": "minecraft:nether_wart"
+  },
+  "flask": {
+    "count": 1,
+    "item": "techguns:infusion_bag"
+  },
+  "fluid": {
+    "amount": 250,
+    "fluid": "techguns:creeper_acid"
+  },
+  "power_per_tick": 25,
+  "result": {
+    "count": 1,
+    "id": "techguns:rad_away"
+  },
+  "second": {
+    "count": 1,
+    "item": "minecraft:glistering_melon_slice"
+  }
+}

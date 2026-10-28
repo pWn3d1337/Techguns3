@@ -1,0 +1,37 @@
+{
+  "parent": "techguns:armor",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:jetpack",
+              "techguns:jump_pack",
+              "techguns:antigrav_pack"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.jetpack.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:jetpack"
+    },
+    "title": {
+      "translate": "advancements.techguns.jetpack.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

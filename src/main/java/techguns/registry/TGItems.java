@@ -5,10 +5,14 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.UseAnim;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 import techguns.item.AmmoBagItem;
+import techguns.radiation.RadMedicineItem;
 
 /**
  * Techguns items. Plain material/component items are registered with {@link #simple} and get their
@@ -57,6 +61,12 @@ public final class TGItems {
     public static final DeferredItem<Item> RAW_PLASTIC = simple("raw_plastic");
     public static final DeferredItem<Item> YELLOWCAKE = simple("yellowcake");
     public static final DeferredItem<Item> ENRICHED_URANIUM = simple("enriched_uranium");
+    /** Techguns 2 rad medicine: the infusion bag rad away comes in (left over after use). */
+    public static final DeferredItem<Item> INFUSION_BAG = simple("infusion_bag");
+    public static final DeferredItem<Item> RAD_AWAY = medicine("rad_away", UseAnim.BOW, RadMedicineItem::radAwayEffects,
+            () -> new ItemStack(INFUSION_BAG.get()));
+    public static final DeferredItem<Item> RAD_PILLS = medicine("rad_pills", UseAnim.EAT, RadMedicineItem::radPillsEffects,
+            () -> new ItemStack(Items.GLASS_BOTTLE));
     public static final DeferredItem<Item> QUARTZ_ROD = simple("quartz_rod");
     public static final DeferredItem<Item> TGX = simple("tgx");
     public static final DeferredItem<Item> TREATED_LEATHER = simple("treated_leather");
@@ -170,6 +180,14 @@ public final class TGItems {
 
     private static DeferredItem<Item> simple(String name) {
         return simple(name, new Item.Properties());
+    }
+
+    private static DeferredItem<Item> medicine(String name, UseAnim animation,
+                                               java.util.function.Supplier<List<net.minecraft.world.effect.MobEffectInstance>> effects,
+                                               java.util.function.Supplier<ItemStack> container) {
+        DeferredItem<Item> item = ITEMS.register(name, () -> new RadMedicineItem(new Item.Properties(), animation, effects, container));
+        SIMPLE_ITEMS.add(item);
+        return item;
     }
 
     private static DeferredItem<Item> simple(String name, Item.Properties properties) {

@@ -1,0 +1,38 @@
+{
+  "parent": "techguns:energy_weapon",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:nuclear_deathray",
+              "techguns:tesla_gun",
+              "techguns:tfg"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.superweapon.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "techguns:tfg"
+    },
+    "title": {
+      "translate": "advancements.techguns.superweapon.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,39 @@
+{
+  "parent": "techguns:military_base",
+  "criteria": {
+    "entered": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "techguns:castle"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.castle.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:monster_hole"
+    },
+    "title": {
+      "translate": "advancements.techguns.castle.title"
+    }
+  },
+  "requirements": [
+    [
+      "entered"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -62,7 +62,7 @@ public class BioGunProjectile extends GenericProjectile {
 
     @Override
     protected TGDamageSource createDamageSource() {
-        // Fabric also disabled the knockback of this damage; that follows with the knockback multiplier
+        // Fabric took the knockback off this damage but pushed with a separate hit, so it has the normal knockback
         return TGDamage.poison(level(), this, getOwner(), DeathType.BIO).setGoreChance(1.0f).setArmorPenetration(penetration);
     }
 

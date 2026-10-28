@@ -363,7 +363,7 @@ public class OreDrillBlockEntity extends MultiblockMasterBlockEntity {
         if (stack.is(FluidTags.LAVA)) {
             return LAVA_FUEL_VALUE;
         }
-        return stack.is(TGTags.Fluids.DRILL_FUEL) ? TGConfig.ORE_DRILL_FUEL_VALUE_FUEL.get().floatValue() : 0.0f;
+        return stack.is(TGTags.Fluids.FUEL) ? TGConfig.ORE_DRILL_FUEL_VALUE_FUEL.get().floatValue() : 0.0f;
     }
 
     public int getFuelBuffer() {

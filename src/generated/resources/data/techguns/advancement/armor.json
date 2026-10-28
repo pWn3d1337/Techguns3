@@ -1,0 +1,38 @@
+{
+  "parent": "techguns:root",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:t1_combat_helmet",
+              "techguns:t1_combat_chestplate",
+              "techguns:t1_combat_leggings",
+              "techguns:t1_combat_boots"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.armor.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:t1_combat_chestplate"
+    },
+    "title": {
+      "translate": "advancements.techguns.armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

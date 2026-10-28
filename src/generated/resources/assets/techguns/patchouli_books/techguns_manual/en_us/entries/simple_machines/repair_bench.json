@@ -1,0 +1,15 @@
+{
+  "category": "techguns:simple_machines",
+  "icon": "techguns:repair_bench",
+  "name": "Repair Bench",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Repair Bench is used to repair techguns armors. It does not need power. The cost for repairing is shown as tooltip when hovering the repair button. Repairing should always be cheaper than crafting a new armor."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:repair_bench"
+    }
+  ]
+}

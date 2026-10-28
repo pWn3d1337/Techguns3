@@ -1,0 +1,25 @@
+{
+  "type": "techguns:chem_lab",
+  "allow_swap": true,
+  "first": {
+    "count": 4,
+    "item": "minecraft:sugar"
+  },
+  "flask": {
+    "count": 1,
+    "item": "minecraft:glass_bottle"
+  },
+  "fluid": {
+    "amount": 1000,
+    "tag": "c:milk"
+  },
+  "power_per_tick": 20,
+  "result": {
+    "count": 4,
+    "id": "techguns:rad_pills"
+  },
+  "second": {
+    "count": 1,
+    "item": "minecraft:glistering_melon_slice"
+  }
+}

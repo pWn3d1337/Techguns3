@@ -1,0 +1,66 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "armors",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:t3_combat_chestplate"
+  },
+  "name": "book.techguns.techguns_manual.armors.advanced_combat_armor.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.armors.advanced_combat_armor.page0.text",
+      "title": "book.techguns.techguns_manual.armors.advanced_combat_armor.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:entity",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "default_rotation": -45.0,
+      "entity_id": "minecraft:armor_stand{ShowArms:1,NoBasePlate:1,ArmorItems:[{count:1,id:'techguns:t3_combat_boots'}, {count:1,id:'techguns:t3_combat_leggings'}, {count:1,id:'techguns:t3_combat_chestplate'}, {count:1,id:'techguns:t3_combat_helmet'}]}",
+      "name": "book.techguns.techguns_manual.armors.advanced_combat_armor.page1.name",
+      "offset": 0.0,
+      "rotate": true,
+      "scale": 1.0,
+      "text": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:t3_combat_helmet",
+      "recipe_id_2": "techguns:t3_combat_chestplate",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:t3_combat_leggings",
+      "recipe_id_2": "techguns:t3_combat_boots",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 10,
+  "x": 0,
+  "y": 0
+}

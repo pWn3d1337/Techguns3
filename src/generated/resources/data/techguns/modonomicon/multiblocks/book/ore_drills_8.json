@@ -1,0 +1,286 @@
+{
+  "type": "modonomicon:dense",
+  "mapping": {
+    "*": {
+      "type": "modonomicon:display",
+      "display": "minecraft:basalt"
+    },
+    "+": {
+      "type": "modonomicon:display",
+      "display": "minecraft:stone"
+    },
+    "0": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_controller"
+    },
+    "C": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_cluster_common_metal"
+    },
+    "E": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_engine"
+    },
+    "F": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_frame"
+    },
+    "R": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_rod"
+    },
+    "S": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_scaffold"
+    }
+  },
+  "pattern": [
+    [
+      "___________",
+      "___________",
+      "___________",
+      "___________",
+      "___________",
+      "_____0_____",
+      "___________",
+      "___________",
+      "___________",
+      "___________",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FFFFFFFFF_",
+      "_FEEEEEEEF_",
+      "_FEEEEEEEF_",
+      "_FEEEEEEEF_",
+      "_FEEEEEEEF_",
+      "_FEEEEEEEF_",
+      "_FEEEEEEEF_",
+      "_FEEEEEEEF_",
+      "_FFFFFFFFF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_SEEEEEEES_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FSSSSSSSF_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S___R___S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_S_______S_",
+      "_FSSSSSSSF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "_FFFFFFFFF_",
+      "_FSSSSSSSF_",
+      "_FSSSSSSSF_",
+      "_FSSSSSSSF_",
+      "_FSSSRSSSF_",
+      "_FSSSSSSSF_",
+      "_FSSSSSSSF_",
+      "_FSSSSSSSF_",
+      "_FFFFFFFFF_",
+      "___________"
+    ],
+    [
+      "___________",
+      "___________",
+      "___________",
+      "___________",
+      "___________",
+      "_____C_____",
+      "___________",
+      "___________",
+      "___________",
+      "___________",
+      "___________"
+    ],
+    [
+      "*+*+*+*+*+*",
+      "+*+*+*+*+*+",
+      "*+*+*+*+*+*",
+      "+*+*+*+*+*+",
+      "*+*+*+*+*+*",
+      "+*+*+*+*+*+",
+      "*+*+*+*+*+*",
+      "+*+*+*+*+*+",
+      "*+*+*+*+*+*",
+      "+*+*+*+*+*+",
+      "*+*+*+*+*+*"
+    ]
+  ]
+}

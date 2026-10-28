@@ -1,0 +1,26 @@
+{
+  "category": "techguns:armors",
+  "icon": "techguns:t2_commando_chestplate",
+  "name": "T2 : Commando Armor",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Commando Armor is a Tier 2 armor intended for combat and under water activities."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "minecraft:armor_stand{ShowArms:1,NoBasePlate:1,ArmorItems:[{count:1,id:'techguns:t2_commando_boots'}, {count:1,id:'techguns:t2_commando_leggings'}, {count:1,id:'techguns:t2_commando_chestplate'}, {count:1,id:'techguns:t2_commando_helmet'}]}",
+      "name": "Soldier's Armor"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:t2_commando_helmet",
+      "recipe2": "techguns:t2_commando_chestplate"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "techguns:t2_commando_leggings",
+      "recipe2": "techguns:t2_commando_boots"
+    }
+  ]
+}

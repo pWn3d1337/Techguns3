@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "immersiveengineering:metal_press",
+  "energy": 2400,
+  "input": {
+    "tag": "c:ingots/obsidian_steel"
+  },
+  "mold": "immersiveengineering:mold_plate",
+  "result": {
+    "id": "techguns:obsidian_steel_plate"
+  }
+}

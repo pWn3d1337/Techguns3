@@ -26,6 +26,8 @@ public final class TGRegistries {
         TGAttributes.ATTRIBUTES.register(modEventBus);
         TGComponents.COMPONENTS.register(modEventBus);
         TGAttachments.ATTACHMENTS.register(modEventBus);
+        TGMobEffects.MOB_EFFECTS.register(modEventBus);
+        TGMobEffects.POTIONS.register(modEventBus);
         TGSounds.SOUNDS.register(modEventBus);
         TGParticleTypes.PARTICLE_TYPES.register(modEventBus);
         TGRecipes.SERIALIZERS.register(modEventBus);

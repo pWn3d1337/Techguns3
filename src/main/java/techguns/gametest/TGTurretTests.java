@@ -138,8 +138,8 @@ public class TGTurretTests {
         helper.assertFalse(TGTeams.shouldAttack(owner, other, TGTeams.PVP_NONE), "No PvP: other players are safe");
         helper.assertTrue(TGTeams.shouldAttack(owner, other, TGTeams.PVP_EVERYONE), "Everyone: other players are attacked");
         helper.assertFalse(TGTeams.shouldAttack(owner, owner, TGTeams.PVP_EVERYONE), "never the owner");
-        helper.assertTrue(TGTeams.nextPvpSetting(TGTeams.PVP_NONE) == TGTeams.PVP_EVERYONE
-                && TGTeams.nextPvpSetting(TGTeams.PVP_EVERYONE) == TGTeams.PVP_NONE, "Without a team mod the button toggles none / everyone");
+        helper.assertTrue(TGTeams.hasTeams() || TGTeams.nextPvpSetting(TGTeams.PVP_NONE) == TGTeams.PVP_EVERYONE
+                && TGTeams.nextPvpSetting(TGTeams.PVP_EVERYONE) == TGTeams.PVP_NONE, "Without teams the button toggles none / everyone");
         helper.assertTrue(TGTeams.isHostile(owner, other) && !TGTeams.isHostile(owner, owner), "Turrets fight back against others only");
         helper.assertTrue(TGEntities.TURRET.get().getDimensions().height() == 0.9f, "Turret is 0.9 high");
         helper.succeed();

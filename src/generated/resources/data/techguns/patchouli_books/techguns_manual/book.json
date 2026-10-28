@@ -1,0 +1,12 @@
+{
+  "book_texture": "techguns:textures/gui/tgmanual_textures.png",
+  "creative_tab": "techguns:main",
+  "flip_sound": "minecraft:ui.button.click",
+  "landing_text": "The Techguns manual: weapons, armor, machines and how to progress from the first gun to the endgame.",
+  "model": "techguns:techguns_manual",
+  "name": "Techguns Manual",
+  "nameplate_color": "000000",
+  "open_sound": "minecraft:item.armor.equip_iron",
+  "use_resource_pack": true,
+  "version": 1
+}

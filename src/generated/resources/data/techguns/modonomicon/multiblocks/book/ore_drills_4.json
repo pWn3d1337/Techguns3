@@ -1,0 +1,47 @@
+{
+  "type": "modonomicon:dense",
+  "mapping": {
+    "*": {
+      "type": "modonomicon:display",
+      "display": "minecraft:basalt"
+    },
+    "+": {
+      "type": "modonomicon:display",
+      "display": "minecraft:stone"
+    },
+    "0": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_rod"
+    },
+    "C": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_cluster_common_metal"
+    },
+    "R": {
+      "type": "modonomicon:block",
+      "block": "techguns:ore_drill_controller"
+    }
+  },
+  "pattern": [
+    [
+      "___",
+      "_R_",
+      "___"
+    ],
+    [
+      "___",
+      "_0_",
+      "___"
+    ],
+    [
+      "___",
+      "_C_",
+      "___"
+    ],
+    [
+      "*+*",
+      "+*+",
+      "*+*"
+    ]
+  ]
+}

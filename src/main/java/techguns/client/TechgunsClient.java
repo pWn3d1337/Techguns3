@@ -52,11 +52,16 @@ public class TechgunsClient {
         modEventBus.addListener(TGClientItemExtensions::register);
         modEventBus.addListener(TGArmorClientExtensions::register);
         modEventBus.addListener(TGShieldRenderer::register);
+        modEventBus.addListener(techguns.client.render.item.GuideBookModel::registerAdditional);
+        modEventBus.addListener(techguns.client.render.item.GuideBookModel::modifyBakingResult);
         modEventBus.addListener(SlotGearLayer::register);
         modEventBus.addListener(TGShieldBlocking::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);
+        modEventBus.addListener(techguns.client.gui.RadiationOverlay::register);
+        modEventBus.addListener(techguns.client.gui.RadiationOverlay::registerEffectIcon);
+        NeoForge.EVENT_BUS.addListener(techguns.client.gui.RadiationOverlay::onTooltip);
         modEventBus.addListener(ClientAmmoBagTooltip::register);
         modEventBus.addListener(ClientArmorTooltip::register);
         modEventBus.addListener(ExtraSlotsScreen::register);
@@ -89,6 +94,7 @@ public class TechgunsClient {
         // invisible: only the main segment's particle trail is drawn
         event.registerEntityRenderer(TGEntities.SONIC_SHOTGUN_PROJECTILE.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.TFG_PROJECTILE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(TGEntities.RADIATION_AREA.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.CHAINSAW_PROJECTILE.get(), NoopRenderer::new);
         event.registerEntityRenderer(TGEntities.GRAPPLING_HOOK_PROJECTILE.get(), GrapplingHookProjectileRenderer::new);
         event.registerEntityRenderer(TGEntities.BIOGUN_PROJECTILE.get(), BioGunProjectileRenderer::new);

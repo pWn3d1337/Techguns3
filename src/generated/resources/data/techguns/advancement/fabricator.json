@@ -1,0 +1,33 @@
+{
+  "parent": "techguns:chem_lab",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:fabricator_controller"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.fabricator.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:fabricator_controller"
+    },
+    "title": {
+      "translate": "advancements.techguns.fabricator.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,37 @@
+{
+  "parent": "techguns:automatic",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:rocket_launcher",
+              "techguns:grenade_launcher",
+              "techguns:guided_missile_launcher"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.heavy_ordnance.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:rocket_launcher"
+    },
+    "title": {
+      "translate": "advancements.techguns.heavy_ordnance.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

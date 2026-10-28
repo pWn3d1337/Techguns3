@@ -56,6 +56,9 @@ public final class TGClientItemExtensions implements IClientItemExtensions {
     @Override
     public HumanoidModel.ArmPose getArmPose(LivingEntity entity, InteractionHand hand, ItemStack stack) {
         if (stack.getItem() instanceof GunItem gun) {
+            if (entity.isFallFlying()) {
+                return TGArmPoses.elytraAim();
+            }
             boolean akimbo = entity.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND)
                     .getItem() instanceof GunItem;
             HoldType hold = gun.stats().holdType();

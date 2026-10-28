@@ -1,0 +1,38 @@
+{
+  "parent": "techguns:root",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:pistol",
+              "techguns:revolver",
+              "techguns:golden_revolver",
+              "techguns:laser_pistol"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.handgun.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:pistol"
+    },
+    "title": {
+      "translate": "advancements.techguns.handgun.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

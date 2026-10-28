@@ -44,6 +44,18 @@ public final class PlayerPayloads {
         }
     }
 
+    /** Server to client: the player's radiation level. */
+    public record SyncRadiation(int level) implements CustomPacketPayload {
+        public static final Type<SyncRadiation> TYPE = new Type<>(TGIds.id("sync_radiation"));
+        public static final StreamCodec<ByteBuf, SyncRadiation> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT,
+                SyncRadiation::level, SyncRadiation::new);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
     /** Client to server: the jetpack boost key (jump) was pressed or released. */
     public record JetpackBoost(boolean active) implements CustomPacketPayload {
         public static final Type<JetpackBoost> TYPE = new Type<>(TGIds.id("jetpack_boost"));

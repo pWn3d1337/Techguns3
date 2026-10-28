@@ -133,9 +133,9 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
                 entry(TGArmors.T2_COMBAT_LEGGINGS.get(), 1), entry(TGArmors.T2_COMBAT_BOOTS.get(), 1),
                 entry(TGArmors.T2_COMMANDO_HELMET.get(), 1), entry(TGArmors.T2_COMMANDO_CHESTPLATE.get(), 1),
                 entry(TGArmors.T2_COMMANDO_LEGGINGS.get(), 1), entry(TGArmors.T2_COMMANDO_BOOTS.get(), 1));
-        // radaway and radpills (weight 2 each, 1-4) are not ported yet
         LootPool.Builder medical = pool(
-                entry(Items.APPLE, 1, 1, 3), entry(Items.BREAD, 1, 1, 3), entry(Items.COOKED_BEEF, 1, 1, 2));
+                entry(Items.APPLE, 1, 1, 3), entry(Items.BREAD, 1, 1, 3), entry(Items.COOKED_BEEF, 1, 1, 2),
+                entry(TGItems.RAD_AWAY.get(), 2, 1, 4), entry(TGItems.RAD_PILLS.get(), 2, 1, 4));
         LootPool.Builder explosives = pool(
                 entry(TGAmmo.ROCKET.get(), 2, 1, 3), entry(TGAmmo.GRENADE_40MM.get(), 2, 1, 4), entry(TGGuns.STIELGRANATE.get(), 2, 1, 3),
                 entry(TGGuns.FRAG_GRENADE.get(), 2, 1, 2), entry(TGGuns.ROCKET_LAUNCHER.get(), 1), entry(TGGuns.GRENADE_LAUNCHER.get(), 1));

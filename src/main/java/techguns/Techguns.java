@@ -36,9 +36,14 @@ public class Techguns {
         net.neoforged.neoforge.common.NeoForgeMod.enableMilkFluid();
         modEventBus.addListener(TGNetwork::registerPayloads);
         modEventBus.addListener(TGDataGenerators::gatherData);
+        modEventBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) -> techguns.compat.team.TGTeams.registerProviders());
+        if (net.neoforged.fml.ModList.get().isLoaded("mekanism")) {
+            techguns.compat.mekanism.MekanismRadiation.register(modEventBus);
+        }
 
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingIncomingDamage);
         NeoForge.EVENT_BUS.addListener(TGDamageEvents::onLivingDeath);
+        NeoForge.EVENT_BUS.addListener(TGDamageEvents::onKnockback);
         MeleeToolEvents.init(NeoForge.EVENT_BUS);
         ArmorBonusEvents.init(NeoForge.EVENT_BUS);
         ArmorPowerEvents.init(NeoForge.EVENT_BUS);
@@ -47,6 +52,7 @@ public class Techguns {
         ExtraSlotEvents.init(NeoForge.EVENT_BUS);
         AmmoBagEvents.init(NeoForge.EVENT_BUS);
         TGSpawnManager.init(modEventBus, NeoForge.EVENT_BUS);
+        techguns.radiation.RadiationEvents.init(modEventBus, NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener((PlayerTickEvent.Post event) -> ShooterState.of(event.getEntity()).tick());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TGConfig.COMMON_SPEC);

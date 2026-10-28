@@ -1,0 +1,87 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "weapons",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:mechanical_parts_iron"
+  },
+  "name": "book.techguns.techguns_manual.weapons.weapon_mechanics.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_mechanics.page0.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_mechanics.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "hand_types",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_mechanics.page1.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_mechanics.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_mechanics.page2.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_mechanics.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_mechanics.page3.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_mechanics.page3.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.weapons.weapon_mechanics.page4.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_mechanics.page4.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:image",
+      "anchor": "",
+      "border": true,
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "images": [
+        "techguns:textures/gui/manual/safemode_on.png",
+        "techguns:textures/gui/manual/safemode_off.png"
+      ],
+      "text": "book.techguns.techguns_manual.weapons.weapon_mechanics.page5.text",
+      "title": "book.techguns.techguns_manual.weapons.weapon_mechanics.page5.title",
+      "use_legacy_rendering": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

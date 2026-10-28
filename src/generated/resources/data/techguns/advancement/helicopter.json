@@ -1,0 +1,38 @@
+{
+  "parent": "techguns:undead_soldier",
+  "criteria": {
+    "attack_helicopter": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "techguns:attack_helicopter"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.helicopter.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "techguns:attack_helicopter_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.techguns.helicopter.title"
+    }
+  },
+  "requirements": [
+    [
+      "attack_helicopter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

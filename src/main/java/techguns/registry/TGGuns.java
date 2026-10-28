@@ -387,7 +387,7 @@ public final class TGGuns {
                             new MeleeToolItem.MiningHead(TGItems.POWER_HAMMER_HEAD_OBSIDIAN, 1, 1.0, 0.5f, ChatFormatting.DARK_PURPLE),
                             new MeleeToolItem.MiningHead(TGItems.POWER_HAMMER_HEAD_CARBON, 2, 2.0, 1.0f, ChatFormatting.DARK_GRAY)),
                     MeleeToolItem.UseAction.CHARGE)
-                    .toolLevel(BlockTags.MINEABLE_WITH_PICKAXE, 2).toolLevel(BlockTags.MINEABLE_WITH_SHOVEL, 2)
+                    .toolLevel(BlockTags.MINEABLE_WITH_PICKAXE, 2).toolLevel(BlockTags.MINEABLE_WITH_SHOVEL, 2).meleeKnockback(1.5f)
                     .withHitSound(TGSounds.POWERHAMMER_IMPACT).withChargeSound(TGSounds.POWERHAMMER_CHARGE));
 
     public static final DeferredItem<GunItem> SHISHKEBAP = gun("shishkebap",

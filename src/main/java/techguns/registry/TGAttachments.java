@@ -31,6 +31,10 @@ public final class TGAttachments {
     public static final Supplier<AttachmentType<FallbackSlots.Inventory>> EXTRA_SLOTS = ATTACHMENTS.register("extra_slots",
             () -> AttachmentType.builder(FallbackSlots.Inventory::new).serialize(FallbackSlots.Inventory.CODEC).copyOnDeath().build());
 
+    /** Player radiation level ({@code PlayerRadiation}); saved, copied on death, synced by TGNetwork. */
+    public static final Supplier<AttachmentType<Integer>> RADIATION = ATTACHMENTS.register("radiation",
+            () -> AttachmentType.builder(() -> 0).serialize(com.mojang.serialization.Codec.INT).copyOnDeath().build());
+
     /** Position of the TG spawner an NPC came from ({@code SpawnerLink}); saved with the entity. */
     public static final Supplier<AttachmentType<BlockPos>> SPAWNER_POS = ATTACHMENTS.register("spawner_pos",
             () -> AttachmentType.builder(() -> BlockPos.ZERO).serialize(BlockPos.CODEC).build());

@@ -1,0 +1,39 @@
+{
+  "parent": "techguns:root",
+  "criteria": {
+    "entered": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "techguns:military_base"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.military_base.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:military_spawn_point"
+    },
+    "title": {
+      "translate": "advancements.techguns.military_base.title"
+    }
+  },
+  "requirements": [
+    [
+      "entered"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

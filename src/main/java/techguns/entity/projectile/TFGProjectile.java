@@ -80,8 +80,9 @@ public class TFGProjectile extends GenericProjectile {
 
     @Override
     protected TGDamageSource createDamageSource() {
-        // Techguns 2 also tripled the knockback of the explosion; that follows with the knockback multiplier
-        return TGDamage.energy(level(), this, getOwner(), DeathType.GORE).setGoreChance(1.0f).setArmorPenetration(penetration);
+        // Fabric TFGProjectile: the explosion knocks back three times as far
+        return TGDamage.energy(level(), this, getOwner(), DeathType.GORE).setGoreChance(1.0f).setArmorPenetration(penetration)
+                .setKnockbackMultiplier(3.0f);
     }
 
     @Override

@@ -24,4 +24,9 @@ public final class TGIds {
     public static ResourceLocation of(String namespace, String path) {
         return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
+
+    /** Identifier from its {@code namespace:path} string (no namespace: minecraft). */
+    public static ResourceLocation parse(String id) {
+        return ResourceLocation.parse(id);
+    }
 }

@@ -28,6 +28,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import techguns.TGConfig;
+import techguns.compat.team.TGTeams;
 import techguns.registry.TGItems;
 
 /**
@@ -36,7 +37,7 @@ import techguns.registry.TGItems;
  * progress. Subclasses decide what an operation is ({@link #checkAndStartOperation}) and where its results go
  * ({@link #finishOperation}).
  *
- * <p>Security: Techguns 2 without a team mod has two levels, public and owner only; teams come with the factions.
+ * <p>Security: Techguns 2 levels public, allies, team and owner ({@link TGTeams}); without teams only public and owner.
  */
 public abstract class TGMachineBlockEntity extends BlockEntity implements MenuProvider {
     /** {@link #data} indices synced to an open menu. */
@@ -46,7 +47,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     public static final int DATA_ENERGY_HIGH = 3;
     public static final int DATA_REDSTONE = 4;
     public static final int DATA_SIGNAL = 5;
-    public static final int DATA_OWNER_ONLY = 6;
+    public static final int DATA_SECURITY = 6;
     public static final int DATA_COUNT = 7;
 
     /** Menu button ids ({@link #pressButton}); machine buttons start at {@link #BUTTON_MACHINE}. */
@@ -66,7 +67,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     @Nullable
     private UUID owner;
     private String ownerName = "";
-    private boolean ownerOnly;
+    private int security = TGTeams.SECURITY_PUBLIC;
 
     @Nullable
     protected MachineOperation operation;
@@ -89,7 +90,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
                 case DATA_ENERGY_HIGH -> energy.getEnergyStored() >>> 16;
                 case DATA_REDSTONE -> redstoneMode.ordinal();
                 case DATA_SIGNAL -> signal ? 1 : 0;
-                case DATA_OWNER_ONLY -> ownerOnly ? 1 : 0;
+                case DATA_SECURITY -> security;
                 default -> getExtraData(index);
             };
         }
@@ -357,7 +358,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     public void setOwner(Player player) {
         this.owner = player.getUUID();
         this.ownerName = player.getGameProfile().getName();
-        this.ownerOnly = false;
+        this.security = TGTeams.SECURITY_PUBLIC;
         setChanged();
     }
 
@@ -371,7 +372,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
     }
 
     public boolean mayAccess(Player player) {
-        return owner == null || !ownerOnly || isOwner(player);
+        return owner == null || TGTeams.canAccess(owner, player.getUUID(), security);
     }
 
     public boolean isOwner(Player player) {
@@ -392,7 +393,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
                 if (!isOwner(player)) {
                     yield false;
                 }
-                ownerOnly = !ownerOnly;
+                security = TGTeams.nextSecurity(security);
                 yield true;
             }
             default -> pressMachineButton(player, id);
@@ -455,8 +456,8 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         return signal;
     }
 
-    public boolean isOwnerOnly() {
-        return ownerOnly;
+    public int getSecurity() {
+        return security;
     }
 
     @Nullable
@@ -526,7 +527,7 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
             tag.putUUID("owner", owner);
             tag.putString("owner_name", ownerName);
         }
-        tag.putBoolean("owner_only", ownerOnly);
+        tag.putByte("security", (byte) security);
         tag.putInt("progress", progress);
         tag.putInt("total_time", totalTime);
         tag.putBoolean("working", operation != null);
@@ -538,7 +539,8 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         signal = tag.getBoolean("signal");
         owner = tag.hasUUID("owner") ? tag.getUUID("owner") : null;
         ownerName = tag.getString("owner_name");
-        ownerOnly = tag.getBoolean("owner_only");
+        // before 8f1 there was only owner_only
+        security = tag.contains("security") ? tag.getByte("security") : tag.getBoolean("owner_only") ? TGTeams.SECURITY_OWNER : TGTeams.SECURITY_PUBLIC;
         progress = tag.getInt("progress");
         totalTime = tag.getInt("total_time");
         working = tag.getBoolean("working");

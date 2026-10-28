@@ -9,6 +9,8 @@ version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
 displayURL="https://github.com/pWn3d1337/Techguns3"
+# Techguns arm poses (client)
+enumExtensions="META-INF/enumextensions.json"
 description='''
 Techguns 3 - guns, armor, machines, NPCs and structures for modern Minecraft.
 '''

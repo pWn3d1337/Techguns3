@@ -1,0 +1,37 @@
+{
+  "values": {
+    "#c:ingots/uranium": {
+      "level": 1
+    },
+    "#c:ores/uranium": {
+      "level": 1
+    },
+    "#c:raw_materials/uranium": {
+      "level": 1
+    },
+    "techguns:antigrav_core": {
+      "level": 4
+    },
+    "techguns:deepslate_uranium_ore": {
+      "level": 1
+    },
+    "techguns:enriched_uranium": {
+      "level": 3
+    },
+    "techguns:plasma_generator": {
+      "level": 4
+    },
+    "techguns:raw_uranium": {
+      "level": 1
+    },
+    "techguns:rocket_nuke": {
+      "level": 1
+    },
+    "techguns:uranium_ore": {
+      "level": 1
+    },
+    "techguns:yellowcake": {
+      "level": 1
+    }
+  }
+}

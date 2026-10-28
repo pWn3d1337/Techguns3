@@ -505,6 +505,11 @@ public class TGRecipeProvider extends RecipeProvider {
                 new ItemStack(TGItems.RAW_PLASTIC.get()), true, 25);
         chemLabFluid(output, "creeper_acid", sized(TGItems.BIOMASS.get(), 1), sized(Items.GUNPOWDER, 1), fluid(water, 1000),
                 new net.neoforged.neoforge.fluids.FluidStack(acid, 1000), 20);
+        // Techguns 2 rad medicine
+        chemLab(output, "rad_pills", sized(Items.SUGAR, 4), sized(Items.GLISTERING_MELON_SLICE, 1), sized(Items.GLASS_BOTTLE, 1),
+                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(Tags.Fluids.MILK, 1000), new ItemStack(TGItems.RAD_PILLS.get(), 4), true, 20);
+        chemLab(output, "rad_away", sized(Items.NETHER_WART, 1), sized(Items.GLISTERING_MELON_SLICE, 1), sized(TGItems.INFUSION_BAG.get(), 1),
+                net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient.of(acid, 250), new ItemStack(TGItems.RAD_AWAY.get()), true, 25);
         chemLab(output, "tgx", sized(Items.GUNPOWDER, 1), new SizedIngredient(Ingredient.of(Tags.Items.GEMS_LAPIS), 1), null, fluid(lava, 500),
                 new ItemStack(TGItems.TGX.get()), true, 20);
         // incendiary rounds (Techguns 2: only the Chem Lab makes them; rifle rounds also split from incendiary stacks)
@@ -517,6 +522,9 @@ public class TGRecipeProvider extends RecipeProvider {
         chemLab(output, "shotgun_rounds_incendiary", sized(TGAmmo.SHOTGUN_ROUNDS.get(), 8), sized(Items.BLAZE_POWDER, 1), null, fluid(lava, 250),
                 new ItemStack(TGAmmo.SHOTGUN_ROUNDS_INCENDIARY.get(), 8), false, 25);
         chemLab(output, "fuel_tank", null, null, sized(TGAmmo.FUEL_TANK_EMPTY.get(), 1), fluid(lava, 500),
+                new ItemStack(TGAmmo.FUEL_TANK.get()), false, 1);
+        // Techguns 2: 250 mB of any fuel of another mod (lava stays, Techguns 2 dropped it once a fuel existed)
+        chemLab(output, "fuel_tank_from_fuel", null, null, sized(TGAmmo.FUEL_TANK_EMPTY.get(), 1), fluid(TGTags.Fluids.FUEL, 250),
                 new ItemStack(TGAmmo.FUEL_TANK.get()), false, 1);
         chemLab(output, "rocket_high_velocity", sized(TGAmmo.ROCKET.get(), 1), null, null, fluid(lava, 250),
                 new ItemStack(TGAmmo.ROCKET_HIGH_VELOCITY.get()), false, 5);
@@ -646,6 +654,9 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern(" g ").pattern("crc").pattern(" g ")
                 .define('r', TGBlocks.REACTION_CHAMBER_HOUSING.get()).define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('g', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy(getHasName(TGBlocks.REACTION_CHAMBER_HOUSING.get()), has(TGBlocks.REACTION_CHAMBER_HOUSING.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.INFUSION_BAG.get(), 4)
+                .pattern("pp").pattern("pp").define('p', TGItems.PLASTIC_SHEET.get())
+                .unlockedBy(getHasName(TGItems.PLASTIC_SHEET.get()), has(TGItems.PLASTIC_SHEET.get())).save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.HEAT_RAY_FOCUS.get())
                 .pattern("cwc").pattern("plp").pattern("plp")
                 .define('c', TGItems.CIRCUIT_BOARD_ELITE.get()).define('w', TGItems.GOLD_WIRE.get()).define('p', TGTags.Items.plate("steel"))

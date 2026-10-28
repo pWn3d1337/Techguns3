@@ -538,6 +538,14 @@ Each phase ends in a runnable, testable build. Phases 3–8 can partly overlap o
 - Guide book, advancements.
 - Gun posing during elytra flight: third-person arm/gun poses and first-person gun transforms while fall-flying (open `TODO: Elytra Flying` in Techguns 2 and Fabric `RenderItemBase`). The glider stays the Techguns 2 non-elytra glide (decided 2026-10-26).
 - Mod compat per §5.4: tier 2 conditional recipes (Create, Mekanism, IE, MI, Oritech) and tier 3 code compat (Mekanism radiation bridge, fuels, Create Big Cannons, team mods, scripting if requested).
+- Batches (planned 2026-10-27):
+  - 8a1: radiation core: player radiation level (attachment, 0..1000, synced), radiation / rad regeneration / rad resistance effects (Techguns 2: dose per second = level - resistance; mobs take 0.5 damage per point), poisoning stages (500 / 750 / 1000) with lethal radiation poisoning, 200 lost on death, radioactive items in the inventory (item data map), potions and brewing, HUD and tooltip, geiger sounds, config switch. Techguns 2 shipped the player side switched off (`WIP_disableRadiationSystem`); Techguns 3 finishes it and switches it on by default.
+  - 8a2: radiation sources and cures: rad away and rad pills (Chem Lab recipes, crate loot), the lingering radiation area of nukes, NDR beam hits, the Reaction Chamber focus radiation; gas mask resistance check.
+  - 8b: leftovers: nuke / tesla knockback multipliers, gun posing during elytra flight.
+  - 8c: advancements as a progression guide.
+  - 8d: guide book, port of the Techguns 2 book. Decision: both Patchouli and Modonomicon, optional, generated from the one 1.12 book source (Patchouli keeps the 1.12 look; Modonomicon has the 26.x versions and wins when both are installed).
+  - 8e: mod compat tier 2: conditional recipes for Create, Mekanism, Immersive Engineering, Modern Industrialization, Oritech. Done as gap-filling only (TG plates their presses lack, obsidian steel alloying); the rest already works through `c:` tags.
+  - 8f: mod compat tier 3, split: 8f1 team mods (vanilla teams, FTB Teams, Open Parties and Claims through `TGTeams`; machine security levels), 8f2 Mekanism radiation bridge (shielding both ways, rad regeneration cures Mekanism radiation) and fuel mods (`techguns:fuel` tag). Create Big Cannons left out: Techguns has no munitions to offer it yet.
 - **Exit:** feature parity with Techguns 2.
 
 ### Phase 9 — Polish & first release

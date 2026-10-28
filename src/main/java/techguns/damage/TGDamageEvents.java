@@ -1,7 +1,12 @@
 package techguns.damage;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import net.minecraft.core.Holder;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import techguns.TGConfig;
 import techguns.core.damage.DeathEffectRules;
 import techguns.core.damage.DeathType;
@@ -48,9 +54,49 @@ public final class TGDamageEvents {
         }
     }
 
+    /**
+     * Knockback multiplier of the hit an entity is taking, for its knockback later in the same hurt (the knockback
+     * event doesn't carry the damage source); only valid in the tick it was set.
+     */
+    private record PendingKnockback(float multiplier, long gameTime) {
+    }
+
+    private static final Map<LivingEntity, PendingKnockback> PENDING_KNOCKBACK = Collections.synchronizedMap(new WeakHashMap<>());
+
+    /** Techguns 2 / Fabric knockback multiplier: TG damage sources and powered melee tools scale the hit's knockback. */
+    public static float knockbackMultiplier(DamageSource source) {
+        if (source instanceof TGDamageSource tgSource) {
+            return tgSource.getKnockbackMultiplier();
+        }
+        if (source.is(DamageTypes.PLAYER_ATTACK) && source.getEntity() instanceof Player player
+                && player.getMainHandItem().getItem() instanceof MeleeToolItem tool) {
+            return tool.meleeKnockback(player.getMainHandItem());
+        }
+        return 1.0f;
+    }
+
+    public static void onKnockback(LivingKnockBackEvent event) {
+        LivingEntity entity = event.getEntity();
+        PendingKnockback pending = PENDING_KNOCKBACK.remove(entity);
+        if (pending == null || pending.gameTime() != entity.level().getGameTime()) {
+            return;
+        }
+        if (pending.multiplier() <= 0.0f) {
+            event.setCanceled(true);
+        } else {
+            event.setStrength(event.getStrength() * pending.multiplier());
+        }
+    }
+
     public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
         LivingEntity target = event.getEntity();
         DamageContainer container = event.getContainer();
+        float knockback = knockbackMultiplier(container.getSource());
+        if (knockback != 1.0f) {
+            PENDING_KNOCKBACK.put(target, new PendingKnockback(knockback, target.level().getGameTime()));
+        } else {
+            PENDING_KNOCKBACK.remove(target);
+        }
 
         if (container.getSource() instanceof TGDamageSource source) {
             float factor = damageFactor(source.getEntity(), target);

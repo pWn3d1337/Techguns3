@@ -1,0 +1,107 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "powered_machines",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:electric_engine"
+  },
+  "name": "book.techguns.techguns_manual.powered_machines.machine_mechanics.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page0.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page1.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "security",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page2.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page2.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "security2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page3.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page3.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "power",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page4.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page4.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "redstone",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page5.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page5.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "upgrade",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "techguns:machine_upgrade_stack"
+      },
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page6.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page6.title"
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "wrench",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page7.text",
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page7.title",
+      "use_markdown_in_title": false
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 0,
+  "x": 0,
+  "y": 0
+}

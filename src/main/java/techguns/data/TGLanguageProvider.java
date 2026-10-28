@@ -17,7 +17,9 @@ import techguns.client.TGKeyMappings;
 import techguns.core.damage.TGDamageCategory;
 import techguns.damage.TGDamageTypes;
 import techguns.registry.TGBlocks;
+import techguns.data.legacy.LegacyBook;
 import techguns.registry.TGCreativeTabs;
+import techguns.registry.TGMobEffects;
 import techguns.registry.TGItems;
 
 public class TGLanguageProvider extends LanguageProvider {
@@ -28,6 +30,7 @@ public class TGLanguageProvider extends LanguageProvider {
     /** English names that differ from the title-cased registry name. */
     private static final Map<String, String> NAME_OVERRIDES = Map.ofEntries(
             Map.entry("biomass", "Bio Mass"),
+            Map.entry("rad_away", "RadAway"), Map.entry("rad_pills", "Anti-RAD Pills"),
             // Phase 5c3 (Techguns 2 lang: tile.techguns.orecluster.*, item.techguns.oredrill*)
             Map.entry("explosive_charge", "Mining Charge"),
             Map.entry("cyber_demon", "Cyberdemon"),
@@ -293,6 +296,32 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.TOGGLE_STEP_ASSIST.getName(), "Toggle Step Assist");
         addGunTooltips();
         addMachines();
+        addRadiation();
+        for (String[] entry : TGAdvancementProvider.ENTRIES) {
+            add("advancements.techguns." + entry[0] + ".title", entry[1]);
+            add("advancements.techguns." + entry[0] + ".description", entry[2]);
+        }
+        // the Modonomicon manual's texts (Patchouli has its own en_us folder)
+        LegacyBook.load().ifPresent(book -> LegacyBook.lang(book, this::add));
+    }
+
+    /** Techguns 2 radiation effects, potions, HUD and tooltip. */
+    private void addRadiation() {
+        add(TGMobEffects.RADIATION.get(), "Radiation");
+        add(TGMobEffects.RAD_REGENERATION.get(), "Rad Regeneration");
+        add(TGMobEffects.RAD_RESISTANCE.get(), "Rad Resistance");
+        String[][] potions = {{"techguns.radiation", "Radiation"}, {"techguns.rad_regeneration", "Rad Regeneration"},
+                {"techguns.rad_resistance", "Rad Resistance"}};
+        for (String[] potion : potions) {
+            add("item.minecraft.potion.effect." + potion[0], "Potion of " + potion[1]);
+            add("item.minecraft.splash_potion.effect." + potion[0], "Splash Potion of " + potion[1]);
+            add("item.minecraft.lingering_potion.effect." + potion[0], "Lingering Potion of " + potion[1]);
+            add("item.minecraft.tipped_arrow.effect." + potion[0], "Arrow of " + potion[1]);
+        }
+        add("techguns.hud.radiation", "%s RAD");
+        add("techguns.hud.radiation_rate", "+[%s RAD/s]");
+        add("techguns.tooltip.radiation", "Radiation");
+        add(techguns.registry.TGEntities.RADIATION_AREA.get(), "Radiation Area");
     }
 
     /** Techguns 2 machine screen texts. */
@@ -310,7 +339,11 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.owner", "Owned by: %s");
         add("techguns.container.security.tooltip", "Security: %s");
         add("techguns.container.security.tooltip.0", "Public");
+        add("techguns.container.security.tooltip.1", "Allies");
+        add("techguns.container.security.tooltip.2", "Team");
         add("techguns.container.security.tooltip.3", "Owner");
+        add("techguns.container.security.tooltip.description.1", "Allies of the owner's team can access");
+        add("techguns.container.security.tooltip.description.2", "Team members can access");
         add("techguns.container.security.tooltip.description.0", "Anyone can access");
         add("techguns.container.security.tooltip.description.3", "Only owner can access");
         add("techguns.container.security.tooltip.descr2", "Only the owner can change this setting");

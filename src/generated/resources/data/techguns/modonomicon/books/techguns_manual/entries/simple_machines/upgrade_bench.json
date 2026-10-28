@@ -1,0 +1,63 @@
+{
+  "background_u_index": 0,
+  "background_v_index": 0,
+  "category": "simple_machines",
+  "description": "",
+  "hide_while_locked": false,
+  "icon": {
+    "item": "techguns:upgrade_bench"
+  },
+  "name": "book.techguns.techguns_manual.simple_machines.upgrade_bench.name",
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.simple_machines.upgrade_bench.page0.text",
+      "title": "book.techguns.techguns_manual.simple_machines.upgrade_bench.name",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:text",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "show_title_separator": true,
+      "text": "book.techguns.techguns_manual.simple_machines.upgrade_bench.page1.text",
+      "title": "book.techguns.techguns_manual.simple_machines.upgrade_bench.page1.title",
+      "use_markdown_in_title": false
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "anchor": "",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "recipe_id_1": "techguns:upgrade_bench",
+      "text": "",
+      "title1": "",
+      "title2": ""
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "anchor": "upgrade",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "item": {
+        "count": 1,
+        "item": "techguns:upgrade_protection_1"
+      },
+      "text": "book.techguns.techguns_manual.simple_machines.upgrade_bench.page3.text",
+      "title": "book.techguns.techguns_manual.simple_machines.upgrade_bench.page3.title"
+    }
+  ],
+  "show_when_any_parent_unlocked": false,
+  "sort_number": 2,
+  "x": 0,
+  "y": 0
+}

@@ -51,6 +51,7 @@ public final class TGNetwork {
                 TGNetwork::handleJetpackBoostState);
         registrar.playToClient(PlayerPayloads.SyncPlayerData.TYPE, PlayerPayloads.SyncPlayerData.STREAM_CODEC, TGNetwork::handleSyncPlayerData);
         registrar.playToClient(PlayerPayloads.SyncExtraSlots.TYPE, PlayerPayloads.SyncExtraSlots.STREAM_CODEC, TGNetwork::handleSyncExtraSlots);
+        registrar.playToClient(PlayerPayloads.SyncRadiation.TYPE, PlayerPayloads.SyncRadiation.STREAM_CODEC, TGNetwork::handleSyncRadiation);
     }
 
     /** Sends the saved player settings to their client (login, respawn, dimension change). */
@@ -207,6 +208,10 @@ public final class TGNetwork {
         data.set(TGPlayerData.Toggle.STEP_ASSIST, payload.stepAssist());
         data.set(TGPlayerData.Toggle.NIGHT_VISION, payload.nightVision());
         data.set(TGPlayerData.Toggle.JETPACK, payload.jetpack());
+    }
+
+    private static void handleSyncRadiation(PlayerPayloads.SyncRadiation payload, IPayloadContext context) {
+        context.player().setData(techguns.registry.TGAttachments.RADIATION, payload.level());
     }
 
     private static void handleSyncExtraSlots(PlayerPayloads.SyncExtraSlots payload, IPayloadContext context) {
