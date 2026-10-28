@@ -1,0 +1,48 @@
+name: Release
+
+# Manual only: builds, runs the GameTests and uploads the jar to CurseForge, Modrinth and a GitHub release
+# (./gradlew publishMods). Needs the CURSEFORGE_TOKEN and MODRINTH_TOKEN secrets and the project ids in
+# gradle.properties; without them publishMods is a dry run and the release is only attached as a build artifact.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build with Gradle
+        run: ./gradlew build -Puse_mcpfabric=false
+
+      - name: Run GameTests
+        run: ./gradlew runGameTestServer -Puse_mcpfabric=false
+
+      - name: Publish
+        run: ./gradlew publishMods -Puse_mcpfabric=false
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: techguns-jar
+          path: build/libs/*.jar

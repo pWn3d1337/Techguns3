@@ -3,6 +3,8 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
+    // CurseForge, Modrinth and GitHub uploads (9g); publishMods runs as a dry run without tokens
+    id 'me.modmuss50.mod-publish-plugin' version '2.2.1'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -18,7 +20,7 @@ sourceSets.main.resources {
 
     // Exclude development-only resources from finalized outputs
     exclude("**/*.bbmodel") // Blockbench project files
-    exclude("src/generated/**/.cache") // datagen cache files
+    exclude(".cache/**") // datagen cache files (paths are relative to the resource dirs)
 }
 
 repositories {
@@ -238,6 +240,64 @@ publishing {
             url = "file://${project.projectDir}/repo"
         }
     }
+}
+
+// Release (9g): ./gradlew publishMods uploads the jar to CurseForge, Modrinth and GitHub with the CHANGELOG.md
+// section of this version. Without the tokens or the project ids (gradle.properties) it is a dry run that writes
+// the release into build/publishMods. The release workflow (.github/workflows/release.yml) runs it on demand.
+var releaseVersion = mod_version
+var releaseChangelog = providers.fileContents(layout.projectDirectory.file('CHANGELOG.md')).asText.map { text ->
+    var section = text =~ /(?ms)^## \[\Q${releaseVersion}\E\][^\n]*\n(.*?)(?=^## \[|\z)/
+    section.find() ? section.group(1).trim() : "See CHANGELOG.md"
+}
+var curseforgeToken = providers.environmentVariable('CURSEFORGE_TOKEN')
+var modrinthToken = providers.environmentVariable('MODRINTH_TOKEN')
+var githubToken = providers.environmentVariable('GITHUB_TOKEN')
+
+publishMods {
+    file = jar.archiveFile
+    changelog = releaseChangelog
+    version = mod_version
+    displayName = "${mod_name} ${mod_version} (${minecraft_version})"
+    type = mod_version.contains('alpha') ? ALPHA : mod_version.contains('beta') ? BETA : STABLE
+    modLoaders.add('neoforge')
+    dryRun = !curseforgeToken.isPresent() || !modrinthToken.isPresent() || !githubToken.isPresent()
+            || curseforge_project_id.isEmpty() || modrinth_project_id.isEmpty()
+
+    curseforge {
+        projectId = curseforge_project_id.isEmpty() ? '0' : curseforge_project_id
+        accessToken = curseforgeToken
+        minecraftVersions.add(minecraft_version)
+        javaVersions.add(JavaVersion.VERSION_21)
+        client = true
+        server = true
+        requires('geckolib')
+        optional('curios', 'jei', 'patchouli', 'modonomicon')
+    }
+    modrinth {
+        projectId = modrinth_project_id.isEmpty() ? '00000000' : modrinth_project_id
+        accessToken = modrinthToken
+        minecraftVersions.add(minecraft_version)
+        requires('geckolib')
+        optional('curios', 'jei', 'patchouli', 'modonomicon')
+    }
+    github {
+        repository = 'pWn3d1337/Techguns3'
+        accessToken = githubToken
+        commitish = providers.environmentVariable('GITHUB_SHA').orElse('master')
+        tagName = "v${mod_version}"
+    }
+}
+
+tasks.named('jar', Jar) {
+    manifest.attributes([
+            'Specification-Title'   : mod_id,
+            'Specification-Vendor'  : mod_authors,
+            'Specification-Version' : '1',
+            'Implementation-Title'  : mod_name,
+            'Implementation-Version': mod_version,
+            'Implementation-Vendor' : mod_authors,
+    ])
 }
 
 tasks.named('test', Test) {

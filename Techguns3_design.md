@@ -616,7 +616,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q7 | Energy: plain FE only? | FE only. |
 | Q8 | Structures: faithful 1.12 rebuilds vs redesign with jigsaw variety? | Faithful first via converter, jigsaw where it adds value. |
 | Q9 | Recipe viewer priority: JEI vs EMI? | JEI first. |
-| Q10 | License for Techguns 3 (1.12 has `LICENSE.txt`, Fabric has `LICENSE`). | Author's call. |
+| Q10 | License for Techguns 3 (1.12 has `LICENSE.txt`, Fabric has `LICENSE`). The Techguns Mod License from 1.12 is in place (`LICENSE.txt`, `mod_license`); 9g kept it. | Author's call. |
 
 ---
 

@@ -20,6 +20,7 @@ Everything is English: code, comments, commit messages, docs, replies.
 | GameTests (headless, exits when done) | `./gradlew runGameTestServer` |
 | Dev client | `./gradlew runClient` |
 | Dedicated server | `./gradlew runServer` |
+| Release upload (dry run without tokens/project ids, see README) | `./gradlew publishMods` |
 
 Disable the dev-only MCP bridge with `-Puse_mcpfabric=false` (CI does this).
 Add `-Pcompat_mods=true` to put the compat mods (Create, Mekanism, IE, MI, Oritech, FTB Teams) on the dev runtime, e.g. to check the compat recipes with `runGameTestServer`; `-Popac=true` adds Open Parties and Claims (dev client only, it crashes the GameTest server).
