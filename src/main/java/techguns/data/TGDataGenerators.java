@@ -66,6 +66,8 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeServer(), new TGRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new TGCuriosProvider(output));
         generator.addProvider(event.includeServer(), new TGDataMapProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new net.neoforged.neoforge.common.data.AdvancementProvider(output, lookup, fileHelper,
+                List.of(new TGAdvancementProvider())));
 
         // Client assets
         generator.addProvider(event.includeClient(), new TGBlockStateProvider(output, fileHelper));

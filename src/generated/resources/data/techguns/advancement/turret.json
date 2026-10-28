@@ -1,0 +1,33 @@
+{
+  "parent": "techguns:machines",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:turret"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.turret.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:turret"
+    },
+    "title": {
+      "translate": "advancements.techguns.turret.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,34 @@
+{
+  "parent": "techguns:fabricator",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:ore_drill_controller"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.ore_drill.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "techguns:ore_drill_controller"
+    },
+    "title": {
+      "translate": "advancements.techguns.ore_drill.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

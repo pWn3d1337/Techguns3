@@ -1,0 +1,33 @@
+{
+  "parent": "techguns:machines",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:chem_lab"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.chem_lab.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:chem_lab"
+    },
+    "title": {
+      "translate": "advancements.techguns.chem_lab.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

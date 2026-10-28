@@ -1,0 +1,31 @@
+{
+  "parent": "techguns:root",
+  "criteria": {
+    "irradiated": {
+      "conditions": {
+        "effects": {
+          "techguns:radiation": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.radiation.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:enriched_uranium"
+    },
+    "title": {
+      "translate": "advancements.techguns.radiation.title"
+    }
+  },
+  "requirements": [
+    [
+      "irradiated"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

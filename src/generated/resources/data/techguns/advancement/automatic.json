@@ -1,0 +1,45 @@
+{
+  "parent": "techguns:handgun",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:ak47",
+              "techguns:m4",
+              "techguns:m4_infiltrator",
+              "techguns:aug",
+              "techguns:scar",
+              "techguns:thompson",
+              "techguns:mac10",
+              "techguns:vector",
+              "techguns:pdw",
+              "techguns:lmg",
+              "techguns:minigun"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.automatic.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:ak47"
+    },
+    "title": {
+      "translate": "advancements.techguns.automatic.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

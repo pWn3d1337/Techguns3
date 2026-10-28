@@ -296,6 +296,10 @@ public class TGLanguageProvider extends LanguageProvider {
         addGunTooltips();
         addMachines();
         addRadiation();
+        for (String[] entry : TGAdvancementProvider.ENTRIES) {
+            add("advancements.techguns." + entry[0] + ".title", entry[1]);
+            add("advancements.techguns." + entry[0] + ".description", entry[2]);
+        }
     }
 
     /** Techguns 2 radiation effects, potions, HUD and tooltip. */

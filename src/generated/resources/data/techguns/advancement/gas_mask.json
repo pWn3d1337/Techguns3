@@ -1,0 +1,33 @@
+{
+  "parent": "techguns:armor",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:gas_mask"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.gas_mask.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:gas_mask"
+    },
+    "title": {
+      "translate": "advancements.techguns.gas_mask.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

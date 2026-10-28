@@ -1,0 +1,33 @@
+{
+  "parent": "techguns:armor",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:steam_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.steam_armor.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:steam_chestplate"
+    },
+    "title": {
+      "translate": "advancements.techguns.steam_armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

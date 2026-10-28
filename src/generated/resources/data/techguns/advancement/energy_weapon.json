@@ -1,0 +1,40 @@
+{
+  "parent": "techguns:automatic",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:lasergun",
+              "techguns:laser_pistol",
+              "techguns:blaster_rifle",
+              "techguns:blaster_shotgun",
+              "techguns:pulse_rifle",
+              "techguns:gauss_rifle"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.energy_weapon.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:lasergun"
+    },
+    "title": {
+      "translate": "advancements.techguns.energy_weapon.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

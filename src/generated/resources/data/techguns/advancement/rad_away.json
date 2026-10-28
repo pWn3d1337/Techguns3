@@ -1,0 +1,31 @@
+{
+  "parent": "techguns:radiation",
+  "criteria": {
+    "rad_away": {
+      "conditions": {
+        "item": {
+          "items": "techguns:rad_away"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.rad_away.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:rad_away"
+    },
+    "title": {
+      "translate": "advancements.techguns.rad_away.title"
+    }
+  },
+  "requirements": [
+    [
+      "rad_away"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

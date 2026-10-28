@@ -1,0 +1,36 @@
+{
+  "parent": "techguns:root",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:metal_press",
+              "techguns:ammo_press"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.machines.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:ammo_press"
+    },
+    "title": {
+      "translate": "advancements.techguns.machines.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

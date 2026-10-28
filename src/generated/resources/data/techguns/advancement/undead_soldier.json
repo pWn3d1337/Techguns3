@@ -1,0 +1,67 @@
+{
+  "parent": "techguns:root",
+  "criteria": {
+    "skeleton_soldier": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "techguns:skeleton_soldier"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "zombie_pigman_soldier": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "techguns:zombie_pigman_soldier"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "zombie_soldier": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "techguns:zombie_soldier"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.undead_soldier.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "techguns:zombie_soldier_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.techguns.undead_soldier.title"
+    }
+  },
+  "requirements": [
+    [
+      "zombie_soldier",
+      "skeleton_soldier",
+      "zombie_pigman_soldier"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

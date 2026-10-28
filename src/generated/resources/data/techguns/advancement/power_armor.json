@@ -1,0 +1,40 @@
+{
+  "parent": "techguns:steam_armor",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "techguns:t3_power_chestplate",
+              "techguns:t3_miner_chestplate",
+              "techguns:t3_exo_chestplate",
+              "techguns:t4_praetor_chestplate",
+              "techguns:t4_power_chestplate"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.techguns.power_armor.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "techguns:t3_power_chestplate"
+    },
+    "title": {
+      "translate": "advancements.techguns.power_armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
