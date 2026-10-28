@@ -284,6 +284,18 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("power_hammer_head_obsidian", "Power Hammer Head (Obsidian)"),
             Map.entry("power_hammer_head_carbon", "Power Hammer Head (Carbon)"));
 
+    /** All English texts by key, for the translations carried over from Techguns 2. */
+    public static Map<String, String> english(PackOutput output) {
+        Map<String, String> texts = new java.util.TreeMap<>();
+        new TGLanguageProvider(output) {
+            @Override
+            public void add(String key, String value) {
+                texts.put(key, value);
+            }
+        }.addTranslations();
+        return texts;
+    }
+
     @Override
     protected void addTranslations() {
         addConfig();
