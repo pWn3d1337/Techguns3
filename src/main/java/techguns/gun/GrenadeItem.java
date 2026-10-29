@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import techguns.core.damage.TGDamageCategory;
 import techguns.entity.projectile.GrenadeProjectile;
 
 /**
@@ -89,10 +90,19 @@ public class GrenadeItem extends Item {
         entity.swing(entity.getUsedItemHand());
     }
 
+    /** Techguns 2 {@code GenericGrenade.addInformation}: damage; with shift also damage type, radius and bounces. */
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.techguns.gun.damage", "%.1f-%.1f".formatted(damage, damageMin)).withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.techguns.grenade.radius", "%.1f".formatted(radiusMin)).withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.techguns.grenade.bounces", type.bounces).withStyle(ChatFormatting.GRAY));
+        boolean detailed = GunClientEffects.get().hasShiftDown();
+        if (detailed) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.gun.damage_type", GunTooltip.damageCategory(TGDamageCategory.EXPLOSION)));
+        }
+        tooltip.add(GunTooltip.line("tooltip.techguns.gun.damage", GunTooltip.oneDecimal(damage) + "-" + GunTooltip.oneDecimal(damageMin)));
+        if (detailed) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.gun.radius", GunTooltip.oneDecimal(radius), GunTooltip.oneDecimal(radiusMin)));
+            tooltip.add(GunTooltip.line("tooltip.techguns.grenade.bounces", type.bounces));
+        } else {
+            tooltip.add(Component.translatable("tooltip.techguns.shift_for_details").withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 }

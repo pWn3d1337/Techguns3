@@ -17,7 +17,7 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
   oxygen masks and other face, back and hand gear in extra slots.
 - Machines: Metal Press, Ammo Press, Blast Furnace, Grinder, Chem Lab, Charging Station, Repair, Camo, Upgrade and
   Ammo Bench, and the Fabricator, Reaction Chamber and Ore Drill multiblocks. Machines run on Forge Energy (FE).
-- Decorative blocks, lamps, ladders, nets, sandbags, crates and doors (animated, with their settings screen); explosive
+- Decorative blocks, lamps, ladders, nets, sandbags, crates and doors (animated, with their settings screen; 3x3 doors also hang under ceilings); explosive
   charges; turrets; the crowbar (a pickaxe and wrench: door settings, turning and picking up machines) and the combat knife.
 - 20 NPC types in factions: zombie and skeleton soldiers, human soldiers and bandits, super mutants, alien bugs and
   the bosses (cyber demon, ghastling, attack helicopter); natural spawning and spawner blocks.
@@ -29,6 +29,10 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
 - Datapack overrides for gun and armor stats ([docs/stat_overrides.md](docs/stat_overrides.md)), replacing the Techguns 2
   CraftTweaker tweakers.
 - Client option to keep the FOV steady with speed bonuses and while sprinting (on by default, like Techguns 2).
+- One- and two-handed guns as in Techguns 2: pistols and other one-handed guns can be dual-wielded, a two-handed gun
+  leaves the off hand unusable. Gun tooltips show all stats with shift held, and how the loaded ammo changes them.
+- The Techguns 2 HUD in the bottom right corner: ammo of the held guns with spare reloads, safe mode, power armor
+  power, jetpack fuel, night vision and step assist state, worn-out armor and radiation (client config `showHudElements`).
 
 ### New in Techguns 3 (not in Techguns 2)
 - Nether fortress: the Techguns 2 Nether dungeon, now generated underground with an entrance hut.

@@ -337,6 +337,30 @@ public class TGBlockTests {
         }
     }
 
+    /** The door item stands a door on a floor (Techguns 2) or hangs it under a ceiling; side faces place nothing. */
+    @GameTest(template = "empty_32x12x32")
+    public static void doorItemPlacesOnFloorAndCeiling(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        BlockPos floor = new BlockPos(8, 1, 8);
+        BlockPos ceiling = new BlockPos(16, 6, 8);
+        helper.setBlock(floor, Blocks.STONE);
+        helper.setBlock(ceiling, Blocks.STONE);
+        helper.assertTrue(useDoorItem(helper, player, TGBlocks.DOOR_HANGAR_UP_3X3, floor, Direction.UP).consumesAction(), "Placed on a floor");
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_UP_3X3, floor.above(2), false, false), "The door stands on the floor");
+        helper.assertTrue(useDoorItem(helper, player, TGBlocks.DOOR_HANGAR_UP_3X3, ceiling, Direction.DOWN).consumesAction(), "Placed under a ceiling");
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_UP_3X3, ceiling.below(2), false, false), "The door hangs below the ceiling");
+        helper.assertTrue(!useDoorItem(helper, player, TGBlocks.DOOR_HANGAR_UP_3X3, ceiling, Direction.EAST).consumesAction(), "Side faces place nothing");
+        helper.succeed();
+    }
+
+    private static InteractionResult useDoorItem(GameTestHelper helper, Player player, DeferredBlock<Door3x3Block> door, BlockPos relative, Direction face) {
+        ItemStack stack = new ItemStack(door.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        BlockPos abs = helper.absolutePos(relative);
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(abs).relative(face, 0.5), face, abs, false);
+        return stack.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, hit));
+    }
+
     private static boolean doorIs(GameTestHelper helper, DeferredBlock<Door3x3Block> door, BlockPos master, boolean zplane, boolean open) {
         for (int col = 0; col < 3; col++) {
             for (int row = 0; row < 3; row++) {

@@ -60,7 +60,7 @@ public class TechgunsClient {
         modEventBus.addListener(TGRenderTypes::registerShaders);
         modEventBus.addListener(GunAmmoDecorator::register);
         modEventBus.addListener(LockOnOverlay::register);
-        modEventBus.addListener(techguns.client.gui.RadiationOverlay::register);
+        modEventBus.addListener(techguns.client.gui.TGHud::register);
         modEventBus.addListener(techguns.client.gui.RadiationOverlay::registerEffectIcon);
         NeoForge.EVENT_BUS.addListener(techguns.client.gui.RadiationOverlay::onTooltip);
         modEventBus.addListener(ClientAmmoBagTooltip::register);
@@ -77,6 +77,7 @@ public class TechgunsClient {
         ClientFx.init(modEventBus, NeoForge.EVENT_BUS);
         ChargeEffects.init(NeoForge.EVENT_BUS);
         RenderingEntityTracker.init(NeoForge.EVENT_BUS);
+        techguns.client.render.item.OffhandHiding.init(NeoForge.EVENT_BUS);
         CamoTextures.init(NeoForge.EVENT_BUS);
         SlotGearFx.init(NeoForge.EVENT_BUS);
         MiningPlaneOutline.init(NeoForge.EVENT_BUS);

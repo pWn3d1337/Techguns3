@@ -505,15 +505,38 @@ public class TGLanguageProvider extends LanguageProvider {
     }
 
     private void addGunTooltips() {
-        add("tooltip.techguns.gun.ammo", "Ammo: %s/%s");
-        add("tooltip.techguns.gun.ammo_item", "Loads: %s");
+        add("tooltip.techguns.gun.loaded", "Loaded: %s/%s");
+        add("tooltip.techguns.gun.ammo", "Ammo: %s");
+        add("tooltip.techguns.gun.hand_type", "Hand type: %s");
+        add("techguns.gun_hand_type.one_handed", "One-Handed");
+        add("techguns.gun_hand_type.two_handed", "Two-Handed");
+        add("techguns.gun_hand_type.one_point_five_handed", "Dual Wield Penalty");
         add("tooltip.techguns.gun.damage", "Damage: %s");
+        add("tooltip.techguns.gun.damage_pellets", "Damage (x%2$s): %1$s");
         add("tooltip.techguns.gun.damage_type", "Damage type: %s");
         add("tooltip.techguns.gun.range", "Range: %s");
+        add("tooltip.techguns.gun.range_drop", "Range: %s-%s (%s ticks)");
+        add("tooltip.techguns.gun.radius", "Radius: %s-%s");
+        add("tooltip.techguns.gun.velocity", "Velocity: %s");
+        add("tooltip.techguns.gun.spread", "Spread: %s");
+        add("tooltip.techguns.gun.spread_zoomed", "Spread: %s (zoomed: %s)");
+        add("tooltip.techguns.gun.clip_size", "Clip size: %s");
         add("tooltip.techguns.gun.reload_time", "Reload time: %ss");
         add("tooltip.techguns.gun.penetration", "Armor penetration: %s");
+        add("tooltip.techguns.gun.zoom", "Zoom: %s (%s)");
+        add("tooltip.techguns.gun.zoom.toggle", "toggle");
+        add("tooltip.techguns.gun.zoom.hold", "hold");
+        add("tooltip.techguns.tool.classes", "Tool classes: %s");
+        add("tooltip.techguns.tool.class_level", " %s: %s");
+        add("tooltip.techguns.tool.mining_head", "Mining head: %s");
+        add("tooltip.techguns.tool.break_speed", "Break speed: %s");
+        add("tooltip.techguns.tool.mining_radius", "Mining area: %sx%s");
+        add("techguns.tool_class.pickaxe", "Pickaxe");
+        add("techguns.tool_class.axe", "Axe");
+        add("techguns.tool_class.shovel", "Shovel");
+        add("techguns.tool_class.hoe", "Hoe");
+        add("techguns.tool_class.sword", "Sword");
         add("tooltip.techguns.shift_for_details", "Hold Shift for details");
-        add("tooltip.techguns.grenade.radius", "Radius: %s");
         add("tooltip.techguns.grenade.bounces", "Bounces: %s");
         add("tooltip.techguns.armor.durability", "Durability: %s/%s");
         add("tooltip.techguns.armor.toughness", "Toughness: %s");

@@ -1,19 +1,15 @@
 package techguns.client.gui;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import techguns.TGIds;
 import techguns.core.radiation.RadiationRules;
 import techguns.radiation.ItemRadiation;
 import techguns.radiation.PlayerRadiation;
@@ -21,19 +17,12 @@ import techguns.radiation.RadiationEffects;
 import techguns.registry.TGMobEffects;
 
 /**
- * Techguns 2 radiation HUD ({@code TGGuiEvents}): the player's radiation in the bottom right corner, coloured by
- * poisoning stage, and the dose per second while the radiation effect is on them; the radiation level in the tooltip
- * of radioactive items.
+ * Techguns 2 radiation HUD ({@code TGGuiEvents}): the player's radiation, coloured by poisoning stage, and the dose
+ * per second while the radiation effect is on them, at the top of the {@link TGHud} stack; the radiation level in the
+ * tooltip of radioactive items.
  */
 public final class RadiationOverlay {
-    private static final int MARGIN = 2;
-
     private RadiationOverlay() {
-    }
-
-    // MIGRATION(26.x): GUI layers change with the new GUI render pipeline.
-    public static void register(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.HOTBAR, TGIds.id("radiation"), RadiationOverlay::render);
     }
 
     /**
@@ -51,14 +40,14 @@ public final class RadiationOverlay {
         }, TGMobEffects.RADIATION.get());
     }
 
-    private static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.options.hideGui) {
-            return;
-        }
+    /**
+     * Draws the radiation and the dose per second right-aligned at {@code right}, the level at {@code y} and the dose
+     * one line above (part of {@link TGHud}); returns the next free line above.
+     */
+    static int render(GuiGraphics graphics, Minecraft mc, int right, int y) {
         int level = PlayerRadiation.get(mc.player);
         if (level <= 0) {
-            return;
+            return y;
         }
         ChatFormatting color = switch (RadiationRules.stage(level)) {
             case LETHAL -> ChatFormatting.RED;
@@ -66,15 +55,17 @@ public final class RadiationOverlay {
             case MINOR -> ChatFormatting.YELLOW;
             case NONE -> ChatFormatting.WHITE;
         };
-        int y = graphics.guiHeight() - MARGIN - mc.font.lineHeight;
         Component total = Component.translatable("techguns.hud.radiation", level).withStyle(color);
-        graphics.drawString(mc.font, total, graphics.guiWidth() - MARGIN - mc.font.width(total), y, 0xFFFFFFFF);
+        graphics.drawString(mc.font, total, right - mc.font.width(total), y, 0xFFFFFFFF);
+        y -= TGHud.LINE;
         MobEffectInstance effect = mc.player.getEffect(TGMobEffects.RADIATION);
         if (effect != null) {
             int dose = RadiationRules.dose(effect.getAmplifier(), RadiationEffects.resistance(mc.player));
             Component rate = Component.translatable("techguns.hud.radiation_rate", dose);
-            graphics.drawString(mc.font, rate, graphics.guiWidth() - MARGIN - mc.font.width(rate), y - 10, 0xFFFFFFFF);
+            graphics.drawString(mc.font, rate, right - mc.font.width(rate), y, 0xFFFFFFFF);
+            y -= TGHud.LINE;
         }
+        return y;
     }
 
     /** Techguns 2: "Radiation" with the level as numeral from II on. */

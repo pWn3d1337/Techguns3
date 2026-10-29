@@ -31,7 +31,7 @@ Every field of a gun's stats can be overridden; nested objects merge field by fi
 | `projectile` | `speed` (blocks per tick), `range` (blocks), `spread`, `gravity`, `forward_offset`, `pellets` (extra projectiles per shot), `pellet_spread`, `burst` (extra projectiles in a line instead of a cone) |
 | `zoom` | `fov_multiplier`, `toggle`, `spread_multiplier`, `fire_centered`; guns without a scope get one by adding `zoom` |
 | `ai` | NPC use: `attack_range`, `attack_time`, `burst_count`, `burst_attack_time` |
-| top level | `hand_type` (`one_handed`, `two_handed`, `one_point_five_handed`), `hold_type` (`crossbow`, `bow`, `lowered`) |
+| top level | `hand_type` (`one_handed`, `two_handed`, `one_point_five_handed`; a two-handed gun blocks the off hand), `hold_type` (`crossbow`, `bow`, `lowered`), `range_tooltip` (`drop`, `no_drop`, `radius`: how the tooltip shows `drop_start`/`drop_end`) |
 
 NPCs use the same guns, so an override changes them too. A changed `clip_size` applies to the next reload.
 

@@ -16,8 +16,9 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
 /**
- * Places a 3x3 door (Techguns 2 {@code ItemTGDoor3x3}): right-click the top face of a block; the door stands on the
- * clicked block, three wide and three high, in the plane facing the player.
+ * Places a 3x3 door (Techguns 2 {@code ItemTGDoor3x3}): right-click the top face of a block and the door stands on the
+ * clicked block, or (new in Techguns 3, for doors in ceilings such as hangar doors) the bottom face and it hangs below
+ * it; three wide and three high, in the plane facing the player.
  */
 public class Door3x3Item extends BlockItem {
     public Door3x3Item(Door3x3Block block, Properties properties) {
@@ -26,22 +27,24 @@ public class Door3x3Item extends BlockItem {
 
     @Override
     public InteractionResult place(BlockPlaceContext context) {
-        if (context.getClickedFace() != Direction.UP) {
+        Direction face = context.getClickedFace();
+        if (face != Direction.UP && face != Direction.DOWN) {
             return InteractionResult.FAIL;
         }
         Level level = context.getLevel();
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
         Door3x3Block door = (Door3x3Block) getBlock();
+        // the bottom row on a floor, the top row under a ceiling
         BlockPos base = context.getClickedPos();
         // the door plane is the Z axis when the player looks east or west
         boolean zplane = context.getHorizontalDirection().getAxis() == Direction.Axis.X;
-        BlockPos master = base.above();
+        BlockPos master = face == Direction.UP ? base.above() : base.below();
 
         if (!Door3x3Block.isFree(level, master, zplane)) {
             return InteractionResult.FAIL;
         }
-        if (player != null && !player.mayUseItemAt(base, Direction.UP, stack)) {
+        if (player != null && !player.mayUseItemAt(base, face, stack)) {
             return InteractionResult.FAIL;
         }
         for (int col = 0; col < 3; col++) {

@@ -289,6 +289,10 @@ public final class TGDebugCommands {
                             ctx.getSource().sendSystemMessage(Component.literal(text));
                             return 1;
                         }))
+                .then(Commands.literal("tooltip")
+                        // the held item's tooltip in chat (MCP cannot hover), "detailed" as with shift held
+                        .executes(ctx -> printTooltip(ctx.getSource(), false))
+                        .then(Commands.literal("detailed").executes(ctx -> printTooltip(ctx.getSource(), true))))
                 .then(Commands.literal("teams")
                         .executes(ctx -> {
                             // runs every team source on the integrated server: you vs yourself and vs a stranger
@@ -338,5 +342,20 @@ public final class TGDebugCommands {
                                     + " " + RenderLateEntityRenderer.debugStats()));
                             return 1;
                         })));
+    }
+
+    private static int printTooltip(net.minecraft.commands.CommandSourceStack source, boolean detailed) {
+        Minecraft mc = Minecraft.getInstance();
+        net.minecraft.world.item.ItemStack held = mc.player.getMainHandItem();
+        ClientGunController.get().forceShift(detailed);
+        try {
+            for (Component line : held.getTooltipLines(net.minecraft.world.item.Item.TooltipContext.of(mc.level), mc.player,
+                    net.minecraft.world.item.TooltipFlag.Default.NORMAL)) {
+                source.sendSystemMessage(line);
+            }
+        } finally {
+            ClientGunController.get().forceShift(false);
+        }
+        return 1;
     }
 }

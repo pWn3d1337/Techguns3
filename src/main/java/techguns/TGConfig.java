@@ -177,6 +177,10 @@ public final class TGConfig {
     public static final ModConfigSpec.DoubleValue FIXED_SPRINT_FOV = CLIENT
             .comment("Multiplies the FOV while sprinting by this value, independent of the actual speed. Only used with lockSpeedDependentFov.")
             .defineInRange("fixedSprintFovMultiplier", 1.15, 1.0, 10.0);
+    public static final ModConfigSpec.BooleanValue SHOW_HUD_ELEMENTS = CLIENT
+            .comment("Shows the Techguns HUD elements in the bottom right corner: safe mode, power armor power, jetpack fuel, "
+                    + "night vision, step assist and worn-out armor. The ammo of held guns and the radiation are always shown.")
+            .define("showHudElements", true);
 
     static final ModConfigSpec CLIENT_SPEC = CLIENT.build();
 

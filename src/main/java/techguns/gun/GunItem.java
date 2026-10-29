@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -119,7 +120,7 @@ public class GunItem extends Item {
     /** @param target locked-on target sent by the client (lock-on guns), or null */
     public void shoot(ItemStack stack, Level level, Player player, InteractionHand hand, boolean zooming, @Nullable Entity target) {
         ShooterState state = ShooterState.of(player);
-        if (state.fireDelay(hand) > 0) {
+        if (state.fireDelay(hand) > 0 || !GunHands.canUse(player, hand)) {
             return;
         }
         if (GunData.loaded(stack) <= 0) {
@@ -340,7 +341,7 @@ public class GunItem extends Item {
      */
     public void startReload(ItemStack stack, Level level, Player player, InteractionHand hand, boolean forced) {
         ShooterState state = ShooterState.of(player);
-        if (state.fireDelay(hand) > 0 || (forced && isFullyLoaded(stack))) {
+        if (state.fireDelay(hand) > 0 || (forced && isFullyLoaded(stack)) || !GunHands.canUse(player, hand)) {
             return;
         }
         GunAmmo current = GunData.ammo(stack);
@@ -480,28 +481,91 @@ public class GunItem extends Item {
         return projectiles.factory(GunData.variant(stack)).damageCategory();
     }
 
+    /**
+     * Techguns 2 {@code GenericGun.addInformation}: loaded ammo, ammo items and damage; with shift also the hand type,
+     * damage type, range (or explosion radius), velocity, spread, clip size, reload time, armor penetration and zoom.
+     * Values the loaded ammo variant changes are coloured.
+     */
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        GunAmmo ammo = GunData.ammo(stack);
-        tooltip.add(Component.translatable("tooltip.techguns.gun.ammo", ammo.loaded(), stats().firing().clipSize()).withStyle(ChatFormatting.GRAY));
-        for (ItemStack ammoItem : ammoType().ammoStacks(ammo.variant())) {
-            tooltip.add(Component.translatable("tooltip.techguns.gun.ammo_item", ammoItem.getHoverName()).withStyle(ChatFormatting.GRAY));
+        appendGunTooltip(stack, tooltip, GunClientEffects.get().hasShiftDown());
+    }
+
+    /** The gun tooltip lines; {@code detailed} with shift held. */
+    public void appendGunTooltip(ItemStack stack, List<Component> tooltip, boolean detailed) {
+        GunStats stats = stats();
+        DamageModifier mod = factory(stack).modifier();
+        tooltip.add(GunTooltip.line("tooltip.techguns.gun.loaded", GunData.loaded(stack), stats.firing().clipSize()));
+        if (detailed) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.gun.hand_type", GunTooltip.handType(stats.handType())));
         }
-        GunStats.Damage damage = stats().damage();
-        String dmg = damage.damageMin() < damage.damage() ? "%.1f-%.1f".formatted(damage.damage(), damage.damageMin()) : "%.1f".formatted(damage.damage());
-        String pellets = stats().projectile().pellets() > 0 ? " (x" + (stats().projectile().pellets() + 1) + ")" : "";
-        tooltip.add(Component.translatable("tooltip.techguns.gun.damage", dmg + pellets).withStyle(ChatFormatting.GRAY));
-        if (GunClientEffects.get().hasShiftDown()) {
-            tooltip.add(Component.translatable("tooltip.techguns.gun.damage_type",
-                    Component.translatable("techguns.damage_category." + damageCategory(stack).id())).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("tooltip.techguns.gun.range", "%.0f".formatted(stats().projectile().range())).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("tooltip.techguns.gun.reload_time", "%.2f".formatted(stats().firing().reloadTicks() * 0.05f)).withStyle(ChatFormatting.GRAY));
-            if (damage.penetration() > 0.0f) {
-                tooltip.add(Component.translatable("tooltip.techguns.gun.penetration", "%.1f".formatted(damage.penetration())).withStyle(ChatFormatting.GRAY));
-            }
-        } else {
+        int perReload = stats.firing().ammoPerReload();
+        for (ItemStack ammoItem : ammoType().ammoStacks(GunData.variant(stack))) {
+            Component name = ammoItem.getHoverName().copy().withStyle(ChatFormatting.WHITE);
+            tooltip.add(GunTooltip.line("tooltip.techguns.gun.ammo", perReload > 1 ? Component.literal(perReload + "x ").append(name) : name));
+        }
+        appendToolTooltip(stack, tooltip, detailed);
+        if (detailed) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.gun.damage_type", GunTooltip.damageCategory(damageCategory(stack))));
+        }
+        tooltip.add(damageLine(stats, mod, detailed));
+        if (!detailed) {
             tooltip.add(Component.translatable("tooltip.techguns.shift_for_details").withStyle(ChatFormatting.DARK_GRAY));
+            return;
         }
+        tooltip.add(rangeLine(stats, mod));
+        float speed = stats.projectile().speed();
+        float velocity = mod.velocity(speed);
+        tooltip.add(GunTooltip.line("tooltip.techguns.gun.velocity", GunTooltip.modified(GunTooltip.oneDecimal(velocity), speed, velocity))
+                .append(GunTooltip.change(speed, velocity, mod.velocityMul(), mod.velocityAdd())));
+        float spread = stats.projectile().spread();
+        float zoomSpread = stats.zoom().map(zoom -> zoom.spreadMultiplier() * spread).orElse(spread);
+        tooltip.add(zoomSpread != spread
+                ? GunTooltip.line("tooltip.techguns.gun.spread_zoomed", GunTooltip.number(spread), GunTooltip.number(zoomSpread))
+                : GunTooltip.line("tooltip.techguns.gun.spread", GunTooltip.number(spread)));
+        tooltip.add(GunTooltip.line("tooltip.techguns.gun.clip_size", stats.firing().clipSize()));
+        tooltip.add(GunTooltip.line("tooltip.techguns.gun.reload_time", GunTooltip.number(stats.firing().reloadTicks() * 0.05)));
+        if (stats.damage().penetration() > 0.0f) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.gun.penetration", GunTooltip.oneDecimal(stats.damage().penetration())));
+        }
+        stats.zoom().ifPresent(zoom -> tooltip.add(GunTooltip.line("tooltip.techguns.gun.zoom", GunTooltip.number(zoom.fovMultiplier()),
+                Component.translatable(zoom.toggle() ? "tooltip.techguns.gun.zoom.toggle" : "tooltip.techguns.gun.zoom.hold"))));
+    }
+
+    /** Tooltip lines of the tool side (powered melee tools: mining head, tool classes); {@code detailed} with shift. */
+    protected void appendToolTooltip(ItemStack stack, List<Component> tooltip, boolean detailed) {
+    }
+
+    /** Damage at short range, the damage beyond the drop and the pellet count (Techguns 2 {@code getTooltipTextDmg}). */
+    private static Component damageLine(GunStats stats, DamageModifier mod, boolean detailed) {
+        GunStats.Damage damage = stats.damage();
+        float max = mod.damage(damage.damage());
+        float min = mod.damage(damage.damageMin());
+        String text = GunTooltip.oneDecimal(max) + (min < max ? "-" + GunTooltip.oneDecimal(min) : "");
+        MutableComponent value = GunTooltip.modified(text, damage.damage(), max);
+        if (detailed) {
+            value.append(GunTooltip.change(damage.damage(), max, mod.damageMul(), mod.damageAdd()));
+        }
+        int pellets = stats.projectile().pellets();
+        return pellets > 0 ? GunTooltip.line("tooltip.techguns.gun.damage_pellets", value, pellets + 1) : GunTooltip.line("tooltip.techguns.gun.damage", value);
+    }
+
+    /** Techguns 2 {@code getTooltipTextRange}: damage drop start, end and lifetime, the range alone, or the explosion radius. */
+    private static Component rangeLine(GunStats stats, DamageModifier mod) {
+        GunStats.Damage damage = stats.damage();
+        float start = mod.range(damage.dropStart());
+        float end = mod.range(damage.dropEnd());
+        Component from = GunTooltip.modified(GunTooltip.oneDecimal(start), damage.dropStart(), start);
+        Component to = GunTooltip.modified(GunTooltip.oneDecimal(end), damage.dropEnd(), end);
+        Component change = GunTooltip.change(damage.dropStart(), start, mod.rangeMul(), mod.rangeAdd());
+        return switch (stats.rangeTooltip()) {
+            case DROP -> {
+                int lifetime = Math.round(stats.projectile().lifetimeTicks() * mod.rangeMul() + mod.rangeAdd());
+                yield GunTooltip.line("tooltip.techguns.gun.range_drop", from, to, lifetime).append(change);
+            }
+            case NO_DROP -> GunTooltip.line("tooltip.techguns.gun.range", from).append(change);
+            case RADIUS -> GunTooltip.line("tooltip.techguns.gun.radius", from, to).append(change);
+        };
     }
 
     @Override

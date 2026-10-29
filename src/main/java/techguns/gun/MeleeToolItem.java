@@ -10,6 +10,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -271,12 +271,38 @@ public class MeleeToolItem extends ChargeGunItem implements techguns.item.TGMele
         };
     }
 
+    /**
+     * Techguns 2 {@code GenericGunMeleeCharge.addMiningTooltip}: the tool classes; with shift the mining head, the mining
+     * level per tool class, the break speed and the mining area.
+     */
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
-        if (heads.size() > 1) {
-            MiningHead head = head(stack);
-            tooltip.add(head.item().get().getDescription().copy().withStyle(head.color()));
+    protected void appendToolTooltip(ItemStack stack, List<Component> tooltip, boolean detailed) {
+        if (!detailed) {
+            MutableComponent classes = Component.empty();
+            for (int i = 0; i < toolLevels.size(); i++) {
+                classes.append(i > 0 ? Component.literal(", ") : Component.empty()).append(toolClassName(toolLevels.get(i).getFirst()));
+            }
+            tooltip.add(GunTooltip.line("tooltip.techguns.tool.classes", classes));
+            return;
         }
+        MiningHead head = head(stack);
+        if (!heads.isEmpty()) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.tool.mining_head", head.item().get().getDescription().copy().withStyle(head.color())));
+        }
+        tooltip.add(GunTooltip.line("tooltip.techguns.tool.classes", Component.empty()));
+        for (Pair<TagKey<Block>, Integer> entry : toolLevels) {
+            tooltip.add(GunTooltip.line("tooltip.techguns.tool.class_level", toolClassName(entry.getFirst()), entry.getSecond() + head.levelBonus()));
+        }
+        tooltip.add(GunTooltip.line("tooltip.techguns.tool.break_speed", GunTooltip.number(miningSpeed + head.speedBonus())));
+        if (miningRadius > 0) {
+            int size = miningRadius * 2 + 1;
+            tooltip.add(GunTooltip.line("tooltip.techguns.tool.mining_radius", size, size));
+        }
+    }
+
+    /** Techguns 2 tool class names for the mineable tags (sword for the sword-efficient blocks). */
+    private static Component toolClassName(TagKey<Block> tag) {
+        String path = tag.location().getPath();
+        return Component.translatable("techguns.tool_class." + path.substring(path.lastIndexOf('/') + 1).replace("_efficient", ""));
     }
 }

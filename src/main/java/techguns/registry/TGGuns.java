@@ -29,6 +29,7 @@ import techguns.gun.GrapplingHookItem;
 import techguns.gun.GrenadeItem;
 import techguns.gun.GunStats;
 import techguns.gun.HoldType;
+import techguns.gun.RangeTooltipType;
 import techguns.gun.LockOnGunItem;
 import techguns.gun.MeleeToolItem;
 import techguns.gun.ProjectileSelector;
@@ -201,13 +202,13 @@ public final class TGGuns {
 
     public static final DeferredItem<GunItem> LASERGUN = gun("lasergun",
             GunStats.builder(false, 5, 45, 45, 12.0f, MAX_RANGE_SNIPER, 0.0f)
-                    .speed(100.0f).zoom(0.75f, true, 0.75f, false).ai(RANGE_MEDIUM, 30, 0, 0).build(),
+                    .speed(100.0f).zoom(0.75f, true, 0.75f, false).rangeTooltip(RangeTooltipType.NO_DROP).ai(RANGE_MEDIUM, 30, 0, 0).build(),
             GunSounds.of(TGSounds.LASERGUN_FIRE, TGSounds.LASERGUN_RELOAD), LASERGUN_PROJECTILES);
 
     public static final DeferredItem<GunItem> ROCKET_LAUNCHER = gun("rocket_launcher",
             GunStats.builder(true, 10, 1, 40, 50.0f, 200, 0.05f)
                     .gravity(0.01).speed(1.0f).recoilTicks(10).damageDrop(2.0f, 4.0f, 10f).forwardOffset(0.35f)
-                    .holdType(HoldType.BOW).ai(RANGE_MEDIUM, 80, 0, 0).build(),
+                    .holdType(HoldType.BOW).rangeTooltip(RangeTooltipType.RADIUS).ai(RANGE_MEDIUM, 80, 0, 0).build(),
             GunSounds.of(TGSounds.ROCKET_FIRE, TGSounds.ROCKET_RELOAD), ROCKET_PROJECTILES);
 
     // --- Batch 3b: shotguns, sniper, advanced and blaster guns (Fabric TGuns stats) ---
@@ -262,7 +263,7 @@ public final class TGGuns {
     // --- Batch 3c: energy guns (Fabric TGuns stats) ---
     public static final DeferredItem<GunItem> LASER_PISTOL = gun("laser_pistol",
             GunStats.builder(false, 6, 20, 40, 9.0f, MAX_RANGE_SNIPER, 0.025f)
-                    .speed(100.0f).handType(GunHandType.ONE_HANDED).ai(RANGE_MEDIUM, 30, 0, 0).build(),
+                    .speed(100.0f).handType(GunHandType.ONE_HANDED).rangeTooltip(RangeTooltipType.NO_DROP).ai(RANGE_MEDIUM, 30, 0, 0).build(),
             GunSounds.of(TGSounds.LASER_PISTOL_FIRE, TGSounds.LASER_PISTOL_RELOAD), LASER_PISTOL_PROJECTILES);
 
     public static final DeferredItem<GunItem> NUCLEAR_DEATHRAY = gun("nuclear_deathray",
@@ -303,19 +304,19 @@ public final class TGGuns {
     // --- Batch 3d: explosives ---
     public static final DeferredItem<GunItem> GRENADE_LAUNCHER = gun("grenade_launcher",
             GunStats.builder(true, 5, 6, 100, 30.0f, 160, 0.015f)
-                    .speed(1.0f).ammoPerReload(6).damageDrop(1.5f, 3.0f, 12.0f).gravity(0.02).ai(RANGE_MEDIUM, 40, 3, 20).build(),
+                    .speed(1.0f).ammoPerReload(6).damageDrop(1.5f, 3.0f, 12.0f).gravity(0.02).rangeTooltip(RangeTooltipType.RADIUS).ai(RANGE_MEDIUM, 40, 3, 20).build(),
             GunSounds.of(TGSounds.GRENADE_LAUNCHER_FIRE, TGSounds.GRENADE_LAUNCHER_RELOAD), GRENADE_40MM_PROJECTILES);
 
     public static final DeferredItem<GunItem> GUIDED_MISSILE_LAUNCHER = gun("guided_missile_launcher",
             properties -> new LockOnGunItem(properties,
                     GunStats.builder(true, 10, 1, 40, 50.0f, 100, 0.05f)
-                            .speed(1.0f).recoilTicks(10).damageDrop(2.0f, 4.0f, 20.0f).holdType(HoldType.BOW).ai(RANGE_MEDIUM, 80, 0, 0).build(),
+                            .speed(1.0f).recoilTicks(10).damageDrop(2.0f, 4.0f, 20.0f).holdType(HoldType.BOW).rangeTooltip(RangeTooltipType.RADIUS).ai(RANGE_MEDIUM, 80, 0, 0).build(),
                     GunSounds.of(TGSounds.GUIDEDMISSILE_FIRE, TGSounds.ROCKET_RELOAD), GUIDED_MISSILE_PROJECTILES, 20, 80));
 
     public static final DeferredItem<GunItem> GRIM_REAPER = gun("grim_reaper",
             properties -> new LockOnGunItem(properties,
                     GunStats.builder(false, 6, 4, 40, 50.0f, 200, 0.05f)
-                            .speed(1.0f).recoilTicks(10).ammoPerReload(4).damageDrop(3.0f, 5.0f, 10.0f).holdType(HoldType.BOW).ai(RANGE_MEDIUM, 120, 4, 30).build(),
+                            .speed(1.0f).recoilTicks(10).ammoPerReload(4).damageDrop(3.0f, 5.0f, 10.0f).holdType(HoldType.BOW).rangeTooltip(RangeTooltipType.RADIUS).ai(RANGE_MEDIUM, 120, 4, 30).build(),
                     GunSounds.of(TGSounds.GUIDEDMISSILE_FIRE, TGSounds.ROCKET_RELOAD), GUIDED_MISSILE_PROJECTILES, 20, 80));
 
     // --- Batch 3e: charge and fuel weapons ---
@@ -339,7 +340,7 @@ public final class TGGuns {
             properties -> new ChargeGunItem(properties,
                     GunStats.builder(false, 5, 20, 45, 50.0f, 100, 0.015f)
                             .speed(2.0f).penetration(PENETRATION_MED_HIGH).damageDrop(8, 15, 15.0f).muzzleFlashTicks(10).recoilTicks(10)
-                            .forwardOffset(0.40f).ai(RANGE_SHORT, 30, 0, 0).build(),
+                            .forwardOffset(0.40f).rangeTooltip(RangeTooltipType.RADIUS).ai(RANGE_SHORT, 30, 0, 0).build(),
                     GunSounds.of(TGSounds.TFG_FIRE, TGSounds.BIOGUN_RELOAD), TFG_PROJECTILES, 60.0f, 10)
                     .withChargeSound(TGSounds.TFG_CHARGE).withChargeFx("TFGChargeStart", -0.14f, -0.10f, 0.42f));
 

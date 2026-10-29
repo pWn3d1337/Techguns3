@@ -10,7 +10,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * (design doc Q4). Behaviour that is not a number (projectiles, sounds, special logic) lives on the gun item.
  */
 public record GunStats(Firing firing, Damage damage, Projectile projectile, Optional<Zoom> zoom, GunHandType handType, HoldType holdType,
-                       Ai ai) {
+                       Ai ai, RangeTooltipType rangeTooltip) {
 
     public static final Codec<GunStats> CODEC = RecordCodecBuilder.create(i -> i.group(
             Firing.CODEC.fieldOf("firing").forGetter(GunStats::firing),
@@ -19,7 +19,8 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
             Zoom.CODEC.optionalFieldOf("zoom").forGetter(GunStats::zoom),
             GunHandType.CODEC.optionalFieldOf("hand_type", GunHandType.TWO_HANDED).forGetter(GunStats::handType),
             HoldType.CODEC.optionalFieldOf("hold_type", HoldType.CROSSBOW).forGetter(GunStats::holdType),
-            Ai.CODEC.optionalFieldOf("ai", Ai.DEFAULT).forGetter(GunStats::ai)
+            Ai.CODEC.optionalFieldOf("ai", Ai.DEFAULT).forGetter(GunStats::ai),
+            RangeTooltipType.CODEC.optionalFieldOf("range_tooltip", RangeTooltipType.DROP).forGetter(GunStats::rangeTooltip)
     ).apply(i, GunStats::new));
 
     /**
@@ -170,6 +171,7 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
         private GunHandType handType = GunHandType.TWO_HANDED;
         private HoldType holdType = HoldType.CROSSBOW;
         private Ai ai = Ai.DEFAULT;
+        private RangeTooltipType rangeTooltip = RangeTooltipType.DROP;
 
         private Builder(boolean semiAuto, int fireDelay, int clipSize, int reloadTicks, float damage, float range, float spread) {
             this.semiAuto = semiAuto;
@@ -269,12 +271,17 @@ public record GunStats(Firing firing, Damage damage, Projectile projectile, Opti
             return this;
         }
 
+        public Builder rangeTooltip(RangeTooltipType type) {
+            this.rangeTooltip = type;
+            return this;
+        }
+
         public GunStats build() {
             return new GunStats(
                     new Firing(semiAuto, fireDelay, clipSize, reloadTicks, ammoPerReload, recoilTicks, muzzleFlashTicks, silenced, continuousAnimation),
                     new Damage(damage, damageMin, dropStart, dropEnd, penetration, radius),
                     new Projectile(speed, range, spread, gravity, forwardOffset, pellets, pelletSpread, burst),
-                    Optional.ofNullable(zoom), handType, holdType, ai);
+                    Optional.ofNullable(zoom), handType, holdType, ai, rangeTooltip);
         }
     }
 }

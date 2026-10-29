@@ -13,6 +13,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import techguns.gun.ChargeGunItem;
 import techguns.gun.GrenadeItem;
+import techguns.gun.GunHands;
 import techguns.gun.GunItem;
 import techguns.gun.HoldType;
 
@@ -60,7 +61,7 @@ public final class TGClientItemExtensions implements IClientItemExtensions {
                 return TGArmPoses.elytraAim();
             }
             boolean akimbo = entity.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND)
-                    .getItem() instanceof GunItem;
+                    .getItem() instanceof GunItem && GunHands.canUseOffhand(entity);
             HoldType hold = gun.stats().holdType();
             if (hold == HoldType.BOW || (hold == HoldType.CROSSBOW && akimbo)) {
                 return HumanoidModel.ArmPose.BOW_AND_ARROW;

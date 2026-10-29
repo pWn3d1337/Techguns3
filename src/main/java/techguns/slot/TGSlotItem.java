@@ -59,6 +59,12 @@ public class TGSlotItem extends Item {
         return slot;
     }
 
+    /** Item that recharges this gear, or null. */
+    @Nullable
+    public ItemLike refillItem() {
+        return refill == null ? null : refill.get();
+    }
+
     /** Bonuses this stack gives while worn now (empty when worn out). */
     public Map<Holder<Attribute>, Double> activeBonuses(Player player, ItemStack stack) {
         return isCharged(stack) ? bonuses : Map.of();

@@ -24,6 +24,7 @@ import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import techguns.client.TGKeyMappings;
 import techguns.gun.GunClientEffects;
+import techguns.gun.GunHands;
 import techguns.gun.GunItem;
 import techguns.gun.LockOnGunItem;
 import techguns.gun.GunStats;
@@ -35,6 +36,7 @@ import techguns.network.TGNetwork;
  */
 public final class ClientGunController implements GunClientEffects {
     private static final ClientGunController INSTANCE = new ClientGunController();
+    private boolean forcedShift;
 
     /** FOV multiplier while zoomed; 1 = not zoomed. */
     private float zoom = 1.0f;
@@ -136,7 +138,12 @@ public final class ClientGunController implements GunClientEffects {
 
     @Override
     public boolean hasShiftDown() {
-        return Screen.hasShiftDown();
+        return Screen.hasShiftDown() || forcedShift;
+    }
+
+    /** Dev testing: tooltips as with shift held ({@code /tgdebug tooltip detailed}). */
+    public void forceShift(boolean shift) {
+        forcedShift = shift;
     }
 
     public boolean isZooming() {
@@ -259,7 +266,7 @@ public final class ClientGunController implements GunClientEffects {
         while (TGKeyMappings.FORCE_RELOAD.consumeClick()) {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack stack = player.getItemInHand(hand);
-                if (stack.getItem() instanceof GunItem gun) {
+                if (stack.getItem() instanceof GunItem gun && GunHands.canUse(player, hand)) {
                     TGNetwork.sendForceReload(hand);
                     gun.startReload(stack, player.level(), player, hand, true);
                 }
@@ -298,10 +305,14 @@ public final class ClientGunController implements GunClientEffects {
         }
     }
 
-    /** The off-hand gun fires with the use key, unless the main hand gun uses that key for zooming. */
+    /**
+     * The off-hand gun fires with the use key, unless the main hand gun uses that key for zooming or one of the guns is
+     * two-handed.
+     */
     private static boolean offHandGunUsesUseKey(LocalPlayer player) {
         boolean mainUsesRightClick = player.getMainHandItem().getItem() instanceof GunItem mainGun && mainGun.stats().zoom().isPresent();
-        return player.getOffhandItem().getItem() instanceof GunItem gun && gun.shootsWithLeftClick() && !mainUsesRightClick;
+        return player.getOffhandItem().getItem() instanceof GunItem gun && gun.shootsWithLeftClick() && !mainUsesRightClick
+                && GunHands.canUseOffhand(player);
     }
 
     private void onComputeFov(ComputeFovModifierEvent event) {
