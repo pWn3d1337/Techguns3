@@ -24,7 +24,7 @@ Everything is English: code, comments, commit messages, docs, replies.
 
 Disable the dev-only MCP bridge with `-Puse_mcpfabric=false` (CI does this).
 The mod declares `neo_min_version` (gradle.properties) as its oldest NeoForge; check it with `-Pneo_version=<neo_min_version>` (CI does this in its own job; MCP Fabric needs a newer NeoForge, so combine with `-Puse_mcpfabric=false`).
-Add `-Pcompat_mods=true` to put the compat mods (Create, Mekanism, IE, MI, Oritech, FTB Teams) on the dev runtime, e.g. to check the compat recipes with `runGameTestServer`; `-Popac=true` adds Open Parties and Claims (dev client only, it crashes the GameTest server); `-Pdecor_mods=true` adds the decorative block mods (Rechiseled, Chisel Reborn, Factory Blocks, Laboratory Blocks) that structures and the chiseling groups use.
+Add `-Pcompat_mods=true` to put the compat mods (Create, Mekanism, IE, MI, Oritech, FTB Teams) on the dev runtime, e.g. to check the compat recipes with `runGameTestServer`; `-Popac=true` adds Open Parties and Claims (dev client only, it crashes the GameTest server); `-Pdecor_mods=true` adds the decorative block mods (Rechiseled, Chisel Reborn, Factory Blocks, Laboratory Blocks) that structures and the chiseling groups use; `-Plootr=true` adds Lootr (per-player structure loot; dev client only, the structure GameTests check the vanilla chests it replaces).
 
 ## In-game testing via MCP
 The dev client loads **MCP Fabric** (`mcpfabric`, dev-only `localRuntime` dependency, never shipped).

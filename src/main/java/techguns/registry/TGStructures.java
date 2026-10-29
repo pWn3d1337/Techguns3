@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -118,21 +119,25 @@ public final class TGStructures {
      * medium start, {@link #BIG_CLEARANCE} from a big one.
      */
     public enum Size {
-        SMALL("overworld_small", 16, 51531853, false), MEDIUM("overworld_medium", 32, 51531854, false), BIG("overworld_big", 64, 51531857, false),
-        NETHER_SMALL("nether_small", 16, 51531855, true), NETHER_MEDIUM("nether_medium", 32, 51531856, true),
+        SMALL("overworld_small", 16, 51531853, false, 1), MEDIUM("overworld_medium", 32, 51531854, false, 2),
+        BIG("overworld_big", 64, 51531857, false, 5),
+        NETHER_SMALL("nether_small", 16, 51531855, true, 1), NETHER_MEDIUM("nether_medium", 32, 51531856, true, 2),
         /** New: only the Nether fortress (Techguns 2 had no big Nether structures). */
-        NETHER_BIG("nether_big", 48, 51531858, true);
+        NETHER_BIG("nether_big", 48, 51531858, true, 3);
 
         public final ResourceKey<StructureSet> set;
         public final int spacing;
         public final int salt;
         public final boolean nether;
+        /** Rough reach of its structures from the start chunk, in chunks (for keeping away from vanilla structures). */
+        public final int radius;
 
-        Size(String set, int spacing, int salt, boolean nether) {
+        Size(String set, int spacing, int salt, boolean nether, int radius) {
             this.set = ResourceKey.create(Registries.STRUCTURE_SET, TGIds.id(set));
             this.spacing = spacing;
             this.salt = salt;
             this.nether = nether;
+            this.radius = radius;
         }
 
         /** The bigger set this one keeps away from. */
@@ -198,6 +203,19 @@ public final class TGStructures {
      */
     private static final int BIG_CLEARANCE = 7;
 
+    /**
+     * Vanilla surface structures the Techguns sets keep away from where they really generate, with their own radius in
+     * chunks (Techguns 2 knew no such structures; overlapping a village or a mansion broke both). Trial chambers and
+     * ancient cities are left out: they lie deep below the surface structures.
+     */
+    private static final List<Map.Entry<ResourceKey<StructureSet>, Integer>> VANILLA_OVERWORLD = List.of(
+            Map.entry(BuiltinStructureSets.VILLAGES, 5), Map.entry(BuiltinStructureSets.PILLAGER_OUTPOSTS, 3),
+            Map.entry(BuiltinStructureSets.WOODLAND_MANSIONS, 4), Map.entry(BuiltinStructureSets.OCEAN_MONUMENTS, 3),
+            Map.entry(BuiltinStructureSets.DESERT_PYRAMIDS, 1), Map.entry(BuiltinStructureSets.JUNGLE_TEMPLES, 1),
+            Map.entry(BuiltinStructureSets.SWAMP_HUTS, 1), Map.entry(BuiltinStructureSets.IGLOOS, 1));
+    /** Fortresses and bastions. */
+    private static final List<Map.Entry<ResourceKey<StructureSet>, Integer>> VANILLA_NETHER = List.of(Map.entry(BuiltinStructureSets.NETHER_COMPLEXES, 5));
+
     private TGStructures() {
     }
 
@@ -258,9 +276,13 @@ public final class TGStructures {
                 };
                 avoid.add(new StructurePlacement.ExclusionZone(sets.getOrThrow(bigger.get().set), clearance));
             }
+            List<StructurePlacement.ExclusionZone> avoidVanilla = new ArrayList<>();
+            for (Map.Entry<ResourceKey<StructureSet>, Integer> vanilla : size.nether ? VANILLA_NETHER : VANILLA_OVERWORLD) {
+                avoidVanilla.add(new StructurePlacement.ExclusionZone(sets.getOrThrow(vanilla.getKey()), size.radius + vanilla.getValue()));
+            }
             context.register(size.set, new StructureSet(entries, new AvoidingSpreadPlacement(Vec3i.ZERO,
                     StructurePlacement.FrequencyReductionMethod.DEFAULT, 1.0f, size.salt, size.spacing, size.spacing / 2,
-                    RandomSpreadType.LINEAR, avoid)));
+                    RandomSpreadType.LINEAR, avoid, avoidVanilla)));
         }
     }
 }

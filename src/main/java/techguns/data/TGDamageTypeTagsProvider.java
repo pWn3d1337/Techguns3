@@ -48,5 +48,16 @@ public class TGDamageTypeTagsProvider extends TagsProvider<DamageType> {
                 TGDamageTypes.LIGHTNING, TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING, TGDamageTypes.DARK);
         // poison knocks back like Fabric's bio gun; acid and bio blobs have no direct entity, so they push nothing
         tag(DamageTypeTags.NO_KNOCKBACK).add(TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING);
+
+        // Newer vanilla tags (1.20.5+). Animals panic only from listed types: hurt by guns they flee like in Techguns 2.
+        tag(DamageTypeTags.PANIC_CAUSES).add(
+                TGDamageTypes.PHYSICAL, TGDamageTypes.BULLET, TGDamageTypes.EXPLOSION, TGDamageTypes.FIRE, TGDamageTypes.ENERGY,
+                TGDamageTypes.POISON, TGDamageTypes.ICE, TGDamageTypes.LIGHTNING, TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING,
+                TGDamageTypes.DARK);
+        // shots knock armor stands over like arrows; melee tools break them like a punch
+        tag(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(TGDamageTypes.BULLET, TGDamageTypes.ENERGY);
+        tag(DamageTypeTags.CAN_BREAK_ARMOR_STAND).add(TGDamageTypes.PHYSICAL);
+        // wolf armor soaks up attacks, but not sickness (vanilla lets magic and wither through)
+        tag(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(TGDamageTypes.RADIATION, TGDamageTypes.RADIATION_POISONING);
     }
 }

@@ -54,11 +54,11 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 9i | Decorative mod blocks in structures (Factory Blocks, Chisel Reborn, Laboratory Blocks), Rechiseled groups | `d0741a9` |
   | 9j | Connected textures through Fusion (the 19 Techguns 2 CTM textures) | `ecac8ff` |
 
-- All 323 GameTests pass (`alienBugBitesItsTarget` is flaky: it waits for the bug's AI) (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 327 GameTests pass (`alienBugBitesItsTarget` is flaky: it waits for the bug's AI) (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
-1. Phase 9 works on `phase9`, rebased onto `master` after the Phase 8 merge; not pushed yet (push and open the Phase 9 PR when the user asks). Phase 9 is done except 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
+1. Phase 9 is merged into `master` (PR #10, after two code review passes). Left: 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
 2. Book content: the manual is the 1.12 text with ids remapped. Outdated topics (crowbar/wrench, TG inventory tab buttons, door config GUI, RF) are for the author to rewrite in `src/legacy/book/techguns_manual` (Patchouli format; `runData` regenerates both books).
 3. Later: EMI plugin, JEI views of the special crafting recipes.
 

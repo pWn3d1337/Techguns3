@@ -2,6 +2,12 @@
   "placement": {
     "type": "techguns:avoiding_spread",
     "avoid": [],
+    "avoid_generated": [
+      {
+        "chunk_count": 8,
+        "other_set": "minecraft:nether_complexes"
+      }
+    ],
     "salt": 51531858,
     "separation": 24,
     "spacing": 48

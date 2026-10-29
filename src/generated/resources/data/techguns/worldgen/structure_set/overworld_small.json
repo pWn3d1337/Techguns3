@@ -11,6 +11,40 @@
         "other_set": "techguns:overworld_big"
       }
     ],
+    "avoid_generated": [
+      {
+        "chunk_count": 6,
+        "other_set": "minecraft:villages"
+      },
+      {
+        "chunk_count": 4,
+        "other_set": "minecraft:pillager_outposts"
+      },
+      {
+        "chunk_count": 5,
+        "other_set": "minecraft:woodland_mansions"
+      },
+      {
+        "chunk_count": 4,
+        "other_set": "minecraft:ocean_monuments"
+      },
+      {
+        "chunk_count": 2,
+        "other_set": "minecraft:desert_pyramids"
+      },
+      {
+        "chunk_count": 2,
+        "other_set": "minecraft:jungle_temples"
+      },
+      {
+        "chunk_count": 2,
+        "other_set": "minecraft:swamp_huts"
+      },
+      {
+        "chunk_count": 2,
+        "other_set": "minecraft:igloos"
+      }
+    ],
     "salt": 51531853,
     "separation": 8,
     "spacing": 16

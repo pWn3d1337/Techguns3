@@ -213,6 +213,11 @@ dependencies {
     if (project.opac.toBoolean()) {
         localRuntime("maven.modrinth:open-parties-and-claims:${opac_version}") { transitive = false }
     }
+    // Lootr on its own (-Plootr=true): per-player loot for the structure chests; not for GameTests, which check the
+    // chests' loot tables that Lootr replaces
+    if (project.lootr.toBoolean()) {
+        localRuntime("maven.modrinth:lootr:${lootr_version}") { transitive = false }
+    }
 }
 
 // Expands the declared properties in src/main/templates (neoforge.mods.toml).

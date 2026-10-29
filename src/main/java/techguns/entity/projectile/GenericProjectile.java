@@ -201,7 +201,8 @@ public class GenericProjectile extends Projectile implements IEntityWithComplexS
                 getBoundingBox().expandTowards(getDeltaMovement()).inflate(1.0), this::canHitEntity);
         HitResult hit = entityHit != null ? entityHit : blockHit;
         if (hit.getType() != HitResult.Type.MISS && !isRemoved()) {
-            onHit(hit);
+            // the vanilla hit path: entities that deflect projectiles (breezes) send the shot back like an arrow
+            hitTargetOrDeflectSelf(hit);
             if (isRemoved() || dying) {
                 return;
             }

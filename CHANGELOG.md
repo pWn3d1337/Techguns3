@@ -44,6 +44,10 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
 - Safe mode (key B, like Techguns 2): with it on, your guns and grenades don't damage blocks; NPC and turret shots never do.
 - Connected textures with Fusion installed, like Techguns 2 had with CTM: containers, steel frames, border panels,
   concrete, nether metal and the ore drill join into larger textures.
+- Fits the newer vanilla game: Techguns structures keep away from villages, pillager outposts, mansions, monuments,
+  temples, Nether fortresses and bastions; animals flee when shot; bullets and energy shots knock armor stands over
+  like arrows; breezes deflect Techguns projectiles like arrows (beams pass); radiation goes through wolf armor; with
+  Lootr installed, every player gets their own loot from Techguns structure chests.
 
 ### Known gaps
 - Some guide book pages still describe Techguns 2 features that changed (crowbar and wrench, the inventory tab

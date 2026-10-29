@@ -11,6 +11,12 @@
         "other_set": "techguns:nether_big"
       }
     ],
+    "avoid_generated": [
+      {
+        "chunk_count": 6,
+        "other_set": "minecraft:nether_complexes"
+      }
+    ],
     "salt": 51531855,
     "separation": 8,
     "spacing": 16
