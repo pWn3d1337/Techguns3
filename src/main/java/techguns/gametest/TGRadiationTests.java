@@ -90,6 +90,7 @@ public class TGRadiationTests {
     public static void radioactiveItemsIrradiateTheInventory(GameTestHelper helper) {
         helper.assertTrue(ItemRadiation.of(new ItemStack(TGItems.ENRICHED_URANIUM.get())) == 3
                 && ItemRadiation.of(new ItemStack(TGItems.RAW_URANIUM.get())) == 1
+                && ItemRadiation.of(new ItemStack(TGItems.TACTICAL_NUKE_WARHEAD.get())) == 1
                 && ItemRadiation.of(new ItemStack(Items.IRON_INGOT)) == 0, "Item radiation data map");
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.getInventory().add(new ItemStack(TGItems.RAW_URANIUM.get()));

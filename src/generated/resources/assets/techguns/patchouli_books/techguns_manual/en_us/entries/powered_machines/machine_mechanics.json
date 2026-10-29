@@ -44,8 +44,9 @@
       "title": "Upgrade Slot"
     },
     {
-      "type": "patchouli:text",
+      "type": "patchouli:spotlight",
       "anchor": "wrench",
+      "item": "techguns:crowbar",
       "text": "As many other tech mods, Techguns also has a 'wrench' item. The crowbar is Techguns version of a wrench, but can also be used as pickaxe and for hitting enemies. The crowbar allows to rotate techguns machines or can dismantle them ($(thing)'Sneak + Right Click'$()). Technically everything that has the tool class 'wrench' is considered as wrench.",
       "title": "'Wrench'"
     }

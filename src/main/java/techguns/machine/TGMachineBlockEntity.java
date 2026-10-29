@@ -423,6 +423,17 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
         }
     }
 
+    /** A wrench is about to pick the machine up as an item (its block entity data goes into the item). */
+    public void beforeDismantle() {
+    }
+
+    /** Empties the inventory without dropping it (the contents went into a dismantled machine item). */
+    public void clearContents() {
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            inventory.setStackInSlot(i, ItemStack.EMPTY);
+        }
+    }
+
     public void dropContents() {
         if (level == null) {
             return;

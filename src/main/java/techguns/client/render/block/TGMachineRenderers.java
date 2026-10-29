@@ -11,7 +11,7 @@ import techguns.client.model.machine.MetalPressModel;
 import techguns.registry.TGBlockEntities;
 import techguns.registry.TGBlocks;
 
-/** Block entity and item renderers of the machines. */
+/** Block entity and item renderers of the machines and the 3x3 doors. */
 public final class TGMachineRenderers {
     private static final TGMachineRenderer<?> METAL_PRESS = new TGMachineRenderer<>(lazy(MetalPressModel::bake),
             TGIds.id("textures/block/metal_press.png"));
@@ -26,6 +26,7 @@ public final class TGMachineRenderers {
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(TGMachineRenderers::registerRenderers);
         modEventBus.addListener(TGMachineRenderers::registerItems);
+        modEventBus.addListener(Door3x3Renderer::registerAdditional);
     }
 
     @SuppressWarnings("unchecked")
@@ -40,6 +41,7 @@ public final class TGMachineRenderers {
         event.registerBlockEntityRenderer(TGBlockEntities.REACTION_CHAMBER.get(), ReactionChamberRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.ORE_DRILL.get(), OreDrillRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.TURRET.get(), TurretBaseRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.DOOR_3X3.get(), Door3x3Renderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {

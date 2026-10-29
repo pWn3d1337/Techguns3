@@ -30,6 +30,8 @@ final class LegacyItems {
 
     /** Techguns 2 item names that changed. */
     private static final Map<String, String> RENAMED = Map.of("boltaction", "bolt_action", "combatshotgun", "combat_shotgun", "radaway", "rad_away", "radpills", "rad_pills",
+            // the Fabric port's name of the scatterbeam rifle
+            "scatterbeamrifle", "blaster_shotgun",
             "handcannon", "hand_cannon");
 
     private LegacyItems() {

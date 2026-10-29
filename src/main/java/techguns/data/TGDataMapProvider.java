@@ -25,6 +25,7 @@ public class TGDataMapProvider extends DataMapProvider {
         radiation.add(TGItems.YELLOWCAKE, new ItemRadiation(1), false);
         radiation.add(TGItems.ANTIGRAV_CORE, new ItemRadiation(4), false);
         radiation.add(TGItems.PLASMA_GENERATOR, new ItemRadiation(4), false);
+        radiation.add(TGItems.TACTICAL_NUKE_WARHEAD, new ItemRadiation(1), false);
         radiation.add(TGAmmo.ROCKET_NUKE, new ItemRadiation(1), false);
         // Techguns 2: every uranium ore and ingot (ore dictionary); raw uranium is the ore's drop now
         radiation.add(TGItems.RAW_URANIUM, new ItemRadiation(1), false);

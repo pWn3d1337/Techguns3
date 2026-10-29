@@ -1,0 +1,7 @@
+{
+  "parent": "techguns:block/hangar_door_frame",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "techguns:block/hangar_door"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "s": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    " s",
+    "p "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:combat_knife"
+  }
+}

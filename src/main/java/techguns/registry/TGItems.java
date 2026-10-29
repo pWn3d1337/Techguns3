@@ -69,6 +69,8 @@ public final class TGItems {
             () -> new ItemStack(Items.GLASS_BOTTLE));
     public static final DeferredItem<Item> QUARTZ_ROD = simple("quartz_rod");
     public static final DeferredItem<Item> TGX = simple("tgx");
+    /** Radioactive; crafted into the nuke rocket. */
+    public static final DeferredItem<Item> TACTICAL_NUKE_WARHEAD = simple("tactical_nuke_warhead");
     public static final DeferredItem<Item> TREATED_LEATHER = simple("treated_leather");
     public static final DeferredItem<Item> HEAVY_CLOTH = simple("heavy_cloth");
     public static final DeferredItem<Item> BIOMASS = simple("biomass");
@@ -177,6 +179,11 @@ public final class TGItems {
     // --- Ammo Bags (capacity in rounds; a full stack counts 64) ---
     public static final DeferredItem<Item> AMMO_BOX = ITEMS.registerItem("ammo_box", props -> new AmmoBagItem(props, 64 * 4));
     public static final DeferredItem<Item> AMMO_BOX_LARGE = ITEMS.registerItem("ammo_box_large", props -> new AmmoBagItem(props, 64 * 8));
+
+    // --- Tools ---
+    public static final DeferredItem<techguns.item.CrowbarItem> CROWBAR = ITEMS.registerItem("crowbar", techguns.item.CrowbarItem::new);
+    public static final DeferredItem<techguns.item.CombatKnifeItem> COMBAT_KNIFE = ITEMS.registerItem("combat_knife",
+            techguns.item.CombatKnifeItem::new);
 
     private static DeferredItem<Item> simple(String name) {
         return simple(name, new Item.Properties());

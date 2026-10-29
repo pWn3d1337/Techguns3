@@ -89,6 +89,13 @@ public final class TGBlockEntities {
             () -> BlockEntityType.Builder.of(techguns.entity.spawn.TGSpawnerBlockEntity::new, TGBlocks.MONSTER_HOLE.get(),
                     TGBlocks.MILITARY_SPAWN_POINT.get()).build(null));
 
+    /** On the master (centre) block of the 3x3 doors. */
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.block.Door3x3BlockEntity>> DOOR_3X3 = BLOCK_ENTITY_TYPES.register("door_3x3",
+            () -> BlockEntityType.Builder.of(techguns.block.Door3x3BlockEntity::new,
+                    TGBlocks.DOORS_3X3.stream().map(door -> (net.minecraft.world.level.block.Block) door.get())
+                            .toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
+
     private TGBlockEntities() {
     }
 

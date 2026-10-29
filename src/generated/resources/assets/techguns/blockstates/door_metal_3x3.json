@@ -1,113 +1,223 @@
 {
   "variants": {
-    "col=0,open=false,row=0,zplane=false": {
+    "col=0,moving=false,open=false,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=false,row=0,zplane=true": {
+    "col=0,moving=false,open=false,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=false,row=1,zplane=false": {
+    "col=0,moving=false,open=false,row=1,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=false,row=1,zplane=true": {
+    "col=0,moving=false,open=false,row=1,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=false,row=2,zplane=false": {
+    "col=0,moving=false,open=false,row=2,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=false,row=2,zplane=true": {
+    "col=0,moving=false,open=false,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=true,row=0,zplane=false": {
+    "col=0,moving=false,open=true,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=true,row=0,zplane=true": {
+    "col=0,moving=false,open=true,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=true,row=1,zplane=false": {
+    "col=0,moving=false,open=true,row=1,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=true,row=1,zplane=true": {
+    "col=0,moving=false,open=true,row=1,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=true,row=2,zplane=false": {
+    "col=0,moving=false,open=true,row=2,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=0,open=true,row=2,zplane=true": {
+    "col=0,moving=false,open=true,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=false,row=0,zplane=false": {
+    "col=0,moving=true,open=false,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=false,row=0,zplane=true": {
+    "col=0,moving=true,open=false,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=false,row=1,zplane=false": {
+    "col=0,moving=true,open=false,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=false,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=false,row=2,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=false,row=2,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=true,row=0,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=true,row=0,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=true,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=true,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=true,row=2,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=0,moving=true,open=true,row=2,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=1,moving=false,open=false,row=0,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=1,moving=false,open=false,row=0,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=1,moving=false,open=false,row=1,zplane=false": {
       "model": "techguns:block/door_metal_3x3_closed"
     },
-    "col=1,open=false,row=1,zplane=true": {
+    "col=1,moving=false,open=false,row=1,zplane=true": {
       "model": "techguns:block/door_metal_3x3_closed",
       "y": 90
     },
-    "col=1,open=false,row=2,zplane=false": {
+    "col=1,moving=false,open=false,row=2,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=false,row=2,zplane=true": {
+    "col=1,moving=false,open=false,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=true,row=0,zplane=false": {
+    "col=1,moving=false,open=true,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=true,row=0,zplane=true": {
+    "col=1,moving=false,open=true,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=true,row=1,zplane=false": {
+    "col=1,moving=false,open=true,row=1,zplane=false": {
       "model": "techguns:block/door_metal_3x3_open"
     },
-    "col=1,open=true,row=1,zplane=true": {
+    "col=1,moving=false,open=true,row=1,zplane=true": {
       "model": "techguns:block/door_metal_3x3_open",
       "y": 90
     },
-    "col=1,open=true,row=2,zplane=false": {
+    "col=1,moving=false,open=true,row=2,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=1,open=true,row=2,zplane=true": {
+    "col=1,moving=false,open=true,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=false,row=0,zplane=false": {
+    "col=1,moving=true,open=false,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=false,row=0,zplane=true": {
+    "col=1,moving=true,open=false,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=false,row=1,zplane=false": {
+    "col=1,moving=true,open=false,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_frame"
+    },
+    "col=1,moving=true,open=false,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_frame",
+      "y": 90
+    },
+    "col=1,moving=true,open=false,row=2,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=false,row=1,zplane=true": {
+    "col=1,moving=true,open=false,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=false,row=2,zplane=false": {
+    "col=1,moving=true,open=true,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=false,row=2,zplane=true": {
+    "col=1,moving=true,open=true,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=true,row=0,zplane=false": {
+    "col=1,moving=true,open=true,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_frame"
+    },
+    "col=1,moving=true,open=true,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_frame",
+      "y": 90
+    },
+    "col=1,moving=true,open=true,row=2,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=true,row=0,zplane=true": {
+    "col=1,moving=true,open=true,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=true,row=1,zplane=false": {
+    "col=2,moving=false,open=false,row=0,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=true,row=1,zplane=true": {
+    "col=2,moving=false,open=false,row=0,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=true,row=2,zplane=false": {
+    "col=2,moving=false,open=false,row=1,zplane=false": {
       "model": "techguns:block/door_metal_3x3_part"
     },
-    "col=2,open=true,row=2,zplane=true": {
+    "col=2,moving=false,open=false,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=false,row=2,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=false,row=2,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=true,row=0,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=true,row=0,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=true,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=true,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=true,row=2,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=false,open=true,row=2,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=false,row=0,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=false,row=0,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=false,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=false,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=false,row=2,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=false,row=2,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=true,row=0,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=true,row=0,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=true,row=1,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=true,row=1,zplane=true": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=true,row=2,zplane=false": {
+      "model": "techguns:block/door_metal_3x3_part"
+    },
+    "col=2,moving=true,open=true,row=2,zplane=true": {
       "model": "techguns:block/door_metal_3x3_part"
     }
   }

@@ -135,6 +135,9 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("pistol_rounds_incendiary", "Pistol Rounds (Incendiary)"),
             Map.entry("rifle_rounds_incendiary", "Rifle Rounds (Incendiary)"),
             Map.entry("ammo_box", "Ammo Box (Small)"),
+            Map.entry("crowbar", "Crowbar"),
+            Map.entry("combat_knife", "Combat Knife"),
+            Map.entry("tactical_nuke_warhead", "Small Nuclear Warhead"),
             Map.entry("concrete_brown", "Reinforced Concrete"),
             Map.entry("concrete_brown_light", "Reinforced Concrete (Light)"),
             Map.entry("concrete_grey", "Reinforced Concrete (Grey)"),
@@ -361,6 +364,14 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.tooltip.descr2", "Only the owner can change this setting");
         add("techguns.container.security.tooltip.unowned", "Unowned (Replace Block to set ownership)");
         add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
+        add("techguns.container.door3x3", "Tech Door");
+        add("techguns.container.door3x3.mode", "Mode");
+        add("techguns.container.door3x3.mode.manual", "Manual");
+        add("techguns.container.door3x3.mode.redstone", "Redstone");
+        add("techguns.container.door3x3.mode.player_detector", "Player Detector");
+        add("techguns.container.door3x3.autoclose", "Auto Close");
+        add("techguns.container.door3x3.redstonewarning", "Redstone is set to ignored!");
+        add("techguns.tooltip.wrench", "Wrench: sneak + use for door settings; use turns a machine, sneak + use picks it up");
         add("techguns.container.metalpress.autosplit", "Stack split:");
         // Phase 5b3 benches (Techguns 2 / Fabric lang)
         add("techguns.repairbench.noarmor", "No armor");
@@ -420,6 +431,9 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.oredrill.drillrequired.medium", "Requires Medium Drill");
         add("techguns.container.oredrill.drillrequired.large", "Requires Large Drill");
         add("techguns.msg.error.oredrill.controlleralone", "Can't form multiblock: No connected ore drill engines/rods");
+        add("techguns.msg.error.oredrill.controllernext", "Can't place 2 ore drill controllers next to each other");
+        add("techguns.msg.error.alreadyrod", "Can't place here, this cluster already has a connected drill rod");
+        add("techguns.msg.error.rodplacement", "Needs to be placed next to an Ore Cluster or another rod");
         add("techguns.msg.error.oredrill.nocluster", "Can't form multiblock: The rods must end at an ore cluster");
         add("techguns.msg.error.oredrill.rodsize", "Rod must be at least as long as drill diameter and engine size. "
                 + "Engine height must be at least as high as drill radius.");

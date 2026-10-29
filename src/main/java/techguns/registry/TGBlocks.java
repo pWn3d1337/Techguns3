@@ -260,10 +260,11 @@ public final class TGBlocks {
     public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_FRAME = withItem("ore_drill_frame", () -> new MultiblockPartBlock(machine()));
     public static final DeferredBlock<OreDrillScaffoldBlock> ORE_DRILL_SCAFFOLD = withItem("ore_drill_scaffold",
             () -> new OreDrillScaffoldBlock(machine()));
-    public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_ROD = withItem("ore_drill_rod", () -> new MultiblockPartBlock(machine()));
+    public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_ROD = withItem("ore_drill_rod", () -> new MultiblockPartBlock(machine()),
+            techguns.multiblock.OreDrillPartItem::new);
     public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_ENGINE = withItem("ore_drill_engine", () -> new MultiblockPartBlock(machine()));
     public static final DeferredBlock<MultiblockControllerBlock> ORE_DRILL_CONTROLLER = withItem("ore_drill_controller",
-            () -> new MultiblockControllerBlock(machine(), TGBlockEntities.ORE_DRILL));
+            () -> new MultiblockControllerBlock(machine(), TGBlockEntities.ORE_DRILL), techguns.multiblock.OreDrillPartItem::new);
 
     /** Techguns 2 turret base; base and turret are drawn by renderers. */
     public static final DeferredBlock<techguns.block.TurretBlock> TURRET = withItem("turret", () -> new techguns.block.TurretBlock(machine()));
@@ -321,8 +322,9 @@ public final class TGBlocks {
     }
 
     private static DeferredBlock<Door3x3Block> door3x3(String name, Door3x3Block.Kind kind) {
+        // solid also when open (no collision): fluids would otherwise flow in and wash the door away
         return withItem(name, () -> new Door3x3Block(kind, BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0f, 25.0f)
-                .sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK)), (block, properties) -> new Door3x3Item(block, properties));
+                .sound(SoundType.METAL).noOcclusion().forceSolidOn().pushReaction(PushReaction.BLOCK)), (block, properties) -> new Door3x3Item(block, properties));
     }
 
     /** Techguns 2 {@code concrete}: rock, hardness 8 (blast resistance like 1.12: hardness * 5). */

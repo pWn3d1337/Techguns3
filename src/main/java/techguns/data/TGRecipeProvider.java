@@ -600,6 +600,23 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('c', Items.CRAFTING_TABLE).define('o', TGTags.Items.plate("obsidian_steel")).define('e', Tags.Items.GEMS_EMERALD)
                 .define('s', Tags.Items.OBSIDIANS)
                 .unlockedBy(getHasName(TGItems.OBSIDIAN_STEEL_PLATE.get()), has(TGItems.OBSIDIAN_STEEL_PLATE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TGItems.CROWBAR.get())
+                .pattern(" np").pattern(" p ").pattern("p  ")
+                .define('p', TGTags.Items.plate("steel")).define('n', TGTags.Items.nugget("steel"))
+                .unlockedBy(getHasName(TGItems.STEEL_PLATE.get()), has(TGItems.STEEL_PLATE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGItems.COMBAT_KNIFE.get())
+                .pattern(" s").pattern("p ")
+                .define('s', TGTags.Items.plate("steel")).define('p', TGItems.PLASTIC_SHEET.get())
+                .unlockedBy(getHasName(TGItems.STEEL_PLATE.get()), has(TGItems.STEEL_PLATE.get())).save(output);
+        // two warheads; one makes a rocket a nuke rocket
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TGItems.TACTICAL_NUKE_WARHEAD.get(), 2)
+                .pattern("pcp").pattern("tut").pattern("pcp")
+                .define('p', TGTags.Items.plate("lead")).define('t', TGItems.TGX.get()).define('c', TGItems.CIRCUIT_BOARD.get())
+                .define('u', TGItems.ENRICHED_URANIUM.get())
+                .unlockedBy(getHasName(TGItems.ENRICHED_URANIUM.get()), has(TGItems.ENRICHED_URANIUM.get())).save(output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TGAmmo.ROCKET_NUKE.get())
+                .requires(TGAmmo.ROCKET.get()).requires(TGItems.TACTICAL_NUKE_WARHEAD.get())
+                .unlockedBy(getHasName(TGItems.TACTICAL_NUKE_WARHEAD.get()), has(TGItems.TACTICAL_NUKE_WARHEAD.get())).save(output);
         // Fabric: shapeless crafting table + gunpowder + iron ingot
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TGBlocks.AMMO_BENCH.get())
                 .requires(Items.CRAFTING_TABLE).requires(Tags.Items.GUNPOWDERS).requires(Tags.Items.INGOTS_IRON)

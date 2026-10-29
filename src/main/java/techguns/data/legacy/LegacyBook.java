@@ -68,7 +68,7 @@ public final class LegacyBook {
             Map.entry("item_door3x3:0", "door_metal_3x3"), Map.entry("item_door3x3:1", "door_hangar_up_3x3"));
 
     /** Items Techguns 3 doesn't have, with the icon used instead (pages showing them are turned into text). */
-    private static final Map<String, String> MISSING_ITEMS = Map.of("crowbar", "door_metal_3x3");
+    private static final Map<String, String> MISSING_ITEMS = Map.of();
 
     /** Entry ids that changed, and the dead links of Techguns 2 that pointed at an entry under another name. */
     private static final Map<String, String> ENTRY_RENAMES = Map.of("machines/reactionchamber", "machines/reaction_chamber");

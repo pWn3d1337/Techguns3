@@ -1,0 +1,7 @@
+{
+  "parent": "techguns:block/techdoor3x3_frame_nether",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "techguns:block/techdoor3x3_nether"
+  }
+}

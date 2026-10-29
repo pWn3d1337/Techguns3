@@ -179,6 +179,15 @@ public class TGBenchTests {
         player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TGArmors.T1_SCOUT_HELMET.get()));
         bench.pressButton(player, CamoBenchBlockEntity.BUTTON_ARMOR);
         helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, player.getItemBySlot(EquipmentSlot.HEAD)) == 1, "+ cycles the worn helmet");
+
+        // worn face/back/hand gear has its own buttons (the 1.12 bench had them commented out)
+        techguns.slot.ExtraSlots.set(player, techguns.slot.TGSlotType.BACK, new ItemStack(techguns.registry.TGSlotItems.JETPACK.get()));
+        bench.pressButton(player, CamoBenchBlockEntity.BUTTON_GEAR + 2 * techguns.slot.TGSlotType.BACK.ordinal());
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, techguns.slot.ExtraSlots.get(player, techguns.slot.TGSlotType.BACK)) == 1,
+                "+ cycles the worn jetpack");
+        bench.pressButton(player, CamoBenchBlockEntity.BUTTON_GEAR + 2 * techguns.slot.TGSlotType.BACK.ordinal() + 1);
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, techguns.slot.ExtraSlots.get(player, techguns.slot.TGSlotType.BACK)) == 0,
+                "- cycles it back");
         helper.succeed();
     }
 

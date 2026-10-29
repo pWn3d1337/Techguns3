@@ -1,17 +1,24 @@
 package techguns.block;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -22,20 +29,27 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import techguns.registry.TGBlockEntities;
 import techguns.registry.TGSounds;
 
 /**
  * The 3x3 tech and hangar doors (Techguns 2 {@code BlockTGDoor3x3}). One door is nine blocks of the same door block;
  * every block stores its column (along the door plane) and row, the centre block (column 1, row 1) is the master that
- * renders the whole door model, the other eight render nothing. Right-clicking any part or a redstone signal on any part
- * opens/closes the whole door; an unpowered open door closes again after five seconds. Breaking any part removes the whole
- * door and drops one door item (not for creative players).
+ * renders the whole door model, the other eight render nothing. Breaking any part removes the whole door and drops one
+ * door item (not for creative players).
  * <p>
- * Simplified vs 1.12: the open/close animation is not ported (the door switches between its closed and open model at
- * once), and the door block entity with its GUI (Manual / Redstone / Player Detector mode, auto close toggle, owner) is
- * not ported yet, so a door is always manual (use) and redstone controlled with auto close on.
+ * Who opens it is a setting of {@link Door3x3BlockEntity} (sneak + use with a wrench opens the door screen): manual
+ * doors open and close when used (and close again five seconds after opening, unless auto close is off), redstone doors
+ * follow a signal at any of their blocks, player detector doors open for players near them. The owner's security
+ * setting decides who may do that.
+ * <p>
+ * Opening and closing take {@link #MOVE_TICKS} like the 1.12 {@code OPENING} / {@code CLOSING} states: the door is
+ * {@link #MOVING} with {@link #OPEN} already set to where it goes (an opening door lets entities through at once, a
+ * closing one blocks them at once, as in 1.12). Meanwhile the master shows only the frame and
+ * {@code Door3x3Renderer} draws the moving door wings or segments; {@link Door3x3BlockEntity} times the movement. Using
+ * the door or a change of power while it moves turns it around.
  */
-public class Door3x3Block extends Block {
+public class Door3x3Block extends Block implements EntityBlock {
     /** The four door kinds: the bi-parting tech door, the nether tech door, and the hangar doors that retract up or down. */
     public enum Kind {
         METAL, HANGAR_UP, HANGAR_DOWN, NETHER;
@@ -54,8 +68,12 @@ public class Door3x3Block extends Block {
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     /** Redstone state of the whole door (like the vanilla door): redstone only acts on a change of power. */
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+    /** The door is opening ({@link #OPEN}) or closing (not open). */
+    public static final BooleanProperty MOVING = BooleanProperty.create("moving");
 
-    /** Ticks until an unpowered open door closes again (5000 ms in 1.12). */
+    /** Ticks an opening or closing door moves (DOOR_OPEN_TIME 1000 ms in 1.12). */
+    public static final int MOVE_TICKS = 20;
+    /** Ticks until a fully open manual door closes again (5000 ms in 1.12). */
     public static final int AUTO_CLOSE_TICKS = 100;
 
     // thickness: size = 6/16 from both sides (4/16 thick), size2 = 4/16 for the open frame strips
@@ -76,7 +94,7 @@ public class Door3x3Block extends Block {
         super(properties);
         this.kind = kind;
         registerDefaultState(stateDefinition.any().setValue(ZPLANE, false).setValue(COL, 1).setValue(ROW, 1)
-                .setValue(OPEN, false).setValue(POWERED, false));
+                .setValue(OPEN, false).setValue(POWERED, false).setValue(MOVING, false));
     }
 
     public Kind kind() {
@@ -85,7 +103,7 @@ public class Door3x3Block extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ZPLANE, COL, ROW, OPEN, POWERED);
+        builder.add(ZPLANE, COL, ROW, OPEN, POWERED, MOVING);
     }
 
     // --- geometry of the nine parts ---
@@ -170,16 +188,44 @@ public class Door3x3Block extends Block {
 
     // --- opening and closing ---
 
+    /** Manual doors open and close when an allowed player uses them (Techguns 2 {@code onBlockActivated}). */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide) {
             BlockPos master = masterPos(state, pos);
             BlockState masterState = level.getBlockState(master);
-            if (masterState.is(this)) {
-                setOpen(level, master, masterState, !masterState.getValue(OPEN), masterState.getValue(POWERED), true);
+            if (masterState.is(this) && level.getBlockEntity(master) instanceof Door3x3BlockEntity door) {
+                if (!door.mayAccess(player)) {
+                    denied(player, door);
+                } else if (door.getMode() == Door3x3BlockEntity.Mode.MANUAL) {
+                    setOpen(level, master, masterState, !masterState.getValue(OPEN), masterState.getValue(POWERED), true);
+                }
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /**
+     * Opens the door screen for {@code player} (sneak + use with a wrench, Techguns 2 {@code TechgunsGuiHandler}) if
+     * the security setting allows it.
+     */
+    public void openSettings(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level.isClientSide || !(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        BlockPos master = masterPos(state, pos);
+        if (level.getBlockEntity(master) instanceof Door3x3BlockEntity door) {
+            if (door.mayAccess(player)) {
+                serverPlayer.openMenu(door, buf -> buf.writeBlockPos(master));
+            } else {
+                denied(player, door);
+            }
+        }
+    }
+
+    private static void denied(Player player, Door3x3BlockEntity door) {
+        player.displayClientMessage(Component.translatable("techguns.container.security.denied", door.getDisplayName())
+                .withStyle(ChatFormatting.RED), true);
     }
 
     private SoundEvent sound(boolean opening) {
@@ -187,32 +233,45 @@ public class Door3x3Block extends Block {
     }
 
     /**
-     * Sets the open and powered state of the whole door and plays the open/close sound. Hangar doors also move the hangar
-     * doors next to and above/below them that were in the same state, so a row of hangar doors opens together.
+     * Sets the open and powered state of the whole door; a change of the open state starts the movement (or turns it
+     * around) and plays the open/close sound. Hangar doors also move the hangar doors next to and above/below them that
+     * were in the same state, so a row of hangar doors opens together.
      */
     public void setOpen(Level level, BlockPos master, BlockState masterState, boolean open, boolean powered, boolean syncHangarNeighbors) {
         boolean zplane = masterState.getValue(ZPLANE);
         boolean changed = masterState.getValue(OPEN) != open;
+        setParts(level, master, zplane, open, powered, changed || masterState.getValue(MOVING));
+        if (changed) {
+            playSound(level, master, sound(open));
+            if (syncHangarNeighbors && kind.isHangar()) {
+                syncHangarNeighbors(level, master, zplane, open);
+            }
+        }
+    }
+
+    /** The end of the movement (1.12 {@code OPENING} to {@code OPENED}, {@code CLOSING} to {@code CLOSED}). */
+    public void finishMoving(Level level, BlockPos master, BlockState masterState) {
+        setParts(level, master, masterState.getValue(ZPLANE), masterState.getValue(OPEN), masterState.getValue(POWERED), false);
+        playSound(level, master, TGSounds.TECHDOOR_STATE_FINISHED.get());
+    }
+
+    private void setParts(Level level, BlockPos master, boolean zplane, boolean open, boolean powered, boolean moving) {
         for (int col = 0; col < 3; col++) {
             for (int row = 0; row < 3; row++) {
                 BlockPos pos = partPos(master, zplane, col, row);
                 BlockState part = level.getBlockState(pos);
                 if (part.is(this)) {
                     // flags: clients only; the parts do not need neighbour updates and must not re-trigger the redstone check
-                    level.setBlock(pos, part.setValue(OPEN, open).setValue(POWERED, powered), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+                    level.setBlock(pos, part.setValue(OPEN, open).setValue(POWERED, powered).setValue(MOVING, moving),
+                            Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
                 }
             }
         }
-        if (changed) {
-            level.playSound(null, master, sound(open), SoundSource.BLOCKS, (float) (0.9 + level.random.nextDouble() * 0.2),
-                    (float) (0.9 + level.random.nextDouble() * 0.2));
-            if (open && !powered) {
-                level.scheduleTick(master, this, AUTO_CLOSE_TICKS);
-            }
-            if (syncHangarNeighbors && kind.isHangar()) {
-                syncHangarNeighbors(level, master, zplane, open);
-            }
-        }
+    }
+
+    private static void playSound(Level level, BlockPos pos, SoundEvent sound) {
+        level.playSound(null, pos, sound, SoundSource.BLOCKS, (float) (0.9 + level.random.nextDouble() * 0.2),
+                (float) (0.9 + level.random.nextDouble() * 0.2));
     }
 
     /** 1.12 {@code checkOpenNeighbours}: hangar doors sideways (up to three) and above/below follow this door. */
@@ -246,11 +305,20 @@ public class Door3x3Block extends Block {
         return false;
     }
 
+    // --- block entity: timing of the movement and the auto close ---
+
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (isMaster(state) && state.getValue(OPEN) && !state.getValue(POWERED)) {
-            setOpen(level, pos, state, false, false, true);
-        }
+    @Nullable
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return isMaster(state) ? new Door3x3BlockEntity(pos, state) : null;
+    }
+
+    @Override
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide || type != TGBlockEntities.DOOR_3X3.get() ? null
+                : (BlockEntityTicker<T>) (BlockEntityTicker<Door3x3BlockEntity>) Door3x3BlockEntity::serverTick;
     }
 
     // --- redstone ---
@@ -266,15 +334,20 @@ public class Door3x3Block extends Block {
         return false;
     }
 
-    /** Opens or closes the door when the redstone power of any of its blocks changed. */
+    /**
+     * Notes the redstone power of the door's blocks; a redstone door opens or closes as its redstone behaviour says
+     * (Techguns 2 {@code updateRedstoneState}).
+     */
     public void updatePower(Level level, BlockPos master) {
         BlockState masterState = level.getBlockState(master);
-        if (!masterState.is(this)) {
+        if (!masterState.is(this) || !(level.getBlockEntity(master) instanceof Door3x3BlockEntity door)) {
             return;
         }
         boolean powered = isPowered(level, master, masterState.getValue(ZPLANE));
-        if (powered != masterState.getValue(POWERED)) {
-            setOpen(level, master, masterState, powered, powered, true);
+        Boolean wantsOpen = door.wantsOpen(powered);
+        boolean open = wantsOpen != null ? wantsOpen : masterState.getValue(OPEN);
+        if (open != masterState.getValue(OPEN) || powered != masterState.getValue(POWERED)) {
+            setOpen(level, master, masterState, open, powered, true);
         }
     }
 

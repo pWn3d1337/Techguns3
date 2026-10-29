@@ -1,6 +1,31 @@
 package techguns.gametest;
 
+import java.util.List;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.Tags;
+import techguns.machine.TGMachineBlock;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.block.state.BlockState;
+import techguns.compat.jei.SpecialCraftingExamples;
+import techguns.multiblock.OreDrillPartItem;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
+import techguns.core.damage.DeathType;
+import techguns.item.TGMeleeWeapon;
+import techguns.registry.TGAmmo;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -174,6 +199,128 @@ public class TGMachineTests {
         press.getInventory().setStackInSlot(MetalPressBlockEntity.SLOT_INPUT1, new ItemStack(Items.IRON_INGOT, 5));
         helper.destroyBlock(PRESS);
         helper.assertItemEntityCountIs(Items.IRON_INGOT, PRESS, 2.0, 5);
+        helper.succeed();
+    }
+
+    /** Right-clicks the press with a crowbar like a player (the wrench event runs before the block's use). */
+    private static void wrench(GameTestHelper helper, Player player, boolean sneaking) {
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(TGItems.CROWBAR.get()));
+        player.setShiftKeyDown(sneaking);
+        BlockPos abs = helper.absolutePos(PRESS);
+        CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, abs, new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false));
+    }
+
+    /** Techguns 2 wrench: use turns a machine, sneak + use dismantles it into an item that keeps its contents. */
+    @GameTest(template = ARENA)
+    public static void wrenchTurnsAndDismantlesMachines(GameTestHelper helper) {
+        MetalPressBlockEntity press = press(helper);
+        Player player = playerAt(helper, PRESS);
+        helper.assertTrue(TGItems.CROWBAR.get().getDefaultInstance().is(Tags.Items.TOOLS_WRENCH), "The crowbar is a wrench");
+        Direction facing = helper.getBlockState(PRESS).getValue(TGMachineBlock.FACING);
+        wrench(helper, player, false);
+        helper.assertTrue(helper.getBlockState(PRESS).getValue(TGMachineBlock.FACING) == facing.getClockWise(), "A wrench turns the machine");
+
+        press.getInventory().setStackInSlot(MetalPressBlockEntity.SLOT_INPUT1, new ItemStack(Items.IRON_INGOT, 5));
+        wrench(helper, player, true);
+        helper.assertBlockNotPresent(TGBlocks.METAL_PRESS.get(), PRESS);
+        helper.assertItemEntityCountIs(Items.IRON_INGOT, PRESS, 2.0, 0);
+        List<ItemEntity> items = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(helper.absolutePos(PRESS)).inflate(2.0),
+                entity -> entity.getItem().is(TGBlocks.METAL_PRESS.get().asItem()));
+        helper.assertTrue(items.size() == 1, "Sneak + wrench drops the machine as an item");
+        ItemStack item = items.get(0).getItem();
+        helper.assertTrue(item.has(DataComponents.BLOCK_ENTITY_DATA), "The machine item keeps the block entity data");
+
+        // placing it again brings the contents back
+        helper.setBlock(PRESS, TGBlocks.METAL_PRESS.get());
+        BlockItem.updateCustomBlockEntityTag(helper.getLevel(), player, helper.absolutePos(PRESS), item);
+        ItemStack input = ((MetalPressBlockEntity) helper.getBlockEntity(PRESS)).getInventory().getStackInSlot(MetalPressBlockEntity.SLOT_INPUT1);
+        helper.assertTrue(input.is(Items.IRON_INGOT) && input.getCount() == 5, "The placed machine has its contents back, got " + input);
+
+        // multiblock controllers are not wrenched (Techguns 2)
+        helper.assertTrue(!TGBlocks.FABRICATOR_CONTROLLER.get().canBeWrenched() && TGBlocks.TURRET.get().canBeWrenched(),
+                "Multiblocks are not wrenched, turrets are");
+        helper.succeed();
+    }
+
+    /** Techguns 2 crowbar: a steel (iron level) pickaxe. */
+    @GameTest(template = ARENA)
+    public static void crowbarIsASteelPickaxe(GameTestHelper helper) {
+        ItemStack crowbar = new ItemStack(TGItems.CROWBAR.get());
+        helper.assertTrue(crowbar.isCorrectToolForDrops(Blocks.IRON_ORE.defaultBlockState()), "The crowbar mines iron ore");
+        helper.assertTrue(crowbar.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()), "The crowbar mines diamond ore (iron level)");
+        helper.assertTrue(!crowbar.isCorrectToolForDrops(Blocks.OBSIDIAN.defaultBlockState()), "The crowbar does not mine obsidian");
+        helper.assertTrue(crowbar.getMaxDamage() == 1000, "1000 uses like Techguns 2");
+        helper.succeed();
+    }
+
+    /** Techguns 2 combat knife: a steel sword (6.5 damage) whose kills gore a quarter of the time, like the crowbar's. */
+    @GameTest(template = ARENA)
+    public static void combatKnifeIsASteelSword(GameTestHelper helper) {
+        ItemStack knife = new ItemStack(TGItems.COMBAT_KNIFE.get());
+        helper.assertTrue(knife.is(ItemTags.SWORDS) && knife.getMaxDamage() == 1000, "A steel sword");
+        double[] damage = {1.0};
+        knife.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
+            if (attribute.is(Attributes.ATTACK_DAMAGE)) {
+                damage[0] += modifier.amount();
+            }
+        });
+        helper.assertTrue(Math.abs(damage[0] - 6.5) < 1.0e-4, "Techguns 2 knife damage 6.5, got " + damage[0]);
+        for (ItemStack weapon : new ItemStack[] {knife, new ItemStack(TGItems.CROWBAR.get())}) {
+            TGMeleeWeapon melee = (TGMeleeWeapon) weapon.getItem();
+            helper.assertTrue(melee.meleeDeathType(weapon) == DeathType.GORE && melee.meleeGoreChance() == 0.25f, weapon + " gores a quarter of kills");
+        }
+        helper.succeed();
+    }
+
+    /** Techguns 2 {@code ItemBlockOreDrill}: where drill rods and controllers may be placed. */
+    @GameTest(template = ARENA)
+    public static void oreDrillPartsPlacementRules(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockState rod = TGBlocks.ORE_DRILL_ROD.get().defaultBlockState();
+        BlockState controller = TGBlocks.ORE_DRILL_CONTROLLER.get().defaultBlockState();
+        BlockPos cluster = new BlockPos(4, 1, 4);
+        helper.setBlock(cluster, TGBlocks.ORE_CLUSTER_COAL.get());
+        helper.setBlock(cluster.east(), TGBlocks.ORE_CLUSTER_COAL.get());
+        helper.assertTrue("techguns.msg.error.rodplacement".equals(OreDrillPartItem.placementError(level, helper.absolutePos(new BlockPos(1, 1, 1)), rod)),
+                "A rod alone is refused");
+        helper.assertTrue(OreDrillPartItem.placementError(level, helper.absolutePos(cluster.above()), rod) == null, "A rod on a cluster is fine");
+        helper.setBlock(cluster.above(), rod);
+        helper.assertTrue(OreDrillPartItem.placementError(level, helper.absolutePos(cluster.above(2)), rod) == null, "A rod on a rod is fine");
+        helper.assertTrue("techguns.msg.error.alreadyrod".equals(OreDrillPartItem.placementError(level, helper.absolutePos(cluster.east().above()), rod)),
+                "A second rod at the same cluster is refused");
+        BlockPos first = new BlockPos(1, 1, 6);
+        helper.setBlock(first, controller);
+        helper.assertTrue("techguns.msg.error.oredrill.controllernext".equals(OreDrillPartItem.placementError(level, helper.absolutePos(first.east()), controller)),
+                "No controller next to a controller");
+        helper.assertTrue(OreDrillPartItem.placementError(level, helper.absolutePos(first.east(2)), controller) == null, "One block apart is fine");
+        helper.succeed();
+    }
+
+    /** The JEI examples of the special crafting recipes are what crafting really gives. */
+    @GameTest(template = ARENA)
+    public static void specialCraftingExamplesMatchTheRecipes(GameTestHelper helper) {
+        var level = helper.getLevel();
+        List<RecipeHolder<CraftingRecipe>> examples = SpecialCraftingExamples.all(level.registryAccess());
+        helper.assertTrue(examples.stream().anyMatch(e -> e.id().getPath().startsWith("jei/ammo_change/"))
+                && examples.stream().anyMatch(e -> e.id().getPath().startsWith("jei/mining_head/")), "Ammo change and mining head examples");
+        for (RecipeHolder<CraftingRecipe> example : examples) {
+            List<ItemStack> inputs = example.value().getIngredients().stream().map(ingredient -> ingredient.getItems()[0]).toList();
+            CraftingInput input = CraftingInput.of(2, 1, inputs);
+            ItemStack crafted = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level)
+                    .map(recipe -> recipe.value().assemble(input, level.registryAccess())).orElse(ItemStack.EMPTY);
+            ItemStack shown = example.value().getResultItem(level.registryAccess());
+            helper.assertTrue(ItemStack.isSameItemSameComponents(crafted, shown), example.id() + " shows " + shown + " but crafting gives " + crafted);
+        }
+        helper.succeed();
+    }
+
+    /** The nuke rocket is crafted from a rocket and a tactical nuke warhead (Techguns 2 shapeless recipe). */
+    @GameTest(template = ARENA)
+    public static void warheadMakesNukeRockets(GameTestHelper helper) {
+        CraftingInput input = CraftingInput.of(2, 1, List.of(new ItemStack(TGAmmo.ROCKET.get()), new ItemStack(TGItems.TACTICAL_NUKE_WARHEAD.get())));
+        ItemStack result = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, helper.getLevel())
+                .map(recipe -> recipe.value().assemble(input, helper.getLevel().registryAccess())).orElse(ItemStack.EMPTY);
+        helper.assertTrue(result.is(TGAmmo.ROCKET_NUKE.get()), "Rocket + warhead = nuke rocket, got " + result);
         helper.succeed();
     }
 }

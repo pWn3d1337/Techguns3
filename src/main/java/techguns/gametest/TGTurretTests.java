@@ -4,6 +4,14 @@ import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.CommonHooks;
+import techguns.block.TurretBlock;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
@@ -64,6 +72,35 @@ public class TGTurretTests {
             helper.assertTrue(turret.getHealth() == (float) TurretEntity.MAX_HEALTH, "Full health");
             helper.setBlock(BASE, Blocks.AIR);
             helper.assertTrue(turrets(helper).isEmpty(), "Breaking the base removes the turret");
+            helper.succeed();
+        });
+    }
+
+    /** Techguns 2 {@code rotateTile}: a wrench on the bottom face hangs the turret below the base, on the top stands it. */
+    @GameTest(template = ARENA)
+    public static void wrenchHangsAndStandsTheTurret(GameTestHelper helper) {
+        base(helper, false);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        BlockPos abs = helper.absolutePos(BASE);
+        player.moveTo(abs.getX() + 2.5, abs.getY(), abs.getZ() + 0.5);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(TGItems.CROWBAR.get()));
+        helper.runAfterDelay(2, () -> {
+            TurretEntity turret = turrets(helper).getFirst();
+            turret.setHealth(20.0f);
+            CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, abs, new BlockHitResult(Vec3.atCenterOf(abs), Direction.DOWN, abs, false));
+            helper.assertTrue(helper.getBlockState(BASE).getValue(TurretBlock.HANGING), "Wrench on the bottom face: hanging");
+            List<TurretEntity> moved = turrets(helper);
+            helper.assertTrue(moved.size() == 1 && moved.getFirst() != turret && moved.getFirst().getHealth() == 20.0f
+                    && moved.getFirst().blockPosition().equals(abs.below()), "The turret hangs below the base with its health");
+            CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, abs, new BlockHitResult(Vec3.atCenterOf(abs), Direction.NORTH, abs, false));
+            helper.assertTrue(helper.getBlockState(BASE).getValue(TurretBlock.HANGING), "A side face changes nothing");
+            CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, abs, new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false));
+            helper.assertTrue(!helper.getBlockState(BASE).getValue(TurretBlock.HANGING) && turrets(helper).size() == 1, "Top face: standing again");
+            // dismantling takes the turret along
+            player.setShiftKeyDown(true);
+            CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, abs, new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false));
+            helper.assertBlockNotPresent(TGBlocks.TURRET.get(), BASE);
+            helper.assertTrue(turrets(helper).isEmpty(), "No turret left after dismantling the base");
             helper.succeed();
         });
     }

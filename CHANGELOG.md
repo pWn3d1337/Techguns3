@@ -17,7 +17,8 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
   oxygen masks and other face, back and hand gear in extra slots.
 - Machines: Metal Press, Ammo Press, Blast Furnace, Grinder, Chem Lab, Charging Station, Repair, Camo, Upgrade and
   Ammo Bench, and the Fabricator, Reaction Chamber and Ore Drill multiblocks. Machines run on Forge Energy (FE).
-- Decorative blocks, lamps, ladders, nets, sandbags, crates and doors; explosive charges; turrets.
+- Decorative blocks, lamps, ladders, nets, sandbags, crates and doors (animated, with their settings screen); explosive
+  charges; turrets; the crowbar (a pickaxe and wrench: door settings, turning and picking up machines) and the combat knife.
 - 20 NPC types in factions: zombie and skeleton soldiers, human soldiers and bandits, super mutants, alien bugs and
   the bosses (cyber demon, ghastling, attack helicopter); natural spawning and spawner blocks.
 - World generation: tin, lead, titanium and other ores, ore clusters, the Techguns 2 overworld and Nether
@@ -50,6 +51,5 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
   Lootr installed, every player gets their own loot from Techguns structure chests.
 
 ### Known gaps
-- Some guide book pages still describe Techguns 2 features that changed (crowbar and wrench, the inventory tab
-  buttons, the door configuration screen, RF).
+- Some guide book pages still describe Techguns 2 features that changed (the inventory tab buttons, RF).
 - Gun, armor and machine numbers are the Techguns 2 values; a balancing pass is still to come.

@@ -5,7 +5,7 @@
   "description": "",
   "hide_while_locked": false,
   "icon": {
-    "item": "techguns:door_metal_3x3"
+    "item": "techguns:crowbar"
   },
   "name": "book.techguns.techguns_manual.doors.door_config.name",
   "pages": [

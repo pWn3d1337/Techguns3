@@ -27,6 +27,12 @@ import techguns.machine.TGMachineBlockEntity;
 public class MultiblockControllerBlock extends TGMachineBlock {
     private final MapCodec<MultiblockControllerBlock> codec;
 
+    /** Techguns 2: multiblock masters are neither turned nor dismantled by a wrench. */
+    @Override
+    public boolean canBeWrenched() {
+        return false;
+    }
+
     public MultiblockControllerBlock(Properties properties, Supplier<? extends BlockEntityType<? extends TGMachineBlockEntity>> type) {
         super(properties, type, Shapes.block(), RenderShape.MODEL);
         this.codec = simpleCodec(p -> new MultiblockControllerBlock(p, type));

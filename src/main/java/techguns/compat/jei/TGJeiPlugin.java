@@ -39,11 +39,22 @@ public class TGJeiPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
-        techguns.client.RecipeViewerHook.setShowCategory(id -> runtime.getJeiHelpers().getRecipeType(TGIds.id(id))
-                .map(type -> {
-                    runtime.getRecipesGui().showTypes(java.util.List.of(type));
-                    return true;
-                }).orElse(false));
+        techguns.client.RecipeViewerHook.setShowCategory(id -> {
+            if (id.equals("held")) {
+                // the recipes using the held item (the special crafting examples of a gun or tool)
+                var stack = Minecraft.getInstance().player.getMainHandItem();
+                if (stack.isEmpty()) {
+                    return false;
+                }
+                runtime.getRecipesGui().show(runtime.getJeiHelpers().getFocusFactory().createFocus(
+                        mezz.jei.api.recipe.RecipeIngredientRole.INPUT, mezz.jei.api.constants.VanillaTypes.ITEM_STACK, stack));
+                return true;
+            }
+            return runtime.getJeiHelpers().getRecipeType(TGIds.id(id)).map(type -> {
+                runtime.getRecipesGui().showTypes(java.util.List.of(type));
+                return true;
+            }).orElse(false);
+        });
     }
 
     @Override
@@ -70,6 +81,9 @@ public class TGJeiPlugin implements IModPlugin {
         add(registration, recipes, UpgradeBenchCategory.TYPE, TGRecipes.UPGRADE_BENCH.get());
         add(registration, recipes, CamoBenchCategory.TYPE, TGRecipes.CAMO_CHANGE.get());
         add(registration, recipes, AmmoBenchCategory.TYPE, TGRecipes.AMMO_BENCH.get());
+        // the ammo change and mining head recipes are special recipes: shown through examples
+        registration.addRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING,
+                SpecialCraftingExamples.all(Minecraft.getInstance().level.registryAccess()));
     }
 
     private static <I extends net.minecraft.world.item.crafting.RecipeInput, R extends Recipe<I>> void add(IRecipeRegistration registration, RecipeManager recipes, RecipeType<RecipeHolder<R>> type,

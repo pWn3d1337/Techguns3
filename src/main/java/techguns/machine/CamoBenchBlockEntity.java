@@ -13,6 +13,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import techguns.camo.CamoData;
+import techguns.slot.ExtraSlots;
+import techguns.slot.TGSlotType;
 import techguns.camo.TGCamo;
 import techguns.recipe.CamoChangeRecipe;
 import techguns.recipe.MachineInput;
@@ -31,8 +33,13 @@ public class CamoBenchBlockEntity extends TGMachineBlockEntity {
     public static final int BUTTON_PREVIOUS = BUTTON_MACHINE + 1;
     /** Worn armor head..feet: {@code BUTTON_ARMOR + 2 * i} next camo, {@code + 1} previous. */
     public static final int BUTTON_ARMOR = BUTTON_MACHINE + 2;
+    /**
+     * Worn face/back/hand gear ({@link TGSlotType} order): {@code BUTTON_GEAR + 2 * i} next camo, {@code + 1} previous
+     * (Techguns 2 had these buttons commented out).
+     */
+    public static final int BUTTON_GEAR = BUTTON_ARMOR + 8;
     /** Picks entry {@code id - BUTTON_VARIANT} of {@link #variants}. */
-    public static final int BUTTON_VARIANT = BUTTON_ARMOR + 8;
+    public static final int BUTTON_VARIANT = BUTTON_GEAR + 2 * TGSlotType.values().length;
 
     public CamoBenchBlockEntity(BlockPos pos, BlockState state) {
         super(TGBlockEntities.CAMO_BENCH.get(), pos, state, 1, 0);
@@ -95,10 +102,20 @@ public class CamoBenchBlockEntity extends TGMachineBlockEntity {
         if (level == null) {
             return false;
         }
-        if (id >= BUTTON_ARMOR && id < BUTTON_VARIANT) {
+        if (id >= BUTTON_ARMOR && id < BUTTON_GEAR) {
             int piece = (id - BUTTON_ARMOR) / 2;
             ItemStack armor = player.getItemBySlot(RepairBenchBlockEntity.ARMOR_SLOTS.get(piece));
             return CamoData.cycle(level.registryAccess(), armor, (id - BUTTON_ARMOR) % 2 == 1).isPresent();
+        }
+        if (id >= BUTTON_GEAR && id < BUTTON_VARIANT) {
+            TGSlotType slot = TGSlotType.values()[(id - BUTTON_GEAR) / 2];
+            ItemStack gear = ExtraSlots.get(player, slot);
+            if (CamoData.cycle(level.registryAccess(), gear, (id - BUTTON_GEAR) % 2 == 1).isEmpty()) {
+                return false;
+            }
+            // set it again so Curios or the fallback slots send the change
+            ExtraSlots.set(player, slot, gear);
+            return true;
         }
         ItemStack stack = inventory.getStackInSlot(SLOT_INPUT);
         List<ItemStack> variants = variants(level, stack);

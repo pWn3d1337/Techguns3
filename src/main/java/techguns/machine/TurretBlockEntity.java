@@ -222,6 +222,23 @@ public class TurretBlockEntity extends TGMachineBlockEntity {
         sendUpdate();
     }
 
+    /** The base turned (standing / hanging): the turret is rebuilt at its new place with its health. */
+    public void remount() {
+        TurretEntity current = getTurret();
+        if (!(level instanceof ServerLevel server) || current == null || dead) {
+            return;
+        }
+        float health = current.getHealth();
+        removeTurret();
+        spawnTurret(server, health);
+    }
+
+    /** Picked up by a wrench: the turret goes, the placed base builds a new one. */
+    @Override
+    public void beforeDismantle() {
+        removeTurret();
+    }
+
     /** The base is broken: the turret goes too. */
     public void removeTurret() {
         TurretEntity current = getTurret();

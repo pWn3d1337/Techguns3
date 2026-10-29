@@ -3,7 +3,7 @@ package techguns.client.gui.machine;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import techguns.registry.TGMenus;
 
-/** Screens of the machine menus. */
+/** Screens of the machine menus and the 3x3 door settings. */
 public final class TGMachineScreens {
     private TGMachineScreens() {
     }
@@ -24,5 +24,6 @@ public final class TGMachineScreens {
         event.register(TGMenus.ORE_DRILL.get(), OreDrillScreen::new);
         event.register(TGMenus.EXPLOSIVE_CHARGE.get(), ExplosiveChargeScreen::new);
         event.register(TGMenus.TURRET.get(), TurretScreen::new);
+        event.register(TGMenus.DOOR_3X3.get(), Door3x3Screen::new);
     }
 }

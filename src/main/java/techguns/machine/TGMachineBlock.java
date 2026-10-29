@@ -20,7 +20,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -136,11 +138,68 @@ public class TGMachineBlock extends BaseEntityBlock {
             if (machine.mayAccess(player)) {
                 serverPlayer.openMenu(machine, buf -> buf.writeBlockPos(pos));
             } else {
-                player.displayClientMessage(Component.translatable("techguns.container.security.denied", machine.getDisplayName())
-                        .withStyle(ChatFormatting.RED), true);
+                denied(player, machine);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    /** Whether a wrench turns and dismantles this machine (Techguns 2 {@code canBeWrenchRotated / Dismantled}). */
+    public boolean canBeWrenched() {
+        return true;
+    }
+
+    /** Wrench use on face {@code face} (Techguns 2 {@code rotateBlock}): turns the machine a quarter clockwise. */
+    public void turn(Level level, BlockPos pos, BlockState state, Player player, Direction face) {
+        if (level.isClientSide || !(level.getBlockEntity(pos) instanceof TGMachineBlockEntity machine)) {
+            return;
+        }
+        if (machine.mayAccess(player)) {
+            turn(level, pos, state, machine, face);
+        } else {
+            denied(player, machine);
+        }
+    }
+
+    /** Turns the machine for a wrench use on {@code face}; the player may access it. */
+    protected void turn(Level level, BlockPos pos, BlockState state, TGMachineBlockEntity machine, Direction face) {
+        level.setBlock(pos, state.rotate(level, pos, Rotation.CLOCKWISE_90), Block.UPDATE_ALL);
+    }
+
+    /**
+     * Wrench sneak + use (Techguns 2 dismantling): removes the machine and drops it as an item that keeps its contents,
+     * power and settings.
+     */
+    public void dismantle(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level.isClientSide || !(level.getBlockEntity(pos) instanceof TGMachineBlockEntity machine)) {
+            return;
+        }
+        if (!machine.mayAccess(player)) {
+            denied(player, machine);
+            return;
+        }
+        machine.beforeDismantle();
+        ItemStack item = new ItemStack(this);
+        machine.saveToItem(item, level.registryAccess());
+        // the contents travel in the item; breaking must not drop them as well
+        machine.clearContents();
+        level.removeBlock(pos, false);
+        popResource(level, pos, item);
+    }
+
+    private static void denied(Player player, TGMachineBlockEntity machine) {
+        player.displayClientMessage(Component.translatable("techguns.container.security.denied", machine.getDisplayName())
+                .withStyle(ChatFormatting.RED), true);
     }
 
     @Override

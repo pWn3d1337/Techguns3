@@ -38,7 +38,7 @@ import techguns.registry.TGComponents;
  * fuel it is a weak club that mines like a hand. Mining heads (an item data component) raise the mining level, speed
  * and damage. The use key does what the tool's {@link UseAction} says.
  */
-public class MeleeToolItem extends ChargeGunItem {
+public class MeleeToolItem extends ChargeGunItem implements techguns.item.TGMeleeWeapon {
     /** Techguns 2 used the sword attack speed for all melee tools (Fabric's positive values were a port mistake). */
     private static final double ATTACK_SPEED = -2.4;
 

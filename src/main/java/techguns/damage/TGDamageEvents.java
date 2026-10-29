@@ -27,6 +27,7 @@ import techguns.core.damage.TGArmorFormula;
 import techguns.core.damage.TGDamageCategory;
 import techguns.entity.npc.TurretEntity;
 import techguns.gun.MeleeToolItem;
+import techguns.item.TGMeleeWeapon;
 import techguns.network.TGNetwork;
 import techguns.registry.TGAttributes;
 
@@ -48,8 +49,8 @@ public final class TGDamageEvents {
                         entity.getRandom().nextFloat())) {
             TGNetwork.sendEntityDeath(entity, source.getDeathType());
         } else if (!entity.level().isClientSide && event.getSource().is(DamageTypes.PLAYER_ATTACK)
-                && event.getSource().getEntity() instanceof Player player && player.getMainHandItem().getItem() instanceof MeleeToolItem tool) {
-            // melee tools hit with the vanilla player attack; their death effect comes from the tool
+                && event.getSource().getEntity() instanceof Player player && player.getMainHandItem().getItem() instanceof TGMeleeWeapon tool) {
+            // melee tools and weapons hit with the vanilla player attack; their death effect comes from the tool
             DeathType deathType = tool.meleeDeathType(player.getMainHandItem());
             if (DeathEffectRules.playsDeathEffect(deathType, debugAlwaysDeathEffect ? 1.0f : tool.meleeGoreChance(), entity.getRandom().nextFloat())) {
                 TGNetwork.sendEntityDeath(entity, deathType);

@@ -63,7 +63,10 @@ public class Door3x3Item extends BlockItem {
             SoundType sound = masterState.getSoundType();
             level.playSound(null, base, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0f) / 2.0f, sound.getPitch() * 0.8f);
             level.gameEvent(GameEvent.BLOCK_PLACE, master, GameEvent.Context.of(player, masterState));
-            // a door put down next to a redstone signal opens at once
+            // the placer owns the door (security setting, Techguns 2 BasicOwnedTileEnt)
+            if (player != null && level.getBlockEntity(master) instanceof Door3x3BlockEntity entity) {
+                entity.setOwner(player);
+            }
             door.updatePower(level, master);
         }
         stack.consume(1, player);

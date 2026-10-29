@@ -5,13 +5,13 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import techguns.TGConfig;
 import techguns.TGIds;
+import techguns.machine.RedstoneMode;
 import techguns.machine.TGMachineBlockEntity;
 import techguns.machine.TGMachineMenu;
 
@@ -23,7 +23,7 @@ import techguns.machine.TGMachineMenu;
 // MIGRATION(26.x): GuiGraphics#blit and screen rendering change with deferred GUI rendering (1.21.6).
 public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends AbstractContainerScreen<M> {
     /** Shared widget sprites of the Techguns 2 machine screens (power bar, buttons, lights). */
-    protected static final ResourceLocation WIDGETS = TGIds.id("textures/gui/ammo_press_gui.png");
+    public static final ResourceLocation WIDGETS = TGIds.id("textures/gui/ammo_press_gui.png");
     private static final int TEXT_COLOR = 0x404040;
 
     private final ResourceLocation texture;
@@ -122,54 +122,43 @@ public abstract class TGMachineScreen<M extends TGMachineMenu<?>> extends Abstra
                     : Component.translatable("techguns.container.power.amount", menu.energy(), menu.maxEnergy());
             graphics.renderTooltip(font, power, mouseX, mouseY);
         } else if (powered && (isIn(mx, my, 6, 5, 10, 5) || isIn(mx, my, -22, 10, 20, 20))) {
-            List<Component> lines = new ArrayList<>();
-            lines.add(Component.translatable("techguns.container.redstone"));
-            lines.add(Component.translatable("techguns.container.redstone.mode", Component.translatable(menu.redstoneMode().translationKey())));
-            lines.add(Component.translatable("techguns.container.redstone.signal",
-                    Component.translatable(menu.hasSignal() ? "techguns.redstonemode.signal.high" : "techguns.redstonemode.signal.low")));
-            graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
+            graphics.renderComponentTooltip(font, redstoneTooltip(menu.redstoneMode(), menu.hasSignal()), mouseX, mouseY);
         } else if (isIn(mx, my, -22, securityButtonY, 20, 20)) {
-            int level = menu.getSecurity();
-            String ownerName = menu.machine().getOwnerName();
-            List<Component> lines = new ArrayList<>();
-            lines.add(Component.translatable("techguns.container.security.owner", ownerName.isEmpty()
-                    ? Component.translatable("techguns.container.security.tooltip.unowned") : Component.literal(ownerName)));
-            lines.add(Component.translatable("techguns.container.security.tooltip",
-                    Component.translatable("techguns.container.security.tooltip." + level)
-                            .withStyle(level == 0 ? ChatFormatting.GREEN : ChatFormatting.RED)));
-            lines.add(Component.translatable("techguns.container.security.tooltip.description." + level));
-            lines.add(Component.translatable("techguns.container.security.tooltip.descr2"));
-            graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
+            graphics.renderComponentTooltip(font, securityTooltip(menu.getSecurity(), menu.machine().getOwnerName()), mouseX, mouseY);
         }
+    }
+
+    /** Tooltip of the redstone button: the required and the present signal. */
+    public static List<Component> redstoneTooltip(RedstoneMode mode, boolean signal) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.translatable("techguns.container.redstone"));
+        lines.add(Component.translatable("techguns.container.redstone.mode", Component.translatable(mode.translationKey())));
+        lines.add(Component.translatable("techguns.container.redstone.signal",
+                Component.translatable(signal ? "techguns.redstonemode.signal.high" : "techguns.redstonemode.signal.low")));
+        return lines;
+    }
+
+    /** Tooltip of the security button: owner and {@link techguns.compat.team.TGTeams} security level. */
+    public static List<Component> securityTooltip(int level, String ownerName) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.translatable("techguns.container.security.owner", ownerName.isEmpty()
+                ? Component.translatable("techguns.container.security.tooltip.unowned") : Component.literal(ownerName)));
+        lines.add(Component.translatable("techguns.container.security.tooltip",
+                Component.translatable("techguns.container.security.tooltip." + level)
+                        .withStyle(level == 0 ? ChatFormatting.GREEN : ChatFormatting.RED)));
+        lines.add(Component.translatable("techguns.container.security.tooltip.description." + level));
+        lines.add(Component.translatable("techguns.container.security.tooltip.descr2"));
+        return lines;
     }
 
     protected static boolean isIn(int mx, int my, int x, int y, int width, int height) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
 
-    /**
-     * Square vanilla button with a Techguns 2 state icon ({@code iconSize} pixels at {@code u, v()} of {@code texture},
-     * centred), e.g. the redstone and security states.
-     */
-    protected final class IconButton extends Button {
-        private final ResourceLocation iconTexture;
-        private final int iconU;
-        private final java.util.function.IntSupplier iconV;
-        private final int iconSize;
-
+    /** A {@link TGIconButton} that presses machine button {@code id}. */
+    protected final class IconButton extends TGIconButton {
         public IconButton(int x, int y, int size, int id, ResourceLocation iconTexture, int iconU, java.util.function.IntSupplier iconV, int iconSize) {
-            super(x, y, size, size, Component.empty(), button -> pressButton(id), DEFAULT_NARRATION);
-            this.iconTexture = iconTexture;
-            this.iconU = iconU;
-            this.iconV = iconV;
-            this.iconSize = iconSize;
-        }
-
-        @Override
-        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-            super.renderWidget(graphics, mouseX, mouseY, partialTick);
-            int offset = (getWidth() - iconSize) / 2;
-            graphics.blit(iconTexture, getX() + offset, getY() + offset, iconU, iconV.getAsInt(), iconSize, iconSize);
+            super(x, y, size, button -> pressButton(id), iconTexture, iconU, iconV, iconSize);
         }
     }
 

@@ -1,6 +1,6 @@
 {
   "category": "techguns:doors",
-  "icon": "techguns:door_metal_3x3",
+  "icon": "techguns:crowbar",
   "name": "Door Configuration",
   "pages": [
     {

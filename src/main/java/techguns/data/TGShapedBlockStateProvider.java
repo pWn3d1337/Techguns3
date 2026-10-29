@@ -494,28 +494,34 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
     }
 
     private void doors3x3() {
-        // closed model, open model, particle texture and item texture per kind; the hangar open models are .obj files
-        door3x3(TGBlocks.DOOR_METAL_3X3, "techdoor3x3_full", "techdoor3x3_opened", "techdoor3x3", "item_door3x3", true);
-        door3x3(TGBlocks.DOOR_HANGAR_UP_3X3, "hangar_door_closed", "hangar_door_opened", "hangar_door", "hangar_door_up", false);
-        door3x3(TGBlocks.DOOR_HANGAR_DOWN_3X3, "hangar_door_down_closed", "hangar_door_down_opened", "hangar_door", "hangar_door_down", false);
-        door3x3(TGBlocks.DOOR_NETHER_3X3, "techdoor3x3_full_nether", "techdoor3x3_opened_nether", "techdoor3x3_nether", "item_door3x3_nether", true);
+        // closed, open and frame model, particle texture and item texture per kind; the hangar open models are .obj files
+        door3x3(TGBlocks.DOOR_METAL_3X3, "techdoor3x3_full", "techdoor3x3_opened", "techdoor3x3_frame", "techdoor3x3", "item_door3x3", true);
+        door3x3(TGBlocks.DOOR_HANGAR_UP_3X3, "hangar_door_closed", "hangar_door_opened", "hangar_door_frame", "hangar_door", "hangar_door_up", false);
+        door3x3(TGBlocks.DOOR_HANGAR_DOWN_3X3, "hangar_door_down_closed", "hangar_door_down_opened", "hangar_door_down_frame", "hangar_door",
+                "hangar_door_down", false);
+        door3x3(TGBlocks.DOOR_NETHER_3X3, "techdoor3x3_full_nether", "techdoor3x3_opened_nether", "techdoor3x3_frame_nether", "techdoor3x3_nether",
+                "item_door3x3_nether", true);
     }
 
-    private void door3x3(DeferredBlock<Door3x3Block> block, String closedParent, String openParent, String particle, String itemTexture,
-                         boolean jsonOpenModel) {
+    private void door3x3(DeferredBlock<Door3x3Block> block, String closedParent, String openParent, String frameParent, String particle,
+                         String itemTexture, boolean jsonOpenModel) {
         String name = path(block);
         ModelFile closed = models().withExistingParent("block/" + name + "_closed", modLoc("block/" + closedParent)).renderType(CUTOUT);
         // the .obj wrappers carry their own render type (a child of a custom loader model would not)
         ModelFile open = jsonOpenModel
                 ? models().withExistingParent("block/" + name + "_open", modLoc("block/" + openParent)).renderType(CUTOUT)
                 : existing(openParent);
+        // while the door moves the master shows only the frame, the renderer draws the moving parts
+        ModelFile frame = models().withExistingParent("block/" + name + "_frame", modLoc("block/" + frameParent)).renderType(CUTOUT)
+                .texture("particle", tex(particle));
         // the eight other blocks of the door draw nothing, only the particle texture
         ModelFile part = models().getBuilder("block/" + name + "_part").texture("particle", tex(particle));
         getVariantBuilder(block.get()).forAllStatesExcept(state -> {
             if (!Door3x3Block.isMaster(state)) {
                 return ConfiguredModel.builder().modelFile(part).build();
             }
-            return ConfiguredModel.builder().modelFile(state.getValue(Door3x3Block.OPEN) ? open : closed)
+            ModelFile model = state.getValue(Door3x3Block.MOVING) ? frame : state.getValue(Door3x3Block.OPEN) ? open : closed;
+            return ConfiguredModel.builder().modelFile(model)
                     .rotationY(state.getValue(Door3x3Block.ZPLANE) ? 90 : 0).build();
         }, Door3x3Block.POWERED);
         itemModels().withExistingParent(name, mcLoc("item/generated")).texture("layer0", modLoc("item/" + itemTexture));

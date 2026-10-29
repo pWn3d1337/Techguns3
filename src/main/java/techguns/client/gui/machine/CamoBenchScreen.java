@@ -13,14 +13,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import techguns.TGIds;
 import techguns.camo.CamoData;
+import techguns.slot.ExtraSlots;
+import techguns.slot.TGSlotType;
 import techguns.machine.CamoBenchBlockEntity;
 import techguns.machine.CamoBenchMenu;
 import techguns.machine.RepairBenchBlockEntity;
 
 /**
  * Camo Bench screen (Techguns 2 {@code CamoBenchGui}): the player model with the offhand slot on the left, the input
- * item's camo with cycle arrows, camo cycle buttons and camo numbers for the worn armor, and on the right a
- * Fabric-style list of every look of the input item to pick from.
+ * item's camo with cycle arrows, camo cycle buttons and camo numbers for the worn armor and the worn face/back/hand gear
+ * (shown in the texture's gear slots; they live in Curios or the extra slot screen), and on the right a Fabric-style
+ * list of every look of the input item to pick from.
  */
 public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
     private static final ResourceLocation TEXTURE = TGIds.id("textures/gui/camo_bench_gui.png");
@@ -50,8 +53,12 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
     private List<ItemStack> cachedVariants = List.of();
     private int cachedCurrent = -1;
     private Component cachedName = Component.empty();
-    private final ItemStack[] cachedArmor = new ItemStack[RepairBenchBlockEntity.ARMOR_SLOTS.size()];
-    private final int[] cachedArmorCamo = new int[RepairBenchBlockEntity.ARMOR_SLOTS.size()];
+    /** Worn armor pieces, then the face/back/hand gear. */
+    private static final int WORN = RepairBenchBlockEntity.ARMOR_SLOTS.size() + TGSlotType.values().length;
+    /** Left edge of the face/back/hand slots of the texture (the armor slots follow at 99). */
+    private static final int GEAR_X = 45;
+    private final ItemStack[] cachedWorn = new ItemStack[WORN];
+    private final int[] cachedWornCamo = new int[WORN];
 
     private void refreshInput() {
         ItemStack input = input();
@@ -80,15 +87,19 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
         return cachedCurrent;
     }
 
-    /** Camo number (1-based, 0 = no camos) of the worn armor piece {@code i}. */
-    private int armorCamo(int i, ItemStack armor) {
-        if (cachedArmor[i] == null || !ItemStack.matches(armor, cachedArmor[i])) {
-            cachedArmor[i] = armor.copy();
-            cachedArmorCamo[i] = minecraft == null || minecraft.level == null ? 0
-                    : CamoData.camos(minecraft.level.registryAccess(), armor).indexOf(
-                            CamoData.current(minecraft.level.registryAccess(), armor).orElse(null)) + 1;
+    /** Camo number (1-based, 0 = no camos) of worn item {@code i}: armor pieces, then the gear. */
+    private int wornCamo(int i, ItemStack worn) {
+        if (cachedWorn[i] == null || !ItemStack.matches(worn, cachedWorn[i])) {
+            cachedWorn[i] = worn.copy();
+            cachedWornCamo[i] = minecraft == null || minecraft.level == null ? 0
+                    : CamoData.camos(minecraft.level.registryAccess(), worn).indexOf(
+                            CamoData.current(minecraft.level.registryAccess(), worn).orElse(null)) + 1;
         }
-        return cachedArmorCamo[i];
+        return cachedWornCamo[i];
+    }
+
+    private ItemStack gear(TGSlotType slot) {
+        return minecraft == null || minecraft.player == null ? ItemStack.EMPTY : ExtraSlots.get(minecraft.player, slot);
     }
 
     private int panelX() {
@@ -110,12 +121,16 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
             addRenderableWidget(Button.builder(Component.literal("-"), b -> pressButton(id + 1))
                     .bounds(leftPos + 102 + i * 18, topPos + 69, 10, 10).build());
         }
+        for (TGSlotType slot : TGSlotType.values()) {
+            int id = CamoBenchBlockEntity.BUTTON_GEAR + 2 * slot.ordinal();
+            int x = leftPos + GEAR_X + 3 + slot.ordinal() * 18;
+            addRenderableWidget(Button.builder(Component.literal("+"), b -> pressButton(id)).bounds(x, topPos + 59, 10, 10).build());
+            addRenderableWidget(Button.builder(Component.literal("-"), b -> pressButton(id + 1)).bounds(x, topPos + 69, 10, 10).build());
+        }
     }
 
     @Override
     protected void renderMachineBg(GuiGraphics graphics, int x, int y) {
-        // the face/back/hand slots of the Techguns 2 texture: the extra slots live in Curios or their own screen here
-        graphics.fill(x + 40, y + 15, x + 98, y + 48, PANEL_COLOR);
         graphics.blit(TEXTURE, x - 45, y + 6, 178, 0, 45, 84);
         graphics.blit(TEXTURE, x - 18, y + 93, 7, 83, 18, 18);
         if (minecraft != null && minecraft.player != null) {
@@ -145,6 +160,12 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
         super.renderMachineTooltips(graphics, mx, my, mouseX, mouseY);
         if (menu.getCarried().isEmpty()) {
             grid.renderTooltip(graphics, font, mouseX, mouseY);
+            for (TGSlotType slot : TGSlotType.values()) {
+                ItemStack gear = gear(slot);
+                if (!gear.isEmpty() && isIn(mx, my, GEAR_X + slot.ordinal() * 18, 18, 16, 16)) {
+                    graphics.renderTooltip(font, gear, mouseX, mouseY);
+                }
+            }
         }
     }
 
@@ -163,8 +184,16 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
         if (minecraft != null && minecraft.player != null) {
             for (int i = 0; i < RepairBenchBlockEntity.ARMOR_SLOTS.size(); i++) {
                 ItemStack armor = minecraft.player.getItemBySlot(RepairBenchBlockEntity.ARMOR_SLOTS.get(i));
-                int camo = armorCamo(i, armor);
+                int camo = wornCamo(i, armor);
                 drawText(graphics, Component.literal(String.valueOf(camo)), 104 + i * 18, 38);
+            }
+            // the worn gear drawn in the gear slots of the texture (no slots: the items stay where they are worn)
+            for (TGSlotType slot : TGSlotType.values()) {
+                ItemStack gear = gear(slot);
+                int x = GEAR_X + slot.ordinal() * 18;
+                graphics.renderItem(gear, x, 18);
+                int camo = wornCamo(RepairBenchBlockEntity.ARMOR_SLOTS.size() + slot.ordinal(), gear);
+                drawText(graphics, Component.literal(String.valueOf(camo)), x + 5, 38);
             }
         }
     }

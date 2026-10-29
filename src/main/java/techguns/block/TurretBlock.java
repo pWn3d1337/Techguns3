@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.Shapes;
 import techguns.machine.TGMachineBlock;
+import techguns.machine.TGMachineBlockEntity;
 import techguns.machine.TurretBlockEntity;
 import techguns.registry.TGBlockEntities;
 
@@ -29,6 +30,21 @@ import techguns.registry.TGBlockEntities;
 public class TurretBlock extends TGMachineBlock {
     public static final BooleanProperty HANGING = BooleanProperty.create("hanging");
     public static final MapCodec<TurretBlock> CODEC = simpleCodec(TurretBlock::new);
+
+    /**
+     * Techguns 2 {@code TurretTileEnt.rotateTile}: a wrench on the top face stands the turret on the base, on the bottom
+     * face hangs it below; the turret moves over with its health.
+     */
+    @Override
+    protected void turn(Level level, BlockPos pos, BlockState state, TGMachineBlockEntity machine, Direction face) {
+        if (face.getAxis() != Direction.Axis.Y || state.getValue(HANGING) == (face == Direction.DOWN)) {
+            return;
+        }
+        level.setBlock(pos, state.setValue(HANGING, face == Direction.DOWN), Block.UPDATE_ALL);
+        if (machine instanceof TurretBlockEntity turret) {
+            turret.remount();
+        }
+    }
 
     public TurretBlock(Properties properties) {
         super(properties, TGBlockEntities.TURRET, Shapes.block(), RenderShape.ENTITYBLOCK_ANIMATED);

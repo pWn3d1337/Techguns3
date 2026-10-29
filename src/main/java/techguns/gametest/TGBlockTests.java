@@ -30,6 +30,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import techguns.block.CamoNetBlock;
 import techguns.block.Door3x3Block;
+import techguns.block.Door3x3BlockEntity;
+import techguns.compat.team.TGTeams;
+import techguns.machine.RedstoneMode;
+import net.minecraft.server.level.ServerPlayer;
 import techguns.block.MilitaryCrateBlock;
 import techguns.block.SandbagsBlock;
 import techguns.block.TGLampBlock;
@@ -396,26 +400,186 @@ public class TGBlockTests {
 
         use(helper, player, middle);
         helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, false), "Using it again closes the door");
-
-        // an unpowered open door closes on its own (the scheduled auto close tick)
-        use(helper, player, corner);
-        helper.getBlockState(master).tick(helper.getLevel(), helper.absolutePos(master), helper.getLevel().random);
-        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, false), "The auto close tick closes the door");
+        helper.assertTrue(!helper.getBlockState(middle).getCollisionShape(helper.getLevel(), absMiddle).isEmpty(), "A closing door collides at once");
         helper.succeed();
     }
 
     @GameTest(template = ARENA)
+    public static void openDoorKeepsWaterOut(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        BlockPos master = new BlockPos(3, 2, 4);
+        placeDoor(helper, TGBlocks.DOOR_METAL_3X3, master, true);
+        use(helper, player, master);
+        helper.setBlock(new BlockPos(2, 1, 4), Blocks.WATER);
+        helper.runAfterDelay(20, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, true), "Water must not wash an open door away");
+            helper.succeed();
+        });
+    }
+
+    private static boolean moving(GameTestHelper helper, BlockPos master) {
+        return helper.getBlockState(master).getValue(Door3x3Block.MOVING);
+    }
+
+    private static Door3x3BlockEntity doorEntity(GameTestHelper helper, BlockPos master) {
+        if (helper.getBlockEntity(master) instanceof Door3x3BlockEntity door) {
+            return door;
+        }
+        throw new net.minecraft.gametest.framework.GameTestAssertException("No door block entity at the master " + master);
+    }
+
+    /** 1.12 OPENING / OPENED / CLOSING / CLOSED: the door moves for a second, turns around when used mid-way, closes on its own. */
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void doorMovesBeforeItIsOpen(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        BlockPos master = new BlockPos(3, 2, 4);
+        placeDoor(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false);
+        helper.assertTrue(helper.getLevel().getBlockEntity(helper.absolutePos(Door3x3Block.partPos(master, false, 0, 0))) == null,
+                "Only the master has a block entity");
+        Door3x3BlockEntity door = doorEntity(helper, master);
+        use(helper, player, master);
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false, true) && moving(helper, master), "The door starts opening");
+        helper.assertTrue(door.openness(0.0f) == 0.0f, "An opening door starts closed");
+        int quarter = Door3x3Block.MOVE_TICKS / 4;
+        helper.runAfterDelay(quarter, () -> {
+            helper.assertTrue(Math.abs(door.openness(0.0f) - 0.25f) < 0.06f, "A quarter of the way open, got " + door.openness(0.0f));
+            use(helper, player, master);
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false, false) && moving(helper, master), "Used mid-way it turns around");
+            helper.assertTrue(Math.abs(door.openness(0.0f) - 0.25f) < 0.06f, "Turning around keeps the door where it is, got " + door.openness(0.0f));
+        });
+        // closed a quarter of a movement later; open it again and wait for the auto close
+        int closed = quarter * 2 + 2;
+        helper.runAfterDelay(closed, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false, false) && !moving(helper, master), "The door has closed");
+            use(helper, player, master);
+        });
+        int open = closed + Door3x3Block.MOVE_TICKS + 2;
+        helper.runAfterDelay(open, () -> helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false, true) && !moving(helper, master),
+                "The door is fully open after " + Door3x3Block.MOVE_TICKS + " ticks"));
+        helper.runAfterDelay(open + Door3x3Block.AUTO_CLOSE_TICKS - 6, () -> helper.assertTrue(
+                doorIs(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false, true), "The auto close counts from fully open"));
+        helper.runAfterDelay(open + Door3x3Block.AUTO_CLOSE_TICKS + 2, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_HANGAR_DOWN_3X3, master, false, false) && moving(helper, master),
+                    "An unpowered open door closes on its own");
+            helper.succeed();
+        });
+    }
+
+    /** A mock player (not in the level) next to the door, in range of its settings. */
+    private static Player playerNear(GameTestHelper helper, BlockPos master) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Vec3 at = helper.absoluteVec(Vec3.atBottomCenterOf(master).add(2.0, -1.0, 0.0));
+        player.moveTo(at.x, at.y, at.z);
+        return player;
+    }
+
+    /** Techguns 2 door modes: only redstone doors follow redstone, as their redstone behaviour says. */
+    @GameTest(template = ARENA, timeoutTicks = 200)
     public static void doorFollowsRedstone(GameTestHelper helper) {
         BlockPos master = new BlockPos(3, 2, 4);
         placeDoor(helper, TGBlocks.DOOR_NETHER_3X3, master, true);
+        Door3x3BlockEntity door = doorEntity(helper, master);
+        Player player = playerNear(helper, master);
         BlockPos power = new BlockPos(3, 1, 6); // next to the south column, bottom row
         helper.setBlock(power, Blocks.REDSTONE_BLOCK);
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, false), "A manual door ignores redstone");
+        helper.assertTrue(door.pressButton(player, Door3x3BlockEntity.BUTTON_MODE) && door.getMode() == Door3x3BlockEntity.Mode.REDSTONE,
+                "The mode button switches to redstone");
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, false), "Redstone behaviour 'ignore' leaves the door as it is");
+        door.pressButton(player, Door3x3BlockEntity.BUTTON_REDSTONE);
+        helper.assertTrue(door.getRedstoneMode() == RedstoneMode.HIGH, "Redstone behaviour high");
         helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, true), "A redstone signal at any part opens the door");
-        // the auto close does not act on a powered door
-        helper.getBlockState(master).tick(helper.getLevel(), helper.absolutePos(master), helper.getLevel().random);
-        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, true), "A powered door stays open");
-        helper.setBlock(power, Blocks.AIR);
-        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, false), "Removing the signal closes the door");
+        // no auto close for redstone doors
+        helper.runAfterDelay(Door3x3Block.MOVE_TICKS + Door3x3Block.AUTO_CLOSE_TICKS + 5, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, true), "A powered door stays open");
+            helper.setBlock(power, Blocks.AIR);
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, false), "Removing the signal closes the door");
+            door.pressButton(player, Door3x3BlockEntity.BUTTON_REDSTONE);
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_NETHER_3X3, master, true, true), "Redstone behaviour low opens it without a signal");
+            helper.succeed();
+        });
+    }
+
+    /** Techguns 2 player detector: opens for players near it, closes a second after they left. */
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void doorPlayerDetector(GameTestHelper helper) {
+        BlockPos master = new BlockPos(3, 2, 4);
+        placeDoor(helper, TGBlocks.DOOR_METAL_3X3, master, true);
+        Door3x3BlockEntity door = doorEntity(helper, master);
+        Player setter = playerNear(helper, master);
+        door.pressButton(setter, Door3x3BlockEntity.BUTTON_MODE);
+        door.pressButton(setter, Door3x3BlockEntity.BUTTON_MODE);
+        helper.assertTrue(door.getMode() == Door3x3BlockEntity.Mode.PLAYER_DETECTOR, "Third mode: player detector");
+        // a plain mock player in the level (a mock server player would join like a client)
+        Player walker = helper.makeMockPlayer(GameType.SURVIVAL);
+        Vec3 far = helper.absoluteVec(new Vec3(0.5, 1, 0.5)).add(0, 0, -20);
+        Vec3 near = helper.absoluteVec(Vec3.atBottomCenterOf(master).add(1.5, -1.0, 0.0));
+        walker.moveTo(far.x, far.y, far.z);
+        helper.getLevel().addFreshEntity(walker);
+        helper.runAfterDelay(Door3x3BlockEntity.DETECTOR_INTERVAL * 2, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, false), "No player near: closed");
+            walker.moveTo(near.x, near.y, near.z);
+        });
+        int opened = Door3x3BlockEntity.DETECTOR_INTERVAL * 4;
+        helper.runAfterDelay(opened, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, true), "A player near opens the door");
+            walker.moveTo(far.x, far.y, far.z);
+        });
+        helper.runAfterDelay(opened + Door3x3Block.MOVE_TICKS + Door3x3BlockEntity.DETECTOR_INTERVAL, () -> helper.assertTrue(
+                doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, true), "The door stays open a second after the player left"));
+        helper.runAfterDelay(opened + 3 * Door3x3Block.MOVE_TICKS + Door3x3BlockEntity.DETECTOR_INTERVAL, () -> {
+            helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, false), "Then it closes");
+            walker.discard();
+            helper.succeed();
+        });
+    }
+
+    /** Owner and security like the machines: an owner-only door keeps others out of it and its settings. */
+    @GameTest(template = ARENA)
+    public static void doorSecurityKeepsOthersOut(GameTestHelper helper) {
+        BlockPos master = new BlockPos(3, 2, 4);
+        placeDoor(helper, TGBlocks.DOOR_METAL_3X3, master, true);
+        Door3x3BlockEntity door = doorEntity(helper, master);
+        Player owner = playerNear(helper, master);
+        Player other = playerNear(helper, master);
+        door.setOwner(owner);
+        helper.assertTrue(!door.pressButton(other, Door3x3BlockEntity.BUTTON_SECURITY), "Only the owner changes the security");
+        door.pressButton(owner, Door3x3BlockEntity.BUTTON_SECURITY);
+        if (door.getSecurity() != TGTeams.SECURITY_OWNER) {
+            // with a team mod the levels go public, allies, team, owner
+            door.pressButton(owner, Door3x3BlockEntity.BUTTON_SECURITY);
+            door.pressButton(owner, Door3x3BlockEntity.BUTTON_SECURITY);
+        }
+        helper.assertTrue(door.getSecurity() == TGTeams.SECURITY_OWNER, "Owner only");
+        use(helper, other, master);
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, false), "Others can't open an owner-only door");
+        helper.assertTrue(!door.pressButton(other, Door3x3BlockEntity.BUTTON_MODE), "Others can't change its settings");
+        use(helper, owner, master);
+        helper.assertTrue(doorIs(helper, TGBlocks.DOOR_METAL_3X3, master, true, true), "The owner opens it");
+        helper.succeed();
+    }
+
+    /**
+     * Techguns 2: sneak + use with a wrench (the crowbar) is the door screen's (the event is taken before the block's
+     * use, a fake player gets no screen), without sneaking the wrench opens the door like a hand.
+     */
+    @GameTest(template = ARENA)
+    public static void wrenchOpensDoorSettings(GameTestHelper helper) {
+        BlockPos master = new BlockPos(3, 2, 4);
+        placeDoor(helper, TGBlocks.DOOR_METAL_3X3, master, true);
+        ServerPlayer player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(helper.getLevel());
+        Vec3 near = helper.absoluteVec(Vec3.atBottomCenterOf(master).add(2.0, -1.0, 0.0));
+        player.moveTo(near.x, near.y, near.z);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(techguns.registry.TGItems.CROWBAR.get()));
+        BlockPos corner = helper.absolutePos(Door3x3Block.partPos(master, true, 0, 0));
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(corner), Direction.EAST, corner, false);
+        player.setShiftKeyDown(true);
+        var event = net.neoforged.neoforge.common.CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, corner, hit);
+        helper.assertTrue(event.isCanceled() && event.getCancellationResult().consumesAction(), "Sneak + wrench is taken for the door screen");
+        player.setShiftKeyDown(false);
+        event = net.neoforged.neoforge.common.CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, corner, hit);
+        helper.assertTrue(!event.isCanceled(), "Without sneaking the wrench uses the door");
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         helper.succeed();
     }
 

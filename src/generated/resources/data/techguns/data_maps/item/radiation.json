@@ -27,6 +27,9 @@
     "techguns:rocket_nuke": {
       "level": 1
     },
+    "techguns:tactical_nuke_warhead": {
+      "level": 1
+    },
     "techguns:uranium_ore": {
       "level": 1
     },

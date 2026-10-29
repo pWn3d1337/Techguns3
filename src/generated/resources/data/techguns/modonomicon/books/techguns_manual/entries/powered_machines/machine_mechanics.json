@@ -89,15 +89,17 @@
       "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page6.title"
     },
     {
-      "type": "modonomicon:text",
+      "type": "modonomicon:spotlight",
       "anchor": "wrench",
       "condition": {
         "type": "modonomicon:none"
       },
-      "show_title_separator": true,
+      "item": {
+        "count": 1,
+        "item": "techguns:crowbar"
+      },
       "text": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page7.text",
-      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page7.title",
-      "use_markdown_in_title": false
+      "title": "book.techguns.techguns_manual.powered_machines.machine_mechanics.page7.title"
     }
   ],
   "show_when_any_parent_unlocked": false,
