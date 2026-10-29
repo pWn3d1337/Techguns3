@@ -40,6 +40,11 @@ public final class TGConfig {
                     + "Damage without an attacker (radiation, acid) is not scaled.")
             .defineInRange("damageFactorNPC", 1.0, 0.0, 100.0);
 
+    public static final ModConfigSpec.BooleanValue AUTO_FEEDER = COMMON
+            .comment("An Auto-Feeder worn in the mouth slot feeds its food to the player when they are hungry (the Techguns 2 auto-feeder; "
+                    + "Techguns 2 config disableAutofeeder). Switch it off if you think it breaks the balance.")
+            .define("autoFeeder", true);
+
     public static final ModConfigSpec.BooleanValue ALLOW_UNSAFE_MODE = COMMON
             .comment("Players may switch off safe mode, so their guns and grenades damage blocks. When false, players are always in safe mode "
                     + "(Techguns 2 permission canUseUnsafeMode).")

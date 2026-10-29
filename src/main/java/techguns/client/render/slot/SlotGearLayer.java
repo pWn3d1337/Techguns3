@@ -43,10 +43,14 @@ public final class SlotGearLayer extends RenderLayer<AbstractClientPlayer, Playe
     }
 
     /**
-     * Whether the worn armor leaves the slot's gear visible: powered helmets hide face gear, chest pieces hide back
-     * gear and gloves (Techguns 2 {@code isSlotVisible}).
+     * Whether the slot's gear is drawn: not when the player switched the slot's visibility off in Curios, and not when
+     * the worn armor hides it: powered helmets hide face gear, chest pieces hide back gear and gloves (Techguns 2
+     * {@code isSlotVisible}).
      */
     public static boolean isSlotVisible(Player player, TGSlotType slot) {
+        if (!ExtraSlots.isRendered(player, slot)) {
+            return false;
+        }
         switch (slot) {
             case FACE:
                 return !(player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof TGArmorItem armor && armor.hidesFaceSlot());

@@ -1,0 +1,7 @@
+{
+  "icon": "techguns:slot/empty_mouth_slot",
+  "order": 45,
+  "validators": [
+    "curios:tag"
+  ]
+}

@@ -9,7 +9,7 @@ import techguns.registry.TGComponents;
 import techguns.registry.TGTags;
 
 /**
- * Typed access to the contents of Ammo Bag stacks. All methods are pure logic on {@link ItemStack}s so they can
+ * Typed access to the contents of Ammo Bag stacks and the other {@link StorageBag}s (Auto-Feeder). All methods are pure logic on {@link ItemStack}s so they can
  * be used from GameTests without a player. Mutating methods only touch the bag stack (and the stack passed for
  * insertion), never the world.
  */
@@ -17,6 +17,7 @@ public final class AmmoBagData {
     private AmmoBagData() {
     }
 
+    /** An Ammo Bag (ammo is counted, taken and picked up through these). */
     public static boolean isBag(ItemStack stack) {
         return stack.getItem() instanceof AmmoBagItem;
     }
@@ -36,7 +37,7 @@ public final class AmmoBagData {
 
     /** Capacity of the bag in rounds, 0 if the stack is not a bag. */
     public static int capacity(ItemStack bag) {
-        return bag.getItem() instanceof AmmoBagItem item ? item.capacity() : 0;
+        return bag.getItem() instanceof StorageBag item ? item.capacity() : 0;
     }
 
     public static int occupancy(ItemStack bag) {
@@ -54,7 +55,8 @@ public final class AmmoBagData {
 
     /** How many items of {@code stack} would fit into the bag right now. */
     public static int maxAmountToAdd(ItemStack bag, ItemStack stack) {
-        if (!isBag(bag) || !isAmmo(stack)) {
+        if (!(bag.getItem() instanceof StorageBag storage) || stack.isEmpty() || !stack.getItem().canFitInsideContainerItems()
+                || !storage.canStore(stack)) {
             return 0;
         }
         return Math.min(stack.getCount(), remainingCapacity(bag) / AmmoBagContents.unitWeight(stack));
@@ -62,7 +64,7 @@ public final class AmmoBagData {
 
     /**
      * Moves as much of {@code stack} into the bag as fits and shrinks {@code stack} accordingly.
-     * Non-ammo stacks are rejected.
+     * Stacks the bag doesn't take are rejected.
      *
      * @return the number of items inserted
      */

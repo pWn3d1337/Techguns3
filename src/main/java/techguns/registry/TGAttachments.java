@@ -27,7 +27,7 @@ public final class TGAttachments {
     public static final Supplier<AttachmentType<TGPlayerData>> PLAYER_DATA = ATTACHMENTS.register("player_data",
             () -> AttachmentType.builder(TGPlayerData::new).serialize(TGPlayerData.CODEC).copyOnDeath().build());
 
-    /** Fallback extra slots (face/back/hand) when Curios is absent; synced by TGNetwork. */
+    /** Fallback extra slots (face/back/hand/mouth) when Curios is absent; synced by TGNetwork. */
     public static final Supplier<AttachmentType<FallbackSlots.Inventory>> EXTRA_SLOTS = ATTACHMENTS.register("extra_slots",
             () -> AttachmentType.builder(FallbackSlots.Inventory::new).serialize(FallbackSlots.Inventory.CODEC).copyOnDeath().build());
 

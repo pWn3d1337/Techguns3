@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "p": {
+      "item": "techguns:plastic_sheet"
+    },
+    "r": {
+      "item": "techguns:rubber_bar"
+    }
+  },
+  "pattern": [
+    " pp",
+    " pp",
+    "rr "
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:auto_feeder"
+  }
+}

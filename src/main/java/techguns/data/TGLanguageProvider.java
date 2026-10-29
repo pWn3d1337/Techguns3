@@ -142,6 +142,7 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("ammo_box", "Ammo Box (Small)"),
             Map.entry("crowbar", "Crowbar"),
             Map.entry("combat_knife", "Combat Knife"),
+            Map.entry("auto_feeder", "Auto-Feeder"),
             Map.entry("worldgen_test_tool", "WorldGen Test Tool"),
             Map.entry("building_scan_tool", "Building Scan Tool"),
             Map.entry("tactical_nuke_warhead", "Small Nuclear Warhead"),
@@ -573,6 +574,11 @@ public class TGLanguageProvider extends LanguageProvider {
         add("tooltip.techguns.slot.face", "Face");
         add("tooltip.techguns.slot.back", "Back");
         add("tooltip.techguns.slot.hand", "Hand");
+        add("tooltip.techguns.slot.mouth", "Mouth");
+        // Curios names its slots by this key
+        add("curios.identifier.mouth", "Mouth");
+        add("tooltip.techguns.auto_feeder", "Feeds you its food when you are hungry");
+        add("tooltip.techguns.auto_feeder.left", "Food points left of the last meal: %s");
         add("tooltip.techguns.slot.charge", "Charge: %s/%s");
         add("tooltip.techguns.slot.refill", "Recharges with: %s");
         add("attribute.name.techguns.night_vision", "Night Vision");

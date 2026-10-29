@@ -31,13 +31,15 @@ mechanics and effects of the Fabric 1.19.4 port. Worlds and items from Techguns 
 - Client option to keep the FOV steady with speed bonuses and while sprinting (on by default, like Techguns 2).
 - One- and two-handed guns as in Techguns 2: pistols and other one-handed guns can be dual-wielded, a two-handed gun
   leaves the off hand unusable. Gun tooltips show all stats with shift held, and how the loaded ammo changes them.
+- Auto-Feeder: worn in the new mouth slot, it feeds you its food when you get hungry, replacing the auto-feeder slots
+  of the Techguns 2 inventory tab (config `autoFeeder`).
 - The Techguns 2 HUD in the bottom right corner: ammo of the held guns with spare reloads, safe mode, power armor
   power, jetpack fuel, night vision and step assist state, worn-out armor and radiation (client config `showHudElements`).
 
 ### New in Techguns 3 (not in Techguns 2)
 - Nether fortress: the Techguns 2 Nether dungeon, now generated underground with an entrance hut.
 - Cities: the Techguns 2 procedural city, which Techguns 2 never spawned.
-- Optional integrations: Curios for the extra slots (Techguns uses its own slots without it), JEI recipe categories
+- Optional integrations: Curios for the extra slots (its visibility toggle hides the worn gear; Techguns uses its own slots without it), JEI recipe categories
   for all machines, the guide book for both Patchouli and Modonomicon, Create, Mekanism, Immersive Engineering,
   Modern Industrialization and Oritech recipes for Techguns plates and alloys, vanilla teams, FTB Teams and Open
   Parties and Claims for friendly fire and turret targeting, machine security levels, and a two-way Mekanism

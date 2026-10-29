@@ -361,6 +361,8 @@ public class TGRecipeProvider extends RecipeProvider {
                 "ogn", "cpc", "pep");
 
         slotShaped(output, TGSlotItems.WORKING_GLOVES.get(), cloth, "working_gloves", Map.of('h', cloth), " h", "hh");
+        // new in Techguns 3: replaces the auto-feeder slots of the Techguns 2 inventory tab (a plastic food box, a rubber tube)
+        slotShaped(output, TGSlotItems.AUTO_FEEDER.get(), plastic, "auto_feeder", Map.of('p', plastic, 'r', rubber), " pp", " pp", "rr ");
     }
 
     private static Map<Character, Object> with(Map<Character, Object> keys, char symbol, Object ingredient) {

@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.slot.TGSlotItem;
 import techguns.slot.TGSlotType;
 import techguns.slot.item.AntiGravPackItem;
+import techguns.slot.item.AutoFeederItem;
 import techguns.slot.item.GasMaskItem;
 import techguns.slot.item.GliderItem;
 import techguns.slot.item.JetpackItem;
@@ -19,7 +20,7 @@ import techguns.slot.item.ScubaTanksItem;
 import techguns.slot.item.TacticalMaskItem;
 
 /**
- * Gear worn in the extra face/back/hand slots (Techguns 2 {@code TGItems} additional slot items and the shared
+ * Gear worn in the extra face/back/hand/mouth slots (Techguns 2 {@code TGItems} additional slot items and the shared
  * oxygen mask and working gloves). Durability is the charge.
  */
 public final class TGSlotItems {
@@ -44,6 +45,10 @@ public final class TGSlotItems {
     // --- Hand ---
     public static final DeferredItem<TGSlotItem> WORKING_GLOVES = slot("working_gloves",
             props -> new TGSlotItem(props, TGSlotType.HAND, 0).bonus(TGAttributes.MINING_SPEED_BONUS, 0.10));
+
+    // --- Mouth ---
+    /** Replaces the Techguns 2 auto-feeder: three stacks of food, like the three food slots of the Techguns 2 inventory tab. */
+    public static final DeferredItem<AutoFeederItem> AUTO_FEEDER = slot("auto_feeder", props -> new AutoFeederItem(props, 64 * 3));
 
     // --- Crafting components of the gear (flat models, like TGItems.simple) ---
     public static final DeferredItem<Item> GAS_MASK_FILTER = component("gas_mask_filter");

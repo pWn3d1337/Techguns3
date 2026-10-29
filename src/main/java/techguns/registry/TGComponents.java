@@ -37,6 +37,10 @@ public final class TGComponents {
     public static final Supplier<DataComponentType<AmmoBagContents>> AMMO_BAG_CONTENTS = COMPONENTS.registerComponentType("ammo_bag_contents",
             builder -> builder.persistent(AmmoBagContents.CODEC).networkSynchronized(AmmoBagContents.STREAM_CODEC));
 
+    /** Food points of the last meal an Auto-Feeder fed that didn't fit into the food bar yet; access through {@code AutoFeederItem}. */
+    public static final Supplier<DataComponentType<Integer>> AUTO_FEEDER_FOOD_LEFT = COMPONENTS.registerComponentType("auto_feeder_food_left",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     /** First corner a debug tool's area selection; access through {@code DebugToolData}. */
     public static final Supplier<DataComponentType<net.minecraft.core.BlockPos>> DEBUG_CORNER = COMPONENTS.registerComponentType("debug_corner",
             builder -> builder.persistent(net.minecraft.core.BlockPos.CODEC).networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC));

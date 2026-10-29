@@ -19,7 +19,7 @@ import techguns.slot.ExtraSlots;
 import techguns.slot.menu.ExtraSlotsMenu;
 
 /**
- * Fallback extra slot screen (no Curios): face, back and hand slot next to the inventory, opened with a button on the
+ * Fallback extra slot screen (no Curios): face, back, hand and mouth slot next to the inventory, opened with a button on the
  * vanilla inventory screen. The panel is drawn in code in the vanilla style (the Techguns 2 texture carries slots of
  * features that do not exist here); the empty slot icons are the 1.12 ones.
  */
@@ -28,7 +28,8 @@ public class ExtraSlotsScreen extends AbstractContainerScreen<ExtraSlotsMenu> {
     private static final ResourceLocation[] EMPTY_ICONS = {
             TGIds.id("textures/gui/emptyslots/emptyslot_face.png"),
             TGIds.id("textures/gui/emptyslots/emptyslot_back.png"),
-            TGIds.id("textures/gui/emptyslots/emptyslot_hand.png")};
+            TGIds.id("textures/gui/emptyslots/emptyslot_hand.png"),
+            TGIds.id("textures/slot/empty_mouth_slot.png")};
 
     public ExtraSlotsScreen(ExtraSlotsMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);

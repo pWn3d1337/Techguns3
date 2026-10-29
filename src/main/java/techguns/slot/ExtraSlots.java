@@ -36,6 +36,11 @@ public final class ExtraSlots {
         provider.markChanged(player);
     }
 
+    /** Whether the player wants the slot's gear drawn (Curios visibility toggle). */
+    public static boolean isRendered(Player player, TGSlotType slot) {
+        return provider.isRendered(player, slot);
+    }
+
     /** Moves a held slot item into its empty slot (Techguns 2 right-click equip); returns true if it was equipped. */
     public static boolean tryEquip(Player player, ItemStack held, TGSlotType slot) {
         if (!get(player, slot).isEmpty() || !set(player, slot, held.copy())) {

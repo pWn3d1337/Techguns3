@@ -13,8 +13,10 @@ import techguns.Techguns;
 import techguns.slot.TGSlotType;
 
 /**
- * Gives players the Curios slots Techguns' extra slot gear needs ({@code data/techguns/curios/entities/techguns.json}).
- * A plain JSON provider: no dependency on Curios classes.
+ * Gives players the Curios slots Techguns' extra slot gear needs ({@code data/techguns/curios/entities/techguns.json})
+ * and defines the one Curios doesn't have, the mouth slot of the Auto-Feeder ({@code curios/slots/mouth.json}, listed
+ * right after the head slot, icon {@code techguns:slot/empty_mouth_slot} from {@code textures/slot}). A plain JSON
+ * provider: no dependency on Curios classes.
  */
 public class TGCuriosProvider implements DataProvider {
     private final PackOutput output;
@@ -34,8 +36,16 @@ public class TGCuriosProvider implements DataProvider {
             slots.add(slot.curiosId());
         }
         json.add("slots", slots);
-        Path path = output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(Techguns.MODID).resolve("curios/entities/techguns.json");
-        return DataProvider.saveStable(cache, json, path);
+        Path data = output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(Techguns.MODID).resolve("curios");
+        JsonObject mouth = new JsonObject();
+        // Curios' head slot is 40
+        mouth.addProperty("order", 45);
+        mouth.addProperty("icon", Techguns.MODID + ":slot/empty_mouth_slot");
+        JsonArray validators = new JsonArray();
+        validators.add("curios:tag");
+        mouth.add("validators", validators);
+        return CompletableFuture.allOf(DataProvider.saveStable(cache, json, data.resolve("entities/techguns.json")),
+                DataProvider.saveStable(cache, mouth, data.resolve("slots/" + TGSlotType.MOUTH.curiosId() + ".json")));
     }
 
     @Override

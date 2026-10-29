@@ -54,7 +54,7 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
     private int cachedCurrent = -1;
     private Component cachedName = Component.empty();
     /** Worn armor pieces, then the face/back/hand gear. */
-    private static final int WORN = RepairBenchBlockEntity.ARMOR_SLOTS.size() + TGSlotType.values().length;
+    private static final int WORN = RepairBenchBlockEntity.ARMOR_SLOTS.size() + TGSlotType.camoSlots().size();
     /** Left edge of the face/back/hand slots of the texture (the armor slots follow at 99). */
     private static final int GEAR_X = 45;
     private final ItemStack[] cachedWorn = new ItemStack[WORN];
@@ -121,7 +121,7 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
             addRenderableWidget(Button.builder(Component.literal("-"), b -> pressButton(id + 1))
                     .bounds(leftPos + 102 + i * 18, topPos + 69, 10, 10).build());
         }
-        for (TGSlotType slot : TGSlotType.values()) {
+        for (TGSlotType slot : TGSlotType.camoSlots()) {
             int id = CamoBenchBlockEntity.BUTTON_GEAR + 2 * slot.ordinal();
             int x = leftPos + GEAR_X + 3 + slot.ordinal() * 18;
             addRenderableWidget(Button.builder(Component.literal("+"), b -> pressButton(id)).bounds(x, topPos + 59, 10, 10).build());
@@ -160,7 +160,7 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
         super.renderMachineTooltips(graphics, mx, my, mouseX, mouseY);
         if (menu.getCarried().isEmpty()) {
             grid.renderTooltip(graphics, font, mouseX, mouseY);
-            for (TGSlotType slot : TGSlotType.values()) {
+            for (TGSlotType slot : TGSlotType.camoSlots()) {
                 ItemStack gear = gear(slot);
                 if (!gear.isEmpty() && isIn(mx, my, GEAR_X + slot.ordinal() * 18, 18, 16, 16)) {
                     graphics.renderTooltip(font, gear, mouseX, mouseY);
@@ -188,7 +188,7 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
                 drawText(graphics, Component.literal(String.valueOf(camo)), 104 + i * 18, 38);
             }
             // the worn gear drawn in the gear slots of the texture (no slots: the items stay where they are worn)
-            for (TGSlotType slot : TGSlotType.values()) {
+            for (TGSlotType slot : TGSlotType.camoSlots()) {
                 ItemStack gear = gear(slot);
                 int x = GEAR_X + slot.ordinal() * 18;
                 graphics.renderItem(gear, x, 18);

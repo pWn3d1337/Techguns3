@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
@@ -17,7 +18,11 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import techguns.TGIds;
+import techguns.TGConfig;
 import techguns.Techguns;
+import techguns.item.AmmoBagData;
+import techguns.registry.TGItems;
+import techguns.slot.item.AutoFeederItem;
 import techguns.player.TGPlayerData;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGAttributes;
@@ -210,6 +215,82 @@ public class TGSlotItemTests {
         item.slotTick(player, goggles);
         helper.assertTrue(goggles.getDamageValue() == 1, "1 charge per tick with the toggle on");
         data.set(TGPlayerData.Toggle.NIGHT_VISION, false);
+        helper.succeed();
+    }
+
+    /** The Auto-Feeder takes only food, up to three stacks, and is worn in the mouth slot. */
+    @GameTest(template = ARENA)
+    public static void autoFeederStoresFood(GameTestHelper helper) {
+        ItemStack feeder = new ItemStack(TGSlotItems.AUTO_FEEDER.get());
+        helper.assertTrue(((TGSlotItem) feeder.getItem()).slot() == TGSlotType.MOUTH, "The Auto-Feeder is mouth gear");
+        ItemStack iron = new ItemStack(Items.IRON_INGOT, 10);
+        helper.assertTrue(AmmoBagData.insert(feeder, iron) == 0, "No iron in the Auto-Feeder");
+        helper.assertTrue(AmmoBagData.insert(feeder, new ItemStack(Items.BREAD, 64)) == 64, "Bread goes in");
+        helper.assertTrue(AmmoBagData.insert(feeder, new ItemStack(Items.COOKED_BEEF, 200)) == 128, "Three stacks in all");
+        helper.assertTrue(AmmoBagData.insert(new ItemStack(TGItems.AMMO_BOX.get()), new ItemStack(Items.BREAD)) == 0, "No food in ammo boxes");
+        helper.succeed();
+    }
+
+    /**
+     * Techguns 2 auto-feeder: a hungry player eats the first stored food; the food points that don't fit are kept on the
+     * Auto-Feeder and fed first; a full player isn't fed; config off feeds nothing.
+     */
+    @GameTest(template = ARENA)
+    public static void autoFeederFeedsHungryPlayer(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack feeder = new ItemStack(TGSlotItems.AUTO_FEEDER.get());
+        AmmoBagData.insert(feeder, new ItemStack(Items.COOKED_BEEF, 2));
+        TGSlotItem item = (TGSlotItem) feeder.getItem();
+        player.getFoodData().setFoodLevel(10);
+        item.slotTick(player, feeder);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 18 && AmmoBagData.occupancy(feeder) == 1, "A steak (8) eaten at 10");
+        item.slotTick(player, feeder);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 20 && AmmoBagData.occupancy(feeder) == 0, "The second steak fills the bar");
+        helper.assertTrue(AutoFeederItem.foodLeft(feeder) == 6, "6 points kept, kept " + AutoFeederItem.foodLeft(feeder));
+        item.slotTick(player, feeder);
+        helper.assertTrue(AutoFeederItem.foodLeft(feeder) == 6, "A full player isn't fed");
+        player.getFoodData().setFoodLevel(16);
+        item.slotTick(player, feeder);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 20 && AutoFeederItem.foodLeft(feeder) == 2, "The kept points are fed first");
+
+        AmmoBagData.insert(feeder, new ItemStack(Items.BREAD));
+        player.getFoodData().setFoodLevel(10);
+        boolean before = TGConfig.AUTO_FEEDER.get();
+        TGConfig.AUTO_FEEDER.set(false);
+        try {
+            item.slotTick(player, feeder);
+            helper.assertTrue(player.getFoodData().getFoodLevel() == 10, "Auto-feeder off: nothing eaten");
+        } finally {
+            TGConfig.AUTO_FEEDER.set(before);
+        }
+        helper.succeed();
+    }
+
+    /** Food that leaves a bowl gives the bowl back like eating it by hand. */
+    @GameTest(template = ARENA)
+    public static void autoFeederGivesBowlsBack(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack feeder = new ItemStack(TGSlotItems.AUTO_FEEDER.get());
+        AmmoBagData.insert(feeder, new ItemStack(Items.MUSHROOM_STEW));
+        player.getFoodData().setFoodLevel(5);
+        AutoFeederItem.feed(player, feeder);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 11, "Stew (6) eaten");
+        helper.assertTrue(player.getInventory().countItem(Items.BOWL) == 1, "The bowl is back in the inventory");
+        helper.succeed();
+    }
+
+    /** With Curios, the slot's visibility toggle decides whether the gear is drawn; the gear keeps working. */
+    @GameTest(template = ARENA)
+    public static void curiosVisibilityToggleHidesGear(GameTestHelper helper) {
+        if (!ExtraSlots.usesCurios()) {
+            helper.succeed();
+            return;
+        }
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        helper.assertTrue(ExtraSlots.isRendered(player, TGSlotType.BACK), "Gear is drawn by default");
+        helper.assertTrue(techguns.compat.curios.CuriosExtraSlots.setRendered(player, TGSlotType.BACK, false), "The mock player has a back slot");
+        helper.assertTrue(!ExtraSlots.isRendered(player, TGSlotType.BACK), "Hidden in Curios: not drawn");
+        helper.assertTrue(ExtraSlots.isRendered(player, TGSlotType.FACE), "Other slots stay visible");
         helper.succeed();
     }
 }

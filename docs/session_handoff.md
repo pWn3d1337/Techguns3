@@ -54,7 +54,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 9i | Decorative mod blocks in structures (Factory Blocks, Chisel Reborn, Laboratory Blocks), Rechiseled groups | `d0741a9` |
   | 9j | Connected textures through Fusion (the 19 Techguns 2 CTM textures) | `ecac8ff` |
 
-- All 349 GameTests pass (`alienBugBitesItsTarget` is flaky: it waits for the bug's AI) (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- All 353 GameTests pass (`alienBugBitesItsTarget` is flaky: it waits for the bug's AI) (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
 ## Next steps
 
