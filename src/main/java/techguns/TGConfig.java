@@ -12,6 +12,11 @@ public final class TGConfig {
             .comment("Enable additional debug logging for Techguns.")
             .define("debugLogging", false);
 
+    public static final ModConfigSpec.BooleanValue DEBUG = COMMON
+            .comment("Enable the Techguns 2 debug tools (world gen test tool, building scan tool, dungeon scanner and generator,",
+                    "structure markers) in the creative tab and their use. Disable this for playing.")
+            .define("debug", false);
+
     static {
         COMMON.push("damage");
     }

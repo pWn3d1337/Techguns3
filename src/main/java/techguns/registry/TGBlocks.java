@@ -409,6 +409,25 @@ public final class TGBlocks {
     }
 
     /** Registers a block with a custom block item. */
+    // --- Techguns 2 debug tools (hidden and unusable unless the debug config is on, see TGDebug) ---
+    public static final DeferredBlock<Block> AIR_MARKER = debugBlock("air_marker", () -> new Block(marker()));
+    public static final DeferredBlock<Block> ANTI_AIR_MARKER = debugBlock("anti_air_marker", () -> new Block(marker()));
+    public static final DeferredBlock<techguns.debug.InteriorMarkerBlock> INTERIOR_MARKER = debugBlock("interior_marker",
+            () -> new techguns.debug.InteriorMarkerBlock(marker()));
+    public static final DeferredBlock<techguns.debug.DungeonToolBlock> DUNGEON_SCANNER = debugBlock("dungeon_scanner",
+            () -> new techguns.debug.DungeonToolBlock(machine(), TGBlockEntities.DUNGEON_SCANNER));
+    public static final DeferredBlock<techguns.debug.DungeonToolBlock> DUNGEON_GENERATOR = debugBlock("dungeon_generator",
+            () -> new techguns.debug.DungeonToolBlock(machine(), TGBlockEntities.DUNGEON_GENERATOR));
+
+    /** Techguns 2 debug markers: ground blocks that break at once. */
+    private static BlockBehaviour.Properties marker() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).instabreak().sound(SoundType.STONE);
+    }
+
+    private static <B extends Block> DeferredBlock<B> debugBlock(String name, java.util.function.Supplier<B> factory) {
+        return withItem(name, factory, (block, properties) -> new techguns.debug.DebugBlockItem(block, properties));
+    }
+
     private static <B extends Block> DeferredBlock<B> withItem(String name, java.util.function.Supplier<B> factory,
                                                                 BiFunction<B, Item.Properties, ? extends Item> itemFactory) {
         DeferredBlock<B> block = BLOCKS.register(name, factory);

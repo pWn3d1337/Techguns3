@@ -47,6 +47,11 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("turret_armor_carbon", "Turret Armor (Carbon)"),
             Map.entry("explosive_charge_advanced", "Advanced Mining Charge"),
             Map.entry("ore_cluster_coal", "Ore Cluster (Coal)"),
+            Map.entry("air_marker", "Air Marker"),
+            Map.entry("anti_air_marker", "Anti Air Marker"),
+            Map.entry("interior_marker", "Interior Marker"),
+            Map.entry("dungeon_scanner", "Dungeon Scanner"),
+            Map.entry("dungeon_generator", "Dungeon Generator"),
             Map.entry("ore_cluster_common_metal", "Ore Cluster (Common Metal)"),
             Map.entry("ore_cluster_rare_metal", "Ore Cluster (Rare Metal)"),
             Map.entry("ore_cluster_shiny_metal", "Ore Cluster (Shiny Metal)"),
@@ -137,6 +142,8 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("ammo_box", "Ammo Box (Small)"),
             Map.entry("crowbar", "Crowbar"),
             Map.entry("combat_knife", "Combat Knife"),
+            Map.entry("worldgen_test_tool", "WorldGen Test Tool"),
+            Map.entry("building_scan_tool", "Building Scan Tool"),
             Map.entry("tactical_nuke_warhead", "Small Nuclear Warhead"),
             Map.entry("concrete_brown", "Reinforced Concrete"),
             Map.entry("concrete_brown_light", "Reinforced Concrete (Light)"),
@@ -365,6 +372,33 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.security.tooltip.unowned", "Unowned (Replace Block to set ownership)");
         add("techguns.container.security.denied", "[DENIED] You have no permission to use %s");
         add("techguns.container.door3x3", "Tech Door");
+        // Techguns 2 debug tools
+        add("techguns.debug.disabled", "Techguns debug tools are off (\"debug\" in the Techguns common config)");
+        add("techguns.debug.corner1", "Position 1 set (%s)");
+        add("techguns.debug.corner2", "Position 2 set (%s), size %s x %s x %s");
+        add("techguns.debug.scan.saved", "Saved structure template %s");
+        add("techguns.debug.scan.failed", "Could not save structure template %s");
+        add("techguns.debug.worldgen.mode", "Mode: %s");
+        add("techguns.debug.worldgen.done", "%s done");
+        add("techguns.debug.worldgen.mode.military_camp", "Military Camp");
+        add("techguns.debug.worldgen.mode.city", "City");
+        add("techguns.debug.worldgen.mode.castle", "Castle");
+        add("techguns.debug.worldgen.mode.nether_fortress", "Nether Fortress");
+        add("techguns.debug.worldgen.mode.smooth", "Smooth");
+        add("techguns.debug.worldgen.mode.flatten", "Flatten");
+        add("techguns.debug.worldgen.mode.remove_junk", "Remove Junk");
+        add("techguns.container.dungeonscanner", "Dungeon Scanner");
+        add("techguns.container.dungeongenerator", "Dungeon Generator");
+        add("techguns.debug.dungeon.template", "Template name");
+        add("techguns.debug.dungeon.scan", "Scan");
+        add("techguns.debug.dungeon.load", "Load");
+        add("techguns.debug.dungeon.copy", "Copy 1st");
+        add("techguns.debug.dungeon.generate", "Generate");
+        add("techguns.debug.dungeon.size_xz", "Size XZ: %s");
+        add("techguns.debug.dungeon.size_y", "Size Y: %s");
+        add("techguns.debug.dungeon.scanned", "Saved %s segments as dungeon template %s");
+        add("techguns.debug.dungeon.loaded", "Placed %s segments of dungeon template %s");
+        add("techguns.debug.dungeon.generated", "Generated a dungeon of %s");
         add("techguns.container.door3x3.mode", "Mode");
         add("techguns.container.door3x3.mode.manual", "Manual");
         add("techguns.container.door3x3.mode.redstone", "Redstone");

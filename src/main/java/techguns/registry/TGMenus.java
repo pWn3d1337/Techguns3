@@ -64,6 +64,8 @@ public final class TGMenus {
             () -> IMenuTypeExtension.create(techguns.machine.TurretMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.ExplosiveChargeMenu>> EXPLOSIVE_CHARGE = MENUS.register(
             "explosive_charge", () -> IMenuTypeExtension.create(techguns.machine.ExplosiveChargeMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.debug.DungeonToolMenu>> DUNGEON_TOOL = MENUS.register(
+            "dungeon_tool", () -> IMenuTypeExtension.create(techguns.debug.DungeonToolMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<techguns.block.Door3x3Menu>> DOOR_3X3 = MENUS.register(
             "door_3x3", () -> IMenuTypeExtension.create(techguns.block.Door3x3Menu::new));
 

@@ -56,6 +56,7 @@ public final class TGNetwork {
         registrar.playToClient(PlayerPayloads.SyncExtraSlots.TYPE, PlayerPayloads.SyncExtraSlots.STREAM_CODEC, TGNetwork::handleSyncExtraSlots);
         registrar.playToClient(PlayerPayloads.SyncRadiation.TYPE, PlayerPayloads.SyncRadiation.STREAM_CODEC, TGNetwork::handleSyncRadiation);
         registrar.playToClient(StatPayloads.SyncStatOverrides.TYPE, StatPayloads.SyncStatOverrides.STREAM_CODEC, TGNetwork::handleSyncStatOverrides);
+        registrar.playToServer(DebugPayloads.TemplateAction.TYPE, DebugPayloads.TemplateAction.STREAM_CODEC, TGNetwork::handleTemplateAction);
     }
 
     /** Sends the saved player settings to their client (login, respawn, dimension change). */
@@ -184,6 +185,13 @@ public final class TGNetwork {
         ItemStack stack = player.getItemInHand(payload.hand());
         if (stack.getItem() instanceof GunItem gun && !player.isSpectator()) {
             gun.startReload(stack, player.level(), player, payload.hand(), true);
+        }
+    }
+
+    private static void handleTemplateAction(DebugPayloads.TemplateAction payload, IPayloadContext context) {
+        Player player = context.player();
+        if (player.containerMenu.containerId == payload.containerId() && player.containerMenu instanceof techguns.debug.DungeonToolMenu menu) {
+            menu.templateAction(player, payload.action(), payload.name());
         }
     }
 

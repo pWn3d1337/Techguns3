@@ -185,6 +185,12 @@ public final class TGItems {
     public static final DeferredItem<techguns.item.CombatKnifeItem> COMBAT_KNIFE = ITEMS.registerItem("combat_knife",
             techguns.item.CombatKnifeItem::new);
 
+    // --- Techguns 2 debug tools (see TGDebug) ---
+    public static final DeferredItem<techguns.debug.WorldGenTestToolItem> WORLDGEN_TEST_TOOL = ITEMS.registerItem("worldgen_test_tool",
+            techguns.debug.WorldGenTestToolItem::new);
+    public static final DeferredItem<techguns.debug.BuildingScanToolItem> BUILDING_SCAN_TOOL = ITEMS.registerItem("building_scan_tool",
+            techguns.debug.BuildingScanToolItem::new);
+
     private static DeferredItem<Item> simple(String name) {
         return simple(name, new Item.Properties());
     }

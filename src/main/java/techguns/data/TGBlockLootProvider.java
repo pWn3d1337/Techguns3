@@ -42,6 +42,10 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        for (var block : java.util.List.of(TGBlocks.AIR_MARKER, TGBlocks.ANTI_AIR_MARKER, TGBlocks.INTERIOR_MARKER, TGBlocks.DUNGEON_SCANNER,
+                TGBlocks.DUNGEON_GENERATOR)) {
+            dropSelf(block.get());
+        }
         add(TGBlocks.BIOBLOB.get(), noDrop());
         add(TGBlocks.MONSTER_HOLE.get(), noDrop());
         add(TGBlocks.MILITARY_SPAWN_POINT.get(), noDrop());

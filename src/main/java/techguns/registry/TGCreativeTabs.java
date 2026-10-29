@@ -31,7 +31,12 @@ public final class TGCreativeTabs {
                 TGArmors.shields().forEach(item -> output.accept(item.get()));
                 TGSlotItems.items().forEach(item -> output.accept(item.get()));
                 TGSlotItems.components().forEach(item -> output.accept(item.get()));
-                TGBlocks.blocksWithItem().forEach(block -> output.accept(block.get()));
+                TGBlocks.blocksWithItem().stream().filter(block -> !techguns.debug.TGDebug.isDebugItem(block.get().asItem()))
+                        .forEach(block -> output.accept(block.get()));
+                // Techguns 2 TGConfig.debug: the debug tools only with debug on
+                if (techguns.debug.TGDebug.enabled()) {
+                    techguns.debug.TGDebug.items().forEach(output::accept);
+                }
                 TGItems.simpleItems().forEach(item -> output.accept(item.get()));
                 output.accept(TGFluids.ACID_BUCKET.get());
                 TGItems.oreDrillHeads().forEach(item -> output.accept(item.get()));

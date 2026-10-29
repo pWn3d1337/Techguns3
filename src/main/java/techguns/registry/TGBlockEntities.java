@@ -96,6 +96,14 @@ public final class TGBlockEntities {
                     TGBlocks.DOORS_3X3.stream().map(door -> (net.minecraft.world.level.block.Block) door.get())
                             .toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.debug.DungeonScannerBlockEntity>> DUNGEON_SCANNER = BLOCK_ENTITY_TYPES.register(
+            "dungeon_scanner", () -> BlockEntityType.Builder.of(techguns.debug.DungeonScannerBlockEntity::new, TGBlocks.DUNGEON_SCANNER.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.debug.DungeonGeneratorBlockEntity>> DUNGEON_GENERATOR = BLOCK_ENTITY_TYPES.register(
+            "dungeon_generator", () -> BlockEntityType.Builder.of(techguns.debug.DungeonGeneratorBlockEntity::new, TGBlocks.DUNGEON_GENERATOR.get())
+                    .build(null));
+
     private TGBlockEntities() {
     }
 

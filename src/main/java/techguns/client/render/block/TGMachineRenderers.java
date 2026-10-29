@@ -42,6 +42,8 @@ public final class TGMachineRenderers {
         event.registerBlockEntityRenderer(TGBlockEntities.ORE_DRILL.get(), OreDrillRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.TURRET.get(), TurretBaseRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.DOOR_3X3.get(), Door3x3Renderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.DUNGEON_SCANNER.get(), DungeonToolRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.DUNGEON_GENERATOR.get(), DungeonToolRenderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {

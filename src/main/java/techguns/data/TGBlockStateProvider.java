@@ -22,6 +22,16 @@ public class TGBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        // Techguns 2 debug tools
+        cubeAllWithItem(TGBlocks.AIR_MARKER);
+        cubeAllWithItem(TGBlocks.ANTI_AIR_MARKER);
+        cubeAllWithItem(TGBlocks.DUNGEON_SCANNER);
+        cubeAllWithItem(TGBlocks.DUNGEON_GENERATOR);
+        var interior = models().cube("block/interior_marker", modLoc("block/interior_marker_side"), modLoc("block/interior_marker_side"),
+                modLoc("block/interior_marker_front"), modLoc("block/interior_marker_side"), modLoc("block/interior_marker_side"),
+                modLoc("block/interior_marker_side")).texture("particle", modLoc("block/interior_marker_side"));
+        horizontalBlock(TGBlocks.INTERIOR_MARKER.get(), interior);
+        simpleBlockItem(TGBlocks.INTERIOR_MARKER.get(), interior);
         cubeAllWithItem(TGBlocks.TIN_ORE);
         cubeAllWithItem(TGBlocks.DEEPSLATE_TIN_ORE);
         cubeAllWithItem(TGBlocks.LEAD_ORE);

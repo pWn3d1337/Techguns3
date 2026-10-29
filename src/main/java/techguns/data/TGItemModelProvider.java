@@ -24,6 +24,8 @@ public class TGItemModelProvider extends ItemModelProvider {
         TGItems.oreDrillHeads().forEach(item -> basicItem(item.get()));
         handheldItem(TGItems.CROWBAR.get());
         handheldItem(TGItems.COMBAT_KNIFE.get());
+        basicItem(TGItems.WORLDGEN_TEST_TOOL.get());
+        basicItem(TGItems.BUILDING_SCAN_TOOL.get());
         techguns.registry.TGNpcs.npcs().forEach(npc -> withExistingParent(npc.egg().getId().getPath(), mcLoc("item/template_spawn_egg")));
         TGAmmo.flatAmmo().forEach(item -> basicItem(item.get()));
         TGArmors.armors().forEach(item -> basicItem(item.get()));

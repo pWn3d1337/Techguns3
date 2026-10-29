@@ -16,11 +16,11 @@ import techguns.machine.RedstoneMode;
 /**
  * Door settings screen (Techguns 2 {@code Door3x3Gui}): the mode button and name, the auto close toggle (only for manual
  * doors), a warning when a redstone door ignores redstone, and the redstone and security buttons on the left side like
- * the machine screens. Techguns 2 drew it on its empty dungeon scanner panel; only the top of the panel is used.
+ * the machine screens, on the empty dungeon scanner panel like Techguns 2 (only its top is used).
  */
 // MIGRATION(26.x): GuiGraphics#blit and screen rendering change with deferred GUI rendering (1.21.6).
 public class Door3x3Screen extends AbstractContainerScreen<Door3x3Menu> {
-    private static final ResourceLocation TEXTURE = TGIds.id("textures/gui/door3x3_gui.png");
+    private static final ResourceLocation TEXTURE = TGIds.id("textures/gui/dungeon_scanner_gui.png");
     private static final int TEXT_COLOR = 0x404040;
     private static final int PANEL_TOP = 76;
     private static final int PANEL_BOTTOM = 4;

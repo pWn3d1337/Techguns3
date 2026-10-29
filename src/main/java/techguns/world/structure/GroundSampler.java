@@ -13,13 +13,49 @@ import net.minecraft.world.level.levelgen.structure.Structure.GenerationContext;
  * candidate that fails early costs only a few columns.
  */
 final class GroundSampler {
-    private final GenerationContext context;
+    /** The ground (top solid block + 1) and the surface (top block + 1, liquids included) of a column. */
+    interface Heights {
+        int floor(int x, int z);
+
+        int surface(int x, int z);
+    }
+
+    private final Heights heights;
     private final int originX;
     private final int originZ;
     private final Map<Long, int[]> samples = new HashMap<>();
 
     GroundSampler(GenerationContext context, int originX, int originZ) {
-        this.context = context;
+        this(new Heights() {
+            @Override
+            public int floor(int x, int z) {
+                return context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
+            }
+
+            @Override
+            public int surface(int x, int z) {
+                return context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+            }
+        }, originX, originZ);
+    }
+
+    /** The ground of a level that already exists (the debug tools placing structures). */
+    GroundSampler(net.minecraft.world.level.LevelReader level, int originX, int originZ) {
+        this(new Heights() {
+            @Override
+            public int floor(int x, int z) {
+                return level.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);
+            }
+
+            @Override
+            public int surface(int x, int z) {
+                return level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+            }
+        }, originX, originZ);
+    }
+
+    private GroundSampler(Heights heights, int originX, int originZ) {
+        this.heights = heights;
         this.originX = originX;
         this.originZ = originZ;
     }
@@ -29,8 +65,8 @@ final class GroundSampler {
         return samples.computeIfAbsent(ChunkPos.asLong(i, j), key -> {
             int x = originX + i * MilitaryBaseStructure.HeightGrid.STEP;
             int z = originZ + j * MilitaryBaseStructure.HeightGrid.STEP;
-            int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
-            int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+            int floor = heights.floor(x, z);
+            int surface = heights.surface(x, z);
             return new int[] {floor - 1, surface > floor ? 1 : 0};
         });
     }

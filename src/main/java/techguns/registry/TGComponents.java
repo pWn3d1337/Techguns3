@@ -37,6 +37,14 @@ public final class TGComponents {
     public static final Supplier<DataComponentType<AmmoBagContents>> AMMO_BAG_CONTENTS = COMPONENTS.registerComponentType("ammo_bag_contents",
             builder -> builder.persistent(AmmoBagContents.CODEC).networkSynchronized(AmmoBagContents.STREAM_CODEC));
 
+    /** First corner a debug tool's area selection; access through {@code DebugToolData}. */
+    public static final Supplier<DataComponentType<net.minecraft.core.BlockPos>> DEBUG_CORNER = COMPONENTS.registerComponentType("debug_corner",
+            builder -> builder.persistent(net.minecraft.core.BlockPos.CODEC).networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC));
+
+    /** Mode of the world gen test tool; access through {@code DebugToolData}. */
+    public static final Supplier<DataComponentType<Integer>> DEBUG_MODE = COMPONENTS.registerComponentType("debug_mode",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private TGComponents() {
     }
 }

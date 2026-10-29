@@ -235,7 +235,7 @@ public abstract class CampLevelPiece extends StructurePiece {
     }
 
     /** Techguns 2 {@code isGroundBlock}: the ground, rock, sand and clay materials. */
-    private static boolean isGround(BlockState state) {
+    static boolean isGround(BlockState state) {
         return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND) || state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(BlockTags.TERRACOTTA)
                 || state.is(Tags.Blocks.GRAVELS) || state.is(Tags.Blocks.SANDSTONE_BLOCKS) || state.is(Tags.Blocks.ORES) || state.is(Blocks.CLAY);
     }

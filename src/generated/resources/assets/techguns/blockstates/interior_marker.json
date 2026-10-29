@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "techguns:block/interior_marker",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "techguns:block/interior_marker"
+    },
+    "facing=south": {
+      "model": "techguns:block/interior_marker",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "techguns:block/interior_marker",
+      "y": 270
+    }
+  }
+}

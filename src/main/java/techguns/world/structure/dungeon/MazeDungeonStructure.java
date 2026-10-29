@@ -1,16 +1,23 @@
 package techguns.world.structure.dungeon;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import javax.annotation.Nullable;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import techguns.TGIds;
 import techguns.registry.TGStructures;
 import techguns.world.LegacyPaletteProcessor;
@@ -125,12 +132,18 @@ public class MazeDungeonStructure extends Structure {
         place(pieces, context, bestPath(random, cellsX, levels, cellsZ), origin);
     }
 
-    /** Techguns 2 {@code Dungeon.generate}: the path with the most cells of a few attempts. */
     private MazeDungeonPath bestPath(WorldgenRandom random, int cellsX, int levels, int cellsZ) {
+        return bestPath(random, cellsX, levels, cellsZ, preset);
+    }
+
+    /** Techguns 2 {@code Dungeon.generate}: the path with the most cells of a few attempts ({@code settings} null: defaults). */
+    static MazeDungeonPath bestPath(RandomSource random, int cellsX, int levels, int cellsZ, @Nullable DungeonPreset settings) {
         MazeDungeonPath path = null;
         for (int i = 0; i < ATTEMPTS; i++) {
             MazeDungeonPath p = new MazeDungeonPath(cellsX, levels, cellsZ, random);
-            preset.init(p);
+            if (settings != null) {
+                settings.init(p);
+            }
             p.generatePath();
             if (path == null || p.numSegments() > path.numSegments()) {
                 path = p;
@@ -139,19 +152,34 @@ public class MazeDungeonStructure extends Structure {
         return path;
     }
 
+    /** The template of a segment on a level of a dungeon {@code levels} high. */
+    interface Templates {
+        ResourceLocation template(SegmentType type, int level, int levels);
+    }
+
     private void place(StructurePiecesBuilder pieces, GenerationContext context, MazeDungeonPath dungeon, BlockPos origin) {
-        BlockPos pivot = new BlockPos(preset.sizeXZ / 2, 0, preset.sizeXZ / 2);
-        dungeon.generateDungeon((type, level, x, y, z, rotation) -> pieces.addPiece(new LegacyTemplatePiece(context.structureTemplateManager(),
-                preset.template(type, level, dungeon.sY), cell(origin, x, y, z), counterClockwise(rotation), pivot,
+        addPieces(pieces::addPiece, context.structureTemplateManager(), dungeon, origin, preset.sizeXZ, preset.sizeY, preset::template, preset);
+    }
+
+    /** The segment template pieces and the spawners of a dungeon path, its first cell at {@code origin}. */
+    static void addPieces(Consumer<StructurePiece> pieces, StructureTemplateManager manager, MazeDungeonPath dungeon, BlockPos origin, int sizeXZ,
+                          int sizeY, Templates templates, DungeonPreset spawners) {
+        BlockPos pivot = new BlockPos(sizeXZ / 2, 0, sizeXZ / 2);
+        dungeon.generateDungeon((type, level, x, y, z, rotation) -> pieces.accept(new LegacyTemplatePiece(manager,
+                templates.template(type, level, dungeon.sY), cell(origin, sizeXZ, sizeY, x, y, z), counterClockwise(rotation), pivot,
                 LegacyPaletteProcessor.BiomeColor.WOODLAND, 0, 0, false)));
         for (int[] cell : dungeon.spawnPositions(DungeonPreset.SPAWN_DENSITY)) {
-            BlockPos at = cell(origin, cell[0], cell[1], cell[2]).offset(preset.sizeXZ / 2, DungeonPreset.SPAWN_Y_OFFSET, preset.sizeXZ / 2);
-            pieces.addPiece(new DungeonSpawnerPiece(at, preset));
+            BlockPos at = cell(origin, sizeXZ, sizeY, cell[0], cell[1], cell[2]).offset(sizeXZ / 2, DungeonPreset.SPAWN_Y_OFFSET, sizeXZ / 2);
+            pieces.accept(new DungeonSpawnerPiece(at, spawners));
         }
     }
 
     private BlockPos cell(BlockPos origin, int x, int y, int z) {
-        return origin.offset(x * preset.sizeXZ, y * preset.sizeY, z * preset.sizeXZ);
+        return cell(origin, preset.sizeXZ, preset.sizeY, x, y, z);
+    }
+
+    private static BlockPos cell(BlockPos origin, int sizeXZ, int sizeY, int x, int y, int z) {
+        return origin.offset(x * sizeXZ, y * sizeY, z * sizeXZ);
     }
 
     /** Techguns 2 turned segments counter-clockwise. */

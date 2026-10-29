@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "techguns:block/interior_marker_side",
+    "east": "techguns:block/interior_marker_side",
+    "north": "techguns:block/interior_marker_front",
+    "particle": "techguns:block/interior_marker_side",
+    "south": "techguns:block/interior_marker_side",
+    "up": "techguns:block/interior_marker_side",
+    "west": "techguns:block/interior_marker_side"
+  }
+}

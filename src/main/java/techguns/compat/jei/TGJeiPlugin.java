@@ -39,6 +39,11 @@ public class TGJeiPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
+        // Techguns 2 TGConfig.debug: the debug tools only with debug on
+        if (!techguns.debug.TGDebug.enabled()) {
+            runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
+                    techguns.debug.TGDebug.items().stream().map(net.minecraft.world.item.ItemStack::new).toList());
+        }
         techguns.client.RecipeViewerHook.setShowCategory(id -> {
             if (id.equals("held")) {
                 // the recipes using the held item (the special crafting examples of a gun or tool)
