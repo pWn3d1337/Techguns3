@@ -112,8 +112,11 @@ public class TGMachineTests3 {
         helper.setBlock(pos, TGFluids.ACID_BLOCK.get());
         Husk husk = TGTestTargets.husk(helper, pos);
         float health = husk.getHealth();
+        // the hurt cooldown (10 ticks) is kept, as in Techguns 2: at most 2 damage every 10 ticks, not every tick
         helper.runAfterDelay(30, () -> {
-            helper.assertTrue(husk.getHealth() < health, "Acid should hurt the husk");
+            float lost = health - husk.getHealth();
+            helper.assertTrue(lost > 0.0f, "Acid should hurt the husk");
+            helper.assertTrue(lost <= 8.0f, "Acid keeps the hurt cooldown, lost " + lost + " in 30 ticks");
             helper.succeed();
         });
     }

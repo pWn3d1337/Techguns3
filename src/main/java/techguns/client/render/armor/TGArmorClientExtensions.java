@@ -26,6 +26,12 @@ public final class TGArmorClientExtensions implements IClientItemExtensions {
         });
     }
 
+    /** The 3D inventory icon of steam and power armor (only used by their builtin/entity item models). */
+    @Override
+    public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+        return techguns.client.render.item.TGItemRendererAdapter.INSTANCE;
+    }
+
     @Override
     public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
         if (stack.getItem() instanceof TGArmorItem armor && armor.armorModel() != null) {

@@ -339,6 +339,13 @@ public final class TGArmors {
         return Collections.unmodifiableList(ARMORS);
     }
 
+    /** Armor drawn as its 3D armor model in the inventory and hands (Techguns 2 {@code RenderArmorItem}: steam, T3 and T4 power armor). */
+    public static List<DeferredItem<? extends TGArmorItem>> modelIconArmors() {
+        return List.of(STEAM_HELMET, STEAM_CHESTPLATE, STEAM_LEGGINGS, STEAM_BOOTS,
+                T3_POWER_HELMET, T3_POWER_CHESTPLATE, T3_POWER_LEGGINGS, T3_POWER_BOOTS,
+                T4_POWER_HELMET, T4_POWER_CHESTPLATE, T4_POWER_LEGGINGS, T4_POWER_BOOTS);
+    }
+
     private static Holder<ArmorMaterial> material(TGArmorStats stats, int enchantability, Holder<SoundEvent> equipSound) {
         // defense, toughness and knockback resistance are 0: TGArmorItem adds its own modifiers
         EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);

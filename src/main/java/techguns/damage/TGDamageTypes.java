@@ -20,6 +20,8 @@ public final class TGDamageTypes {
     public static final ResourceKey<DamageType> FIRE = key("fire");
     public static final ResourceKey<DamageType> ENERGY = key("energy");
     public static final ResourceKey<DamageType> POISON = key("poison");
+    /** Creeper acid: poison that keeps the hurt cooldown (Techguns 2 {@code ignoreHurtresistTime=false}), so it hurts twice a second at most. */
+    public static final ResourceKey<DamageType> ACID = key("acid");
     public static final ResourceKey<DamageType> ICE = key("ice");
     public static final ResourceKey<DamageType> LIGHTNING = key("lightning");
     public static final ResourceKey<DamageType> RADIATION = key("radiation");
@@ -47,6 +49,7 @@ public final class TGDamageTypes {
         register(context, FIRE, 0.1f, DamageEffects.BURNING);
         register(context, ENERGY, 0.1f, DamageEffects.HURT);
         register(context, POISON, 0.0f, DamageEffects.HURT);
+        register(context, ACID, 0.0f, DamageEffects.HURT);
         register(context, ICE, 0.1f, DamageEffects.FREEZING);
         register(context, LIGHTNING, 0.1f, DamageEffects.HURT);
         register(context, RADIATION, 0.0f, DamageEffects.HURT);

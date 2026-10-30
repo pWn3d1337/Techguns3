@@ -122,7 +122,8 @@ public class TechgunsClient {
         zombieLike(event, techguns.registry.TGNpcs.STORMTROOPER, armySoldier);
         zombieLike(event, techguns.registry.TGNpcs.DICTATOR_DAVE, techguns.TGIds.id("textures/entity/dictator.png"));
         event.registerEntityRenderer(techguns.registry.TGNpcs.CYBER_DEMON.type().get(), context -> new techguns.client.render.entity.npc.CustomModelNpcRenderer(
-                context, techguns.client.render.entity.npc.CyberDemonModel.createLayer(), false, techguns.TGIds.id("textures/entity/cyberdemon.png"), 0.5f));
+                context, techguns.client.render.entity.npc.CyberDemonModel.createLayer(), true, techguns.TGIds.id("textures/entity/cyberdemon.png"), 0.5f)
+                .weaponOffset(context, new techguns.client.render.entity.npc.NpcHeldItemLayer.Offset(0.16f, 0.0f, 0.0f, 1.5f)));
         event.registerEntityRenderer(techguns.registry.TGNpcs.GHASTLING.type().get(), techguns.client.render.entity.npc.GhastlingRenderer::new);
         event.registerEntityRenderer(techguns.registry.TGNpcs.ATTACK_HELICOPTER.type().get(), techguns.client.render.entity.npc.AttackHelicopterRenderer::new);
         event.registerEntityRenderer(techguns.registry.TGNpcs.ALIEN_BUG.type().get(), techguns.client.render.entity.npc.AlienBugRenderer::new);
@@ -137,7 +138,8 @@ public class TechgunsClient {
         event.registerEntityRenderer(techguns.registry.TGNpcs.SKELETON_SOLDIER.type().get(), context -> new techguns.client.render.entity.npc.TGNpcRenderer(
                 context, techguns.TGIds.of("minecraft", "textures/entity/skeleton/skeleton.png"),
                 net.minecraft.client.model.geom.ModelLayers.SKELETON, net.minecraft.client.model.geom.ModelLayers.SKELETON_INNER_ARMOR,
-                net.minecraft.client.model.geom.ModelLayers.SKELETON_OUTER_ARMOR));
+                net.minecraft.client.model.geom.ModelLayers.SKELETON_OUTER_ARMOR)
+                .weaponOffset(context, new techguns.client.render.entity.npc.NpcHeldItemLayer.Offset(-0.06f, -0.06f, 0.0f, 1.0f)));
     }
 
     private static void zombieLike(EntityRenderersEvent.RegisterRenderers event, techguns.registry.TGNpcs.Npc npc, ResourceLocation texture) {

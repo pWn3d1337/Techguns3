@@ -2,6 +2,7 @@
   "values": [
     "techguns:radiation_poisoning",
     "techguns:radiation",
-    "techguns:poison"
+    "techguns:poison",
+    "techguns:acid"
   ]
 }

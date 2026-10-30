@@ -16,7 +16,8 @@ public final class TGCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable(MAIN_TITLE))
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
-            .icon(() -> TGItems.STEEL_INGOT.get().getDefaultInstance())
+            // Techguns 2 tab icon
+            .icon(() -> TGAmmo.PISTOL_ROUNDS.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 TGGuns.guns().forEach(gun -> output.accept(gun.get()));
                 output.accept(TGGuns.STIELGRANATE.get());

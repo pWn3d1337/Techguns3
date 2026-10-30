@@ -64,6 +64,11 @@ public final class TGDamage {
         return create(level, TGDamageTypes.POISON, projectile, shooter).setDeathType(deathType);
     }
 
+    /** Creeper acid (Techguns 2 {@code BlockFluidAcid}): poison with the hurt cooldown, no knockback, always gore. */
+    public static TGDamageSource acid(Level level) {
+        return create(level, TGDamageTypes.ACID, null, null).setDeathType(DeathType.BIO).setGoreChance(1.0f).setKnockbackMultiplier(0.0f);
+    }
+
     public static TGDamageSource radiation(Level level, @Nullable Entity projectile, @Nullable Entity shooter, DeathType deathType) {
         return create(level, TGDamageTypes.RADIATION, projectile, shooter).setDeathType(deathType);
     }

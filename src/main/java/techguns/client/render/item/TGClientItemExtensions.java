@@ -29,7 +29,10 @@ public final class TGClientItemExtensions implements IClientItemExtensions {
     public static void register(RegisterClientExtensionsEvent event) {
         TGItemRendererSetup.registerAll();
         for (Item item : TGItemRenderers.items()) {
-            event.registerItem(INSTANCE, item);
+            // armor already has TGArmorClientExtensions, which hands out the same renderer
+            if (!(item instanceof techguns.armor.TGArmorItem)) {
+                event.registerItem(INSTANCE, item);
+            }
         }
     }
 

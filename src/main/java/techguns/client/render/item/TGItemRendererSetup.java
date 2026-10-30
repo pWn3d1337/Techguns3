@@ -64,6 +64,8 @@ public final class TGItemRendererSetup {
     }
 
     static void registerAll() {
+        // Techguns 2: steam and power armor as their armor model
+        techguns.registry.TGArmors.modelIconArmors().forEach(armor -> TGItemRenderers.register(armor, new RenderArmorItem(armor.get())));
         TGItemRenderers.register(TGGuns.M4, new RenderGunBase(new GeoGunModel(new ModelM4(), "m4"), TGIds.id("textures/guns/m4texture.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.1f, 0)
                 .setGUIScale(0.35f).setMuzzleFx(ScreenEffect.muzzleFlash_rifle, 0, 0.18f, -1.29f, 0.75f, 0).setRecoilAnim(GunAnimation.genericRecoil, 0.1f, 4.0f).setTransformTranslations(new float[][]{
                         {0f, 0f, -0.05f}, // First Person

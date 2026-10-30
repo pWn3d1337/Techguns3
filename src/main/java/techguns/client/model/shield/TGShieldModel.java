@@ -25,7 +25,8 @@ public final class TGShieldModel extends Model {
     private final ModelPart root;
 
     private TGShieldModel(ModelPart root) {
-        super(RenderType::entityCutoutNoCull);
+        // translucent: the windows of the shield textures are half transparent (blended in Techguns 2 as well)
+        super(RenderType::entityTranslucent);
         this.root = root;
     }
 

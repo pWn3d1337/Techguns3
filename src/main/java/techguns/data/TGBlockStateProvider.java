@@ -95,7 +95,8 @@ public class TGBlockStateProvider extends BlockStateProvider {
 
     /** Nether metal lava pillar (Techguns 2 cube_glow_frame): a lava cube behind a cutout frame texture. */
     private void borderLava() {
-        BlockModelBuilder model = models().getBuilder("block/nethermetal_border_lava")
+        // block/block: the item's GUI and hand rotations
+        BlockModelBuilder model = models().withExistingParent("block/nethermetal_border_lava", mcLoc("block/block"))
                 .texture("particle", "minecraft:block/lava_still")
                 .texture("glow", "minecraft:block/lava_still")
                 .texture("frame", modLoc("block/nethermetal_border_alpha"))

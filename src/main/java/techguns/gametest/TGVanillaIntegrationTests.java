@@ -59,7 +59,7 @@ public class TGVanillaIntegrationTests {
         Registry<DamageType> types = helper.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE);
         long checked = types.holders().filter(holder -> holder.key().location().getNamespace().equals(Techguns.MODID)).peek(holder ->
                 helper.assertTrue(holder.is(DamageTypeTags.PANIC_CAUSES), holder.key().location() + " should make animals panic")).count();
-        helper.assertTrue(checked == 11, "All 11 Techguns damage types checked, got " + checked);
+        helper.assertTrue(checked == 12, "All 12 Techguns damage types checked, got " + checked);
         helper.assertTrue(tagged(helper, TGDamageTypes.RADIATION, DamageTypeTags.BYPASSES_WOLF_ARMOR), "Radiation passes wolf armor");
         helper.assertTrue(!tagged(helper, TGDamageTypes.BULLET, DamageTypeTags.BYPASSES_WOLF_ARMOR), "Bullets hit wolf armor");
         helper.assertTrue(!tagged(helper, TGDamageTypes.FIRE, DamageTypeTags.IS_FIRE), "Fire stays out of is_fire (fire resistance)");

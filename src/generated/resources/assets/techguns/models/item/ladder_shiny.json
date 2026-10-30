@@ -1,3 +1,6 @@
 {
-  "parent": "techguns:block/ladder_shiny"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "techguns:block/metal_ladder_shiny"
+  }
 }

@@ -13,9 +13,15 @@ import techguns.entity.npc.TGNpc;
 public class SuperMutantRenderer extends HumanoidMobRenderer<TGNpc, TGNpcModel> {
     private static final ResourceLocation[] TEXTURES = {TGIds.id("textures/entity/supermutant_texture_1.png"),
             TGIds.id("textures/entity/supermutant_texture_2.png"), TGIds.id("textures/entity/supermutant_texture_3.png")};
+    private static final NpcHeldItemLayer.Offset[] WEAPON_OFFSETS = {new NpcHeldItemLayer.Offset(0.13f, 0.0f, -0.18f, 1.0f),
+            new NpcHeldItemLayer.Offset(0.17f, 0.0f, -0.3f, 1.0f), new NpcHeldItemLayer.Offset(0.23f, 0.0f, -0.39f, 1.0f)};
 
     public SuperMutantRenderer(EntityRendererProvider.Context context) {
         super(context, new TGNpcModel(SuperMutantModel.createLayer().bakeRoot()), 0.7f);
+        // Techguns 2 weapon offsets of the kinds (SuperMutantBasic / Heavy / Elite)
+        layers.removeIf(layer -> layer instanceof net.minecraft.client.renderer.entity.layers.ItemInHandLayer);
+        addLayer(new NpcHeldItemLayer<>(this, context.getItemInHandRenderer(), npc -> WEAPON_OFFSETS[
+                npc instanceof SuperMutant mutant ? mutant.kind().ordinal() : 0]));
     }
 
     /** Techguns 2 texture index: basic 1, heavy 2, elite 3. */

@@ -17,6 +17,13 @@ public class CustomModelNpcRenderer extends HumanoidMobRenderer<TGNpc, TGNpcMode
         this.texture = texture;
     }
 
+    /** Moves and scales the held gun for the model's arms (Techguns 2 weapon offset and gun scale). */
+    public CustomModelNpcRenderer weaponOffset(EntityRendererProvider.Context context, NpcHeldItemLayer.Offset offset) {
+        layers.removeIf(layer -> layer instanceof net.minecraft.client.renderer.entity.layers.ItemInHandLayer);
+        addLayer(new NpcHeldItemLayer<>(this, context.getItemInHandRenderer(), npc -> offset));
+        return this;
+    }
+
     @Override
     public ResourceLocation getTextureLocation(TGNpc npc) {
         return texture;

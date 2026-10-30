@@ -521,6 +521,8 @@
   "camo.techguns.woodland": "Woodland",
   "camo.techguns.yellow": "Yellow",
   "curios.identifier.mouth": "Mouth",
+  "death.attack.techguns.acid": "%1$s was dissolved in acid",
+  "death.attack.techguns.acid.player": "%1$s was dissolved in acid by %2$s",
   "death.attack.techguns.bullet": "%1$s was shot",
   "death.attack.techguns.bullet.player": "%1$s was shot by %2$s",
   "death.attack.techguns.dark": "%1$s was consumed by darkness",

@@ -185,17 +185,20 @@ dependencies {
     if (project.use_mcpfabric.toBoolean()) {
         localRuntime("maven.modrinth:mcpfabric:${mcpfabric_version}") { transitive = false }
     }
+    // FTB Library (and its Architectury) in every dev run: its sidebar buttons (game mode, day, night, rain) for testing,
+    // like in the test pack
+    localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
+    localRuntime("maven.modrinth:architectury-api:${compat_architectury_api}") { transitive = false }
 
     // Tier 2 compat check (8e), opt-in with -Pcompat_mods=true: the mods whose machines get conditional Techguns
     // recipes, so the GameTests can check those recipes load (Modrinth version ids, see gradle.properties)
     if (project.compat_mods.toBoolean()) {
         ["create", "mekanism", "immersiveengineering", "modern-industrialization", "oritech",
-         "guideme", "architectury-api", "athena-ctm"].each { slug ->
+         "guideme", "athena-ctm"].each { slug ->
             localRuntime("maven.modrinth:${slug}:${project.property('compat_' + slug.replace('-', '_'))}") { transitive = false }
         }
-        // team mods (8f1); FTB Teams also needs Architectury (above)
+        // team mods (8f1); FTB Library and Architectury are always on the dev runtime (above)
         localRuntime("dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}") { transitive = false }
-        localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
     }
     // Decorative block mods (9i), opt-in with -Pdecor_mods=true: Factory Blocks, Chisel Reborn and Laboratory Blocks for the
     // structure blocks, Rechiseled for the chiseling groups (Modrinth version ids, see gradle.properties)
@@ -203,9 +206,6 @@ dependencies {
         ["rechiseled", "supermartijn642s-core-lib", "supermartijn642s-config-lib", "fusion-connected-textures", "chisel-reborn",
          "cryonicconfig", "factory-blocks", "artemis-laboratory-blocks"].each { slug ->
             localRuntime("maven.modrinth:${slug}:${project.property('decor_' + slug.replace('-', '_'))}") { transitive = false }
-        }
-        if (!project.compat_mods.toBoolean()) {
-            localRuntime("maven.modrinth:architectury-api:${compat_architectury_api}") { transitive = false }
         }
     }
     // Open Parties and Claims on its own (-Popac=true): it crashes the GameTest server (no profile cache there),

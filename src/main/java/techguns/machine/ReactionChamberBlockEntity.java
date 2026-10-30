@@ -377,10 +377,11 @@ public class ReactionChamberBlockEntity extends MultiblockMasterBlockEntity {
             return;
         }
         progress++;
-        if (--nextTick > 0) {
+        // like Techguns 2, the client plays a reaction tick one tick after the server's reaction tick update (which
+        // resets next_tick) arrived, so the beep or warning already sees a required intensity that just changed
+        if (--nextTick != REACTION_TICK - 1) {
             return;
         }
-        nextTick = REACTION_TICK;
         // Techguns 2 playReactionTickSound: focus sound, spell particles, beep at the right intensity or warning
         BlockPos pos = centerPos();
         ItemStack focus = clientFocus;

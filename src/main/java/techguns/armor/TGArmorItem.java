@@ -227,7 +227,13 @@ public class TGArmorItem extends ArmorItem implements RepairMaterial.Repairable 
     @Override
     @Nullable
     public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
-        Optional<TGCamo> camo = CamoData.current(entity.level().registryAccess(), stack);
+        return modelTexture(entity.level().registryAccess(), stack, innerModel);
+    }
+
+    /** Texture of the custom armor model (or the layer texture) for this stack's camo; also used by the 3D item icon. */
+    @Nullable
+    public ResourceLocation modelTexture(net.minecraft.core.RegistryAccess registries, ItemStack stack, boolean innerModel) {
+        Optional<TGCamo> camo = CamoData.current(registries, stack);
         if (camo.isPresent()) {
             if (camo.get().layer().isPresent()) {
                 ResourceLocation base = camo.get().layer().get();

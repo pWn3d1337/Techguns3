@@ -3,6 +3,7 @@ package techguns.data;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -141,7 +142,8 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
             };
             return ConfiguredModel.builder().modelFile(model).rotationY(y).build();
         }, LadderBlock.WATERLOGGED);
-        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
+        // a flat sprite like the vanilla ladder (the 1.12 block model showed only its edge in the inventory)
+        itemModels().withExistingParent(path(block), mcLoc("item/generated")).texture("layer0", tex(texture));
     }
 
     private void slimyLadder() {
@@ -155,7 +157,9 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
             };
             return ConfiguredModel.builder().modelFile(model).rotationX(90).rotationY(y).build();
         }, LadderBlock.WATERLOGGED);
-        itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder"));
+        // the trail lies flat in its model: seen from above in the inventory, not edge-on
+        itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder")).transforms()
+                .transform(ItemDisplayContext.GUI).rotation(90, 0, 0).end().end();
     }
 
     // --- camo nets ---

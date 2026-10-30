@@ -650,6 +650,7 @@ public class TGLanguageProvider extends LanguageProvider {
         deathMessage(TGDamageTypes.FIRE, "%1$s was burned to a crisp by %2$s");
         deathMessage(TGDamageTypes.ENERGY, "%1$s was vaporized by %2$s");
         deathMessage(TGDamageTypes.POISON, "%1$s was poisoned by %2$s");
+        deathMessage(TGDamageTypes.ACID, "%1$s was dissolved in acid by %2$s");
         deathMessage(TGDamageTypes.ICE, "%1$s was frozen by %2$s");
         deathMessage(TGDamageTypes.LIGHTNING, "%1$s was electrocuted by %2$s");
         deathMessage(TGDamageTypes.RADIATION, "%1$s was irradiated by %2$s");

@@ -15,9 +15,9 @@ public class FabricatorMenu extends TGMachineMenu<FabricatorBlockEntity> {
     public FabricatorMenu(int id, Inventory inventory, FabricatorBlockEntity machine) {
         super(TGMenus.FABRICATOR.get(), id, machine);
         addMachineSlot(FabricatorBlockEntity.SLOT_INPUT, 19, 17);
-        addMachineSlot(FabricatorBlockEntity.SLOT_WIRES, 47, 17);
-        addMachineSlot(FabricatorBlockEntity.SLOT_POWDER, 68, 17);
-        addMachineSlot(FabricatorBlockEntity.SLOT_PLATE, 89, 17);
+        addMachineSlot(FabricatorBlockEntity.SLOT_WIRES, 47, 17, "wires");
+        addMachineSlot(FabricatorBlockEntity.SLOT_POWDER, 68, 17, "powder");
+        addMachineSlot(FabricatorBlockEntity.SLOT_PLATE, 89, 17, "plate");
         addMachineSlot(FabricatorBlockEntity.SLOT_OUTPUT, 116, 50);
         addMachineSlot(FabricatorBlockEntity.SLOT_UPGRADE, 150, 50);
         addPlayerInventory(inventory);

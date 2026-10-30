@@ -55,7 +55,7 @@ public class TGShieldItem extends ShieldItem implements RepairMaterial.Repairabl
     /** Block percentages per category as the armor icon row. */
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        return Optional.of(new TGArmorTooltip(TGArmorTooltip.CATEGORIES.stream().map(category -> (float) (stats.rate(category) * 100.0)).toList()));
+        return Optional.of(new TGArmorTooltip(TGArmorTooltip.CATEGORIES.stream().map(category -> (float) (stats.rate(category) * 100.0)).toList(), true));
     }
 
     @Override

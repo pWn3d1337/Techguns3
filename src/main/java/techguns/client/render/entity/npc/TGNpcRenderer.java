@@ -24,6 +24,13 @@ public class TGNpcRenderer extends HumanoidMobRenderer<TGNpc, TGNpcModel> {
                 context.getModelManager()));
     }
 
+    /** Moves the held gun for the model's arms (Techguns 2 weapon offset, skeleton soldiers). */
+    public TGNpcRenderer weaponOffset(EntityRendererProvider.Context context, NpcHeldItemLayer.Offset offset) {
+        layers.removeIf(layer -> layer instanceof net.minecraft.client.renderer.entity.layers.ItemInHandLayer);
+        addLayer(new NpcHeldItemLayer<>(this, context.getItemInHandRenderer(), npc -> offset));
+        return this;
+    }
+
     @Override
     public ResourceLocation getTextureLocation(TGNpc npc) {
         return texture;
