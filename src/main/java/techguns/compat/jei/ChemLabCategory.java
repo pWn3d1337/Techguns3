@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawableAnimated;
+import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import techguns.TGIds;
+import techguns.client.gui.machine.ChemLabScreen;
 import techguns.machine.ChemLabBlockEntity;
 import techguns.recipe.ChemLabRecipe;
 import techguns.registry.TGBlocks;
@@ -23,13 +24,12 @@ public class ChemLabCategory extends TGRecipeCategory<RecipeHolder<ChemLabRecipe
     public static final RecipeType<RecipeHolder<ChemLabRecipe>> TYPE = RecipeType.createRecipeHolderType(TGIds.id("chem_lab"));
     private static final ResourceLocation TEXTURE = TGIds.id("textures/gui/chem_lab_gui.png");
     private static final int TANK_Y = 17;
-    private final IDrawableAnimated progress;
+    private final ITickTimer progress;
 
     public ChemLabCategory(IGuiHelper helper) {
         super(helper, TYPE, "techguns.container.chemlab", TEXTURE, TGBlocks.CHEM_LAB.get(), true);
-        // Techguns 2 ProgressBarChemLab drew five pipe sections; the recipe view shows the outlet filling
-        progress = helper.createAnimatedDrawable(helper.createDrawable(TEXTURE, 214, 6, 14, 24), ChemLabBlockEntity.TIME,
-                IDrawableAnimated.StartDirection.TOP, false);
+        // Techguns 2 ProgressBarChemLab: the five pipe sections fill one after another, as on the machine screen
+        progress = helper.createTickTimer(ChemLabBlockEntity.TIME, ChemLabBlockEntity.TIME, false);
     }
 
     @Override
@@ -62,6 +62,6 @@ public class ChemLabCategory extends TGRecipeCategory<RecipeHolder<ChemLabRecipe
 
     @Override
     protected void drawProgress(RecipeHolder<ChemLabRecipe> holder, GuiGraphics graphics) {
-        drawAt(progress, graphics, 117, 20);
+        ChemLabScreen.drawProgress(graphics, -GUI_X, -GUI_Y, (float) progress.getValue() / progress.getMaxValue());
     }
 }
