@@ -241,6 +241,12 @@ public final class TGDebugCommands {
                                                 .executes(ctx -> TGBenchmark.start(StringArgumentType.getString(ctx, "gun"),
                                                         IntegerArgumentType.getInteger(ctx, "shots"),
                                                         IntegerArgumentType.getInteger(ctx, "seconds")) ? 1 : 0)))))
+                .then(Commands.literal("mouse")
+                        .then(Commands.argument("x", IntegerArgumentType.integer(-1000, 1000))
+                                .then(Commands.argument("y", IntegerArgumentType.integer(-1000, 1000))
+                                        .then(Commands.argument("delay", IntegerArgumentType.integer(0, 30000))
+                                                .executes(ctx -> moveMouse(ctx, false))
+                                                .then(Commands.literal("click").executes(ctx -> moveMouse(ctx, true)))))))
                 .then(Commands.literal("key")
                         .then(Commands.argument("name", StringArgumentType.word())
                                 .executes(ctx -> {
@@ -342,6 +348,45 @@ public final class TGDebugCommands {
                                     + " " + RenderLateEntityRenderer.debugStats()));
                             return 1;
                         })));
+    }
+
+    /**
+     * After {@code delay} ms (time to open a screen, the chat screen closes first) puts the GUI mouse at {@code x, y}
+     * relative to the open container screen's top left (or the screen's), for hover tooltips, and optionally left-clicks
+     * there (MCP has no mouse).
+     */
+    // MIGRATION(26.x): MouseHandler fields by reflection; Screen#mouseClicked takes input event records in 1.21.9+.
+    private static int moveMouse(com.mojang.brigadier.context.CommandContext<net.minecraft.commands.CommandSourceStack> ctx, boolean click) {
+        int x = IntegerArgumentType.getInteger(ctx, "x");
+        int y = IntegerArgumentType.getInteger(ctx, "y");
+        Minecraft mc = Minecraft.getInstance();
+        java.util.concurrent.CompletableFuture.delayedExecutor(IntegerArgumentType.getInteger(ctx, "delay"),
+                java.util.concurrent.TimeUnit.MILLISECONDS, mc).execute(() -> {
+                    net.minecraft.client.gui.screens.Screen screen = mc.screen;
+                    if (screen == null) {
+                        return;
+                    }
+                    int gx = x;
+                    int gy = y;
+                    if (screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> container) {
+                        gx += container.getGuiLeft();
+                        gy += container.getGuiTop();
+                    }
+                    double scale = mc.getWindow().getGuiScale();
+                    net.neoforged.fml.util.ObfuscationReflectionHelper.setPrivateValue(net.minecraft.client.MouseHandler.class,
+                            mc.mouseHandler, (gx + 0.5) * scale, "xpos");
+                    net.neoforged.fml.util.ObfuscationReflectionHelper.setPrivateValue(net.minecraft.client.MouseHandler.class,
+                            mc.mouseHandler, (gy + 0.5) * scale, "ypos");
+                    boolean handled = click && screen.mouseClicked(gx + 0.5, gy + 0.5, 0);
+                    if (click) {
+                        screen.mouseReleased(gx + 0.5, gy + 0.5, 0);
+                    }
+                    if (mc.player != null) {
+                        mc.player.displayClientMessage(Component.literal("Mouse at " + gx + ", " + gy
+                                + (click ? (handled ? ", clicked" : ", click not handled") : "") + " on " + screen.getClass().getSimpleName()), false);
+                    }
+                });
+        return 1;
     }
 
     private static int printTooltip(net.minecraft.commands.CommandSourceStack source, boolean detailed) {

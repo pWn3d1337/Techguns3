@@ -24,7 +24,8 @@ import techguns.registry.TGRecipes;
 /**
  * Camo Bench (Techguns 2 {@code CamoBenchTileEnt}): one slot for a camo item (guns, armor, shields, gear with named
  * camos) or a block of a {@link CamoChangeRecipe} group. The menu lists every look of the item (Fabric-style) and
- * picks one, the Techguns 2 arrows cycle through them, and the worn armor has its own cycle buttons.
+ * picks one, the Techguns 2 arrows cycle through them. The screen's tabs pick the same way for the worn armor and the worn
+ * face/back/hand gear ({@link #targetStack}).
  */
 public class CamoBenchBlockEntity extends TGMachineBlockEntity {
     public static final int SLOT_INPUT = 0;
@@ -38,8 +39,18 @@ public class CamoBenchBlockEntity extends TGMachineBlockEntity {
      * (Techguns 2 had these buttons commented out).
      */
     public static final int BUTTON_GEAR = BUTTON_ARMOR + 8;
-    /** Picks entry {@code id - BUTTON_VARIANT} of {@link #variants}. */
+    /**
+     * Picks entry {@code index} of {@link #variants} of {@link #targetStack target} {@code t}:
+     * {@code BUTTON_VARIANT + t * VARIANT_STRIDE + index} ({@link #variantButton}).
+     */
     public static final int BUTTON_VARIANT = BUTTON_GEAR + 2 * TGSlotType.values().length;
+    public static final int VARIANT_STRIDE = 1000;
+
+    /** Screen tabs: the input slot, then the worn armor head..feet, then the worn face/back/hand gear. */
+    public static final int TARGET_INPUT = 0;
+    public static final int TARGET_ARMOR = 1;
+    public static final int TARGET_GEAR = TARGET_ARMOR + RepairBenchBlockEntity.ARMOR_SLOTS.size();
+    public static final int TARGETS = TARGET_GEAR + TGSlotType.camoSlots().size();
 
     public CamoBenchBlockEntity(BlockPos pos, BlockState state) {
         super(TGBlockEntities.CAMO_BENCH.get(), pos, state, 1, 0);
@@ -71,6 +82,35 @@ public class CamoBenchBlockEntity extends TGMachineBlockEntity {
             return CamoData.camos(level.registryAccess(), stack).indexOf(camo.get());
         }
         return group(level, stack).map(recipe -> recipe.entries().indexOf(stack.getItem())).orElse(-1);
+    }
+
+    /** The item tab {@code target} works on: the input, a worn armor piece or a worn gear item. */
+    public ItemStack targetStack(Player player, int target) {
+        if (target < TARGET_ARMOR) {
+            return inventory.getStackInSlot(SLOT_INPUT);
+        }
+        if (target < TARGET_GEAR) {
+            return player.getItemBySlot(RepairBenchBlockEntity.ARMOR_SLOTS.get(target - TARGET_ARMOR));
+        }
+        return ExtraSlots.get(player, TGSlotType.camoSlots().get(target - TARGET_GEAR));
+    }
+
+    /** Button that picks entry {@code index} of target {@code target}'s variants. */
+    public static int variantButton(int target, int index) {
+        return BUTTON_VARIANT + target * VARIANT_STRIDE + index;
+    }
+
+    /** Button that cycles target {@code target} to its next (or with {@code back} previous) look. */
+    public static int cycleButton(int target, boolean back) {
+        int base;
+        if (target < TARGET_ARMOR) {
+            base = BUTTON_NEXT;
+        } else if (target < TARGET_GEAR) {
+            base = BUTTON_ARMOR + 2 * (target - TARGET_ARMOR);
+        } else {
+            base = BUTTON_GEAR + 2 * TGSlotType.camoSlots().get(target - TARGET_GEAR).ordinal();
+        }
+        return base + (back ? 1 : 0);
     }
 
     private static Optional<CamoChangeRecipe> group(Level level, ItemStack stack) {
@@ -117,6 +157,9 @@ public class CamoBenchBlockEntity extends TGMachineBlockEntity {
             ExtraSlots.set(player, slot, gear);
             return true;
         }
+        if (id >= BUTTON_VARIANT + VARIANT_STRIDE) {
+            return pickWorn(player, (id - BUTTON_VARIANT) / VARIANT_STRIDE, (id - BUTTON_VARIANT) % VARIANT_STRIDE);
+        }
         ItemStack stack = inventory.getStackInSlot(SLOT_INPUT);
         List<ItemStack> variants = variants(level, stack);
         if (variants.isEmpty()) {
@@ -132,6 +175,24 @@ public class CamoBenchBlockEntity extends TGMachineBlockEntity {
             }
         }
         inventory.setStackInSlot(SLOT_INPUT, variants.get(index));
+        return true;
+    }
+
+    /** Sets worn target {@code target} to camo {@code index} (worn items only have camos, no block groups). */
+    private boolean pickWorn(Player player, int target, int index) {
+        if (level == null || target >= TARGETS) {
+            return false;
+        }
+        ItemStack stack = targetStack(player, target);
+        List<TGCamo> camos = CamoData.camos(level.registryAccess(), stack);
+        if (index >= camos.size()) {
+            return false;
+        }
+        CamoData.set(stack, camos.get(index));
+        if (target >= TARGET_GEAR) {
+            // set it again so Curios or the fallback slots send the change
+            ExtraSlots.set(player, TGSlotType.camoSlots().get(target - TARGET_GEAR), stack);
+        }
         return true;
     }
 

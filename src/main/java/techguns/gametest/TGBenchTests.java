@@ -188,6 +188,26 @@ public class TGBenchTests {
         bench.pressButton(player, CamoBenchBlockEntity.BUTTON_GEAR + 2 * techguns.slot.TGSlotType.BACK.ordinal() + 1);
         helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, techguns.slot.ExtraSlots.get(player, techguns.slot.TGSlotType.BACK)) == 0,
                 "- cycles it back");
+
+        // the screen's tabs: list picks and arrows for the worn items
+        int helmetTab = CamoBenchBlockEntity.TARGET_ARMOR;
+        int backTab = CamoBenchBlockEntity.TARGET_GEAR + techguns.slot.TGSlotType.camoSlots().indexOf(techguns.slot.TGSlotType.BACK);
+        helper.assertTrue(bench.targetStack(player, helmetTab) == player.getItemBySlot(EquipmentSlot.HEAD), "Tab 1 is the worn helmet");
+        int helmetCamos = CamoData.camos(level.registryAccess(), player.getItemBySlot(EquipmentSlot.HEAD)).size();
+        helper.assertTrue(bench.pressButton(player, CamoBenchBlockEntity.variantButton(helmetTab, helmetCamos - 1)), "Helmet pick accepted");
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, player.getItemBySlot(EquipmentSlot.HEAD)) == helmetCamos - 1,
+                "The list picks the worn helmet's last camo");
+        helper.assertFalse(bench.pressButton(player, CamoBenchBlockEntity.variantButton(helmetTab, helmetCamos)), "Out of range pick refused");
+        bench.pressButton(player, CamoBenchBlockEntity.cycleButton(helmetTab, false));
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, player.getItemBySlot(EquipmentSlot.HEAD)) == 0, "> wraps the helmet around");
+        bench.pressButton(player, CamoBenchBlockEntity.variantButton(backTab, 1));
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, bench.targetStack(player, backTab)) == 1, "The list picks the jetpack's camo");
+        bench.pressButton(player, CamoBenchBlockEntity.cycleButton(backTab, true));
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, bench.targetStack(player, backTab)) == 0, "< cycles the jetpack back");
+        bench.pressButton(player, CamoBenchBlockEntity.variantButton(CamoBenchBlockEntity.TARGET_INPUT, 0));
+        helper.assertTrue(CamoBenchBlockEntity.currentVariant(level, inv.getStackInSlot(CamoBenchBlockEntity.SLOT_INPUT)) == 0,
+                "The input tab still picks the input");
+        helper.assertFalse(bench.pressButton(player, CamoBenchBlockEntity.variantButton(CamoBenchBlockEntity.TARGETS, 0)), "No tab past the last");
         helper.succeed();
     }
 

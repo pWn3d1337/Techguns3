@@ -430,6 +430,14 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.chemlab", "Chem Lab");
         add("techguns.container.upgradebench", "Armor Upgrade Bench");
         add("techguns.container.camobench", "Camo Bench");
+        add("techguns.container.camobench.tab.input", "Bench Slot");
+        add("techguns.container.camobench.tab.head", "Worn Helmet");
+        add("techguns.container.camobench.tab.chest", "Worn Chestplate");
+        add("techguns.container.camobench.tab.legs", "Worn Leggings");
+        add("techguns.container.camobench.tab.feet", "Worn Boots");
+        add("techguns.container.camobench.tab.face", "Worn Face Gear");
+        add("techguns.container.camobench.tab.back", "Worn Back Gear");
+        add("techguns.container.camobench.tab.hand", "Worn Hand Gear");
         add("techguns.jei.oredrill.mininglevel", "Mining level: %s");
         add("techguns.jei.oredrill.oremult", "Ore multiplier: %s");
         add("techguns.jei.oredrill.powermult", "Power multiplier: %s");

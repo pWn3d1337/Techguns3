@@ -4,145 +4,204 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import techguns.TGIds;
-import techguns.camo.CamoData;
-import techguns.slot.ExtraSlots;
+import techguns.registry.TGBlocks;
 import techguns.slot.TGSlotType;
 import techguns.machine.CamoBenchBlockEntity;
 import techguns.machine.CamoBenchMenu;
-import techguns.machine.RepairBenchBlockEntity;
 
 /**
- * Camo Bench screen (Techguns 2 {@code CamoBenchGui}): the player model with the offhand slot on the left, the input
- * item's camo with cycle arrows, camo cycle buttons and camo numbers for the worn armor and the worn face/back/hand gear
- * (shown in the texture's gear slots; they live in Curios or the extra slot screen), and on the right a Fabric-style
- * list of every look of the input item to pick from.
+ * Camo Bench screen: the input slot of the Techguns 2 {@code CamoBenchGui} with the player model on the left,
+ * creative-style tabs on top to pick what to work on (the input, a worn armor piece or a worn gear item; the gear lives in
+ * Curios or the extra slot screen; more tabs than fit over the screen scroll with arrow buttons, as the creative tab pages
+ * do), and a Fabric-style list of every look of that item to pick from.
  */
+// MIGRATION(26.x): blitSprite, atlas sprite blits and item rendering through GuiGraphics change with deferred GUI
+// rendering (1.21.6).
 public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
     private static final ResourceLocation TEXTURE = TGIds.id("textures/gui/camo_bench_gui.png");
-    private static final int PANEL_PADDING = 4;
-    private static final int PANEL_COLOR = 0xFFC6C6C6;
+    private static final ResourceLocation[] TAB_UNSELECTED = new ResourceLocation[7];
+    private static final ResourceLocation[] TAB_SELECTED = new ResourceLocation[7];
+    static {
+        for (int i = 0; i < 7; i++) {
+            TAB_UNSELECTED[i] = TGIds.vanilla("container/creative_inventory/tab_top_unselected_" + (i + 1));
+            TAB_SELECTED[i] = TGIds.vanilla("container/creative_inventory/tab_top_selected_" + (i + 1));
+        }
+    }
+    private static final ResourceLocation[] EMPTY_ARMOR = {InventoryMenu.EMPTY_ARMOR_SLOT_HELMET,
+            InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS};
+    private static final String[] TAB_KEYS = {"input", "head", "chest", "legs", "feet", "face", "back", "hand"};
+    private static final int TAB_WIDTH = 26;
+    private static final int TAB_HEIGHT = 32;
+    private static final int TAB_SPACING = 27;
+    /** Tabs reach 4 pixels into the screen, as in the creative inventory. */
+    private static final int TAB_Y = -28;
+    /** The list (cells and scroller) ends at the texture's inner right edge. */
+    private static final int LIST_X = 90;
+    private static final int LIST_Y = 13;
+    /** Tabs shown at once between the scroll buttons, which sit at the screen's left and right edge. */
+    private static final int VISIBLE_TABS = 5;
+    private static final int SCROLL_BUTTON_WIDTH = 12;
+    private static final int TABS_X = SCROLL_BUTTON_WIDTH
+            + (176 - 2 * SCROLL_BUTTON_WIDTH - (VISIBLE_TABS * TAB_SPACING - 1)) / 2;
 
     private final TGRecipeGrid grid;
+    private int tab = CamoBenchBlockEntity.TARGET_INPUT;
+    /** First tab shown. */
+    private int firstTab;
+    @Nullable
+    private Button scrollBack;
+    @Nullable
+    private Button scrollForward;
 
     public CamoBenchScreen(CamoBenchMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE);
         this.powered = false;
         this.hasUpgradeSlot = false;
         this.securityButtonY = 120;
-        // the armor "-" buttons sit where the inventory title would be
-        this.showInventoryTitle = false;
         this.grid = new TGRecipeGrid(this::variants, this::currentVariant,
-                index -> pressButton(CamoBenchBlockEntity.BUTTON_VARIANT + index));
+                index -> pressButton(CamoBenchBlockEntity.variantButton(tab, index)));
     }
 
-    private ItemStack input() {
-        return menu.machine().getInventory().getStackInSlot(CamoBenchBlockEntity.SLOT_INPUT);
+    private ItemStack target(int target) {
+        return minecraft == null || minecraft.player == null ? ItemStack.EMPTY : menu.machine().targetStack(minecraft.player, target);
     }
 
-    // the camo lookups stream and sort the camo registry: computed again only when the input or an armor piece changes
+    // the camo lookups stream and sort the camo registry: computed again only when the tab or its item changes
+    private int cachedTab = -1;
     @Nullable
-    private ItemStack cachedInput;
+    private ItemStack cachedStack;
     private List<ItemStack> cachedVariants = List.of();
     private int cachedCurrent = -1;
-    private Component cachedName = Component.empty();
-    /** Worn armor pieces, then the face/back/hand gear. */
-    private static final int WORN = RepairBenchBlockEntity.ARMOR_SLOTS.size() + TGSlotType.camoSlots().size();
-    /** Left edge of the face/back/hand slots of the texture (the armor slots follow at 99). */
-    private static final int GEAR_X = 45;
-    private final ItemStack[] cachedWorn = new ItemStack[WORN];
-    private final int[] cachedWornCamo = new int[WORN];
 
-    private void refreshInput() {
-        ItemStack input = input();
-        if (cachedInput != null && ItemStack.matches(input, cachedInput)) {
+    private void refresh() {
+        ItemStack stack = target(tab);
+        if (cachedTab == tab && cachedStack != null && ItemStack.matches(stack, cachedStack)) {
             return;
         }
-        cachedInput = input.copy();
+        cachedTab = tab;
+        cachedStack = stack.copy();
         if (minecraft == null || minecraft.level == null) {
             cachedVariants = List.of();
             cachedCurrent = -1;
-            cachedName = Component.empty();
             return;
         }
-        cachedVariants = CamoBenchBlockEntity.variants(minecraft.level, input);
-        cachedCurrent = CamoBenchBlockEntity.currentVariant(minecraft.level, input);
-        cachedName = CamoData.current(minecraft.level.registryAccess(), input).map(camo -> camo.display()).orElse(Component.empty());
+        cachedVariants = CamoBenchBlockEntity.variants(minecraft.level, stack);
+        cachedCurrent = CamoBenchBlockEntity.currentVariant(minecraft.level, stack);
     }
 
     private List<ItemStack> variants() {
-        refreshInput();
+        refresh();
         return cachedVariants;
     }
 
     private int currentVariant() {
-        refreshInput();
+        refresh();
         return cachedCurrent;
-    }
-
-    /** Camo number (1-based, 0 = no camos) of worn item {@code i}: armor pieces, then the gear. */
-    private int wornCamo(int i, ItemStack worn) {
-        if (cachedWorn[i] == null || !ItemStack.matches(worn, cachedWorn[i])) {
-            cachedWorn[i] = worn.copy();
-            cachedWornCamo[i] = minecraft == null || minecraft.level == null ? 0
-                    : CamoData.camos(minecraft.level.registryAccess(), worn).indexOf(
-                            CamoData.current(minecraft.level.registryAccess(), worn).orElse(null)) + 1;
-        }
-        return cachedWornCamo[i];
-    }
-
-    private ItemStack gear(TGSlotType slot) {
-        return minecraft == null || minecraft.player == null ? ItemStack.EMPTY : ExtraSlots.get(minecraft.player, slot);
-    }
-
-    private int panelX() {
-        return leftPos + imageWidth + 2;
     }
 
     @Override
     protected void init() {
         super.init();
-        grid.setPosition(panelX() + PANEL_PADDING, topPos + PANEL_PADDING);
-        addRenderableWidget(Button.builder(Component.literal(">"), b -> pressButton(CamoBenchBlockEntity.BUTTON_NEXT))
-                .bounds(leftPos + 26, topPos + 59, 12, 12).build());
-        addRenderableWidget(Button.builder(Component.literal("<"), b -> pressButton(CamoBenchBlockEntity.BUTTON_PREVIOUS))
-                .bounds(leftPos + 14, topPos + 59, 12, 12).build());
-        for (int i = 0; i < RepairBenchBlockEntity.ARMOR_SLOTS.size(); i++) {
-            int id = CamoBenchBlockEntity.BUTTON_ARMOR + 2 * i;
-            addRenderableWidget(Button.builder(Component.literal("+"), b -> pressButton(id))
-                    .bounds(leftPos + 102 + i * 18, topPos + 59, 10, 10).build());
-            addRenderableWidget(Button.builder(Component.literal("-"), b -> pressButton(id + 1))
-                    .bounds(leftPos + 102 + i * 18, topPos + 69, 10, 10).build());
+        grid.setPosition(leftPos + LIST_X, topPos + LIST_Y);
+        int y = topPos + TAB_Y + 4;
+        scrollBack = addRenderableWidget(Button.builder(Component.literal("<"), b -> scrollTabs(-1))
+                .bounds(leftPos, y, SCROLL_BUTTON_WIDTH, 20).build());
+        scrollForward = addRenderableWidget(Button.builder(Component.literal(">"), b -> scrollTabs(1))
+                .bounds(leftPos + 176 - SCROLL_BUTTON_WIDTH, y, SCROLL_BUTTON_WIDTH, 20).build());
+        scrollTabs(0);
+    }
+
+    private void scrollTabs(int amount) {
+        firstTab = Math.clamp(firstTab + amount, 0, CamoBenchBlockEntity.TARGETS - VISIBLE_TABS);
+        if (scrollBack != null && scrollForward != null) {
+            scrollBack.active = firstTab > 0;
+            scrollForward.active = firstTab < CamoBenchBlockEntity.TARGETS - VISIBLE_TABS;
         }
-        for (TGSlotType slot : TGSlotType.camoSlots()) {
-            int id = CamoBenchBlockEntity.BUTTON_GEAR + 2 * slot.ordinal();
-            int x = leftPos + GEAR_X + 3 + slot.ordinal() * 18;
-            addRenderableWidget(Button.builder(Component.literal("+"), b -> pressButton(id)).bounds(x, topPos + 59, 10, 10).build());
-            addRenderableWidget(Button.builder(Component.literal("-"), b -> pressButton(id + 1)).bounds(x, topPos + 69, 10, 10).build());
+    }
+
+    private boolean tabShown(int target) {
+        return target >= firstTab && target < firstTab + VISIBLE_TABS;
+    }
+
+    private int tabX(int target) {
+        return leftPos + TABS_X + (target - firstTab) * TAB_SPACING;
+    }
+
+    private int tabAt(double mouseX, double mouseY) {
+        int y = topPos + TAB_Y;
+        for (int i = firstTab; i < firstTab + VISIBLE_TABS; i++) {
+            if (mouseX >= tabX(i) && mouseX < tabX(i) + TAB_WIDTH && mouseY >= y && mouseY < y + TAB_HEIGHT - 4) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        for (int i = firstTab; i < firstTab + VISIBLE_TABS; i++) {
+            if (i != tab) {
+                renderTab(graphics, i);
+            }
+        }
+        super.renderBg(graphics, partialTick, mouseX, mouseY);
+        if (tabShown(tab)) {
+            renderTab(graphics, tab);
+        }
+    }
+
+    private void renderTab(GuiGraphics graphics, int target) {
+        int x = tabX(target);
+        int y = topPos + TAB_Y;
+        // a middle tab sprite: no tab lines up with the screen's corners
+        graphics.blitSprite((target == tab ? TAB_SELECTED : TAB_UNSELECTED)[1], x, y, TAB_WIDTH, TAB_HEIGHT);
+        ItemStack stack = target(target);
+        x += 5;
+        y += 9;
+        if (!stack.isEmpty()) {
+            graphics.renderItem(stack, x, y);
+        } else if (target == CamoBenchBlockEntity.TARGET_INPUT) {
+            graphics.renderItem(new ItemStack(TGBlocks.CAMO_BENCH.get()), x, y);
+        } else if (target < CamoBenchBlockEntity.TARGET_GEAR) {
+            graphics.blit(x, y, 0, 16, 16, minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                    .apply(EMPTY_ARMOR[target - CamoBenchBlockEntity.TARGET_ARMOR]));
+        } else {
+            TGSlotType slot = TGSlotType.camoSlots().get(target - CamoBenchBlockEntity.TARGET_GEAR);
+            graphics.blit(TGIds.id("textures/gui/emptyslots/emptyslot_" + slot.id() + ".png"), x, y, 0, 0, 16, 16, 16, 16);
         }
     }
 
     @Override
     protected void renderMachineBg(GuiGraphics graphics, int x, int y) {
         graphics.blit(TEXTURE, x - 45, y + 6, 178, 0, 45, 84);
-        graphics.blit(TEXTURE, x - 18, y + 93, 7, 83, 18, 18);
         if (minecraft != null && minecraft.player != null) {
             InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, x - 42, y + 9, x - 3, y + 87, 30, 0.0625f,
                     lastMouseX, lastMouseY, minecraft.player);
         }
-        int panelX = panelX();
-        int width = grid.width() + 2 * PANEL_PADDING;
-        int height = grid.height() + 2 * PANEL_PADDING;
-        graphics.fill(panelX, y, panelX + width, y + height, 0xFF000000);
-        graphics.fill(panelX + 1, y + 1, panelX + width - 1, y + height - 1, PANEL_COLOR);
+        // the gear and armor slots and the camo number boxes of the Techguns 2 texture (the tabs and the list replace them)
+        graphics.fill(x + 38, y + 14, x + 172, y + 48, 0xFFC6C6C6);
+        // sunken backgrounds of the cells and the scroller, as in the stonecutter
+        inset(graphics, x + LIST_X - 1, y + LIST_Y, 66, grid.trackHeight() + 3);
+        inset(graphics, x + LIST_X + 66, y + LIST_Y, 14, grid.trackHeight() + 3);
         grid.render(graphics, lastMouseX, lastMouseY);
+    }
+
+    private static void inset(GuiGraphics graphics, int x, int y, int width, int height) {
+        graphics.fill(x, y, x + width, y + height, 0xFFFFFFFF);
+        graphics.fill(x, y, x + width - 1, y + height - 1, 0xFF373737);
+        graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xFF8B8B8B);
     }
 
     private int lastMouseX;
@@ -158,48 +217,40 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
     @Override
     protected void renderMachineTooltips(GuiGraphics graphics, int mx, int my, int mouseX, int mouseY) {
         super.renderMachineTooltips(graphics, mx, my, mouseX, mouseY);
-        if (menu.getCarried().isEmpty()) {
-            grid.renderTooltip(graphics, font, mouseX, mouseY);
-            for (TGSlotType slot : TGSlotType.camoSlots()) {
-                ItemStack gear = gear(slot);
-                if (!gear.isEmpty() && isIn(mx, my, GEAR_X + slot.ordinal() * 18, 18, 16, 16)) {
-                    graphics.renderTooltip(font, gear, mouseX, mouseY);
-                }
-            }
+        if (!menu.getCarried().isEmpty()) {
+            return;
         }
+        int hoveredTab = tabAt(mouseX, mouseY);
+        if (hoveredTab >= 0) {
+            ItemStack stack = target(hoveredTab);
+            graphics.renderComponentTooltip(font, List.of(Component.translatable("techguns.container.camobench.tab." + TAB_KEYS[hoveredTab]),
+                    (stack.isEmpty() ? Component.translatable("techguns.gui.empty") : stack.getHoverName()).copy()
+                            .withStyle(ChatFormatting.GRAY)), mouseX, mouseY);
+            return;
+        }
+        grid.renderTooltip(graphics, font, mouseX, mouseY);
     }
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
-        List<ItemStack> variants = variants();
-        Component name = Component.translatable("techguns.item.invalidcamo");
-        String index = "";
-        if (!variants.isEmpty()) {
-            index = (currentVariant() + 1) + "/" + variants.size();
-            name = cachedName;
-        }
-        drawText(graphics, Component.literal(index), 10, 40);
-        drawText(graphics, name, 10, 50);
-        if (minecraft != null && minecraft.player != null) {
-            for (int i = 0; i < RepairBenchBlockEntity.ARMOR_SLOTS.size(); i++) {
-                ItemStack armor = minecraft.player.getItemBySlot(RepairBenchBlockEntity.ARMOR_SLOTS.get(i));
-                int camo = wornCamo(i, armor);
-                drawText(graphics, Component.literal(String.valueOf(camo)), 104 + i * 18, 38);
-            }
-            // the worn gear drawn in the gear slots of the texture (no slots: the items stay where they are worn)
-            for (TGSlotType slot : TGSlotType.camoSlots()) {
-                ItemStack gear = gear(slot);
-                int x = GEAR_X + slot.ordinal() * 18;
-                graphics.renderItem(gear, x, 18);
-                int camo = wornCamo(RepairBenchBlockEntity.ARMOR_SLOTS.size() + slot.ordinal(), gear);
-                drawText(graphics, Component.literal(String.valueOf(camo)), x + 5, 38);
-            }
-        }
+        // the title left of the list
+        drawText(graphics, title, 8, 6);
+        drawText(graphics, playerInventoryTitle, 8, imageHeight - 96 + 2);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int clickedTab = tabAt(mouseX, mouseY);
+        if (clickedTab >= 0) {
+            if (clickedTab != tab) {
+                tab = clickedTab;
+                grid.scrollToTop();
+                if (minecraft != null) {
+                    minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+                }
+            }
+            return true;
+        }
         return grid.mouseClicked(mouseX, mouseY) || super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -210,12 +261,17 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (mouseY >= topPos + TAB_Y && mouseY < topPos && mouseX >= leftPos && mouseX < leftPos + 176) {
+            scrollTabs(scrollY > 0 ? -1 : 1);
+            return true;
+        }
         return grid.mouseScrolled(mouseX, mouseY, scrollY) || super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
     protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top, int button) {
-        return !grid.isOver(mouseX, mouseY) && super.hasClickedOutside(mouseX, mouseY, left, top, button)
-                && !(mouseX >= left - 45 && mouseX < left && mouseY >= top && mouseY < top + 112);
+        return super.hasClickedOutside(mouseX, mouseY, left, top, button)
+                && !(mouseX >= left - 45 && mouseX < left && mouseY >= top + 6 && mouseY < top + 90)
+                && !(mouseX >= left && mouseX < left + imageWidth && mouseY >= top + TAB_Y && mouseY < top);
     }
 }
