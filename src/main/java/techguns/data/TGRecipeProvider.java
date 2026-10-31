@@ -488,6 +488,8 @@ public class TGRecipeProvider extends RecipeProvider {
         metalPress(output, "gold_wire", Ingredient.of(Tags.Items.INGOTS_GOLD), Ingredient.of(Tags.Items.INGOTS_GOLD), TGItems.GOLD_WIRE.get(), 2);
         metalPress(output, "grenade_40mm", plate("iron"), Ingredient.of(Items.TNT), TGAmmo.GRENADE_40MM.get(), 16);
         metalPress(output, "titanium_plate", ingot("titanium"), ingot("titanium"), TGItems.TITANIUM_PLATE.get(), 2);
+        metalPress(output, "netherite_plate", Ingredient.of(Tags.Items.INGOTS_NETHERITE), Ingredient.of(Tags.Items.INGOTS_NETHERITE),
+                TGItems.NETHERITE_PLATE.get(), 2);
         metalPress(output, "gauss_rifle_slugs", plate("obsidian_steel"), plate("titanium"), TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4);
         metalPress(output, "sniper_rounds_explosive", Ingredient.of(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), Ingredient.of(TGItems.TGX.get()),
                 TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 1);

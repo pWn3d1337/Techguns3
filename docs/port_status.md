@@ -39,7 +39,7 @@ Per-item tables (guns, ammo, armor, blocks, machines, NPCs, structures) are adde
 |---|---|---|---|
 | Ores (tin, lead, titanium, uranium; stone + deepslate) | 8 blocks | tested | generated since 7a; copper ore dropped (vanilla copper) |
 | Raw materials, ingots, nuggets | 14 | rendered | Fabric's interim raw_steel / raw_obsidian_steel ingots removed in 5b3 (decided 2026-10-27): steel and obsidian steel come from the Blast Furnace like Techguns 2 |
-| Plates | 9 | rendered | **no recipe yet** — metal press (Phase 5) |
+| Plates | 10 | rendered | metal press recipes; netherite plate is new (not in Techguns 2), fire resistant |
 | Other materials (rubber, plastic, wires, TGX, …) | 14 | rendered | plastic_sheet, raw_plastic, yellowcake, enriched_uranium, quartz_rod, bronze_ingot: machine recipes (Phase 5) |
 | Components (receivers, barrels, stocks, circuits, emitters, …) | 37 | rendered | recipes ported from Fabric; titanium_receiver, gauss/shielded barrels, steam_armor_plate, plasma_generator, antigrav_core, protective_fiber, heat_ray_focus, uv_emitter wait for machines |
 

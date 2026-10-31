@@ -95,6 +95,7 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         plate("lead", TGItems.LEAD_PLATE);
         plate("carbon", TGItems.CARBON_PLATE);
         plate("titanium", TGItems.TITANIUM_PLATE);
+        plate("netherite", TGItems.NETHERITE_PLATE);
     }
 
     private static TagKey<Item> curiosSlot(TGSlotType slot) {

@@ -89,6 +89,22 @@ public class TGMachineTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void metalPressMakesNetheritePlates(GameTestHelper helper) {
+        MetalPressBlockEntity press = press(helper);
+        press.getEnergy().setEnergy(MetalPressBlockEntity.ENERGY_CAPACITY);
+        press.getInventory().setStackInSlot(MetalPressBlockEntity.SLOT_INPUT1, new ItemStack(Items.NETHERITE_INGOT));
+        press.getInventory().setStackInSlot(MetalPressBlockEntity.SLOT_INPUT2, new ItemStack(Items.NETHERITE_INGOT));
+
+        helper.runAfterDelay(OPERATION_TICKS, () -> {
+            ItemStack out = press.getInventory().getStackInSlot(MetalPressBlockEntity.SLOT_OUTPUT);
+            helper.assertTrue(out.is(TGItems.NETHERITE_PLATE.get()) && out.getCount() == 2,
+                    "Two netherite ingots should make 2 netherite plates, got " + out);
+            helper.assertTrue(out.has(net.minecraft.core.component.DataComponents.FIRE_RESISTANT), "Netherite plates should not burn");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 200)
     public static void metalPressNeedsPower(GameTestHelper helper) {
         MetalPressBlockEntity press = press(helper);
         press.getInventory().setStackInSlot(MetalPressBlockEntity.SLOT_INPUT1, new ItemStack(Items.IRON_INGOT));
