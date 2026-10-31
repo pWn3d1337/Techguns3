@@ -296,6 +296,12 @@ public class TGRecipeProvider extends RecipeProvider {
         exoSuit(output, TGArmors.T3_EXO_CHESTPLATE.get(), TGArmors.T3_COMBAT_CHESTPLATE.get(), 2);
         exoSuit(output, TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_COMBAT_LEGGINGS.get(), 2);
         exoSuit(output, TGArmors.T3_EXO_BOOTS.get(), TGArmors.T3_COMBAT_BOOTS.get(), 1);
+
+        // T4 nanosuit (not in Techguns 2): upgrade of the matching exo suit piece
+        nanoSuit(output, TGArmors.T4_NANO_HELMET.get(), TGArmors.T3_EXO_HELMET.get(), 1);
+        nanoSuit(output, TGArmors.T4_NANO_CHESTPLATE.get(), TGArmors.T3_EXO_CHESTPLATE.get(), 2);
+        nanoSuit(output, TGArmors.T4_NANO_LEGGINGS.get(), TGArmors.T3_EXO_LEGGINGS.get(), 2);
+        nanoSuit(output, TGArmors.T4_NANO_BOOTS.get(), TGArmors.T3_EXO_BOOTS.get(), 1);
         // Techguns 2 has no crafting recipes for the T4 praetor and T4 power armor.
     }
 
@@ -415,6 +421,16 @@ public class TGRecipeProvider extends RecipeProvider {
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
     }
 
+    private static void nanoSuit(RecipeOutput output, Item nano, Item exo, int carbonFibers) {
+        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, nano)
+                .requires(exo).requires(TGItems.CYBERNETIC_PARTS.get()).requires(TGItems.CIRCUIT_BOARD_ADVANCED.get())
+                .requires(TGItems.POWER_PLATING_MK2.get());
+        for (int i = 0; i < carbonFibers; i++) {
+            builder.requires(TGItems.CARBON_FIBERS.get());
+        }
+        builder.unlockedBy(getHasName(exo), has(exo)).save(output, TGIds.id(getItemName(nano)));
+    }
+
     /** Techguns 2 machines, the machine upgrade and the machine recipes. */
     private void buildMachineRecipes(RecipeOutput output) {
         // Metal Press: Techguns 2 has a block-of-iron and an iron-plate version
@@ -488,6 +504,8 @@ public class TGRecipeProvider extends RecipeProvider {
         metalPress(output, "gold_wire", Ingredient.of(Tags.Items.INGOTS_GOLD), Ingredient.of(Tags.Items.INGOTS_GOLD), TGItems.GOLD_WIRE.get(), 2);
         metalPress(output, "grenade_40mm", plate("iron"), Ingredient.of(Items.TNT), TGAmmo.GRENADE_40MM.get(), 16);
         metalPress(output, "titanium_plate", ingot("titanium"), ingot("titanium"), TGItems.TITANIUM_PLATE.get(), 2);
+        metalPress(output, "netherite_plate", Ingredient.of(Tags.Items.INGOTS_NETHERITE), Ingredient.of(Tags.Items.INGOTS_NETHERITE),
+                TGItems.NETHERITE_PLATE.get(), 2);
         metalPress(output, "gauss_rifle_slugs", plate("obsidian_steel"), plate("titanium"), TGAmmo.GAUSS_RIFLE_SLUGS.get(), 4);
         metalPress(output, "sniper_rounds_explosive", Ingredient.of(TGAmmo.SNIPER_ROUNDS_INCENDIARY.get()), Ingredient.of(TGItems.TGX.get()),
                 TGAmmo.SNIPER_ROUNDS_EXPLOSIVE.get(), 1);
@@ -1046,20 +1064,11 @@ public class TGRecipeProvider extends RecipeProvider {
         }
         swap(output, TGBlocks.DOOR_HANGAR_UP_3X3.get(), TGBlocks.DOOR_HANGAR_DOWN_3X3.get());
 
-        // Techguns 3 ladders: 16 copper ladders from copper plates like the metal ladder; the others are 8 ladders around
-        // one item (the Camo Bench also switches between all ladders)
+        // Techguns 3 ladders: 16 copper ladders from copper plates like the metal ladder; the oxidized copper, hazard and
+        // nether ladders only come from the Camo Bench, which switches between all ladders
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LADDER_COPPER.get(), 16)
                 .pattern("iii").pattern(" i ").pattern("iii").define('i', TGTags.Items.plate("copper"))
                 .unlockedBy("has_copper_plate", has(TGTags.Items.plate("copper"))).save(output, TGIds.id("ladder_copper"));
-        ladderVariant(output, TGBlocks.LADDER_OXIDIZED_COPPER.get(), TGBlocks.LADDER_COPPER.get(), Ingredient.of(Items.WATER_BUCKET));
-        ladderVariant(output, TGBlocks.LADDER_HAZARD.get(), TGBlocks.LADDER_METAL.get(), Ingredient.of(Tags.Items.DYES_YELLOW));
-        ladderVariant(output, TGBlocks.LADDER_NETHER.get(), TGBlocks.LADDER_METAL.get(), Ingredient.of(Items.NETHERRACK));
-    }
-
-    private static void ladderVariant(RecipeOutput output, ItemLike result, ItemLike ladder, Ingredient center) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result, 8)
-                .pattern("lll").pattern("lcl").pattern("lll").define('l', ladder).define('c', center)
-                .unlockedBy(getHasName(ladder), has(ladder)).save(output, TGIds.id(getItemName(result)));
     }
 
     /** Two blocks that convert into each other with a shapeless recipe (Techguns 2 lamp/door variants). */

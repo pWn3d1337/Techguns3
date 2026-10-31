@@ -1,0 +1,13 @@
+{
+  "type": "techguns:metal_press",
+  "first": {
+    "tag": "c:ingots/netherite"
+  },
+  "result": {
+    "count": 2,
+    "id": "techguns:netherite_plate"
+  },
+  "second": {
+    "tag": "c:ingots/netherite"
+  }
+}

@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_ladder_metal": {
+    "has_t3_exo_helmet": {
       "conditions": {
         "items": [
           {
-            "items": "techguns:ladder_metal"
+            "items": "techguns:t3_exo_helmet"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "techguns:ladder_hazard"
+        "recipe": "techguns:t4_nano_suit_helmet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_ladder_metal"
+      "has_t3_exo_helmet"
     ]
   ],
   "rewards": {
     "recipes": [
-      "techguns:ladder_hazard"
+      "techguns:t4_nano_suit_helmet"
     ]
   }
 }

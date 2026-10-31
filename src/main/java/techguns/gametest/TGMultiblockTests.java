@@ -8,7 +8,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -187,6 +190,45 @@ public class TGMultiblockTests {
         helper.assertTrue(level.getCapability(Capabilities.ItemHandler.BLOCK, plainHousing, null) == null, "Plain housings expose nothing");
         helper.assertTrue(helper.getBlockState(RC_CONTROLLER).getValue(TGMachineBlock.FACING) == Direction.SOUTH,
                 "The formed controller faces into the chamber (turns its model)");
+        helper.succeed();
+    }
+
+    /** Formed parts keep a full collision box; only the outline follows the slimmer Techguns 2 part boxes. */
+    @GameTest(template = ARENA)
+    public static void formedReactionChamberPartsAreSolid(GameTestHelper helper) {
+        ReactionChamberBlockEntity chamber = buildReactionChamber(helper);
+        var level = helper.getLevel();
+        for (BlockPos pos : chamber.getLinkedParts()) {
+            BlockState state = level.getBlockState(pos);
+            helper.assertTrue(state.getValue(MultiblockPartBlock.FORMED), "Part at " + pos + " is formed");
+            helper.assertTrue(Block.isShapeFullBlock(state.getCollisionShape(level, pos, CollisionContext.empty())),
+                    "Formed part at " + pos + " collides as a full block");
+        }
+        // the glass edge left of the centre is slimmer in outline (Techguns 2 getBBforSlave)
+        BlockPos edgeGlass = helper.absolutePos(new BlockPos(1, 1, 2));
+        helper.assertFalse(Block.isShapeFullBlock(level.getBlockState(edgeGlass).getShape(level, edgeGlass)), "The outline keeps the part box");
+        helper.succeed();
+    }
+
+    /** Multiblock glass is lit like vanilla glass: no neighbour AO, sky light passes, inner faces between glass hidden. */
+    @GameTest(template = ARENA)
+    public static void multiblockGlassActsLikeGlass(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        var level = helper.getLevel();
+        for (Block glass : new Block[] {TGBlocks.FABRICATOR_GLASS.get(), TGBlocks.REACTION_CHAMBER_GLASS.get()}) {
+            helper.setBlock(pos, glass);
+            BlockPos abs = helper.absolutePos(pos);
+            BlockState state = level.getBlockState(abs);
+            helper.assertTrue(state.getShadeBrightness(level, abs) == 1.0f, glass + " casts no ambient occlusion");
+            helper.assertTrue(state.propagatesSkylightDown(level, abs), glass + " lets sky light through");
+            helper.assertTrue(state.getLightBlock(level, abs) == 0, glass + " blocks no light");
+            helper.assertTrue(state.skipRendering(state, Direction.UP), glass + " hides faces towards the same glass");
+            helper.assertFalse(state.skipRendering(state.setValue(MultiblockPartBlock.FORMED, true), Direction.UP),
+                    glass + " shows faces towards a formed glass block (it draws no model)");
+            helper.assertFalse(state.skipRendering(Blocks.GLASS.defaultBlockState(), Direction.UP), glass + " shows faces towards other glass");
+        }
+        BlockState housing = TGBlocks.REACTION_CHAMBER_HOUSING.get().defaultBlockState();
+        helper.assertTrue(housing.getShadeBrightness(level, helper.absolutePos(pos)) < 1.0f, "Housings still shade like solid blocks");
         helper.succeed();
     }
 

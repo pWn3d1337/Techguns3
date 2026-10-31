@@ -1,6 +1,22 @@
 package techguns.gametest;
 
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.StairsShape;
+import techguns.block.CamoNetBlock;
+import techguns.world.structure.CampLevelPiece;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -425,6 +441,164 @@ public class TGStructureTests {
             }
         }
         helper.assertTrue(liquid > 0 && dry > 0, "samples over land and sea: " + dry + " dry, " + liquid + " liquid");
+        helper.succeed();
+    }
+    /**
+     * 1.12 chests side by side were one double chest: the converted templates pair them, and every pair stays whole
+     * under each rotation and mirror the template piece can place it with.
+     */
+    @GameTest(template = ARENA)
+    public static void templateChestsArePaired(GameTestHelper helper) {
+        int pairs = 0;
+        for (ResourceLocation id : convertedTemplates()) {
+            StructureTemplate template = helper.getLevel().getStructureManager().get(id).orElseThrow();
+            List<StructureTemplate.StructureBlockInfo> infos = template.filterBlocks(BlockPos.ZERO, new StructurePlaceSettings(), Blocks.CHEST, false);
+            for (Mirror mirror : Mirror.values()) {
+                for (Rotation rotation : Rotation.values()) {
+                    // as placeInWorld transforms them
+                    StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rotation).setMirror(mirror);
+                    Map<BlockPos, BlockState> chests = new HashMap<>();
+                    for (StructureTemplate.StructureBlockInfo info : infos) {
+                        chests.put(StructureTemplate.calculateRelativePosition(settings, info.pos()), info.state().mirror(mirror).rotate(rotation));
+                    }
+                    int found = assertChestPairs(helper, id + " " + rotation + " " + mirror, chests);
+                    if (mirror == Mirror.NONE && rotation == Rotation.NONE) {
+                        pairs += found;
+                    }
+                }
+            }
+        }
+        // Techguns 2: aircraft carrier 5, gas station 3, survivor hideout 2, factory house and police station 1, Nether dungeon 2
+        helper.assertTrue(pairs == 14, "14 double chests in the converted templates, got " + pairs);
+        helper.succeed();
+    }
+
+    /** The converted Techguns 2 templates: the structures and every maze dungeon segment. */
+    private static List<ResourceLocation> convertedTemplates() {
+        List<ResourceLocation> ids = new ArrayList<>();
+        TEMPLATES.forEach(t -> ids.add(TGIds.id(t.name())));
+        for (DungeonPreset preset : DungeonPreset.values()) {
+            for (String name : preset.templates) {
+                for (SegmentType type : SegmentType.values()) {
+                    ids.add(TGIds.id("dungeon/" + name + "/" + type.fileName()));
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * 1.12 doors split their state between the halves (facing and open below, hinge above); the converted templates
+     * store the joined state in both, since placing a template copies one half into the other.
+     */
+    @GameTest(template = ARENA)
+    public static void templateDoorsAreWhole(GameTestHelper helper) {
+        List<Block> doors = BuiltInRegistries.BLOCK.stream().filter(b -> b instanceof DoorBlock).toList();
+        int pairs = 0;
+        for (ResourceLocation id : convertedTemplates()) {
+            StructureTemplate template = helper.getLevel().getStructureManager().get(id).orElseThrow();
+            Map<BlockPos, BlockState> halves = new HashMap<>();
+            for (Block door : doors) {
+                template.filterBlocks(BlockPos.ZERO, new StructurePlaceSettings(), door, false).forEach(info -> halves.put(info.pos(), info.state()));
+            }
+            for (Map.Entry<BlockPos, BlockState> half : halves.entrySet()) {
+                if (half.getValue().getValue(DoorBlock.HALF) != DoubleBlockHalf.LOWER) {
+                    continue;
+                }
+                BlockState upper = halves.get(half.getKey().above());
+                helper.assertTrue(upper != null && upper.equals(half.getValue().setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER)),
+                        id + ": door halves disagree at " + half.getKey() + ": " + half.getValue() + " / " + upper);
+                pairs++;
+            }
+        }
+        helper.assertTrue(pairs > 0, "The Nether dungeon has doors");
+        helper.succeed();
+    }
+
+    /** Camp stairs take their corner shape from their neighbours, as 1.12 drew them. */
+    @GameTest(template = ARENA)
+    public static void campStairsFormCorners(GameTestHelper helper) {
+        BlockPos origin = helper.absolutePos(new BlockPos(2, 2, 2));
+        BlockState stairs = Blocks.OAK_STAIRS.defaultBlockState();
+        Map<BlockPos, BlockState> blocks = new LinkedHashMap<>();
+        // the stair in front of the north-facing one faces east: an outer corner
+        blocks.put(origin, stairs.setValue(StairBlock.FACING, Direction.NORTH));
+        blocks.put(origin.north(), stairs.setValue(StairBlock.FACING, Direction.EAST));
+        CampLevelPiece.placeBlocks(helper.getLevel(), blocks, new BoundingBox(origin).inflatedBy(2));
+        BlockState corner = helper.getLevel().getBlockState(origin);
+        helper.assertTrue(corner.getValue(StairBlock.SHAPE) == StairsShape.OUTER_LEFT || corner.getValue(StairBlock.SHAPE) == StairsShape.OUTER_RIGHT,
+                "The camp stair should form an outer corner, got " + corner);
+        helper.succeed();
+    }
+
+    /** Military camp loot chests standing side by side are double chests, like 1.12 joined them. */
+    @GameTest(template = ARENA)
+    public static void campChestsArePaired(GameTestHelper helper) {
+        int pairs = 0;
+        for (long seed = 0; seed < 12; seed++) {
+            CampLevel camp = camp(seed, 48, 48, false);
+            Map<BlockPos, BlockState> chests = new HashMap<>();
+            camp.chests().keySet().forEach(pos -> chests.put(pos, camp.blocks().get(pos)));
+            pairs += assertChestPairs(helper, "Camp " + seed, chests);
+        }
+        helper.assertTrue(pairs > 0, "Some camp has a double chest");
+        helper.succeed();
+    }
+
+    /** Every double chest half has its other half; no two single chests stand side by side. Returns the pairs. */
+    private static int assertChestPairs(GameTestHelper helper, String name, Map<BlockPos, BlockState> chests) {
+        int halves = 0;
+        for (Map.Entry<BlockPos, BlockState> chest : chests.entrySet()) {
+            BlockState state = chest.getValue();
+            if (state.getValue(ChestBlock.TYPE) == ChestType.SINGLE) {
+                for (Direction side : Direction.Plane.HORIZONTAL) {
+                    BlockState other = chests.get(chest.getKey().relative(side));
+                    helper.assertTrue(other == null || other.getValue(ChestBlock.TYPE) != ChestType.SINGLE,
+                            name + ": single chests side by side at " + chest.getKey());
+                }
+                continue;
+            }
+            halves++;
+            BlockState other = chests.get(chest.getKey().relative(ChestBlock.getConnectedDirection(state)));
+            helper.assertTrue(other != null && other.getValue(ChestBlock.FACING) == state.getValue(ChestBlock.FACING)
+                    && other.getValue(ChestBlock.TYPE) == state.getValue(ChestBlock.TYPE).getOpposite(), name + ": broken double chest at " + chest.getKey());
+        }
+        return halves / 2;
+    }
+
+    /**
+     * Camp roofs of top camouflage nets join up like the standing nets, also across a chunk edge. World generation never
+     * updates neighbour shapes, so the piece connects them itself.
+     */
+    @GameTest(template = ARENA)
+    public static void campCamoNetsConnect(GameTestHelper helper) {
+        BlockPos origin = helper.absolutePos(new BlockPos(1, 2, 1));
+        Map<BlockPos, BlockState> blocks = new LinkedHashMap<>();
+        BlockState top = TGBlocks.CAMO_NET_TOP_WOOD.get().defaultBlockState();
+        BlockState wall = TGBlocks.CAMO_NET_WOOD.get().defaultBlockState();
+        for (int x = 0; x < 4; x++) {
+            for (int z = 0; z < 3; z++) {
+                blocks.put(origin.offset(x, 2, z), top);
+            }
+            blocks.put(origin.offset(x, 0, 0), wall);
+            blocks.put(origin.offset(x, 1, 0), wall);
+        }
+        // two "chunks": x 0..1 placed first, x 2..3 later
+        BoundingBox first = new BoundingBox(origin.getX(), origin.getY(), origin.getZ(), origin.getX() + 1, origin.getY() + 2, origin.getZ() + 2);
+        CampLevelPiece.placeBlocks(helper.getLevel(), blocks, first);
+        CampLevelPiece.placeBlocks(helper.getLevel(), blocks, first.moved(2, 0, 0));
+        ServerLevel level = helper.getLevel();
+        BlockState middle = level.getBlockState(origin.offset(1, 2, 1));
+        helper.assertTrue(middle.getValue(CamoNetBlock.NORTH) && middle.getValue(CamoNetBlock.EAST) && middle.getValue(CamoNetBlock.SOUTH)
+                && middle.getValue(CamoNetBlock.WEST), "An inner top net connects on all sides, got " + middle);
+        BlockState edge = level.getBlockState(origin.offset(1, 2, 0));
+        helper.assertTrue(!edge.getValue(CamoNetBlock.NORTH) && edge.getValue(CamoNetBlock.EAST) && edge.getValue(CamoNetBlock.WEST),
+                "An edge top net connects along the edge and across the chunk edge, got " + edge);
+        BlockState corner = level.getBlockState(origin.offset(3, 2, 2));
+        helper.assertTrue(corner.getValue(CamoNetBlock.NORTH) && corner.getValue(CamoNetBlock.WEST) && !corner.getValue(CamoNetBlock.EAST)
+                && !corner.getValue(CamoNetBlock.SOUTH), "A corner top net connects inwards, got " + corner);
+        BlockState wallState = level.getBlockState(origin.offset(1, 1, 0));
+        helper.assertTrue(wallState.getValue(CamoNetBlock.EAST) && wallState.getValue(CamoNetBlock.WEST), "A net wall connects, got " + wallState);
         helper.succeed();
     }
 }

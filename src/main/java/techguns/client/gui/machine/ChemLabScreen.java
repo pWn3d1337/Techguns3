@@ -46,11 +46,14 @@ public class ChemLabScreen extends TGMachineScreen<ChemLabMenu> {
         drawFluid(graphics, menu.outputFluid(), ChemLabBlockEntity.OUTPUT_TANK_CAPACITY, x + OUTPUT_TANK_X + 1, y + TANK_Y, TANK_W, TANK_H);
         graphics.blit(TEXTURE, x + INPUT_TANK_X, y + TANK_Y, 176, 32, TANK_W + 2, TANK_H + 2);
         graphics.blit(TEXTURE, x + OUTPUT_TANK_X, y + TANK_Y, 176, 32, TANK_W + 2, TANK_H + 2);
-        if (menu.totalTime() <= 0) {
-            return;
+        if (menu.totalTime() > 0) {
+            drawProgress(graphics, x, y, (float) menu.progress() / menu.totalTime());
         }
+    }
+
+    /** The progress drawing at {@code p} (0..1), at the screen origin {@code x, y}; also used by the JEI category. */
+    public static void drawProgress(GuiGraphics graphics, int x, int y, float p) {
         // Techguns 2: the liquid runs through five pipe sections one after another
-        float p = (float) menu.progress() / menu.totalTime();
         graphics.blit(TEXTURE, x + 81, y + 19, 178, 5, 8, (int) ((p < 0.2f ? p * 5 : 1.0f) * 25));
         if (p >= 0.2f) {
             graphics.blit(TEXTURE, x + 88, y + 39, 186, 25, (int) ((p < 0.4f ? (p - 0.2f) * 5 : 1.0f) * 9), 1);

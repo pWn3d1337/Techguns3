@@ -11,12 +11,16 @@ public interface GunClientEffects {
     GunClientEffects NONE = new GunClientEffects() {
     };
 
-    /** A gun was fired by {@code shooter} (recoil, muzzle flash). */
+    /** A gun was fired by {@code shooter} (recoil, muzzle flash), a normal shot without charge. */
     default void onFired(LivingEntity shooter, InteractionHand hand, int recoilTicks, int muzzleFlashTicks) {
+        onFired(shooter, hand, recoilTicks, muzzleFlashTicks, 0f);
     }
 
-    /** A charge gun was released with {@code charge} (0..1); the charge animation fades out during the recoil. */
-    default void onChargeReleased(LivingEntity shooter, InteractionHand hand, float charge) {
+    /**
+     * A gun was fired; {@code charge} (0..1) is the charge a charge gun was released with, 0 for a normal shot. The
+     * charge animation fades out during the recoil.
+     */
+    default void onFired(LivingEntity shooter, InteractionHand hand, int recoilTicks, int muzzleFlashTicks, float charge) {
     }
 
     /** A reload started. */

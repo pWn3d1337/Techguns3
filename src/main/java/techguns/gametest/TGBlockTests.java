@@ -229,9 +229,14 @@ public class TGBlockTests {
     @GameTest(template = ARENA)
     public static void techguns3LaddersAreCraftable(GameTestHelper helper) {
         var recipes = helper.getLevel().getServer().getRecipeManager();
-        for (String id : List.of("ladder_copper", "ladder_oxidized_copper", "ladder_hazard", "ladder_nether")) {
-            helper.assertTrue(recipes.byKey(techguns.TGIds.id(id)).isPresent(), "Missing recipe " + id);
+        helper.assertTrue(recipes.byKey(techguns.TGIds.id("ladder_copper")).isPresent(), "Missing recipe ladder_copper");
+        // the other Techguns 3 ladders only come from the Camo Bench, which switches between all 8
+        for (String id : List.of("ladder_oxidized_copper", "ladder_hazard", "ladder_nether")) {
+            helper.assertFalse(recipes.byKey(techguns.TGIds.id(id)).isPresent(), "Unexpected crafting recipe " + id);
         }
+        var camo = recipes.byKey(techguns.TGIds.id("camo_change/ladder")).orElseThrow();
+        helper.assertTrue(((techguns.recipe.CamoChangeRecipe) camo.value()).entries()
+                .equals(TGBlocks.LADDERS.stream().map(ladder -> ladder.get().asItem()).toList()), "Camo Bench ladder group should hold all 8 ladders");
         helper.succeed();
     }
 

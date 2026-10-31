@@ -148,6 +148,11 @@ public final class TGCamoProvider {
                 camo("white", "White", "t3_exo"),
                 camo("silver", "Silver", "t3_exo_silver"),
                 camo("dark_green", "Dark Green", "t3_exo_green"))));
+        groups.add(new Group(List.of(TGArmors.T4_NANO_HELMET.get(), TGArmors.T4_NANO_CHESTPLATE.get(), TGArmors.T4_NANO_LEGGINGS.get(), TGArmors.T4_NANO_BOOTS.get()), Kind.ARMOR_LAYERS, List.of(
+                camo("default", "Default", "t4_nano_suit"),
+                camo("black", "Black", "t4_nano_suit_black"),
+                camo("dark_green", "Dark Green", "t4_nano_suit_green"),
+                camo("silver", "Silver", "t4_nano_suit_silver"))));
         groups.add(new Group(List.of(TGArmors.STEAM_HELMET.get(), TGArmors.STEAM_CHESTPLATE.get(), TGArmors.STEAM_LEGGINGS.get(), TGArmors.STEAM_BOOTS.get()), Kind.ARMOR_SINGLE, List.of(
                 camo("default", "Default", "steam_armor"),
                 camo("rusty", "Rusty", "steam_armor_rusty"),
@@ -290,6 +295,14 @@ public final class TGCamoProvider {
         tint(tints, TGArmors.T3_EXO_BOOTS, "t3_exo", 0x384A57, 0xE9FEFF, 0xB0B0B0);
         tint(tints, TGArmors.T3_EXO_BOOTS, "t3_exo_green", 0x015409, 0x20231B, 0x303030);
         tint(tints, TGArmors.T3_EXO_BOOTS, "t3_exo_silver", 0x4A4A4A, 0xCFDBD9, 0xB0B0B0);
+
+        // nanosuit: undersuit, plates, lights (colors picked from its armor textures)
+        for (ItemLike item : List.of(TGArmors.T4_NANO_HELMET, TGArmors.T4_NANO_CHESTPLATE, TGArmors.T4_NANO_LEGGINGS, TGArmors.T4_NANO_BOOTS)) {
+            tint(tints, item, "t4_nano_suit", 0xB0B8C8, 0x8C96AA, 0x5AD7FF);
+            tint(tints, item, "t4_nano_suit_black", 0x808084, 0x5A5A60, 0xFF2A1E);
+            tint(tints, item, "t4_nano_suit_green", 0x9AA880, 0x7E9A58, 0xA8E65C);
+            tint(tints, item, "t4_nano_suit_silver", 0xFFFFFF, 0xE2E8F0, 0xFFD630);
+        }
 
         tint(tints, TGArmors.T3_MINER_HELMET, "hevsuit", 0xFFAE00, -1, 0x8BC2FF);
         tint(tints, TGArmors.T3_MINER_HELMET, "hevsuit_black", 0x424242, -1, 0xFF3C00);

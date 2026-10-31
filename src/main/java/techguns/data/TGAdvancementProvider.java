@@ -120,7 +120,7 @@ public final class TGAdvancementProvider implements AdvancementProvider.Advancem
                 TGArmors.STEAM_CHESTPLATE.get());
         obtain(saver, steam, "power_armor", TGArmors.T3_POWER_CHESTPLATE.get(), AdvancementType.GOAL,
                 TGArmors.T3_POWER_CHESTPLATE.get(), TGArmors.T3_MINER_CHESTPLATE.get(), TGArmors.T3_EXO_CHESTPLATE.get(),
-                TGArmors.T4_PRAETOR_CHESTPLATE.get(), TGArmors.T4_POWER_CHESTPLATE.get());
+                TGArmors.T4_PRAETOR_CHESTPLATE.get(), TGArmors.T4_POWER_CHESTPLATE.get(), TGArmors.T4_NANO_CHESTPLATE.get());
         obtain(saver, armor, "jetpack", TGSlotItems.JETPACK.get(), AdvancementType.TASK,
                 TGSlotItems.JETPACK.get(), TGSlotItems.JUMP_PACK.get(), TGSlotItems.ANTIGRAV_PACK.get());
         obtain(saver, armor, "gas_mask", TGSlotItems.GAS_MASK.get(), AdvancementType.TASK, TGSlotItems.GAS_MASK.get());

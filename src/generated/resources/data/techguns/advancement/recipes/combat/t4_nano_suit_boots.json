@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_ladder_copper": {
+    "has_t3_exo_boots": {
       "conditions": {
         "items": [
           {
-            "items": "techguns:ladder_copper"
+            "items": "techguns:t3_exo_boots"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "techguns:ladder_oxidized_copper"
+        "recipe": "techguns:t4_nano_suit_boots"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_ladder_copper"
+      "has_t3_exo_boots"
     ]
   ],
   "rewards": {
     "recipes": [
-      "techguns:ladder_oxidized_copper"
+      "techguns:t4_nano_suit_boots"
     ]
   }
 }

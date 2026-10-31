@@ -54,6 +54,8 @@ public final class TGItems {
     public static final DeferredItem<Item> LEAD_PLATE = simple("lead_plate");
     public static final DeferredItem<Item> CARBON_PLATE = simple("carbon_plate");
     public static final DeferredItem<Item> TITANIUM_PLATE = simple("titanium_plate");
+    /** Not in Techguns 2; fire resistant like the vanilla netherite items. */
+    public static final DeferredItem<Item> NETHERITE_PLATE = simple("netherite_plate", new Item.Properties().fireResistant());
 
     // --- Other materials ---
     public static final DeferredItem<Item> PLASTIC_SHEET = simple("plastic_sheet");
@@ -79,6 +81,8 @@ public final class TGItems {
     public static final DeferredItem<Item> COPPER_WIRE = simple("copper_wire");
     public static final DeferredItem<Item> GOLD_WIRE = simple("gold_wire");
     public static final DeferredItem<Item> CARBON_FIBERS = simple("carbon_fibers");
+    /** Techguns 3 crafting material. */
+    public static final DeferredItem<Item> NANO_FIBERS = simple("nano_fibers");
 
     // --- Components ---
     public static final DeferredItem<Item> IRON_RECEIVER = simple("iron_receiver");

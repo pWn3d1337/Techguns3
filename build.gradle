@@ -191,6 +191,8 @@ dependencies {
     // like in the test pack
     localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
     localRuntime("maven.modrinth:architectury-api:${compat_architectury_api}") { transitive = false }
+    // Fusion in every dev run: the connected textures of the Techguns blocks (and Rechiseled's with -Pdecor_mods=true)
+    localRuntime("maven.modrinth:fusion-connected-textures:${fusion_version}") { transitive = false }
 
     // Tier 2 compat check (8e), opt-in with -Pcompat_mods=true: the mods whose machines get conditional Techguns
     // recipes, so the GameTests can check those recipes load (Modrinth version ids, see gradle.properties)
@@ -205,7 +207,7 @@ dependencies {
     // Decorative block mods (9i), opt-in with -Pdecor_mods=true: Factory Blocks, Chisel Reborn and Laboratory Blocks for the
     // structure blocks, Rechiseled for the chiseling groups (Modrinth version ids, see gradle.properties)
     if (project.decor_mods.toBoolean()) {
-        ["rechiseled", "supermartijn642s-core-lib", "supermartijn642s-config-lib", "fusion-connected-textures", "chisel-reborn",
+        ["rechiseled", "supermartijn642s-core-lib", "supermartijn642s-config-lib", "chisel-reborn",
          "cryonicconfig", "factory-blocks", "artemis-laboratory-blocks"].each { slug ->
             localRuntime("maven.modrinth:${slug}:${project.property('decor_' + slug.replace('-', '_'))}") { transitive = false }
         }

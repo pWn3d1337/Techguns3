@@ -37,9 +37,13 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import techguns.TGIds;
+import techguns.world.structure.ChestPairs;
 import techguns.world.structure.dungeon.DungeonPreset;
 import techguns.world.structure.dungeon.SegmentType;
 import techguns.block.Door3x3Block;
@@ -193,6 +197,8 @@ public class LegacyStructureProvider implements DataProvider {
                 sizeZ = Math.max(sizeZ, pos.getZ() + 1);
             }
             fixDoors3x3(placed);
+            joinDoorHalves(placed);
+            pairChests(placed);
             return template(placed, sizeX, sizeY, sizeZ);
         }
 
@@ -496,6 +502,41 @@ public class LegacyStructureProvider implements DataProvider {
                     placed.put(pos, new Entry(door.partState(zplane, Math.min(col, 2), Math.min(row, 2)), null, null));
                 }
             }
+        }
+
+        /**
+         * 1.12 doors split their state: the lower half stored facing and open, the upper half hinge and powered (each
+         * half's other values were defaults). The data fixer upgrades each half alone, and template placement then copies
+         * one half into the other (DoorBlock#updateShape), so the door took the upper half's default facing. Both halves
+         * get the joined state.
+         */
+        private static void joinDoorHalves(Map<BlockPos, Entry> placed) {
+            placed.forEach((pos, lower) -> {
+                Entry upper = placed.get(pos.above());
+                if (lower.options() != null || lower.state() == null || !(lower.state().getBlock() instanceof DoorBlock)
+                        || lower.state().getValue(DoorBlock.HALF) != DoubleBlockHalf.LOWER || upper == null || upper.options() != null
+                        || upper.state() == null || upper.state().getBlock() != lower.state().getBlock()) {
+                    return;
+                }
+                BlockState joined = lower.state().setValue(DoorBlock.HINGE, upper.state().getValue(DoorBlock.HINGE))
+                        .setValue(DoorBlock.POWERED, upper.state().getValue(DoorBlock.POWERED));
+                placed.put(pos, new Entry(joined, lower.blockEntity(), null));
+                placed.put(pos.above(), new Entry(joined.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), upper.blockEntity(), null));
+            });
+        }
+
+        /** 1.12 chests next to each other were one double chest; the data fixer leaves them single (see {@link ChestPairs}). */
+        private static void pairChests(Map<BlockPos, Entry> placed) {
+            Map<BlockPos, BlockState> chests = new HashMap<>();
+            placed.forEach((pos, entry) -> {
+                if (entry.options() == null && entry.state() != null && entry.state().getBlock() instanceof ChestBlock) {
+                    chests.put(pos, entry.state());
+                }
+            });
+            ChestPairs.pair(chests).forEach((pos, state) -> {
+                Entry entry = placed.get(pos);
+                placed.put(pos, new Entry(state, entry.blockEntity(), null));
+            });
         }
 
         private static CompoundTag template(Map<BlockPos, Entry> placed, int sizeX, int sizeY, int sizeZ) {

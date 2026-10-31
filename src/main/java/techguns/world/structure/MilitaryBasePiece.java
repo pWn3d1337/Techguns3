@@ -26,6 +26,7 @@ public class MilitaryBasePiece extends CampLevelPiece {
     public static CampLevel build(long seed, int x0, int z0, int sizeX, int sizeZ, BiomeColor color, MilitaryBaseStructure.HeightGrid grid) {
         CampLevel level = level(x0, z0, sizeX, sizeZ, grid);
         new MilitaryCamp(level, RandomSource.create(seed), color, x0, z0, sizeX, sizeZ).build();
+        level.pairChests();
         return level;
     }
 

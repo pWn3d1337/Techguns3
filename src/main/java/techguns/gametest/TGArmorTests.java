@@ -1,6 +1,9 @@
 package techguns.gametest;
 
+import java.util.List;
+
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -194,6 +197,62 @@ public class TGArmorTests {
         helper.assertTrue(modifier(empty, Attributes.ARMOR) > 0.0, "Unpowered chestplate should still give armor");
         helper.assertTrue(near(modifier(powered, TGAttributes.bonusArmor(TGDamageCategory.FIRE)),
                 modifier(empty, TGAttributes.bonusArmor(TGDamageCategory.FIRE))), "Elemental armor should not depend on power");
+        helper.succeed();
+    }
+
+    /** A fully powered stack of a powered armor piece. */
+    private static ItemStack powered(TGPoweredArmorItem item) {
+        ItemStack stack = new ItemStack(item);
+        stack.set(TGComponents.ARMOR_POWER.get(), item.maxPower());
+        return stack;
+    }
+
+    @GameTest(template = ARENA)
+    public static void nanosuitSitsBetweenExoAndPowerArmorMk2(GameTestHelper helper) {
+        List<TGPoweredArmorItem> nano = List.of(TGArmors.T4_NANO_HELMET.get(), TGArmors.T4_NANO_CHESTPLATE.get(),
+                TGArmors.T4_NANO_LEGGINGS.get(), TGArmors.T4_NANO_BOOTS.get());
+        List<TGPoweredArmorItem> exo = List.of(TGArmors.T3_EXO_HELMET.get(), TGArmors.T3_EXO_CHESTPLATE.get(),
+                TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_EXO_BOOTS.get());
+        List<TGPoweredArmorItem> mk2 = List.of(TGArmors.T4_POWER_HELMET.get(), TGArmors.T4_POWER_CHESTPLATE.get(),
+                TGArmors.T4_POWER_LEGGINGS.get(), TGArmors.T4_POWER_BOOTS.get());
+        List<TGPoweredArmorItem> hev = List.of(TGArmors.T3_MINER_HELMET.get(), TGArmors.T3_MINER_CHESTPLATE.get(),
+                TGArmors.T3_MINER_LEGGINGS.get(), TGArmors.T3_MINER_BOOTS.get());
+        List<Holder<Attribute>> bonuses = List.of(TGAttributes.SPEED_BONUS, TGAttributes.JUMP_BONUS, TGAttributes.FALL_DAMAGE_REDUCTION,
+                TGAttributes.FALL_FREE_HEIGHT, TGAttributes.STEP_ASSIST, TGAttributes.RADIATION_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE,
+                Attributes.MAX_HEALTH);
+        for (int i = 0; i < nano.size(); i++) {
+            String id = BuiltInRegistries.ITEM.getKey(nano.get(i)).getPath();
+            ItemStack n = powered(nano.get(i));
+            ItemStack e = powered(exo.get(i));
+            ItemStack m = powered(mk2.get(i));
+            // armor, toughness and every damage category: above the exo suit, below power armor Mk2
+            for (TGDamageCategory category : TGDamageCategory.values()) {
+                if (!category.isResistable()) {
+                    continue;
+                }
+                float nv = nano.get(i).armorValue(category);
+                helper.assertTrue(nv < mk2.get(i).armorValue(category), id + " " + category + " armor should be below Mk2, was " + nv);
+                helper.assertTrue(nv > exo.get(i).armorValue(category), id + " " + category + " armor should be above exo, was " + nv);
+            }
+            helper.assertTrue(nano.get(i).toughness() < mk2.get(i).toughness() && nano.get(i).toughness() > exo.get(i).toughness(),
+                    id + " toughness should be between exo and Mk2");
+            helper.assertTrue(n.getMaxDamage() < m.getMaxDamage() && n.getMaxDamage() > e.getMaxDamage(), id + " durability should be between exo and Mk2");
+            // every exo bonus is stronger (step assist is on/off, so equal), mining equals the HEV suit
+            for (Holder<Attribute> bonus : bonuses) {
+                double exoValue = modifier(e, bonus);
+                double nanoValue = modifier(n, bonus);
+                if (bonus == TGAttributes.STEP_ASSIST) {
+                    helper.assertTrue(near(nanoValue, exoValue), id + " step assist should match exo");
+                } else if (exoValue > 0.0) {
+                    helper.assertTrue(nanoValue > exoValue, id + " " + bonus.getRegisteredName() + " should beat exo " + exoValue + ", was " + nanoValue);
+                } else {
+                    helper.assertTrue(near(nanoValue, 0.0), id + " should not add " + bonus.getRegisteredName());
+                }
+            }
+            helper.assertTrue(near(modifier(n, TGAttributes.MINING_SPEED_BONUS), modifier(powered(hev.get(i)), TGAttributes.MINING_SPEED_BONUS)),
+                    id + " mining bonus should equal the HEV suit");
+        }
+        helper.assertTrue(TGArmors.T4_NANO_CHESTPLATE.get().maxPower() > TGArmors.T3_EXO_CHESTPLATE.get().maxPower(), "Nanosuit should hold more power than exo");
         helper.succeed();
     }
 
