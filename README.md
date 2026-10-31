@@ -42,6 +42,12 @@ The jar is written to `build/libs/`. Development notes (run configs, GameTests, 
 `./gradlew publishMods` does the same locally; without the tokens or project ids it is a dry run that writes the
 release into `build/publishMods`.
 
+### Dev builds
+
+Every push to `master` runs the **Dev build** workflow: it builds, runs the GameTests and replaces the GitHub
+pre-release tagged `dev` with the new jar (version `<mod_version>-dev.<run number>`, the commits since the previous
+dev build as notes). Only the latest dev build is kept. `-Pdev_build=<n>` gives the same version locally.
+
 ## License
 
 See [LICENSE.txt](LICENSE.txt) (Techguns Mod License).

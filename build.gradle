@@ -11,7 +11,9 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = "${minecraft_version}-${mod_version}"
+// Dev builds (.github/workflows/dev-release.yml) append -dev.<run number> to the mod version (jar and mods.toml)
+var modVersion = providers.gradleProperty('dev_build').map { "${mod_version}-dev.${it}" }.getOrElse(mod_version)
+version = "${minecraft_version}-${modVersion}"
 group = mod_group_id
 
 sourceSets.main.resources {
@@ -231,7 +233,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version            : mod_version,
+            mod_version            : modVersion,
             mod_authors            : mod_authors,
             geckolib_version       : geckolib_version,
             curios_version         : curios_version,
