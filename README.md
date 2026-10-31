@@ -7,6 +7,12 @@ Port of Techguns 2 (1.12.2) to **Minecraft 1.21.1 / NeoForge 21.1**, in alpha.
 - Design & roadmap: [Techguns3_design.md](Techguns3_design.md)
 - Port progress: [docs/port_status.md](docs/port_status.md)
 
+## Testing
+
+Testers wanted! Download the **[latest dev build](https://github.com/pWn3d1337/Techguns3/releases/tag/dev)**
+(rebuilt on every change) and see [TESTING.md](TESTING.md) for what to test, compared with Techguns 2, and how to
+report bugs.
+
 ## Requirements
 
 - Minecraft 1.21.1 with NeoForge 21.1.238 or newer
