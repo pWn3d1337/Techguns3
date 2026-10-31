@@ -22,11 +22,14 @@ import techguns.core.damage.TGDamageCategory;
 import techguns.damage.TGDamage;
 import techguns.damage.TGDamageSource;
 import techguns.gun.ChargedProjectileFactory;
+import techguns.gun.FirePos;
+import techguns.gun.GunItem;
 import techguns.gun.ShotParams;
 import techguns.network.FxPayloads;
 import techguns.network.TGNetwork;
 import techguns.registry.TGBlocks;
 import techguns.registry.TGEntities;
+import techguns.registry.TGGuns;
 import techguns.registry.TGSounds;
 
 /**
@@ -39,6 +42,12 @@ public class BioGunProjectile extends GenericProjectile {
     private static final int POISON_TICKS = 100;
     private static final int POISON_AMPLIFIER = 3;
 
+    /** Thrown biomass (Techguns 3): share of the bio gun's damage, and the vanilla snowball's speed and gravity. */
+    public static final float THROWN_DAMAGE_FACTOR = 0.5f;
+    private static final float THROWN_SPEED = 1.5f;
+    private static final double THROWN_GRAVITY = 0.03;
+    private static final int THROWN_LIFETIME = 200;
+
     /** Ammo consumed by the shot (Fabric {@code level}). */
     protected int blobLevel = 1;
 
@@ -49,6 +58,14 @@ public class BioGunProjectile extends GenericProjectile {
     protected BioGunProjectile(ShotParams params, int blobLevel) {
         super(TGEntities.BIOGUN_PROJECTILE.get(), params);
         this.blobLevel = blobLevel;
+    }
+
+    /** A biomass thrown like a snowball: half the bio gun's damage, leaves the smallest blob. */
+    public static BioGunProjectile thrown(LivingEntity thrower) {
+        float damage = TGGuns.BIOGUN.get().stats().damage().damage() * THROWN_DAMAGE_FACTOR;
+        ShotParams params = new ShotParams(null, thrower.level(), thrower, damage, damage, 0.0f, 0.0f, 0.0f, THROWN_SPEED, THROWN_LIFETIME,
+                0.0f, THROWN_GRAVITY, 0.0f, GunItem.blockDamage(thrower), FirePos.CENTER, null);
+        return new BioGunProjectile(params, 1);
     }
 
     public int blobLevel() {

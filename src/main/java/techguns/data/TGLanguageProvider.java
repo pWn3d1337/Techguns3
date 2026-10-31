@@ -406,6 +406,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.container.door3x3.mode.player_detector", "Player Detector");
         add("techguns.container.door3x3.autoclose", "Auto Close");
         add("techguns.container.door3x3.redstonewarning", "Redstone is set to ignored!");
+        add("techguns.tooltip.biomass", "Use to throw");
         add("techguns.tooltip.wrench", "Wrench: sneak + use for door settings; use turns a machine, sneak + use picks it up");
         add("techguns.container.metalpress.autosplit", "Stack split:");
         // Phase 5b3 benches (Techguns 2 / Fabric lang)

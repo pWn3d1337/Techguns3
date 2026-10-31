@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import techguns.Techguns;
 import techguns.item.AmmoBagItem;
+import techguns.item.BiomassItem;
 import techguns.radiation.RadMedicineItem;
 
 /**
@@ -73,7 +74,8 @@ public final class TGItems {
     public static final DeferredItem<Item> TACTICAL_NUKE_WARHEAD = simple("tactical_nuke_warhead");
     public static final DeferredItem<Item> TREATED_LEATHER = simple("treated_leather");
     public static final DeferredItem<Item> HEAVY_CLOTH = simple("heavy_cloth");
-    public static final DeferredItem<Item> BIOMASS = simple("biomass");
+    /** Thrown like a snowball (Techguns 3). */
+    public static final DeferredItem<Item> BIOMASS = simple("biomass", BiomassItem::new);
     public static final DeferredItem<Item> COPPER_WIRE = simple("copper_wire");
     public static final DeferredItem<Item> GOLD_WIRE = simple("gold_wire");
     public static final DeferredItem<Item> CARBON_FIBERS = simple("carbon_fibers");
@@ -205,6 +207,13 @@ public final class TGItems {
 
     private static DeferredItem<Item> simple(String name, Item.Properties properties) {
         DeferredItem<Item> item = ITEMS.registerSimpleItem(name, properties);
+        SIMPLE_ITEMS.add(item);
+        return item;
+    }
+
+    /** A flat-model item with its own class. */
+    private static DeferredItem<Item> simple(String name, java.util.function.Function<Item.Properties, Item> factory) {
+        DeferredItem<Item> item = ITEMS.register(name, () -> factory.apply(new Item.Properties()));
         SIMPLE_ITEMS.add(item);
         return item;
     }

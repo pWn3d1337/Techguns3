@@ -1081,6 +1081,7 @@
   "techguns.tool_class.pickaxe": "Pickaxe",
   "techguns.tool_class.shovel": "Shovel",
   "techguns.tool_class.sword": "Sword",
+  "techguns.tooltip.biomass": "Use to throw",
   "techguns.tooltip.radiation": "Radiation",
   "techguns.tooltip.wrench": "Wrench: sneak + use for door settings; use turns a machine, sneak + use picks it up",
   "techguns.turret.health": "Turret Health",
