@@ -50,7 +50,7 @@ public class TGMachineTests2 {
         return total;
     }
 
-    @GameTest(template = ARENA, timeoutTicks = 300)
+    @GameTest(template = ARENA, timeoutTicks = 400)
     public static void ammoPressFollowsBuildPlan(GameTestHelper helper) {
         helper.setBlock(POS, TGBlocks.AMMO_PRESS.get());
         AmmoPressBlockEntity press = (AmmoPressBlockEntity) helper.getBlockEntity(POS);
@@ -64,7 +64,11 @@ public class TGMachineTests2 {
             ItemStack out = inv.getStackInSlot(AmmoPressBlockEntity.SLOT_OUTPUT);
             helper.assertTrue(out.is(TGAmmo.PISTOL_ROUNDS.get()) && out.getCount() == 12, "Plan 1 should make 12 pistol rounds, got " + out);
             helper.assertTrue(inv.getStackInSlot(AmmoPressBlockEntity.SLOT_CASING_METAL).getCount() == 1, "One operation takes two casing metal");
-            press.pressButton(playerAt(helper), AmmoPressBlockEntity.BUTTON_NEXT);
+            int plans = press.plans().size();
+            helper.assertTrue(plans == 5, "Five build plans expected, got " + plans);
+            helper.assertFalse(press.pressButton(playerAt(helper), AmmoPressBlockEntity.BUTTON_SELECT + plans), "There is no plan past the last");
+            helper.assertTrue(press.getPlan() == 0, "An unknown plan must not change the selection");
+            press.pressButton(playerAt(helper), AmmoPressBlockEntity.BUTTON_SELECT + 1);
             inv.setStackInSlot(AmmoPressBlockEntity.SLOT_OUTPUT, ItemStack.EMPTY);
             inv.setStackInSlot(AmmoPressBlockEntity.SLOT_BULLET_METAL, new ItemStack(TGItems.LEAD_INGOT.get()));
             inv.setStackInSlot(AmmoPressBlockEntity.SLOT_CASING_METAL, new ItemStack(Items.COPPER_INGOT, 2));
@@ -72,7 +76,17 @@ public class TGMachineTests2 {
             helper.runAfterDelay(OPERATION_TICKS, () -> {
                 ItemStack shotgun = inv.getStackInSlot(AmmoPressBlockEntity.SLOT_OUTPUT);
                 helper.assertTrue(shotgun.is(TGAmmo.SHOTGUN_ROUNDS.get()) && shotgun.getCount() == 16, "Plan 2 should make 16 shotgun rounds, got " + shotgun);
-                helper.succeed();
+                press.pressButton(playerAt(helper), AmmoPressBlockEntity.BUTTON_SELECT + 3);
+                inv.setStackInSlot(AmmoPressBlockEntity.SLOT_OUTPUT, ItemStack.EMPTY);
+                inv.setStackInSlot(AmmoPressBlockEntity.SLOT_BULLET_METAL, new ItemStack(TGItems.LEAD_INGOT.get()));
+                inv.setStackInSlot(AmmoPressBlockEntity.SLOT_CASING_METAL, new ItemStack(Items.COPPER_INGOT, 2));
+                inv.setStackInSlot(AmmoPressBlockEntity.SLOT_POWDER, new ItemStack(Items.GUNPOWDER));
+                helper.runAfterDelay(OPERATION_TICKS, () -> {
+                    ItemStack stacks = inv.getStackInSlot(AmmoPressBlockEntity.SLOT_OUTPUT);
+                    helper.assertTrue(stacks.is(TGAmmo.RIFLE_ROUNDS_STACK.get()) && stacks.getCount() == 2,
+                            "Plan 4 should make 2 rifle round stacks, got " + stacks);
+                    helper.succeed();
+                });
             });
         });
     }

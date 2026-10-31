@@ -1,0 +1,33 @@
+{
+  "type": "techguns:ammo_press",
+  "bullet_metal": [
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "tag": "c:ingots/lead"
+    }
+  ],
+  "casing_metal": [
+    {
+      "tag": "c:ingots/copper"
+    },
+    {
+      "tag": "c:ingots/tin"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/bronze"
+    }
+  ],
+  "order": 3,
+  "powder": {
+    "tag": "c:gunpowders"
+  },
+  "result": {
+    "count": 2,
+    "id": "techguns:rifle_rounds_stack"
+  }
+}

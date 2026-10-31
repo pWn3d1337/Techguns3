@@ -16,8 +16,9 @@ import net.minecraft.world.item.ItemStack;
 import techguns.TGIds;
 
 /**
- * Stonecutter-style list of item choices (Fabric {@code StoneCutterStyleScreen}): 4 columns, 3 rows of 16x18 cells and
- * a scroller, drawn with the vanilla stonecutter sprites. Used by the Camo Bench and the Ammo Bench screens.
+ * Stonecutter-style list of item choices (Fabric {@code StoneCutterStyleScreen}): 4 columns, 3 rows (by default) of
+ * 16x18 cells and a scroller, drawn with the vanilla stonecutter sprites. Used by the Camo Bench, Ammo Bench and Ammo
+ * Press screens.
  */
 // MIGRATION(26.x): blitSprite and item rendering through GuiGraphics change with deferred GUI rendering (1.21.6).
 public class TGRecipeGrid {
@@ -27,18 +28,19 @@ public class TGRecipeGrid {
     private static final ResourceLocation SCROLLER = TGIds.vanilla("container/stonecutter/scroller");
     private static final ResourceLocation SCROLLER_DISABLED = TGIds.vanilla("container/stonecutter/scroller_disabled");
     private static final int COLUMNS = 4;
-    private static final int ROWS = 3;
+    private static final int DEFAULT_ROWS = 3;
     private static final int CELL_WIDTH = 16;
     private static final int CELL_HEIGHT = 18;
     /** Scroller left of the list origin, as in the stonecutter (list at 52, scroller at 119). */
     private static final int SCROLLER_X = 67;
     private static final int SCROLLER_HEIGHT = 15;
-    private static final int TRACK_HEIGHT = ROWS * CELL_HEIGHT;
 
     private final Supplier<List<ItemStack>> entries;
     private final IntSupplier selected;
     private final IntConsumer onPick;
     private boolean showCounts;
+    private int rows = DEFAULT_ROWS;
+    private boolean hideScroller;
     private int x;
     private int y;
     private float scrollAmount;
@@ -62,19 +64,46 @@ public class TGRecipeGrid {
         return this;
     }
 
+    /** Visible rows (3 like the stonecutter by default). */
+    public TGRecipeGrid rows(int rows) {
+        this.rows = rows;
+        return this;
+    }
+
     /** Screen position of the list's top left cell (the stonecutter's 52, 14). */
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    /** Width including the scroller. */
-    public static int width() {
-        return SCROLLER_X + 12;
+    /** Shows the first row again (the choices changed). */
+    public void scrollToTop() {
+        scrollAmount = 0;
+        startIndex = 0;
     }
 
-    public static int height() {
-        return TRACK_HEIGHT + 2;
+    /** Draws the scroller only while there are more choices than cells. */
+    public TGRecipeGrid hideScrollerWhenFits() {
+        this.hideScroller = true;
+        return this;
+    }
+
+    /** Width including the scroller, or of the cells alone while the scroller is hidden. */
+    public int width() {
+        return showsScroller(entries.get()) ? SCROLLER_X + 12 : COLUMNS * CELL_WIDTH;
+    }
+
+    public int height() {
+        return trackHeight() + 2;
+    }
+
+    /** Height of the cells, drawn from one pixel below the list origin. */
+    public int trackHeight() {
+        return rows * CELL_HEIGHT;
+    }
+
+    private boolean showsScroller(List<ItemStack> list) {
+        return !hideScroller || canScroll(list);
     }
 
     public void render(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -83,9 +112,11 @@ public class TGRecipeGrid {
             startIndex = 0;
             scrollAmount = 0;
         }
-        int scrollerY = (int) ((TRACK_HEIGHT - SCROLLER_HEIGHT - 1) * scrollAmount);
-        graphics.blitSprite(canScroll(list) ? SCROLLER : SCROLLER_DISABLED, x + SCROLLER_X, y + 1 + scrollerY, 12, SCROLLER_HEIGHT);
-        int end = Math.min(list.size(), startIndex + COLUMNS * ROWS);
+        if (showsScroller(list)) {
+            int scrollerY = (int) ((trackHeight() - SCROLLER_HEIGHT - 1) * scrollAmount);
+            graphics.blitSprite(canScroll(list) ? SCROLLER : SCROLLER_DISABLED, x + SCROLLER_X, y + 1 + scrollerY, 12, SCROLLER_HEIGHT);
+        }
+        int end = Math.min(list.size(), startIndex + COLUMNS * rows);
         for (int i = startIndex; i < end; i++) {
             int cellX = cellX(i);
             int cellY = cellY(i);
@@ -119,7 +150,7 @@ public class TGRecipeGrid {
             onPick.accept(index);
             return true;
         }
-        if (mouseX >= x + SCROLLER_X && mouseX < x + SCROLLER_X + 12 && mouseY >= y && mouseY < y + TRACK_HEIGHT) {
+        if (mouseX >= x + SCROLLER_X && mouseX < x + SCROLLER_X + 12 && mouseY >= y && mouseY < y + trackHeight()) {
             scrolling = true;
         }
         return false;
@@ -130,7 +161,7 @@ public class TGRecipeGrid {
         if (!scrolling || !canScroll(list)) {
             return false;
         }
-        scrollAmount = Mth.clamp(((float) mouseY - y - 7.5f) / (TRACK_HEIGHT - 15.0f), 0.0f, 1.0f);
+        scrollAmount = Mth.clamp(((float) mouseY - y - 7.5f) / (trackHeight() - 15.0f), 0.0f, 1.0f);
         startIndex = (int) (scrollAmount * hiddenRows(list) + 0.5) * COLUMNS;
         return true;
     }
@@ -151,7 +182,7 @@ public class TGRecipeGrid {
     }
 
     private int indexAt(double mouseX, double mouseY) {
-        int end = Math.min(entries.get().size(), startIndex + COLUMNS * ROWS);
+        int end = Math.min(entries.get().size(), startIndex + COLUMNS * rows);
         for (int i = startIndex; i < end; i++) {
             if (mouseX >= cellX(i) && mouseY >= cellY(i) && mouseX < cellX(i) + CELL_WIDTH && mouseY < cellY(i) + CELL_HEIGHT) {
                 return i;
@@ -168,11 +199,11 @@ public class TGRecipeGrid {
         return y + (index - startIndex) / COLUMNS * CELL_HEIGHT + 2;
     }
 
-    private static boolean canScroll(List<ItemStack> list) {
-        return list.size() > COLUMNS * ROWS;
+    private boolean canScroll(List<ItemStack> list) {
+        return list.size() > COLUMNS * rows;
     }
 
-    private static int hiddenRows(List<ItemStack> list) {
-        return (list.size() + COLUMNS - 1) / COLUMNS - ROWS;
+    private int hiddenRows(List<ItemStack> list) {
+        return (list.size() + COLUMNS - 1) / COLUMNS - rows;
     }
 }

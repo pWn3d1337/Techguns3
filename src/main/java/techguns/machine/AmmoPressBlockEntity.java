@@ -28,8 +28,8 @@ public class AmmoPressBlockEntity extends TGMachineBlockEntity {
     public static final int SLOT_POWDER = 2;
     public static final int SLOT_OUTPUT = 3;
     public static final int SLOT_UPGRADE = 4;
-    public static final int BUTTON_NEXT = BUTTON_MACHINE;
-    public static final int BUTTON_PREVIOUS = BUTTON_MACHINE + 1;
+    /** Selects build plan {@code id - BUTTON_SELECT} (the screen's plan list). */
+    public static final int BUTTON_SELECT = BUTTON_MACHINE;
     public static final int DATA_PLAN = DATA_COUNT;
 
     public static final int ENERGY_CAPACITY = 20000;
@@ -151,15 +151,12 @@ public class AmmoPressBlockEntity extends TGMachineBlockEntity {
 
     @Override
     protected boolean pressMachineButton(Player player, int id) {
-        int count = Math.max(1, plans().size());
-        if (id == BUTTON_NEXT) {
-            plan = (plan + 1) % count;
-            return true;
-        } else if (id == BUTTON_PREVIOUS) {
-            plan = Math.floorMod(plan - 1, count);
-            return true;
+        int index = id - BUTTON_SELECT;
+        if (index < 0 || index >= plans().size()) {
+            return false;
         }
-        return false;
+        plan = index;
+        return true;
     }
 
     @Override

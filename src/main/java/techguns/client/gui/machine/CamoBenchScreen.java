@@ -138,8 +138,8 @@ public class CamoBenchScreen extends TGMachineScreen<CamoBenchMenu> {
                     lastMouseX, lastMouseY, minecraft.player);
         }
         int panelX = panelX();
-        int width = TGRecipeGrid.width() + 2 * PANEL_PADDING;
-        int height = TGRecipeGrid.height() + 2 * PANEL_PADDING;
+        int width = grid.width() + 2 * PANEL_PADDING;
+        int height = grid.height() + 2 * PANEL_PADDING;
         graphics.fill(panelX, y, panelX + width, y + height, 0xFF000000);
         graphics.fill(panelX + 1, y + 1, panelX + width - 1, y + height - 1, PANEL_COLOR);
         grid.render(graphics, lastMouseX, lastMouseY);

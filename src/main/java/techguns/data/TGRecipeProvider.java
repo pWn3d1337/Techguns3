@@ -797,7 +797,9 @@ public class TGRecipeProvider extends RecipeProvider {
         ammoPress(output, 0, "pistol_rounds", bullet, casing, powder, TGAmmo.PISTOL_ROUNDS.get(), 12);
         ammoPress(output, 1, "shotgun_rounds", bullet, casing, powder, TGAmmo.SHOTGUN_ROUNDS.get(), 16);
         ammoPress(output, 2, "rifle_rounds", bullet, casing, powder, TGAmmo.RIFLE_ROUNDS.get(), 8);
-        ammoPress(output, 3, "sniper_rounds", bullet, casing, powder, TGAmmo.SNIPER_ROUNDS.get(), 4);
+        // new in Techguns 3, like the Ammo Bench: the rifle rounds of one operation as stacks
+        ammoPress(output, 3, "rifle_rounds_stack", bullet, casing, powder, TGAmmo.RIFLE_ROUNDS_STACK.get(), 2);
+        ammoPress(output, 4, "sniper_rounds", bullet, casing, powder, TGAmmo.SNIPER_ROUNDS.get(), 4);
     }
 
     private static void ammoPress(RecipeOutput output, int order, String name, Ingredient bullet, Ingredient casing, Ingredient powder,
