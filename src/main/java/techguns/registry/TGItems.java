@@ -81,6 +81,8 @@ public final class TGItems {
     public static final DeferredItem<Item> COPPER_WIRE = simple("copper_wire");
     public static final DeferredItem<Item> GOLD_WIRE = simple("gold_wire");
     public static final DeferredItem<Item> CARBON_FIBERS = simple("carbon_fibers");
+    /** Techguns 3 crafting material. */
+    public static final DeferredItem<Item> NANO_FIBERS = simple("nano_fibers");
 
     // --- Components ---
     public static final DeferredItem<Item> IRON_RECEIVER = simple("iron_receiver");
