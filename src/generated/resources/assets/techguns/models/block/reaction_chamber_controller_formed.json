@@ -1,9 +1,11 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "automatic_culling": false,
   "flip_v": true,
   "loader": "neoforge:obj",
   "model": "techguns:models/block/reactionchamber.obj",
-  "render_type": "minecraft:translucent",
+  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "techguns:block/reactionchamber_housing"
   }

@@ -77,6 +77,15 @@ public class MultiblockPartBlock extends BaseEntityBlock {
         return master != null ? master.partShape(pos) : Shapes.block();
     }
 
+    /**
+     * Formed parts stay solid blocks: the slimmer {@link MultiblockMasterBlockEntity#partShape} (Techguns 2
+     * {@code getBBforSlave}) is only the outline, else players walk into the structure's blocks.
+     */
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.block();
+    }
+
     /** Techguns 2: using a formed part opens the master's menu. */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {

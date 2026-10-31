@@ -38,6 +38,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.resources.ResourceLocation;
 import techguns.machine.TGMachineBlock;
 import techguns.multiblock.MultiblockControllerBlock;
+import techguns.multiblock.MultiblockGlassBlock;
 import techguns.multiblock.MultiblockPartBlock;
 import techguns.block.OreDrillScaffoldBlock;
 
@@ -253,14 +254,14 @@ public final class TGBlocks {
     // --- Multiblocks (Phase 5c; Techguns 2 MultiBlockMachine variants, one block each) ---
     public static final DeferredBlock<MultiblockPartBlock> FABRICATOR_HOUSING = withItem("fabricator_housing",
             () -> new MultiblockPartBlock(machine()));
-    public static final DeferredBlock<MultiblockPartBlock> FABRICATOR_GLASS = withItem("fabricator_glass",
-            () -> new MultiblockPartBlock(machine().sound(SoundType.GLASS)));
+    public static final DeferredBlock<MultiblockGlassBlock> FABRICATOR_GLASS = withItem("fabricator_glass",
+            () -> new MultiblockGlassBlock(machine().sound(SoundType.GLASS)));
     public static final DeferredBlock<MultiblockControllerBlock> FABRICATOR_CONTROLLER = withItem("fabricator_controller",
             () -> new MultiblockControllerBlock(machine(), TGBlockEntities.FABRICATOR));
     public static final DeferredBlock<MultiblockPartBlock> REACTION_CHAMBER_HOUSING = withItem("reaction_chamber_housing",
             () -> new MultiblockPartBlock(machine()));
-    public static final DeferredBlock<MultiblockPartBlock> REACTION_CHAMBER_GLASS = withItem("reaction_chamber_glass",
-            () -> new MultiblockPartBlock(machine().sound(SoundType.GLASS)));
+    public static final DeferredBlock<MultiblockGlassBlock> REACTION_CHAMBER_GLASS = withItem("reaction_chamber_glass",
+            () -> new MultiblockGlassBlock(machine().sound(SoundType.GLASS)));
     public static final DeferredBlock<MultiblockControllerBlock> REACTION_CHAMBER_CONTROLLER = withItem("reaction_chamber_controller",
             () -> new MultiblockControllerBlock(machine(), TGBlockEntities.REACTION_CHAMBER));
     public static final DeferredBlock<MultiblockPartBlock> ORE_DRILL_FRAME = withItem("ore_drill_frame", () -> new MultiblockPartBlock(machine()));

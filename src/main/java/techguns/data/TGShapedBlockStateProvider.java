@@ -414,7 +414,11 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
 
     /**
      * Techguns 2: the formed Reaction Chamber is the controller's OBJ model of the whole chamber (flipped v), turned
-     * by the structure direction stored in the facing.
+     * by the structure direction stored in the facing. Cutout like Techguns 2 (the textures have no partial alpha; in
+     * the translucent layer the clear glass pixels hid what lies behind). No ambient occlusion: it would shade the
+     * whole 3x3x4 model from the blocks right around the controller, blackening faces far from it. No automatic
+     * culling: it gives quads in a block face plane that face as cull side, so the solid block under the controller hid
+     * the whole 3x3 bottom.
      */
     private void reactionChamberController() {
         ResourceLocation side = tex("reactionchamber_controller");
@@ -422,8 +426,8 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         ModelFile unformed = models().cube("block/reaction_chamber_controller", housing, housing, side, side, side, side).texture("particle", side);
         ModelFile formed = models().getBuilder("block/reaction_chamber_controller_formed").parent(new ModelFile.UncheckedModelFile(mcLoc("block/block")))
                 .customLoader(net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder::begin)
-                .modelLocation(modLoc("models/block/reactionchamber.obj")).flipV(true).end()
-                .texture("particle", housing).renderType(TRANSLUCENT);
+                .modelLocation(modLoc("models/block/reactionchamber.obj")).flipV(true).automaticCulling(false).end()
+                .texture("particle", housing).renderType(CUTOUT).ao(false);
         getVariantBuilder(TGBlocks.REACTION_CHAMBER_CONTROLLER.get()).forAllStates(state -> {
             boolean isFormed = state.getValue(techguns.multiblock.MultiblockPartBlock.FORMED);
             return net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder().modelFile(isFormed ? formed : unformed)
