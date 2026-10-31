@@ -128,6 +128,10 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         ladder(TGBlocks.LADDER_SHINY, "metal_ladder_shiny");
         ladder(TGBlocks.LADDER_RUSTY, "metal_ladder_rusty");
         ladder(TGBlocks.LADDER_CARBON, "metal_ladder_carbon");
+        ladder(TGBlocks.LADDER_OXIDIZED_COPPER, "metal_ladder_oxidized_copper");
+        ladder(TGBlocks.LADDER_COPPER, "metal_ladder_copper");
+        ladder(TGBlocks.LADDER_HAZARD, "metal_ladder_hazard");
+        ladder(TGBlocks.LADDER_NETHER, "metal_ladder_nether");
     }
 
     private void ladder(DeferredBlock<? extends Block> block, String texture) {

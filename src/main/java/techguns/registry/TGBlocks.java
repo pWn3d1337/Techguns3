@@ -172,8 +172,14 @@ public final class TGBlocks {
     public static final DeferredBlock<TGLadderBlock> LADDER_SHINY = withItem("ladder_shiny", () -> new TGLadderBlock(ladder()));
     public static final DeferredBlock<TGLadderBlock> LADDER_RUSTY = withItem("ladder_rusty", () -> new TGLadderBlock(ladder()));
     public static final DeferredBlock<TGLadderBlock> LADDER_CARBON = withItem("ladder_carbon", () -> new TGLadderBlock(ladder()));
-    /** Techguns 2 {@code ladder0} types in meta order. */
-    public static final List<DeferredBlock<TGLadderBlock>> LADDERS = List.of(LADDER_METAL, LADDER_SHINY, LADDER_RUSTY, LADDER_CARBON);
+    // Techguns 3 additions, same block as ladder0
+    public static final DeferredBlock<TGLadderBlock> LADDER_OXIDIZED_COPPER = withItem("ladder_oxidized_copper", () -> new TGLadderBlock(ladder()));
+    public static final DeferredBlock<TGLadderBlock> LADDER_COPPER = withItem("ladder_copper", () -> new TGLadderBlock(ladder()));
+    public static final DeferredBlock<TGLadderBlock> LADDER_HAZARD = withItem("ladder_hazard", () -> new TGLadderBlock(ladder()));
+    public static final DeferredBlock<TGLadderBlock> LADDER_NETHER = withItem("ladder_nether", () -> new TGLadderBlock(ladder()));
+    /** Techguns 2 {@code ladder0} types in meta order, then the Techguns 3 variants (Camo Bench and Rechiseled order). */
+    public static final List<DeferredBlock<TGLadderBlock>> LADDERS = List.of(LADDER_METAL, LADDER_SHINY, LADDER_RUSTY, LADDER_CARBON,
+            LADDER_OXIDIZED_COPPER, LADDER_COPPER, LADDER_HAZARD, LADDER_NETHER);
     /** Techguns 2 {@code slimyladder}: a vanilla ladder (needs a wall) with a slime sound and the bug nest "slimy trail" model. */
     public static final DeferredBlock<LadderBlock> SLIMY_LADDER = withItem("slimy_ladder", () -> new LadderBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.SLIME_BLOCK).noOcclusion()));

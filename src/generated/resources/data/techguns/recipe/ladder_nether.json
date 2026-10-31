@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:netherrack"
+    },
+    "l": {
+      "item": "techguns:ladder_metal"
+    }
+  },
+  "pattern": [
+    "lll",
+    "lcl",
+    "lll"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:ladder_nether"
+  }
+}

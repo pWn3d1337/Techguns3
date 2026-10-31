@@ -143,7 +143,7 @@ public class TGBlockTests {
     @GameTest(template = ARENA)
     public static void shapedVariantListsAreComplete(GameTestHelper helper) {
         helper.assertTrue(TGBlocks.LAMPS.size() == 2 && TGBlocks.LANTERNS.size() == 2, "2 lamps and 2 lanterns");
-        helper.assertTrue(TGBlocks.LADDERS.size() == 4, "4 ladders");
+        helper.assertTrue(TGBlocks.LADDERS.size() == 8, "8 ladders");
         helper.assertTrue(TGBlocks.CAMO_NETS.size() == 3 && TGBlocks.CAMO_NETS_TOP.size() == 3, "3 camo nets and 3 top nets");
         helper.assertTrue(TGBlocks.MILITARY_CRATES.size() == 9, "9 military crates");
         helper.assertTrue(TGBlocks.DOORS_3X3.size() == 4, "4 3x3 doors");
@@ -223,6 +223,15 @@ public class TGBlockTests {
         helper.assertTrue(Math.abs(south.getShape(helper.getLevel(), pos).max(Direction.Axis.Z) - 0.125) < 1.0e-6, "A south ladder is 2/16 thick");
         helper.setBlock(new BlockPos(2, 1, 2), south);
         helper.assertBlock(new BlockPos(2, 1, 2), block -> block == TGBlocks.LADDER_METAL.get(), () -> "A ladder without a wall should stay");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void techguns3LaddersAreCraftable(GameTestHelper helper) {
+        var recipes = helper.getLevel().getServer().getRecipeManager();
+        for (String id : List.of("ladder_copper", "ladder_oxidized_copper", "ladder_hazard", "ladder_nether")) {
+            helper.assertTrue(recipes.byKey(techguns.TGIds.id(id)).isPresent(), "Missing recipe " + id);
+        }
         helper.succeed();
     }
 

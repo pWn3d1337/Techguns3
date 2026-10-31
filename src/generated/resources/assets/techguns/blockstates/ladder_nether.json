@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "techguns:block/ladder_nether",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "techguns:block/ladder_nether",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "techguns:block/ladder_nether"
+    },
+    "facing=west": {
+      "model": "techguns:block/ladder_nether",
+      "y": 90
+    }
+  }
+}

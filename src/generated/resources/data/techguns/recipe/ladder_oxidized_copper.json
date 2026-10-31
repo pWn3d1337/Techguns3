@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:water_bucket"
+    },
+    "l": {
+      "item": "techguns:ladder_copper"
+    }
+  },
+  "pattern": [
+    "lll",
+    "lcl",
+    "lll"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:ladder_oxidized_copper"
+  }
+}

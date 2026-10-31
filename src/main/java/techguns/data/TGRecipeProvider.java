@@ -1045,6 +1045,21 @@ public class TGRecipeProvider extends RecipeProvider {
                     .unlockedBy("has_" + plate + "_plate", has(plates)).save(output, TGIds.id("ladder_metal" + suffix));
         }
         swap(output, TGBlocks.DOOR_HANGAR_UP_3X3.get(), TGBlocks.DOOR_HANGAR_DOWN_3X3.get());
+
+        // Techguns 3 ladders: 16 copper ladders from copper plates like the metal ladder; the others are 8 ladders around
+        // one item (the Camo Bench also switches between all ladders)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TGBlocks.LADDER_COPPER.get(), 16)
+                .pattern("iii").pattern(" i ").pattern("iii").define('i', TGTags.Items.plate("copper"))
+                .unlockedBy("has_copper_plate", has(TGTags.Items.plate("copper"))).save(output, TGIds.id("ladder_copper"));
+        ladderVariant(output, TGBlocks.LADDER_OXIDIZED_COPPER.get(), TGBlocks.LADDER_COPPER.get(), Ingredient.of(Items.WATER_BUCKET));
+        ladderVariant(output, TGBlocks.LADDER_HAZARD.get(), TGBlocks.LADDER_METAL.get(), Ingredient.of(Tags.Items.DYES_YELLOW));
+        ladderVariant(output, TGBlocks.LADDER_NETHER.get(), TGBlocks.LADDER_METAL.get(), Ingredient.of(Items.NETHERRACK));
+    }
+
+    private static void ladderVariant(RecipeOutput output, ItemLike result, ItemLike ladder, Ingredient center) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result, 8)
+                .pattern("lll").pattern("lcl").pattern("lll").define('l', ladder).define('c', center)
+                .unlockedBy(getHasName(ladder), has(ladder)).save(output, TGIds.id(getItemName(result)));
     }
 
     /** Two blocks that convert into each other with a shapeless recipe (Techguns 2 lamp/door variants). */

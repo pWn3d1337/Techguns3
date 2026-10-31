@@ -4,6 +4,10 @@
     "techguns:ladder_metal",
     "techguns:ladder_shiny",
     "techguns:ladder_rusty",
-    "techguns:ladder_carbon"
+    "techguns:ladder_carbon",
+    "techguns:ladder_oxidized_copper",
+    "techguns:ladder_copper",
+    "techguns:ladder_hazard",
+    "techguns:ladder_nether"
   ]
 }

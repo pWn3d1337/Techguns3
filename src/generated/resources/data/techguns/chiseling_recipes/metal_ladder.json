@@ -12,6 +12,18 @@
     },
     {
       "block": "techguns:ladder_carbon"
+    },
+    {
+      "block": "techguns:ladder_oxidized_copper"
+    },
+    {
+      "block": "techguns:ladder_copper"
+    },
+    {
+      "block": "techguns:ladder_hazard"
+    },
+    {
+      "block": "techguns:ladder_nether"
     }
   ]
 }
