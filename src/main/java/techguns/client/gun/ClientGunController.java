@@ -224,15 +224,10 @@ public final class ClientGunController implements GunClientEffects {
         }
 
         if (mainHand.getItem() instanceof LockOnGunItem lockOnGun && useDown) {
-            // a new press of the use key starts a new lock (Techguns 2 MouseMixin)
-            if (!useWasDown) {
-                LockOnTracker.reset();
-            }
             LockOnTracker.tick(player, lockOnGun);
-        } else if (mainHand.getItem() instanceof LockOnGunItem) {
-            // use key released: the lock fades like a lost target, so it does not stay forever
-            LockOnTracker.decay();
         } else {
+            // use key released (or no lock-on gun): the lock ends at once, so each press starts a new lock (Techguns 2
+            // MouseMixin); missiles already fired keep their target
             LockOnTracker.reset();
         }
 
