@@ -1,5 +1,6 @@
 package techguns.data;
 
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -146,8 +147,10 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
             };
             return ConfiguredModel.builder().modelFile(model).rotationY(y).build();
         }, LadderBlock.WATERLOGGED);
-        // a flat sprite like the vanilla ladder (the 1.12 block model showed only its edge in the inventory)
-        itemModels().withExistingParent(path(block), mcLoc("item/generated")).texture("layer0", tex(texture));
+        // the block model in block perspective like 1.12, moved to the slot centre: the ladder sits on the block's
+        // north face, which the block rotation puts right of and below the centre
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block))).transforms()
+                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(-3.1f, 1.55f, 0).scale(0.625f).end().end();
     }
 
     private void slimyLadder() {
@@ -161,8 +164,9 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
             };
             return ConfiguredModel.builder().modelFile(model).rotationX(90).rotationY(y).build();
         }, LadderBlock.WATERLOGGED);
-        // the trail lies flat in its model: seen from above in the inventory, not edge-on
-        itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder")).transforms()
+        // the trail lies flat in its model: seen from above in the inventory, not edge-on; front-lit like a flat item
+        // (the block side lighting dims a face turned to the viewer, 1.12 showed it bright)
+        itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder")).guiLight(BlockModel.GuiLight.FRONT).transforms()
                 .transform(ItemDisplayContext.GUI).rotation(90, 0, 0).end().end();
     }
 

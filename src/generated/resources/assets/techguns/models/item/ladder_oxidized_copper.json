@@ -1,6 +1,22 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "techguns:block/metal_ladder_oxidized_copper"
+  "parent": "techguns:block/ladder_oxidized_copper",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.625,
+        0.625,
+        0.625
+      ],
+      "translation": [
+        -3.1,
+        1.55,
+        0
+      ]
+    }
   }
 }
