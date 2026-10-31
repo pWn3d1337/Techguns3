@@ -76,6 +76,7 @@ public class TGBulletGunTests {
             tests.add(test(tool.getId().getPath() + "_reloads_from_ammo", tool, TGBulletGunTests::reloadsFromAmmo));
         }
         tests.add(test("grappling_hook_attaches_to_wall", TGGuns.GRAPPLING_HOOK, TGBulletGunTests::hookAttaches));
+        tests.add(test("grappling_hook_pulls_entity_in", TGGuns.GRAPPLING_HOOK, TGBulletGunTests::hookPullsEntity));
         tests.add(test("nether_blaster_ignites", TGGuns.NETHER_BLASTER, (helper, gun) -> ignites(helper, gun, AmmoType.DEFAULT)));
         tests.add(test("sonic_shotgun_pierces", TGGuns.SONIC_SHOTGUN, TGBulletGunTests::pierces));
         return tests;
@@ -197,6 +198,26 @@ public class TGBulletGunTests {
                         new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(16)).stream()
                         .anyMatch(hook -> hook.status() == GrapplingHookProjectile.Status.GRAPPLING_BLOCK),
                 "The hook should attach to the wall"));
+    }
+
+    /** Sneaking, the hook pulls the hit entity to the shooter and lets go when it arrives (it used to crash right then). */
+    private static void hookPullsEntity(GameTestHelper helper, GunItem gun) {
+        Player player = shooter(helper);
+        player.setShiftKeyDown(true);
+        hold(player, gun, gun.stats().firing().clipSize(), AmmoType.DEFAULT);
+        for (int x = 0; x <= 5; x++) {
+            helper.setBlock(new BlockPos(x, 0, 4), Blocks.STONE);
+        }
+        Zombie zombie = target(helper);
+
+        gun.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+
+        AABB area = new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(16);
+        helper.succeedWhen(() -> {
+            helper.assertTrue(zombie.distanceTo(player) < 2.0f, "The zombie should be pulled to the shooter, distance=" + zombie.distanceTo(player));
+            helper.assertTrue(helper.getLevel().getEntitiesOfClass(GrapplingHookProjectile.class, area).stream()
+                    .noneMatch(hook -> hook.status() == GrapplingHookProjectile.Status.PULL_ENTITY), "The hook should let go on arrival");
+        });
     }
 
     private static void explosiveBlast(GameTestHelper helper, GunItem gun) {

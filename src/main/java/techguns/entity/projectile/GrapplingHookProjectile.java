@@ -148,9 +148,11 @@ public class GrapplingHookProjectile extends GenericProjectile {
                 }
             }
             case PULL_ENTITY -> {
-                if (targetEntity != null && targetEntity.isAlive()) {
-                    pull(targetEntity, owner.position());
-                    setPos(targetEntity.getX(), targetEntity.getY() + targetEntity.getEyeHeight() * 0.5, targetEntity.getZ());
+                // local copy: pull() clears targetEntity when the target arrives
+                Entity target = targetEntity;
+                if (target != null && target.isAlive()) {
+                    pull(target, owner.position());
+                    setPos(target.getX(), target.getY() + target.getEyeHeight() * 0.5, target.getZ());
                 } else {
                     stopGrappling();
                 }
