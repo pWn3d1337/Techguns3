@@ -298,6 +298,26 @@ public final class TGArmors {
                     .stepAssist(1.0f, 0.0f)
                     .radiationResistance(1.25f).repairMats(() -> TGItems.POWER_PLATING.get(), () -> TGItems.GOLD_WIRE.get()).armorModel(MODEL_POWER_MK2_0).armorTexture(TGIds.id("textures/models/armor/powerarmor_mk2_darkgrey.png")).knockbackResistance(0.20f));
 
+    // --- T4 nanosuit (not in Techguns 2): armor just below power armor Mk2, bonuses just above the exo suit, HEV mining ---
+    public static final TGArmorStats T4_NANO_STATS = new TGArmorStats("t4_nano_suit", 400, 22.5f, 3.0f).elemental(20.5f)
+            .set(TGDamageCategory.EXPLOSION, 21.5f).set(TGDamageCategory.POISON, 18.5f).set(TGDamageCategory.RADIATION, 19.5f);
+    private static final Holder<ArmorMaterial> T4_NANO = material(T4_NANO_STATS, 0, SoundEvents.ARMOR_EQUIP_CHAIN);
+
+    public static final DeferredItem<TGPoweredArmorItem> T4_NANO_HELMET = powered(T4_NANO, ArmorItem.Type.HELMET, T4_NANO_STATS, "t4_nano_suit",
+            PowerType.RF, 10, item -> item.speed(0.22f, 0.12f, 0.0f, 0.0f).mining(0.1f, 0.0f)
+                    .radiationResistance(0.6f).repairMats(() -> TGItems.CARBON_PLATE.get(), () -> TGItems.CARBON_FIBERS.get()).knockbackResistance(0.175f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_NANO_CHESTPLATE = powered(T4_NANO, ArmorItem.Type.CHESTPLATE, T4_NANO_STATS, "t4_nano_suit",
+            PowerType.RF, 8000, item -> item.speed(0.22f, 0.12f, 0.0f, 0.0f).mining(0.1f, 0.0f)
+                    .battery(() -> TGAmmo.ENERGY_CELL.get(), () -> TGAmmo.ENERGY_CELL_EMPTY.get())
+                    .radiationResistance(0.6f).repairMats(() -> TGItems.CARBON_PLATE.get(), () -> TGItems.CARBON_FIBERS.get()).knockbackResistance(0.325f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_NANO_LEGGINGS = powered(T4_NANO, ArmorItem.Type.LEGGINGS, T4_NANO_STATS, "t4_nano_suit",
+            PowerType.RF, 10, item -> item.speed(0.22f, 0.12f, 0.0f, 0.0f).mining(0.1f, 0.0f)
+                    .radiationResistance(0.6f).repairMats(() -> TGItems.CARBON_PLATE.get(), () -> TGItems.CARBON_FIBERS.get()).knockbackResistance(0.225f));
+    public static final DeferredItem<TGPoweredArmorItem> T4_NANO_BOOTS = powered(T4_NANO, ArmorItem.Type.BOOTS, T4_NANO_STATS, "t4_nano_suit",
+            PowerType.RF, 10, item -> item.speed(0.22f, 0.35f, 0.0f, 0.0f).mining(0.1f, 0.0f).fallProtection(0.6f, 6.0f, 0.0f, 0.0f)
+                    .stepAssist(1.0f, 0.0f)
+                    .radiationResistance(0.6f).repairMats(() -> TGItems.CARBON_PLATE.get(), () -> TGItems.CARBON_FIBERS.get()).knockbackResistance(0.175f));
+
     // --- T2 beret (helmet only) ---
     public static final TGArmorStats T2_BERET_STATS = new TGArmorStats("t2_beret", 60, 8.0f, 0.0f);
     private static final Holder<ArmorMaterial> T2_BERET = material(T2_BERET_STATS, 0, SoundEvents.ARMOR_EQUIP_LEATHER);

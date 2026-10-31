@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "techguns:t3_exo_leggings"
+    },
+    {
+      "item": "techguns:cybernetic_parts"
+    },
+    {
+      "item": "techguns:circuit_board_advanced"
+    },
+    {
+      "item": "techguns:power_plating_mk2"
+    },
+    {
+      "item": "techguns:carbon_fibers"
+    },
+    {
+      "item": "techguns:carbon_fibers"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t4_nano_suit_leggings"
+  }
+}

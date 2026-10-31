@@ -1,0 +1,14 @@
+{
+  "display": {
+    "translate": "camo.techguns.black"
+  },
+  "item": "techguns:t4_nano_suit_leggings",
+  "layer": "techguns:t4_nano_suit_black",
+  "name": "black",
+  "order": 1,
+  "tints": [
+    8421508,
+    5921376,
+    16722462
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "display": {
+    "translate": "camo.techguns.default"
+  },
+  "item": "techguns:t4_nano_suit_chestplate",
+  "layer": "techguns:t4_nano_suit",
+  "name": "default",
+  "tints": [
+    11581640,
+    9213610,
+    5953535
+  ]
+}

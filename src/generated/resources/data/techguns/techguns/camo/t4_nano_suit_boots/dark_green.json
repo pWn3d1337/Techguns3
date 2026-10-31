@@ -1,0 +1,14 @@
+{
+  "display": {
+    "translate": "camo.techguns.dark_green"
+  },
+  "item": "techguns:t4_nano_suit_boots",
+  "layer": "techguns:t4_nano_suit_green",
+  "name": "dark_green",
+  "order": 2,
+  "tints": [
+    10135680,
+    8297048,
+    11069020
+  ]
+}

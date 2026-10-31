@@ -296,6 +296,12 @@ public class TGRecipeProvider extends RecipeProvider {
         exoSuit(output, TGArmors.T3_EXO_CHESTPLATE.get(), TGArmors.T3_COMBAT_CHESTPLATE.get(), 2);
         exoSuit(output, TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_COMBAT_LEGGINGS.get(), 2);
         exoSuit(output, TGArmors.T3_EXO_BOOTS.get(), TGArmors.T3_COMBAT_BOOTS.get(), 1);
+
+        // T4 nanosuit (not in Techguns 2): upgrade of the matching exo suit piece
+        nanoSuit(output, TGArmors.T4_NANO_HELMET.get(), TGArmors.T3_EXO_HELMET.get(), 1);
+        nanoSuit(output, TGArmors.T4_NANO_CHESTPLATE.get(), TGArmors.T3_EXO_CHESTPLATE.get(), 2);
+        nanoSuit(output, TGArmors.T4_NANO_LEGGINGS.get(), TGArmors.T3_EXO_LEGGINGS.get(), 2);
+        nanoSuit(output, TGArmors.T4_NANO_BOOTS.get(), TGArmors.T3_EXO_BOOTS.get(), 1);
         // Techguns 2 has no crafting recipes for the T4 praetor and T4 power armor.
     }
 
@@ -413,6 +419,16 @@ public class TGRecipeProvider extends RecipeProvider {
             builder.requires(TGTags.Items.ingot("titanium"));
         }
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
+    }
+
+    private static void nanoSuit(RecipeOutput output, Item nano, Item exo, int carbonFibers) {
+        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, nano)
+                .requires(exo).requires(TGItems.CYBERNETIC_PARTS.get()).requires(TGItems.CIRCUIT_BOARD_ADVANCED.get())
+                .requires(TGItems.POWER_PLATING_MK2.get());
+        for (int i = 0; i < carbonFibers; i++) {
+            builder.requires(TGItems.CARBON_FIBERS.get());
+        }
+        builder.unlockedBy(getHasName(exo), has(exo)).save(output, TGIds.id(getItemName(nano)));
     }
 
     /** Techguns 2 machines, the machine upgrade and the machine recipes. */

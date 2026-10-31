@@ -1,0 +1,14 @@
+{
+  "display": {
+    "translate": "camo.techguns.silver"
+  },
+  "item": "techguns:t4_nano_suit_boots",
+  "layer": "techguns:t4_nano_suit_silver",
+  "name": "silver",
+  "order": 3,
+  "tints": [
+    16777215,
+    14870768,
+    16766512
+  ]
+}

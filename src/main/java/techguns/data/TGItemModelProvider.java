@@ -92,6 +92,10 @@ public class TGItemModelProvider extends ItemModelProvider {
         layers.put(TGArmors.T3_MINER_CHESTPLATE, numbered("t3_miner_chestplate", 2));
         layers.put(TGArmors.T3_MINER_LEGGINGS, numbered("t3_miner_leggings", 2));
         layers.put(TGArmors.T3_MINER_BOOTS, numbered("t3_miner_boots", 2));
+        layers.put(TGArmors.T4_NANO_HELMET, numbered("t4_nano_suit_helmet", 3));
+        layers.put(TGArmors.T4_NANO_CHESTPLATE, numbered("t4_nano_suit_chestplate", 3));
+        layers.put(TGArmors.T4_NANO_LEGGINGS, numbered("t4_nano_suit_leggings", 3));
+        layers.put(TGArmors.T4_NANO_BOOTS, numbered("t4_nano_suit_boots", 3));
         layers.put(TGArmors.T2_BERET_ITEM, numbered("t2_beret", 2));
         return layers;
     }
