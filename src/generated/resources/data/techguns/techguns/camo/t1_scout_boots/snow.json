@@ -5,5 +5,8 @@
   "item": "techguns:t1_scout_boots",
   "layer": "techguns:t1_scout_snow",
   "name": "snow",
-  "order": 2
+  "order": 2,
+  "tints": [
+    16777215
+  ]
 }

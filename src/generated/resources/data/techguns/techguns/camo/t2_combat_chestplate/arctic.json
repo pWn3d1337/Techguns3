@@ -5,5 +5,10 @@
   "item": "techguns:t2_combat_chestplate",
   "layer": "techguns:t2_combat_arctic",
   "name": "arctic",
-  "order": 3
+  "order": 3,
+  "tints": [
+    16777215,
+    7960953,
+    7960953
+  ]
 }

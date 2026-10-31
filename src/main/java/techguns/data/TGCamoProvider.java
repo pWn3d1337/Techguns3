@@ -1,6 +1,8 @@
 package techguns.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,6 +206,110 @@ public final class TGCamoProvider {
         return groups;
     }
 
+    /**
+     * Item icon tint per layer (Fabric {@code TGCamos} colors for its layered armor icons, see {@code TGItemModelProvider}),
+     * by item and camo texture; -1 leaves a layer untinted. Pieces without an entry keep one plain icon for all camos.
+     */
+    private static Map<Item, Map<String, List<Integer>>> iconTints() {
+        Map<Item, Map<String, List<Integer>>> tints = new HashMap<>();
+        tint(tints, TGArmors.T1_MINER_HELMET, "t1_miner", 0xFFFF00);
+        tint(tints, TGArmors.T1_MINER_HELMET, "t1_miner_red", 0x66FF33);
+        tint(tints, TGArmors.T1_MINER_HELMET, "t1_miner_green", 0x00FFFF);
+        tint(tints, TGArmors.T1_MINER_HELMET, "t1_miner_black", 0xFF9900);
+        for (ItemLike item : List.of(TGArmors.T1_MINER_CHESTPLATE, TGArmors.T1_MINER_LEGGINGS)) {
+            tint(tints, item, "t1_miner", 0x4C6CBF);
+            tint(tints, item, "t1_miner_red", 0xE83030);
+            tint(tints, item, "t1_miner_green", 0x2F8C3A);
+            tint(tints, item, "t1_miner_black", 0x464646);
+        }
+
+        tint(tints, TGArmors.T1_SCOUT_HELMET, "t1_scout", 0xDFC993, 0xD6C9A9);
+        tint(tints, TGArmors.T1_SCOUT_CHESTPLATE, "t1_scout", 0xD5C5A0, 0xB68647);
+        tint(tints, TGArmors.T1_SCOUT_LEGGINGS, "t1_scout", 0xD5C5A0);
+        tint(tints, TGArmors.T1_SCOUT_BOOTS, "t1_scout", 0xD6C9A9);
+        for (ItemLike item : List.of(TGArmors.T1_SCOUT_HELMET, TGArmors.T1_SCOUT_CHESTPLATE)) {
+            tint(tints, item, "t1_scout_forest", 0x007825, 0x007825);
+            tint(tints, item, "t1_scout_snow", 0xFFFFFF, 0xFFFFFF);
+            tint(tints, item, "t1_scout_black", 0x4F4F4F, 0x4F4F4F);
+        }
+        for (ItemLike item : List.of(TGArmors.T1_SCOUT_LEGGINGS, TGArmors.T1_SCOUT_BOOTS)) {
+            tint(tints, item, "t1_scout_forest", 0x007825);
+            tint(tints, item, "t1_scout_snow", 0xFFFFFF);
+            tint(tints, item, "t1_scout_black", 0x4F4F4F);
+        }
+
+        tint(tints, TGArmors.T2_COMBAT_HELMET, "t2_combat", 0x82A780, 0x82A780);
+        tint(tints, TGArmors.T2_COMBAT_HELMET, "t2_combat_desert", 0xFFFCC7, 0xC29971);
+        tint(tints, TGArmors.T2_COMBAT_HELMET, "t2_combat_wood", 0x669756, 0xFFFCC7);
+        tint(tints, TGArmors.T2_COMBAT_HELMET, "t2_combat_arctic", 0xFFFFFF, 0x797979);
+        tint(tints, TGArmors.T2_COMBAT_HELMET, "t2_combat_swat", 0x404040, 0x404040);
+        tint(tints, TGArmors.T2_COMBAT_HELMET, "t2_combat_security", 0x54545D, 0x54545D);
+        for (ItemLike item : List.of(TGArmors.T2_COMBAT_CHESTPLATE, TGArmors.T2_COMBAT_LEGGINGS)) {
+            tint(tints, item, "t2_combat", 0x82A780, 0x82A780, 0x82A780);
+            tint(tints, item, "t2_combat_desert", 0xFFFCC7, 0xC29971, 0xD8C06C);
+            tint(tints, item, "t2_combat_wood", 0x669756, 0xFFFCC7, 0x669756);
+            tint(tints, item, "t2_combat_arctic", 0xFFFFFF, 0x797979, 0x797979);
+            tint(tints, item, "t2_combat_swat", 0x404040, 0x404040, 0x707070);
+            tint(tints, item, "t2_combat_security", 0x3C39C7, 0x3C39C7, 0x707070);
+        }
+        tint(tints, TGArmors.T2_COMBAT_BOOTS, "t2_combat", 0x959595);
+        tint(tints, TGArmors.T2_COMBAT_BOOTS, "t2_combat_desert", 0x9E9982);
+        tint(tints, TGArmors.T2_COMBAT_BOOTS, "t2_combat_wood", 0x759874);
+        tint(tints, TGArmors.T2_COMBAT_BOOTS, "t2_combat_arctic", 0xD7D7D7);
+        tint(tints, TGArmors.T2_COMBAT_BOOTS, "t2_combat_swat", 0x606060);
+        tint(tints, TGArmors.T2_COMBAT_BOOTS, "t2_combat_security", 0x54545D);
+
+        for (ItemLike item : List.of(TGArmors.HAZMAT_HELMET, TGArmors.HAZMAT_CHESTPLATE, TGArmors.HAZMAT_LEGGINGS)) {
+            tint(tints, item, "hazmatsuit", 0xEEFF00);
+            tint(tints, item, "hazmatsuit_orange", 0xFF8800);
+            tint(tints, item, "hazmatsuit_grey", 0xA6A6A6);
+            tint(tints, item, "hazmatsuit_blue", 0x4DCFFF);
+        }
+
+        // T3 combat and exo share the base colors; the third layer is the visor or chest light, the fourth the exo frame
+        tint(tints, TGArmors.T3_COMBAT_HELMET, "t3_combat", 0x384A57, 0xE9FEFF, 0x5146E3);
+        tint(tints, TGArmors.T3_COMBAT_HELMET, "t3_combat_green", 0x015409, 0x20231B, 0x585858);
+        tint(tints, TGArmors.T3_COMBAT_HELMET, "t3_combat_silver", 0x4A4A4A, 0xCFDBD9, 0xD1D15D);
+        tint(tints, TGArmors.T3_COMBAT_CHESTPLATE, "t3_combat", 0x384A57, 0xE9FEFF, 0xFF0000);
+        tint(tints, TGArmors.T3_COMBAT_CHESTPLATE, "t3_combat_green", 0x015409, 0x20231B, 0xFFFFFF);
+        tint(tints, TGArmors.T3_COMBAT_CHESTPLATE, "t3_combat_silver", 0x4A4A4A, 0xCFDBD9, 0xCFDBD9);
+        for (ItemLike item : List.of(TGArmors.T3_COMBAT_LEGGINGS, TGArmors.T3_COMBAT_BOOTS)) {
+            tint(tints, item, "t3_combat", 0x384A57, 0xE9FEFF);
+            tint(tints, item, "t3_combat_green", 0x015409, 0x20231B);
+            tint(tints, item, "t3_combat_silver", 0x4A4A4A, 0xCFDBD9);
+        }
+        tint(tints, TGArmors.T3_EXO_HELMET, "t3_exo", 0x384A57, 0xE9FEFF, 0x5146E3, 0xB0B0B0);
+        tint(tints, TGArmors.T3_EXO_HELMET, "t3_exo_green", 0x015409, 0x20231B, 0x585858, 0x303030);
+        tint(tints, TGArmors.T3_EXO_HELMET, "t3_exo_silver", 0x4A4A4A, 0xCFDBD9, 0xD1D15D, 0xB0B0B0);
+        tint(tints, TGArmors.T3_EXO_CHESTPLATE, "t3_exo", 0x384A57, 0xE9FEFF, 0xFF0000, 0xB0B0B0);
+        tint(tints, TGArmors.T3_EXO_CHESTPLATE, "t3_exo_green", 0x015409, 0x20231B, 0xFFFFFF, 0x303030);
+        tint(tints, TGArmors.T3_EXO_CHESTPLATE, "t3_exo_silver", 0x4A4A4A, 0xCFDBD9, 0xCFDBD9, 0xB0B0B0);
+        tint(tints, TGArmors.T3_EXO_LEGGINGS, "t3_exo", 0x384A57, 0xE9FEFF, 0xA5A5A5);
+        tint(tints, TGArmors.T3_EXO_LEGGINGS, "t3_exo_green", 0x015409, 0x20231B, 0x303030);
+        tint(tints, TGArmors.T3_EXO_LEGGINGS, "t3_exo_silver", 0x4A4A4A, 0xCFDBD9, 0xA5A5A5);
+        tint(tints, TGArmors.T3_EXO_BOOTS, "t3_exo", 0x384A57, 0xE9FEFF, 0xB0B0B0);
+        tint(tints, TGArmors.T3_EXO_BOOTS, "t3_exo_green", 0x015409, 0x20231B, 0x303030);
+        tint(tints, TGArmors.T3_EXO_BOOTS, "t3_exo_silver", 0x4A4A4A, 0xCFDBD9, 0xB0B0B0);
+
+        tint(tints, TGArmors.T3_MINER_HELMET, "hevsuit", 0xFFAE00, -1, 0x8BC2FF);
+        tint(tints, TGArmors.T3_MINER_HELMET, "hevsuit_black", 0x424242, -1, 0xFF3C00);
+        tint(tints, TGArmors.T3_MINER_HELMET, "hevsuit_silver", 0xEEEEEE, -1, 0x8BC2FF);
+        for (ItemLike item : List.of(TGArmors.T3_MINER_CHESTPLATE, TGArmors.T3_MINER_LEGGINGS, TGArmors.T3_MINER_BOOTS)) {
+            tint(tints, item, "hevsuit", 0xFFAE00);
+            tint(tints, item, "hevsuit_black", 0x424242);
+            tint(tints, item, "hevsuit_silver", 0xEEEEEE);
+        }
+
+        tint(tints, TGArmors.T2_BERET_ITEM, "beret_texture", 0xB30000);
+        tint(tints, TGArmors.T2_BERET_ITEM, "beret_texture_green", 0x009000);
+        tint(tints, TGArmors.T2_BERET_ITEM, "beret_texture_black", 0x444444);
+        return tints;
+    }
+
+    private static void tint(Map<Item, Map<String, List<Integer>>> tints, ItemLike item, String texture, int... colors) {
+        tints.computeIfAbsent(item.asItem(), key -> new HashMap<>()).put(texture, Arrays.stream(colors).boxed().toList());
+    }
+
     /** An extra-slot item by id (registered by {@code TGSlotItems}); {@link Items#AIR} if it does not exist (yet). */
     private static ItemLike slotItem(String id) {
         return BuiltInRegistries.ITEM.getOptional(TGIds.id(id)).orElse(Items.AIR);
@@ -217,6 +323,7 @@ public final class TGCamoProvider {
     }
 
     public static void bootstrap(BootstrapContext<TGCamo> context) {
+        Map<Item, Map<String, List<Integer>>> iconTints = iconTints();
         for (Group group : groups()) {
             for (ItemLike itemLike : group.items()) {
                 Item item = itemLike.asItem();
@@ -235,7 +342,8 @@ public final class TGCamoProvider {
                     String itemName = BuiltInRegistries.ITEM.getKey(item).getPath();
                     context.register(ResourceKey.create(TGCamos.KEY, TGIds.id(itemName + "/" + camo.name())),
                             new TGCamo(BuiltInRegistries.ITEM.wrapAsHolder(item), camo.name(), order,
-                                    Component.translatable("camo.techguns." + camo.name()), texture, layer));
+                                    Component.translatable("camo.techguns." + camo.name()), texture, layer,
+                                    iconTints.getOrDefault(item, Map.of()).getOrDefault(camo.texture(), List.of())));
                 }
             }
         }

@@ -5,5 +5,8 @@
   "item": "techguns:t1_miner_helmet",
   "layer": "techguns:t1_miner_red",
   "name": "lime",
-  "order": 1
+  "order": 1,
+  "tints": [
+    6750003
+  ]
 }

@@ -4,5 +4,9 @@
   },
   "item": "techguns:t3_combat_leggings",
   "layer": "techguns:t3_combat",
-  "name": "white"
+  "name": "white",
+  "tints": [
+    3689047,
+    15335167
+  ]
 }

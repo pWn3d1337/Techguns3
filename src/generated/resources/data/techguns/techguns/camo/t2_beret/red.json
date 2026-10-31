@@ -4,5 +4,8 @@
   },
   "item": "techguns:t2_beret",
   "name": "red",
-  "texture": "techguns:textures/models/armor/beret_texture.png"
+  "texture": "techguns:textures/models/armor/beret_texture.png",
+  "tints": [
+    11730944
+  ]
 }

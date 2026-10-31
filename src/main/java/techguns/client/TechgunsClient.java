@@ -79,6 +79,7 @@ public class TechgunsClient {
         RenderingEntityTracker.init(NeoForge.EVENT_BUS);
         techguns.client.render.item.OffhandHiding.init(NeoForge.EVENT_BUS);
         CamoTextures.init(NeoForge.EVENT_BUS);
+        modEventBus.addListener(CamoTextures::registerItemColors);
         SlotGearFx.init(NeoForge.EVENT_BUS);
         MiningPlaneOutline.init(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(ExtraSlotsScreen::onInventoryScreenInit);

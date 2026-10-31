@@ -4,5 +4,8 @@
   },
   "item": "techguns:t3_miner_leggings",
   "layer": "techguns:hevsuit",
-  "name": "orange"
+  "name": "orange",
+  "tints": [
+    16756224
+  ]
 }

@@ -4,5 +4,11 @@
   },
   "item": "techguns:t3_exo_helmet",
   "layer": "techguns:t3_exo",
-  "name": "white"
+  "name": "white",
+  "tints": [
+    3689047,
+    15335167,
+    5326563,
+    11579568
+  ]
 }

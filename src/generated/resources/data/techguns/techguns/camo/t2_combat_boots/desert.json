@@ -5,5 +5,8 @@
   "item": "techguns:t2_combat_boots",
   "layer": "techguns:t2_combat_desert",
   "name": "desert",
-  "order": 2
+  "order": 2,
+  "tints": [
+    10393986
+  ]
 }

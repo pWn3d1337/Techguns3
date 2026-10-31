@@ -5,5 +5,8 @@
   "item": "techguns:t1_miner_leggings",
   "layer": "techguns:t1_miner_green",
   "name": "green",
-  "order": 2
+  "order": 2,
+  "tints": [
+    3116090
+  ]
 }

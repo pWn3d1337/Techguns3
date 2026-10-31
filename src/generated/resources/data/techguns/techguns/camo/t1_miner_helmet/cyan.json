@@ -5,5 +5,8 @@
   "item": "techguns:t1_miner_helmet",
   "layer": "techguns:t1_miner_green",
   "name": "cyan",
-  "order": 2
+  "order": 2,
+  "tints": [
+    65535
+  ]
 }

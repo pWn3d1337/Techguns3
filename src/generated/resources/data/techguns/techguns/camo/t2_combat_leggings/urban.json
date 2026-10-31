@@ -4,5 +4,10 @@
   },
   "item": "techguns:t2_combat_leggings",
   "layer": "techguns:t2_combat",
-  "name": "urban"
+  "name": "urban",
+  "tints": [
+    8562560,
+    8562560,
+    8562560
+  ]
 }

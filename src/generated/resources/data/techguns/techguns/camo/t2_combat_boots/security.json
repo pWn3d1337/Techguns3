@@ -5,5 +5,8 @@
   "item": "techguns:t2_combat_boots",
   "layer": "techguns:t2_combat_security",
   "name": "security",
-  "order": 5
+  "order": 5,
+  "tints": [
+    5526621
+  ]
 }

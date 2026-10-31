@@ -5,5 +5,8 @@
   "item": "techguns:t1_scout_boots",
   "layer": "techguns:t1_scout_forest",
   "name": "forest",
-  "order": 1
+  "order": 1,
+  "tints": [
+    30757
+  ]
 }

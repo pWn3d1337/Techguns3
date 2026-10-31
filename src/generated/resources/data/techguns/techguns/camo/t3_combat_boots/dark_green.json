@@ -5,5 +5,9 @@
   "item": "techguns:t3_combat_boots",
   "layer": "techguns:t3_combat_green",
   "name": "dark_green",
-  "order": 2
+  "order": 2,
+  "tints": [
+    87049,
+    2106139
+  ]
 }

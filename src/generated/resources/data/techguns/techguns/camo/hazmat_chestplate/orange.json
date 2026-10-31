@@ -5,5 +5,8 @@
   "item": "techguns:hazmat_chestplate",
   "layer": "techguns:hazmatsuit_orange",
   "name": "orange",
-  "order": 2
+  "order": 2,
+  "tints": [
+    16746496
+  ]
 }

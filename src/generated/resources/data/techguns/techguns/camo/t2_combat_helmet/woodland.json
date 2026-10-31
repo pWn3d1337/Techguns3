@@ -5,5 +5,9 @@
   "item": "techguns:t2_combat_helmet",
   "layer": "techguns:t2_combat_wood",
   "name": "woodland",
-  "order": 1
+  "order": 1,
+  "tints": [
+    6723414,
+    16776391
+  ]
 }

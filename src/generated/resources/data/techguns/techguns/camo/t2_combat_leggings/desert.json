@@ -5,5 +5,10 @@
   "item": "techguns:t2_combat_leggings",
   "layer": "techguns:t2_combat_desert",
   "name": "desert",
-  "order": 2
+  "order": 2,
+  "tints": [
+    16776391,
+    12753265,
+    14205036
+  ]
 }

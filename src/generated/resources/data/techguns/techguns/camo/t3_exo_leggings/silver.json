@@ -5,5 +5,10 @@
   "item": "techguns:t3_exo_leggings",
   "layer": "techguns:t3_exo_silver",
   "name": "silver",
-  "order": 1
+  "order": 1,
+  "tints": [
+    4868682,
+    13622233,
+    10855845
+  ]
 }

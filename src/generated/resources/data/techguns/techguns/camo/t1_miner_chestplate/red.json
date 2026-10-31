@@ -5,5 +5,8 @@
   "item": "techguns:t1_miner_chestplate",
   "layer": "techguns:t1_miner_red",
   "name": "red",
-  "order": 1
+  "order": 1,
+  "tints": [
+    15216688
+  ]
 }

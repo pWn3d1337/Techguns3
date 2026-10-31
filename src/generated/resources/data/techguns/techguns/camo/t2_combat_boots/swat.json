@@ -5,5 +5,8 @@
   "item": "techguns:t2_combat_boots",
   "layer": "techguns:t2_combat_swat",
   "name": "swat",
-  "order": 4
+  "order": 4,
+  "tints": [
+    6316128
+  ]
 }

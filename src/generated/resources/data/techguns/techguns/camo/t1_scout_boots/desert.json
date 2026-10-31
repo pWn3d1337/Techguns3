@@ -4,5 +4,8 @@
   },
   "item": "techguns:t1_scout_boots",
   "layer": "techguns:t1_scout",
-  "name": "desert"
+  "name": "desert",
+  "tints": [
+    14076329
+  ]
 }

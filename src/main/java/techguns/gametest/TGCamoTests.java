@@ -56,6 +56,24 @@ public class TGCamoTests {
     }
 
     @GameTest(template = ARENA)
+    public static void armorIconTintsFollowCamo(GameTestHelper helper) {
+        var registries = helper.getLevel().registryAccess();
+        ItemStack vest = new ItemStack(TGArmors.T2_COMBAT_CHESTPLATE.get());
+        TGCamo urban = CamoData.current(registries, vest).orElseThrow();
+        TGCamo desert = CamoData.camos(registries, vest).stream().filter(camo -> camo.name().equals("desert")).findFirst().orElseThrow();
+
+        helper.assertTrue(urban.tints().size() == 3, "The T2 combat vest icon has three tinted layers, has " + urban.tints().size());
+        helper.assertTrue(urban.tint(0) == 0xFF82A780, "The urban camo should tint the vest green, is " + Integer.toHexString(urban.tint(0)));
+        helper.assertTrue(desert.tint(1) == 0xFFC29971, "The desert camo should tint layer 1 brown, is " + Integer.toHexString(desert.tint(1)));
+        helper.assertTrue(urban.tint(3) == -1, "A layer without a tint should stay untinted");
+        TGCamo hev = CamoData.current(registries, new ItemStack(TGArmors.T3_MINER_HELMET.get())).orElseThrow();
+        helper.assertTrue(hev.tint(1) == -1 && hev.tint(2) == 0xFF8BC2FF, "The HEV helmet's middle layer stays untinted, the visor is blue");
+        helper.assertTrue(CamoData.current(registries, new ItemStack(TGArmors.STEAM_HELMET.get())).orElseThrow().tints().isEmpty(),
+                "Steam armor icons are 3D models without tints");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
     public static void sneakUseSwitchesArmorCamo(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         ItemStack vest = new ItemStack(TGArmors.T2_COMBAT_CHESTPLATE.get());

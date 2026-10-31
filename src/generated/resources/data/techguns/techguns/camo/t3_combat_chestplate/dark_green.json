@@ -5,5 +5,10 @@
   "item": "techguns:t3_combat_chestplate",
   "layer": "techguns:t3_combat_green",
   "name": "dark_green",
-  "order": 2
+  "order": 2,
+  "tints": [
+    87049,
+    2106139,
+    16777215
+  ]
 }

@@ -4,5 +4,11 @@
   },
   "item": "techguns:t3_exo_chestplate",
   "layer": "techguns:t3_exo",
-  "name": "white"
+  "name": "white",
+  "tints": [
+    3689047,
+    15335167,
+    16711680,
+    11579568
+  ]
 }

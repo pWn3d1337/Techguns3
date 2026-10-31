@@ -4,5 +4,8 @@
   },
   "item": "techguns:t2_combat_boots",
   "layer": "techguns:t2_combat",
-  "name": "urban"
+  "name": "urban",
+  "tints": [
+    9803157
+  ]
 }

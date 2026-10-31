@@ -5,5 +5,8 @@
   "item": "techguns:hazmat_leggings",
   "layer": "techguns:hazmatsuit_grey",
   "name": "grey",
-  "order": 1
+  "order": 1,
+  "tints": [
+    10921638
+  ]
 }

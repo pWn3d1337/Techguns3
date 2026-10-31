@@ -4,5 +4,10 @@
   },
   "item": "techguns:t3_exo_boots",
   "layer": "techguns:t3_exo",
-  "name": "white"
+  "name": "white",
+  "tints": [
+    3689047,
+    15335167,
+    11579568
+  ]
 }

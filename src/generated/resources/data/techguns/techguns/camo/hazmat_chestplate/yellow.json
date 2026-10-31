@@ -4,5 +4,8 @@
   },
   "item": "techguns:hazmat_chestplate",
   "layer": "techguns:hazmatsuit",
-  "name": "yellow"
+  "name": "yellow",
+  "tints": [
+    15662848
+  ]
 }

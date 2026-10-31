@@ -5,5 +5,8 @@
   "item": "techguns:t3_miner_boots",
   "layer": "techguns:hevsuit_black",
   "name": "black",
-  "order": 2
+  "order": 2,
+  "tints": [
+    4342338
+  ]
 }

@@ -4,5 +4,9 @@
   },
   "item": "techguns:t1_scout_chestplate",
   "layer": "techguns:t1_scout",
-  "name": "desert"
+  "name": "desert",
+  "tints": [
+    14009760,
+    11961927
+  ]
 }
