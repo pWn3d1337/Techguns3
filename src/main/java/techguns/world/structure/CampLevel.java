@@ -107,6 +107,13 @@ public final class CampLevel {
         chests.put(new BlockPos(x, y, z), lootTable);
     }
 
+    /** Joins the loot chests standing side by side into double chests, like 1.12 chests joined when placed. */
+    void pairChests() {
+        Map<BlockPos, BlockState> states = new HashMap<>();
+        chests.keySet().forEach(pos -> states.put(pos, blocks.get(pos)));
+        ChestPairs.pair(states).forEach(blocks::put);
+    }
+
     void spawner(int x, int y, int z, BlockState state, Spawner type) {
         set(x, y, z, state);
         spawners.put(new BlockPos(x, y, z), type);

@@ -17,7 +17,10 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CrossCollisionBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.Tags;
 import techguns.block.CamoNetBlock;
+import techguns.block.CamoNetTopBlock;
 import techguns.block.SandbagsBlock;
 import techguns.entity.spawn.TGSpawnerBlockEntity;
 import techguns.world.LegacyPaletteProcessor.BiomeColor;
@@ -44,6 +48,8 @@ public abstract class CampLevelPiece extends StructurePiece {
     static final int MARGIN = 4;
     /** How far a tree's leaves reach into the next chunk. */
     private static final int LEAF_REACH = 5;
+    /** World generation never updates neighbour shapes; a live level would without {@link Block#UPDATE_KNOWN_SHAPE}. */
+    private static final int PLACE_FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
 
     protected final long seed;
     protected final int x0;
@@ -165,21 +171,7 @@ public abstract class CampLevelPiece extends StructurePiece {
                 }
             }
         }
-        for (Map.Entry<BlockPos, BlockState> block : camp.blocks().entrySet()) {
-            if (box.isInside(block.getKey())) {
-                level.setBlock(block.getKey(), block.getValue(), Block.UPDATE_CLIENTS);
-            }
-        }
-        for (Map.Entry<BlockPos, BlockState> block : camp.blocks().entrySet()) {
-            BlockPos at = block.getKey();
-            if (connects(block.getValue()) && (box.isInside(at) || nextTo(box, at) && level.getBlockState(at).is(block.getValue().getBlock()))) {
-                BlockState current = level.getBlockState(at);
-                BlockState shaped = Block.updateFromNeighbourShapes(current, level, at);
-                if (shaped != current) {
-                    level.setBlock(at, shaped, Block.UPDATE_CLIENTS);
-                }
-            }
-        }
+        placeBlocks(level, camp.blocks(), box);
         for (Map.Entry<BlockPos, ResourceKey<LootTable>> chest : camp.chests().entrySet()) {
             if (box.isInside(chest.getKey())) {
                 RandomizableContainer.setBlockEntityLootTable(level, random, chest.getKey(), chest.getValue());
@@ -189,6 +181,29 @@ public abstract class CampLevelPiece extends StructurePiece {
             BlockPos at = spawnerEntry.getKey();
             if (box.isInside(at) && level.getBlockEntity(at) instanceof TGSpawnerBlockEntity spawner) {
                 setUpSpawner(spawner, at, spawnerEntry.getValue(), level);
+            }
+        }
+    }
+
+    /**
+     * Places the blocks inside the box, then gives fences, panes, walls, fence gates, stairs (corners), camouflage nets
+     * (standing and top) and sandbags their connections from their neighbours, also a neighbour already placed right next to the box. Blocks are placed like
+     * world generation does (no neighbour shape updates), also when {@code /place} runs the piece on a live level.
+     */
+    public static void placeBlocks(WorldGenLevel level, Map<BlockPos, BlockState> blocks, BoundingBox box) {
+        for (Map.Entry<BlockPos, BlockState> block : blocks.entrySet()) {
+            if (box.isInside(block.getKey())) {
+                level.setBlock(block.getKey(), block.getValue(), PLACE_FLAGS);
+            }
+        }
+        for (Map.Entry<BlockPos, BlockState> block : blocks.entrySet()) {
+            BlockPos at = block.getKey();
+            if (connects(block.getValue()) && (box.isInside(at) || nextTo(box, at) && level.getBlockState(at).is(block.getValue().getBlock()))) {
+                BlockState current = level.getBlockState(at);
+                BlockState shaped = Block.updateFromNeighbourShapes(current, level, at);
+                if (shaped != current) {
+                    level.setBlock(at, shaped, PLACE_FLAGS);
+                }
             }
         }
     }
@@ -242,7 +257,10 @@ public abstract class CampLevelPiece extends StructurePiece {
 
     private static boolean connects(BlockState state) {
         Block block = state.getBlock();
-        return block instanceof CrossCollisionBlock || block instanceof CamoNetBlock || block instanceof SandbagsBlock;
+        // 1.12 derived these from their neighbours when drawn (stair corners, wall and fence connections)
+        return block instanceof CrossCollisionBlock || block instanceof StairBlock || block instanceof WallBlock
+                || block instanceof FenceGateBlock || block instanceof CamoNetBlock || block instanceof CamoNetTopBlock
+                || block instanceof SandbagsBlock;
     }
 
     /** In a neighbour chunk, right next to the box. */
