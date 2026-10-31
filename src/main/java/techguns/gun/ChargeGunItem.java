@@ -149,8 +149,7 @@ public class ChargeGunItem extends GunItem {
             }
             TGNetwork.sendGunFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks());
         } else {
-            GunClientEffects.get().onChargeReleased(player, hand, charge);
-            GunClientEffects.get().onFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks());
+            GunClientEffects.get().onFired(player, hand, firing.recoilTicks(), firing.muzzleFlashTicks(), charge);
         }
         playSound(level, player, sounds().fire().get(), SOUND_VOLUME);
     }

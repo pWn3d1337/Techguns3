@@ -66,17 +66,15 @@ public final class ShooterValues {
         return reload[hand.ordinal()];
     }
 
-    /** Charge a charge gun was released with; its charge animation fades out during the recoil. */
+    /** Charge the current recoil's shot was released with (0 for a normal shot); its charge animation fades out during the recoil. */
     public float recoilCharge(InteractionHand hand) {
         return recoilCharge[hand.ordinal()];
     }
 
-    void setRecoilCharge(InteractionHand hand, float charge) {
-        recoilCharge[hand.ordinal()] = charge;
-    }
-
-    void startRecoil(InteractionHand hand, int ticks) {
+    /** Every recoil sets its charge, so a normal shot after a charged one does not replay the charge animation (Fabric setRecoiltime). */
+    void startRecoil(InteractionHand hand, int ticks, float charge) {
         recoil[hand.ordinal()].start(ticks);
+        recoilCharge[hand.ordinal()] = charge;
     }
 
     void startMuzzleFlash(InteractionHand hand, int ticks) {
