@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/tg3.png" alt="Techguns 3"></p>
+
 # Techguns 3
 
 Techguns for modern Minecraft — guns, armor, machines, NPCs and structures.
