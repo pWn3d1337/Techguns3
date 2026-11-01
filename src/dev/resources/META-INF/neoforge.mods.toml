@@ -1,0 +1,19 @@
+# Dev-only helper mod, never shipped (source set 'dev', see build.gradle)
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All rights reserved"
+
+[[mods]]
+modId="techguns_dev"
+version="1.0.0"
+displayName="Techguns Dev Tools"
+description='''
+Dev runs only: an infinite Forge Energy source for testing the Techguns machines.
+'''
+
+[[dependencies.techguns_dev]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1,)"
+    ordering="NONE"
+    side="BOTH"

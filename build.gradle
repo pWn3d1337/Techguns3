@@ -25,6 +25,12 @@ sourceSets.main.resources {
     exclude(".cache/**") // datagen cache files (paths are relative to the resource dirs)
 }
 
+// Dev-only helper mod 'techguns_dev' (src/dev): an infinite FE source for testing machines. Its own source set, so it
+// is never in the Techguns jar or the published POM; it compiles against Minecraft and NeoForge only.
+sourceSets {
+    dev
+}
+
 repositories {
     exclusiveContent {
         forRepository {
@@ -144,8 +150,14 @@ neoForge {
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
+        // dev-only helper mod (creative power source), loaded in every run but not part of the jar
+        techguns_dev {
+            sourceSet(sourceSets.dev)
+        }
     }
 }
+neoForge.addModdingDependenciesTo(sourceSets.dev)
+tasks.named('classes') { dependsOn 'devClasses' }
 
 // 'localRuntime': present for dev runs, but never pulled by dependents of this mod or shipped.
 configurations {
