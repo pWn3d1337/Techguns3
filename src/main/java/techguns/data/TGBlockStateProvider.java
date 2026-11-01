@@ -102,12 +102,23 @@ public class TGBlockStateProvider extends BlockStateProvider {
                 .texture("frame", modLoc("block/nethermetal_border_alpha"))
                 .renderType("cutout");
         model.ao(false);
-        for (String texture : new String[]{"#glow", "#frame"}) {
-            var element = model.element().from(0, 0, 0).to(16, 16, 16);
-            for (Direction face : Direction.values()) {
-                element.face(face).texture(texture).cullface(face);
-            }
-            element.end();
+        var lava = model.element().from(0, 0, 0).to(16, 16, 16);
+        for (Direction face : Direction.values()) {
+            lava.face(face).texture("#glow").cullface(face);
+        }
+        lava.end();
+        // each frame face sits a tenth of a pixel in front of the lava: in one plane the two z-fought (Fusion splits
+        // the connected frame into smaller quads; 1.12 relied on draw order). The lava stays a closed cube in the block
+        // planes, so inner corners between pillars keep no gap behind the connected (see-through) frame.
+        for (Direction face : Direction.values()) {
+            float[] from = {0, 0, 0};
+            float[] to = {16, 16, 16};
+            int axis = face.getAxis().ordinal();
+            float plane = face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 16.1f : -0.1f;
+            from[axis] = plane;
+            to[axis] = plane;
+            model.element().from(from[0], from[1], from[2]).to(to[0], to[1], to[2])
+                    .face(face).texture("#frame").cullface(face).end().end();
         }
         simpleBlockWithItem(TGBlocks.NETHERMETAL_BORDER_LAVA.get(), model);
     }
