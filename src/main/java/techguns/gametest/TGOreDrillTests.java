@@ -133,6 +133,17 @@ public class TGOreDrillTests {
         helper.assertTrue(frames == 44 && scaffolds == 36 && plates == 8, "Frame 44, scaffold 36, plate 8; got " + frames + "/" + scaffolds + "/" + plates);
         helper.assertTrue(helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(CONTROLLER.below().east(2)), null) != null,
                 "The frame takes fuel");
+        BlockState scaffold = helper.getBlockState(CONTROLLER.below(3).east(2));
+        helper.assertTrue(scaffold.skipRendering(scaffold, Direction.UP), "Formed scaffold hides faces towards formed scaffold");
+        helper.assertFalse(scaffold.skipRendering(TGBlocks.ORE_DRILL_FRAME.get().defaultBlockState().setValue(MultiblockPartBlock.FORMED, true),
+                Direction.UP), "Formed scaffold shows faces towards the frame");
+        helper.assertFalse(scaffold.skipRendering(scaffold.setValue(OreDrillScaffoldBlock.HIDDEN, true), Direction.UP),
+                "Formed scaffold shows faces towards the drill plate");
+        BlockState loose = TGBlocks.ORE_DRILL_SCAFFOLD.get().defaultBlockState();
+        helper.assertFalse(loose.skipRendering(loose, Direction.UP), "Unformed scaffold shows all faces");
+        BlockPos scaffoldPos = helper.absolutePos(CONTROLLER.below(3).east(2));
+        helper.assertTrue(scaffold.getShadeBrightness(helper.getLevel(), scaffoldPos) == 1.0f
+                && scaffold.propagatesSkylightDown(helper.getLevel(), scaffoldPos), "Scaffold is lit and shaded like glass");
 
         helper.setBlock(CONTROLLER.below(3).east(2), Blocks.AIR);
         helper.assertFalse(drill.isFormed(), "Breaking the scaffold unforms the drill");
