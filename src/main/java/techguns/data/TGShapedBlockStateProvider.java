@@ -11,10 +11,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import techguns.Techguns;
 import techguns.block.CamoNetBlock;
 import techguns.block.Door3x3Block;
@@ -147,10 +150,50 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
             };
             return ConfiguredModel.builder().modelFile(model).rotationY(y).build();
         }, LadderBlock.WATERLOGGED);
-        // the block model in block perspective like 1.12, moved to the slot centre: the ladder sits on the block's
-        // north face, which the block rotation puts right of and below the centre
-        itemModels().withExistingParent(path(block), modLoc("block/" + path(block))).transforms()
-                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(-3.1f, 1.55f, 0).scale(0.625f).end().end();
+        // the inventory icon in block perspective like 1.12; in hand and on the ground held like the vanilla ladder (the
+        // item/generated perspectives of a flat item). Each is moved by the rotated, scaled offset of the ladder from the
+        // block centre (it sits on the block's north face, 7 px back), else it floats beside the hand.
+        var transforms = itemModels().withExistingParent(path(block), modLoc("block/" + path(block))).transforms();
+        Vector3f offset = new Vector3f(0, 0, -7);
+        centredTransform(transforms, ItemDisplayContext.GUI, new Vector3f(30, 225, 0), 0, offset, 0.625f, 0, 0, 0);
+        flatItemTransforms(transforms, 0, offset);
+        transforms.end();
+    }
+
+    /**
+     * The hand and ground perspectives of a flat item (vanilla {@code item/generated}, like the vanilla ladder) for a model
+     * turned by {@code uprightX} degrees about x into the sprite plane (x/y, front to +z) whose centre lies {@code offset}
+     * pixels from the block centre. Left hands take the right-hand values, the renderer mirrors them.
+     */
+    private static void flatItemTransforms(ModelBuilder<?>.TransformsBuilder transforms, float uprightX, Vector3f offset) {
+        centredTransform(transforms, ItemDisplayContext.GROUND, new Vector3f(), uprightX, offset, 0.5f, 0, 2, 0);
+        for (ItemDisplayContext hand : new ItemDisplayContext[]{ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, ItemDisplayContext.THIRD_PERSON_LEFT_HAND}) {
+            centredTransform(transforms, hand, new Vector3f(), uprightX, offset, 0.55f, 0, 3, 1);
+        }
+        for (ItemDisplayContext hand : new ItemDisplayContext[]{ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, ItemDisplayContext.FIRST_PERSON_LEFT_HAND}) {
+            centredTransform(transforms, hand, new Vector3f(0, -90, 25), uprightX, offset, 0.68f, 1.13f, 3.2f, 1.13f);
+        }
+    }
+
+    /**
+     * A display transform whose translation also centres the model: its centre's {@code offset} (pixels from the block
+     * centre), turned and scaled like the model, is moved back. {@code rotation} is in {@code ItemTransform}'s euler degrees
+     * (applied z, then y, then x); {@code uprightX} degrees about x come before it, folded into the angles. (Not the
+     * NeoForge right rotation: the datagen then writes {@code left_rotation}, which the 1.21.1 reader ignores.)
+     */
+    private static void centredTransform(ModelBuilder<?>.TransformsBuilder transforms, ItemDisplayContext context, Vector3f rotation, float uprightX,
+                                         Vector3f offset, float scale, float tx, float ty, float tz) {
+        Quaternionf turn = new Quaternionf().rotationXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y),
+                (float) Math.toRadians(rotation.z)).rotateX((float) Math.toRadians(uprightX));
+        Vector3f shift = new Vector3f(offset).mul(-scale).rotate(turn);
+        // the given angles unless turned: extracting them back fails in gimbal lock (y of +-90 degrees)
+        Vector3f angles = uprightX == 0 ? rotation : turn.getEulerAnglesXYZ(new Vector3f()).mul((float) (180 / Math.PI));
+        transforms.transform(context).rotation(round(angles.x), round(angles.y), round(angles.z)).scale(scale)
+                .translation(round(tx + shift.x), round(ty + shift.y), round(tz + shift.z)).end();
+    }
+
+    private static float round(float value) {
+        return Math.round(value * 100) / 100f;
     }
 
     private void slimyLadder() {
@@ -166,8 +209,13 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         }, LadderBlock.WATERLOGGED);
         // the trail lies flat in its model: seen from above in the inventory, not edge-on; front-lit like a flat item
         // (the block side lighting dims a face turned to the viewer, 1.12 showed it bright)
-        itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder")).guiLight(BlockModel.GuiLight.FRONT).transforms()
-                .transform(ItemDisplayContext.GUI).rotation(90, 0, 0).end().end();
+        // in hand and on the ground held like the vanilla ladder: stood up as in the inventory, the trail lies 7.5 px below
+        // the block centre
+        var transforms = itemModels().withExistingParent("slimy_ladder", modLoc("block/slimy_ladder")).guiLight(BlockModel.GuiLight.FRONT)
+                .transforms();
+        transforms.transform(ItemDisplayContext.GUI).rotation(90, 0, 0).end();
+        flatItemTransforms(transforms, 90, new Vector3f(0, -7.5f, 0));
+        transforms.end();
     }
 
     // --- camo nets ---
