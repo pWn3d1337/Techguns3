@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "p": {
+      "item": "techguns:nether_armor_plating"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "c c",
+    "p p"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t4_praetor_leggings"
+  }
+}

@@ -1,25 +1,18 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
-  "ingredients": [
-    {
-      "item": "techguns:t3_exo_chestplate"
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
     },
-    {
-      "item": "techguns:cybernetic_parts"
-    },
-    {
-      "item": "techguns:circuit_board_advanced"
-    },
-    {
-      "item": "techguns:power_plating_mk2"
-    },
-    {
-      "item": "techguns:carbon_fibers"
-    },
-    {
-      "item": "techguns:carbon_fibers"
+    "p": {
+      "item": "techguns:nano_fibers"
     }
+  },
+  "pattern": [
+    "p p",
+    "pcp",
+    "ppp"
   ],
   "result": {
     "count": 1,

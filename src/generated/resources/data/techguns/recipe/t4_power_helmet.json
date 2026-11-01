@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "p": {
+      "item": "techguns:power_plating_mk2"
+    }
+  },
+  "pattern": [
+    "cpc",
+    "pgp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t4_power_helmet"
+  }
+}

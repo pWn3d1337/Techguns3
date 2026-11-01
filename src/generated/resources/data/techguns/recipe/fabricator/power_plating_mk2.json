@@ -1,0 +1,30 @@
+{
+  "type": "techguns:fabricator",
+  "input": {
+    "count": 2,
+    "ingredient": {
+      "tag": "c:ingots/titanium"
+    }
+  },
+  "plate": {
+    "count": 2,
+    "ingredient": {
+      "tag": "c:plates/netherite"
+    }
+  },
+  "powder": {
+    "ingredient": {
+      "item": "techguns:mechanical_parts_netherite"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "techguns:power_plating_mk2"
+  },
+  "wires": {
+    "count": 2,
+    "ingredient": {
+      "item": "techguns:circuit_board_elite"
+    }
+  }
+}

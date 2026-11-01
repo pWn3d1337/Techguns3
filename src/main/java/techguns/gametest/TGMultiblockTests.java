@@ -111,6 +111,20 @@ public class TGMultiblockTests {
         inv.setStackInSlot(FabricatorBlockEntity.SLOT_PLATE, new ItemStack(TGItems.PLASTIC_SHEET.get()));
     }
 
+    /** Every Fabricator recipe's ingredients fit the slot the recipe puts them in (slots follow the item tags). */
+    @GameTest(template = ARENA)
+    public static void fabricatorRecipesFitTheirSlots(GameTestHelper helper) {
+        IItemHandlerModifiable inv = buildFabricator(helper, false).getInventory();
+        for (var holder : helper.getLevel().getRecipeManager().getAllRecipesFor(techguns.registry.TGRecipes.FABRICATOR.get())) {
+            for (int slot = FabricatorBlockEntity.SLOT_INPUT; slot <= FabricatorBlockEntity.SLOT_PLATE; slot++) {
+                for (ItemStack stack : holder.value().slot(slot).ingredient().getItems()) {
+                    helper.assertTrue(inv.isItemValid(slot, stack), holder.id() + ": " + stack.getItem() + " does not fit slot " + slot);
+                }
+            }
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 200)
     public static void fabricatorMakesEnergyCell(GameTestHelper helper) {
         FabricatorBlockEntity fabricator = buildFabricator(helper, false);
@@ -242,6 +256,48 @@ public class TGMultiblockTests {
         helper.assertTrue(tank.drain(1000, IFluidHandler.FluidAction.EXECUTE).isEmpty(), "Nothing drains down to the level");
         chamber.setLiquidLevel(1);
         helper.assertTrue(tank.drain(5000, IFluidHandler.FluidAction.EXECUTE).getAmount() == 1000, "Above the level drains");
+        helper.succeed();
+    }
+
+    /** Buckets used on any formed part fill the tank up to the liquid level and take out only what is above it. */
+    @GameTest(template = ARENA)
+    public static void reactionChamberTakesBucketsOnParts(GameTestHelper helper) {
+        ReactionChamberBlockEntity chamber = buildReactionChamber(helper);
+        chamber.setLiquidLevel(2);
+        var level = helper.getLevel();
+        BlockPos glass = helper.absolutePos(new BlockPos(2, 1, 2));
+        Player player = player(helper);
+        java.util.function.Supplier<ItemStack> use = () -> {
+            level.getBlockState(glass).useItemOn(player.getMainHandItem(), level, player, net.minecraft.world.InteractionHand.MAIN_HAND,
+                    new net.minecraft.world.phys.BlockHitResult(glass.getCenter(), Direction.UP, glass, false));
+            return player.getMainHandItem();
+        };
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+        helper.assertTrue(use.get().is(Items.BUCKET) && chamber.getTank().getFluidAmount() == 1000, "Below the level a water bucket fills in");
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
+        helper.assertTrue(use.get().is(Items.BUCKET) && chamber.getTank().getFluidAmount() == 1000, "Below the level an empty bucket takes nothing");
+        chamber.setLiquidLevel(0);
+        helper.assertTrue(use.get().is(Items.WATER_BUCKET) && chamber.getTank().isEmpty(), "Above the level an empty bucket takes out");
+        helper.succeed();
+    }
+
+    /** The dump button removes only the liquid above the level. */
+    @GameTest(template = ARENA)
+    public static void reactionChamberDumpsExcessLiquid(GameTestHelper helper) {
+        ReactionChamberBlockEntity chamber = buildReactionChamber(helper);
+        Player player = player(helper);
+        player.setPos(helper.absoluteVec(RC_CONTROLLER.getCenter()));
+        chamber.setLiquidLevel(3);
+        chamber.getTank().fill(new FluidStack(Fluids.WATER, 3000), IFluidHandler.FluidAction.EXECUTE);
+        chamber.pressButton(player, ReactionChamberBlockEntity.BUTTON_DUMP);
+        helper.assertTrue(chamber.getTank().getFluidAmount() == 3000, "At the level nothing is dumped");
+        chamber.setLiquidLevel(1);
+        chamber.pressButton(player, ReactionChamberBlockEntity.BUTTON_DUMP);
+        helper.assertTrue(chamber.getTank().getFluidAmount() == 1000, "Above the level only the excess is dumped, was "
+                + chamber.getTank().getFluidAmount());
+        chamber.setLiquidLevel(0);
+        chamber.pressButton(player, ReactionChamberBlockEntity.BUTTON_DUMP);
+        helper.assertTrue(chamber.getTank().isEmpty(), "At level 0 everything is dumped");
         helper.succeed();
     }
 

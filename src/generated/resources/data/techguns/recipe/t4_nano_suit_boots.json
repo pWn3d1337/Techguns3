@@ -1,22 +1,14 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
-  "ingredients": [
-    {
-      "item": "techguns:t3_exo_boots"
-    },
-    {
-      "item": "techguns:cybernetic_parts"
-    },
-    {
-      "item": "techguns:circuit_board_advanced"
-    },
-    {
-      "item": "techguns:power_plating_mk2"
-    },
-    {
-      "item": "techguns:carbon_fibers"
+  "key": {
+    "p": {
+      "item": "techguns:nano_fibers"
     }
+  },
+  "pattern": [
+    "p p",
+    "p p"
   ],
   "result": {
     "count": 1,

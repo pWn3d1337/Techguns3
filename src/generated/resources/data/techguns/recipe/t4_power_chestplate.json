@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
+    },
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "p": {
+      "item": "techguns:power_plating_mk2"
+    }
+  },
+  "pattern": [
+    "p p",
+    "ece",
+    "ppp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t4_power_chestplate"
+  }
+}

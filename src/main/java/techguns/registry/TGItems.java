@@ -83,6 +83,8 @@ public final class TGItems {
     public static final DeferredItem<Item> CARBON_FIBERS = simple("carbon_fibers");
     /** Techguns 3 crafting material. */
     public static final DeferredItem<Item> NANO_FIBERS = simple("nano_fibers");
+    /** Techguns 3 crafting material: Reaction Chamber product of ghast tears. */
+    public static final DeferredItem<Item> GHAST_POWDER = simple("ghast_powder");
 
     // --- Components ---
     public static final DeferredItem<Item> IRON_RECEIVER = simple("iron_receiver");
@@ -104,6 +106,8 @@ public final class TGItems {
     public static final DeferredItem<Item> MECHANICAL_PARTS_IRON = simple("mechanical_parts_iron");
     public static final DeferredItem<Item> MECHANICAL_PARTS_OBSIDIAN_STEEL = simple("mechanical_parts_obsidian_steel");
     public static final DeferredItem<Item> MECHANICAL_PARTS_CARBON = simple("mechanical_parts_carbon");
+    /** Techguns 3: tier after carbon. */
+    public static final DeferredItem<Item> MECHANICAL_PARTS_NETHERITE = simple("mechanical_parts_netherite", new Item.Properties().fireResistant());
     public static final DeferredItem<Item> CIRCUIT_BOARD = simple("circuit_board");
     public static final DeferredItem<Item> CIRCUIT_BOARD_ELITE = simple("circuit_board_elite");
     public static final DeferredItem<Item> CIRCUIT_BOARD_ADVANCED = simple("circuit_board_advanced");

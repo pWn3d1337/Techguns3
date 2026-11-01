@@ -297,12 +297,18 @@ public class TGRecipeProvider extends RecipeProvider {
         exoSuit(output, TGArmors.T3_EXO_LEGGINGS.get(), TGArmors.T3_COMBAT_LEGGINGS.get(), 2);
         exoSuit(output, TGArmors.T3_EXO_BOOTS.get(), TGArmors.T3_COMBAT_BOOTS.get(), 1);
 
-        // T4 nanosuit (not in Techguns 2): upgrade of the matching exo suit piece
-        nanoSuit(output, TGArmors.T4_NANO_HELMET.get(), TGArmors.T3_EXO_HELMET.get(), 1);
-        nanoSuit(output, TGArmors.T4_NANO_CHESTPLATE.get(), TGArmors.T3_EXO_CHESTPLATE.get(), 2);
-        nanoSuit(output, TGArmors.T4_NANO_LEGGINGS.get(), TGArmors.T3_EXO_LEGGINGS.get(), 2);
-        nanoSuit(output, TGArmors.T4_NANO_BOOTS.get(), TGArmors.T3_EXO_BOOTS.get(), 1);
-        // Techguns 2 has no crafting recipes for the T4 praetor and T4 power armor.
+        // T4 (Techguns 2 has no crafting recipes for them): power armor Mk2 is the T3 power armor with Mk2 plating;
+        // the nether combat armor and the nanosuit are the HEV suit with nether armor plating / nano fibers for both plates
+        Item powerPlatingMk2 = TGItems.POWER_PLATING_MK2.get();
+        Map<Character, Object> powerMk2Keys = Map.of('p', powerPlatingMk2, 'c', elite, 'e', engine, 'g', Tags.Items.GLASS_PANES);
+        usedKeys(output, TGArmors.T4_POWER_HELMET.get(), powerPlatingMk2, powerMk2Keys, "cpc", "pgp");
+        usedKeys(output, TGArmors.T4_POWER_CHESTPLATE.get(), powerPlatingMk2, powerMk2Keys, "p p", "ece", "ppp");
+        usedKeys(output, TGArmors.T4_POWER_LEGGINGS.get(), powerPlatingMk2, powerMk2Keys, "pcp", "e e", "p p");
+        usedKeys(output, TGArmors.T4_POWER_BOOTS.get(), powerPlatingMk2, powerMk2Keys, "e e", "p p");
+        hevLike(output, TGItems.NETHER_ARMOR_PLATING.get(), elite, TGArmors.T4_PRAETOR_HELMET.get(), TGArmors.T4_PRAETOR_CHESTPLATE.get(),
+                TGArmors.T4_PRAETOR_LEGGINGS.get(), TGArmors.T4_PRAETOR_BOOTS.get());
+        hevLike(output, TGItems.NANO_FIBERS.get(), elite, TGArmors.T4_NANO_HELMET.get(), TGArmors.T4_NANO_CHESTPLATE.get(),
+                TGArmors.T4_NANO_LEGGINGS.get(), TGArmors.T4_NANO_BOOTS.get());
     }
 
     /** Techguns 2 recipes of the extra slot gear (face, back and hand items). */
@@ -421,14 +427,13 @@ public class TGRecipeProvider extends RecipeProvider {
         builder.unlockedBy(getHasName(combat), has(combat)).save(output, TGIds.id(getItemName(exo)));
     }
 
-    private static void nanoSuit(RecipeOutput output, Item nano, Item exo, int carbonFibers) {
-        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, nano)
-                .requires(exo).requires(TGItems.CYBERNETIC_PARTS.get()).requires(TGItems.CIRCUIT_BOARD_ADVANCED.get())
-                .requires(TGItems.POWER_PLATING_MK2.get());
-        for (int i = 0; i < carbonFibers; i++) {
-            builder.requires(TGItems.CARBON_FIBERS.get());
-        }
-        builder.unlockedBy(getHasName(exo), has(exo)).save(output, TGIds.id(getItemName(nano)));
+    /** The T3 HEV suit patterns with {@code plating} in place of both its carbon and titanium plates. */
+    private static void hevLike(RecipeOutput output, Item plating, Item elite, Item helmet, Item chestplate, Item leggings, Item boots) {
+        Map<Character, Object> keys = Map.of('p', plating, 'c', elite, 'g', Tags.Items.GLASS_PANES);
+        usedKeys(output, helmet, plating, keys, "pcp", "pgp");
+        usedKeys(output, chestplate, plating, keys, "p p", "pcp", "ppp");
+        usedKeys(output, leggings, plating, keys, "ppp", "c c", "p p");
+        usedKeys(output, boots, plating, keys, "p p", "p p");
     }
 
     /** Techguns 2 machines, the machine upgrade and the machine recipes. */
@@ -496,6 +501,8 @@ public class TGRecipeProvider extends RecipeProvider {
         metalPress(output, "mechanical_parts_obsidian_steel", plate("obsidian_steel"), Ingredient.of(Tags.Items.GEMS_QUARTZ),
                 TGItems.MECHANICAL_PARTS_OBSIDIAN_STEEL.get(), 1);
         metalPress(output, "mechanical_parts_carbon", plate("carbon"), Ingredient.of(Items.BLAZE_ROD), TGItems.MECHANICAL_PARTS_CARBON.get(), 2);
+        metalPress(output, "mechanical_parts_netherite", plate("netherite"), Ingredient.of(TGItems.GHAST_POWDER.get()),
+                TGItems.MECHANICAL_PARTS_NETHERITE.get(), 2);
         metalPress(output, "copper_wire", plate("copper"), plate("copper"), TGItems.COPPER_WIRE.get(), 8);
         metalPress(output, "carbon_plate", Ingredient.of(TGItems.CARBON_FIBERS.get()), Ingredient.of(TGItems.CARBON_FIBERS.get()), TGItems.CARBON_PLATE.get(), 2);
         metalPress(output, "advanced_rounds", plate("obsidian_steel"), Ingredient.of(TGItems.TGX.get()), TGAmmo.ADVANCED_ROUNDS.get(), 16);
@@ -718,6 +725,10 @@ public class TGRecipeProvider extends RecipeProvider {
                 List.of(new ItemStack(TGItems.ANTIGRAV_CORE.get())), 10, 7, 8, 2, 4, 4000, 1.0f, ReactionChamberRecipe.Risk.EXPLOSION_LOW, 500000);
         reaction(output, "enriched_uranium", Ingredient.of(TGItems.YELLOWCAKE.get()), heatRay, water,
                 List.of(new ItemStack(TGItems.ENRICHED_URANIUM.get())), 5, 4, 7, 0, 3, 1000, 0.0f, ReactionChamberRecipe.Risk.BREAK_ITEM, 250000);
+        // Techguns 3
+        reaction(output, "ghast_powder", Ingredient.of(Items.GHAST_TEAR), heatRay, FluidIngredient.single(TGFluids.ACID.get()),
+                List.of(new ItemStack(TGItems.GHAST_POWDER.get(), 2)), 5, 3, 4, 1, 4, 1000, 0.25f,
+                ReactionChamberRecipe.Risk.BREAK_ITEM, 100000);
     }
 
     private static void reaction(RecipeOutput output, String name, Ingredient input, Ingredient focus, FluidIngredient fluid, List<ItemStack> outputs,
@@ -746,6 +757,7 @@ public class TGRecipeProvider extends RecipeProvider {
         Ingredient redstone = Ingredient.of(Tags.Items.DUSTS_REDSTONE);
         Ingredient plastic = Ingredient.of(TGItems.PLASTIC_SHEET.get());
         Ingredient mechanicalParts = Ingredient.of(TGItems.MECHANICAL_PARTS_CARBON.get());
+        Ingredient mechanicalPartsNetherite = Ingredient.of(TGItems.MECHANICAL_PARTS_NETHERITE.get());
         Ingredient circuit = Ingredient.of(TGItems.CIRCUIT_BOARD.get());
         Ingredient eliteCircuit = Ingredient.of(TGItems.CIRCUIT_BOARD_ELITE.get());
         Ingredient leadPlate = Ingredient.of(TGTags.Items.plate("lead"));
@@ -760,6 +772,13 @@ public class TGRecipeProvider extends RecipeProvider {
         fabricator(output, Ingredient.of(TGItems.ENRICHED_URANIUM.get()), 1, eliteCircuit, 2, mechanicalParts, 2, leadPlate, 2,
                 new ItemStack(TGItems.RAD_EMITTER.get()));
         fabricator(output, ingot("steel"), 1, circuit, 1, redstone, 4, leadPlate, 2, new ItemStack(TGAmmo.NUCLEAR_POWER_CELL_EMPTY.get()));
+
+        fabricator(output, ingot("titanium"), 2, eliteCircuit, 2, mechanicalPartsNetherite, 1, Ingredient.of(TGTags.Items.plate("netherite")), 2,
+                new ItemStack(TGItems.POWER_PLATING_MK2.get(), 1));
+        fabricator(output, ingot("netherite"), 2, Ingredient.of(TGItems.GOLD_WIRE.get()), 2, mechanicalPartsNetherite, 1, Ingredient.of(TGTags.Items.plate("titanium")), 2,
+                new ItemStack(TGItems.NETHER_ARMOR_PLATING.get(), 2));
+        fabricator(output, Ingredient.of(TGItems.CARBON_FIBERS), 2, Ingredient.of(TGItems.CYBERNETIC_PARTS.get()), 2, Ingredient.of(TGItems.GHAST_POWDER.get()), 1, Ingredient.of(TGTags.Items.plate("netherite")), 1,
+                new ItemStack(TGItems.NANO_FIBERS.get(), 2));
     }
 
     private static void fabricator(RecipeOutput output, Ingredient input, int inputCount, Ingredient wires, int wireCount, Ingredient powder,
@@ -1225,22 +1244,6 @@ public class TGRecipeProvider extends RecipeProvider {
                 .pattern("nnn").pattern("gpg").pattern("nnn")
                 .define('p', Items.PISTON).define('g', Tags.Items.GLASS_BLOCKS).define('n', Items.IRON_INGOT)
                 .unlockedBy("has_piston", has(Items.PISTON)).save(output, TGIds.id("pump_mechanism"));
-
-        // Armor plating
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.POWER_PLATING_MK2.get(), 4)
-                .pattern("tmt").pattern("bcb").pattern("pmp")
-                .define('p', TGItems.POWER_PLATING.get()).define('b', TGItems.CIRCUIT_BOARD_ADVANCED.get())
-                .define('c', TGItems.CYBERNETIC_PARTS.get()).define('t', Tags.Items.INGOTS_NETHERITE)
-                .define('m', TGItems.MECHANICAL_PARTS_CARBON.get())
-                .unlockedBy("has_power_plating", has(TGItems.POWER_PLATING.get())).save(output, TGIds.id("power_plating_mk2"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGItems.NETHER_ARMOR_PLATING.get(), 4)
-                .pattern(" i ").pattern("cbc").pattern("tpt")
-                .define('p', carbonPlate).define('b', TGItems.CIRCUIT_BOARD_ADVANCED.get())
-                .define('c', TGItems.CYBERNETIC_PARTS.get()).define('t', Tags.Items.INGOTS_NETHERITE)
-                .define('i', TGTags.Items.ingot("titanium"))
-                .unlockedBy("has_circuit_board_advanced", has(TGItems.CIRCUIT_BOARD_ADVANCED.get()))
-                .save(output, TGIds.id("nether_armor_plating"));
-
     }
 
     private void buildAmmoRecipes(RecipeOutput output) {

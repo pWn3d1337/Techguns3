@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_power_plating": {
+    "has_power_plating_mk2": {
       "conditions": {
         "items": [
           {
-            "items": "techguns:power_plating"
+            "items": "techguns:power_plating_mk2"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "techguns:power_plating_mk2"
+        "recipe": "techguns:t4_power_helmet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_power_plating"
+      "has_power_plating_mk2"
     ]
   ],
   "rewards": {
     "recipes": [
-      "techguns:power_plating_mk2"
+      "techguns:t4_power_helmet"
     ]
   }
 }

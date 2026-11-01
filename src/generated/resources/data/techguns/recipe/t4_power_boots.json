@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "e": {
+      "item": "techguns:electric_engine"
+    },
+    "p": {
+      "item": "techguns:power_plating_mk2"
+    }
+  },
+  "pattern": [
+    "e e",
+    "p p"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:t4_power_boots"
+  }
+}

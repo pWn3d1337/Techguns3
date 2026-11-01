@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_t3_exo_chestplate": {
+    "has_nano_fibers": {
       "conditions": {
         "items": [
           {
-            "items": "techguns:t3_exo_chestplate"
+            "items": "techguns:nano_fibers"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_t3_exo_chestplate"
+      "has_nano_fibers"
     ]
   ],
   "rewards": {

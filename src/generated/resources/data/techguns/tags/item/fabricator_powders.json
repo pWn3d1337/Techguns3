@@ -1,6 +1,8 @@
 {
   "values": [
     "#c:dusts/redstone",
-    "techguns:mechanical_parts_carbon"
+    "techguns:mechanical_parts_carbon",
+    "techguns:mechanical_parts_netherite",
+    "techguns:ghast_powder"
   ]
 }

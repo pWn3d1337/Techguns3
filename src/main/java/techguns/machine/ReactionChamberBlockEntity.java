@@ -406,7 +406,8 @@ public class ReactionChamberBlockEntity extends MultiblockMasterBlockEntity {
             case BUTTON_LIQUID_DOWN -> liquidLevel = Math.max(0, liquidLevel - 1);
             case BUTTON_INTENSITY_UP -> intensity = Math.min(ReactionChamberRecipe.MAX_LEVEL, intensity + 1);
             case BUTTON_INTENSITY_DOWN -> intensity = Math.max(0, intensity - 1);
-            case BUTTON_DUMP -> tank.setFluid(FluidStack.EMPTY);
+            // only the liquid above the set level; lower the level to 0 to dump all
+            case BUTTON_DUMP -> tank.removeInternal(Math.max(0, tank.getFluidAmount() - liquidLevel * ReactionChamberRecipe.BUCKET));
             default -> {
                 return false;
             }

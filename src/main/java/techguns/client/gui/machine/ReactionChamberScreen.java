@@ -74,8 +74,8 @@ public class ReactionChamberScreen extends TGMachineScreen<ReactionChamberMenu> 
         if (isIn(mx, my, 18, 16, 11, 51)) {
             graphics.renderComponentTooltip(font, tankTooltip(menu.fluid(), ReactionChamberBlockEntity.TANK_CAPACITY), mouseX, mouseY);
         } else if (isIn(mx, my, 20, 7, 8, 8)) {
-            graphics.renderComponentTooltip(font, List.of(Component.translatable("techguns.chemlab.dumpinput"),
-                    Component.translatable("techguns.chemlab.dumpinput.tooltip")), mouseX, mouseY);
+            graphics.renderComponentTooltip(font, List.of(Component.translatable("techguns.reactionchamber.dump"),
+                    Component.translatable("techguns.reactionchamber.dump.tooltip")), mouseX, mouseY);
         }
     }
 }

@@ -1,0 +1,29 @@
+{
+  "type": "techguns:fabricator",
+  "input": {
+    "count": 2,
+    "ingredient": {
+      "item": "techguns:carbon_fibers"
+    }
+  },
+  "plate": {
+    "ingredient": {
+      "tag": "c:plates/netherite"
+    }
+  },
+  "powder": {
+    "ingredient": {
+      "item": "techguns:ghast_powder"
+    }
+  },
+  "result": {
+    "count": 2,
+    "id": "techguns:nano_fibers"
+  },
+  "wires": {
+    "count": 2,
+    "ingredient": {
+      "item": "techguns:cybernetic_parts"
+    }
+  }
+}

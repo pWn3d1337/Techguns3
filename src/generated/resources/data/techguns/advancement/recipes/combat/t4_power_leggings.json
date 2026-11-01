@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_circuit_board_advanced": {
+    "has_power_plating_mk2": {
       "conditions": {
         "items": [
           {
-            "items": "techguns:circuit_board_advanced"
+            "items": "techguns:power_plating_mk2"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "techguns:nether_armor_plating"
+        "recipe": "techguns:t4_power_leggings"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_circuit_board_advanced"
+      "has_power_plating_mk2"
     ]
   ],
   "rewards": {
     "recipes": [
-      "techguns:nether_armor_plating"
+      "techguns:t4_power_leggings"
     ]
   }
 }

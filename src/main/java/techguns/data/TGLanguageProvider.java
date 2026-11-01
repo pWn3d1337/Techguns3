@@ -115,6 +115,7 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("mechanical_parts_iron", "Mechanical Parts (Iron)"),
             Map.entry("mechanical_parts_obsidian_steel", "Mechanical Parts (Hardened)"),
             Map.entry("mechanical_parts_carbon", "Mechanical Parts (Carbon)"),
+            Map.entry("mechanical_parts_netherite", "Mechanical Parts (Netherite)"),
             Map.entry("circuit_board_elite", "Elite Circuit Board"),
             Map.entry("circuit_board_advanced", "Advanced Circuit Board"),
             Map.entry("power_plating", "Power Armor Plating"),
@@ -511,6 +512,8 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.chemlab.dumpinput", "Dump Input Tank");
         add("techguns.chemlab.dumpoutput", "Dump Output Tank");
         add("techguns.chemlab.dump.tooltip", "Content will be lost");
+        add("techguns.reactionchamber.dump", "Dump Excess Liquid");
+        add("techguns.reactionchamber.dump.tooltip", "Liquid above the level will be lost");
         add("techguns.chemlab.toggledrain", "Toggle drained Tank");
         add("techguns.chemlab.toggledrain.tooltip.0", "Fluids are drained from Output Tank");
         add("techguns.chemlab.toggledrain.tooltip.1", "Fluids are drained from Input Tank");

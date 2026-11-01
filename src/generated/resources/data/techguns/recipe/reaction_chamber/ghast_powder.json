@@ -1,0 +1,27 @@
+{
+  "type": "techguns:reaction_chamber",
+  "fluid": {
+    "fluid": "techguns:creeper_acid"
+  },
+  "focus": {
+    "item": "techguns:heat_ray_focus"
+  },
+  "input": {
+    "item": "minecraft:ghast_tear"
+  },
+  "instability": 0.25,
+  "intensity": 4,
+  "intensity_margin": 1,
+  "liquid_consumption": 1000,
+  "liquid_level": 4,
+  "outputs": [
+    {
+      "count": 2,
+      "id": "techguns:ghast_powder"
+    }
+  ],
+  "power_per_tick": 100000,
+  "required_completion": 3,
+  "risk": "break_item",
+  "ticks": 5
+}

@@ -1,0 +1,30 @@
+{
+  "type": "techguns:fabricator",
+  "input": {
+    "count": 2,
+    "ingredient": {
+      "tag": "c:ingots/netherite"
+    }
+  },
+  "plate": {
+    "count": 2,
+    "ingredient": {
+      "tag": "c:plates/titanium"
+    }
+  },
+  "powder": {
+    "ingredient": {
+      "item": "techguns:mechanical_parts_netherite"
+    }
+  },
+  "result": {
+    "count": 2,
+    "id": "techguns:nether_armor_plating"
+  },
+  "wires": {
+    "count": 2,
+    "ingredient": {
+      "item": "techguns:gold_wire"
+    }
+  }
+}

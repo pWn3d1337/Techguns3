@@ -1,22 +1,20 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
-  "ingredients": [
-    {
-      "item": "techguns:t3_exo_helmet"
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board_elite"
     },
-    {
-      "item": "techguns:cybernetic_parts"
+    "g": {
+      "tag": "c:glass_panes"
     },
-    {
-      "item": "techguns:circuit_board_advanced"
-    },
-    {
-      "item": "techguns:power_plating_mk2"
-    },
-    {
-      "item": "techguns:carbon_fibers"
+    "p": {
+      "item": "techguns:nano_fibers"
     }
+  },
+  "pattern": [
+    "pcp",
+    "pgp"
   ],
   "result": {
     "count": 1,

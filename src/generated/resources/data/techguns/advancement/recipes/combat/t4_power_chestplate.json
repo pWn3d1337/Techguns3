@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_power_plating_mk2": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:power_plating_mk2"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:t4_power_chestplate"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_power_plating_mk2"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:t4_power_chestplate"
+    ]
+  }
+}

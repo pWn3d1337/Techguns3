@@ -19,8 +19,11 @@ import techguns.gun.GunAmmo;
 import techguns.gun.GunData;
 import techguns.gun.MeleeToolItem;
 import techguns.gun.ammo.AmmoType;
+import techguns.TGIds;
 import techguns.recipe.AmmoChangeRecipe;
+import techguns.recipe.MetalPressRecipe;
 import techguns.recipe.MiningHeadUpgradeRecipe;
+import techguns.recipe.ReactionChamberRecipe;
 import techguns.recipe.TransferAmmoRecipe;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGGuns;
@@ -110,6 +113,45 @@ public class TGRecipeTests {
 
         helper.assertTrue(result.is(TGGuns.GOLDEN_REVOLVER.get()) && GunData.loaded(result) == 4,
                 "The golden revolver should keep the 4 rounds, was " + GunData.ammo(result));
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void netheriteMechanicalPartsChain(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager();
+        // ghast tear -> ghast powder in the Reaction Chamber
+        var reaction = (ReactionChamberRecipe) recipes.byKey(TGIds.id("reaction_chamber/ghast_powder")).orElseThrow().value();
+        helper.assertTrue(reaction.input().test(new ItemStack(Items.GHAST_TEAR)) && reaction.focus().test(new ItemStack(TGItems.HEAT_RAY_FOCUS.get())),
+                "Ghast powder should take a ghast tear with the heat ray focus");
+        helper.assertTrue(reaction.liquidLevel() == 4 && reaction.liquidConsumption() == 1000,
+                "Ghast powder should react in 4 buckets of acid and use 1, was " + reaction.liquidLevel() + " / " + reaction.liquidConsumption());
+        helper.assertTrue(reaction.outputs().getFirst().is(TGItems.GHAST_POWDER.get()), "The reaction should make ghast powder");
+        // netherite plate + ghast powder -> netherite mechanical parts in the Metal Press
+        var press = (MetalPressRecipe) recipes.byKey(TGIds.id("metal_press/mechanical_parts_netherite")).orElseThrow().value();
+        helper.assertTrue(press.first().test(new ItemStack(TGItems.NETHERITE_PLATE.get())) && press.second().test(new ItemStack(TGItems.GHAST_POWDER.get())),
+                "Netherite mechanical parts should take a netherite plate and ghast powder");
+        helper.assertTrue(press.result().is(TGItems.MECHANICAL_PARTS_NETHERITE.get()), "The press should make netherite mechanical parts");
+        helper.succeed();
+    }
+
+    /** T4 armor: shaped like the T3 power armor (Mk2 plating) and the HEV suit (nether armor plating, nano fibers). */
+    @GameTest(template = ARENA)
+    public static void t4ArmorRecipesUseTheirPlating(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager();
+        java.util.Map<net.minecraft.world.item.Item, net.minecraft.world.item.Item> plating = java.util.Map.of(
+                techguns.registry.TGArmors.T4_POWER_CHESTPLATE.get(), TGItems.POWER_PLATING_MK2.get(),
+                techguns.registry.TGArmors.T4_PRAETOR_CHESTPLATE.get(), TGItems.NETHER_ARMOR_PLATING.get(),
+                techguns.registry.TGArmors.T4_NANO_CHESTPLATE.get(), TGItems.NANO_FIBERS.get());
+        plating.forEach((armor, material) -> {
+            var id = TGIds.id(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(armor).getPath());
+            var recipe = recipes.byKey(id).orElseThrow(() -> new net.minecraft.gametest.framework.GameTestAssertException("Missing recipe " + id));
+            var ingredients = recipe.value().getIngredients().stream().filter(i -> !i.isEmpty()).toList();
+            long plates = ingredients.stream().filter(i -> i.test(new ItemStack(material))).count();
+            helper.assertTrue(recipe.value() instanceof net.minecraft.world.item.crafting.ShapedRecipe && plates >= 5,
+                    id + " should be shaped with at least 5 " + material + ", has " + plates);
+            helper.assertTrue(ingredients.stream().noneMatch(i -> i.getItems().length > 0 && i.getItems()[0].getItem() instanceof net.minecraft.world.item.ArmorItem),
+                    id + " should not upgrade another armor piece");
+        });
         helper.succeed();
     }
 }

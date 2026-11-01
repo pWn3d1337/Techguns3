@@ -3,6 +3,7 @@
     "techguns:plastic_sheet",
     "#c:plates/carbon",
     "#c:plates/titanium",
-    "#c:plates/lead"
+    "#c:plates/lead",
+    "#c:plates/netherite"
   ]
 }
