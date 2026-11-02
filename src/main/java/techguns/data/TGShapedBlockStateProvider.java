@@ -367,13 +367,16 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
 
     // --- machines ---
 
+    /** Techguns 2 {@code basicmachine} model: metal press, ammo press, chem lab and turret break into paint machine particles. */
+    private static final String BASIC_MACHINE_PARTICLE = "paintmachine_side";
+
     /** Machines are drawn by their block entity renderer; the block model only gives the particle texture. */
     private void machines() {
-        machine(TGBlocks.METAL_PRESS, "metal_press");
-        machine(TGBlocks.AMMO_PRESS, "ammo_press");
+        machine(TGBlocks.METAL_PRESS, BASIC_MACHINE_PARTICLE);
+        machine(TGBlocks.AMMO_PRESS, BASIC_MACHINE_PARTICLE);
         modelMachine(TGBlocks.BLAST_FURNACE, "blast_furnace_base", "blast_furnace_base");
         modelMachine(TGBlocks.GRINDER, "grinder_base", "grinder_inventory_base");
-        machine(TGBlocks.CHEM_LAB, "chem_lab");
+        machine(TGBlocks.CHEM_LAB, BASIC_MACHINE_PARTICLE);
         chargingStation();
         acid();
         // benches: Techguns 2 cube models (front north) and block models, Fabric Ammo Bench model
@@ -382,7 +385,7 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         modelMachine(TGBlocks.UPGRADE_BENCH, "upgrade_bench_base", "upgrade_bench_base");
         modelMachine(TGBlocks.AMMO_BENCH, "ammo_bench_base", "ammo_bench_base");
         multiblocks();
-        machine(TGBlocks.TURRET, "turret_base");
+        machine(TGBlocks.TURRET, BASIC_MACHINE_PARTICLE);
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE, "tnt_charge");
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE_ADVANCED, "c4_charge");
         spawner(TGBlocks.MONSTER_HOLE);
