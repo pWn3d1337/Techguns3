@@ -835,13 +835,16 @@ public class TGRecipeProvider extends RecipeProvider {
         output.accept(TGIds.id("camo_change/" + name), new CamoChangeRecipe(blocks.stream().map(block -> block.get().asItem()).toList()), null);
     }
 
-    /** Fabric {@code ammobench_crafting} recipes: one core, casing and powder each. */
+    /**
+     * Fabric {@code ammobench_crafting} recipes: one core, casing and powder each. The hand-worked bench makes half the
+     * rounds of the powered Ammo Press.
+     */
     private static void ammoBenchRecipes(RecipeOutput output) {
-        ammoBench(output, TGAmmo.PISTOL_ROUNDS.get(), 12);
-        ammoBench(output, TGAmmo.SHOTGUN_ROUNDS.get(), 16);
-        ammoBench(output, TGAmmo.RIFLE_ROUNDS.get(), 8);
-        ammoBench(output, TGAmmo.RIFLE_ROUNDS_STACK.get(), 2);
-        ammoBench(output, TGAmmo.SNIPER_ROUNDS.get(), 4);
+        ammoBench(output, TGAmmo.PISTOL_ROUNDS.get(), 6);
+        ammoBench(output, TGAmmo.SHOTGUN_ROUNDS.get(), 8);
+        ammoBench(output, TGAmmo.RIFLE_ROUNDS.get(), 4);
+        ammoBench(output, TGAmmo.RIFLE_ROUNDS_STACK.get(), 1);
+        ammoBench(output, TGAmmo.SNIPER_ROUNDS.get(), 2);
     }
 
     private static void ammoBench(RecipeOutput output, ItemLike result, int count) {

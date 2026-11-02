@@ -218,8 +218,14 @@ public class TGBenchTests {
         MachineInput input = MachineInput.of(new ItemStack(TGItems.LEAD_INGOT.get()), new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.GUNPOWDER));
         List<AmmoBenchRecipe> matching = recipes.stream().filter(r -> r.matches(input, level)).toList();
         helper.assertTrue(matching.size() == 5, "Lead, copper and gunpowder make 5 kinds of rounds, got " + matching.size());
-        helper.assertTrue(matching.stream().anyMatch(r -> r.result().is(TGAmmo.PISTOL_ROUNDS.get()) && r.result().getCount() == 12),
-                "12 pistol rounds");
+        // the bench makes half of what the Ammo Press makes from the same inputs
+        var presses = level.getRecipeManager().getAllRecipesFor(TGRecipes.AMMO_PRESS.get()).stream().map(RecipeHolder::value).toList();
+        for (AmmoBenchRecipe bench : matching) {
+            int press = presses.stream().filter(r -> r.result().is(bench.result().getItem())).mapToInt(r -> r.result().getCount()).findFirst().orElse(-1);
+            helper.assertTrue(bench.result().getCount() * 2 == press, bench.result() + " should be half the press's " + press);
+        }
+        helper.assertTrue(matching.stream().anyMatch(r -> r.result().is(TGAmmo.PISTOL_ROUNDS.get()) && r.result().getCount() == 6),
+                "6 pistol rounds");
         MachineInput wrong = MachineInput.of(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.GUNPOWDER));
         helper.assertTrue(recipes.stream().noneMatch(r -> r.matches(wrong, level)), "Iron is no bullet core");
         helper.succeed();
@@ -267,10 +273,10 @@ public class TGBenchTests {
         }
         menu.clickMenuButton(player, pistol);
         ItemStack result = menu.getSlot(AmmoBenchMenu.SLOT_RESULT).getItem();
-        helper.assertTrue(result.is(TGAmmo.PISTOL_ROUNDS.get()) && result.getCount() == 12, "The pick makes 12 pistol rounds, got " + result);
+        helper.assertTrue(result.is(TGAmmo.PISTOL_ROUNDS.get()) && result.getCount() == 6, "The pick makes 6 pistol rounds, got " + result);
 
         menu.quickMoveStack(player, AmmoBenchMenu.SLOT_RESULT);
-        helper.assertTrue(countInInventory(player, TGAmmo.PISTOL_ROUNDS.get()) == 12, "Shift-click moves the rounds into the inventory");
+        helper.assertTrue(countInInventory(player, TGAmmo.PISTOL_ROUNDS.get()) == 6, "Shift-click moves the rounds into the inventory");
         helper.assertTrue(menu.getSlot(0).getItem().getCount() == 1 && menu.getSlot(1).getItem().getCount() == 1
                 && menu.getSlot(2).getItem().getCount() == 1, "Taking the result uses one of each input");
         helper.assertTrue(menu.getSlot(AmmoBenchMenu.SLOT_RESULT).getItem().is(TGAmmo.PISTOL_ROUNDS.get()), "The pick stays for the next batch");
