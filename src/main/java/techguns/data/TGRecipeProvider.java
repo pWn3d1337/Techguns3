@@ -78,6 +78,7 @@ public class TGRecipeProvider extends RecipeProvider {
         blastingOnly(output, List.of(TGItems.RAW_TITANIUM.get(), TGBlocks.TITANIUM_ORE.get(), TGBlocks.DEEPSLATE_TITANIUM_ORE.get()),
                 TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
         smeltingAndBlasting(output, List.of(TGItems.RAW_RUBBER.get()), TGItems.RUBBER_BAR.get(), 0.5f, "rubber_bar");
+        smeltingAndBlasting(output, List.of(TGItems.RAW_PLASTIC.get()), TGItems.PLASTIC_SHEET.get(), 0.5f, "plastic_sheet");
 
         buildNuggetRecipes(output);
         buildMaterialRecipes(output);
@@ -92,6 +93,7 @@ public class TGRecipeProvider extends RecipeProvider {
         buildOreDrillRecipes(output);
         buildExplosiveChargeRecipes(output);
         buildTurretRecipes(output);
+        buildSmeltBackRecipes(output);
     }
 
     /** Techguns 2 turret base and armor plates. */
@@ -107,6 +109,29 @@ public class TGRecipeProvider extends RecipeProvider {
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(TGItems.TURRET_ARMOR_IRON.get()), RecipeCategory.MISC, new ItemStack(Items.IRON_INGOT, 5), 0.0f, 200)
                 .unlockedBy(getHasName(TGItems.TURRET_ARMOR_IRON.get()), has(TGItems.TURRET_ARMOR_IRON.get()))
                 .save(output, TGIds.id("iron_ingot_from_turret_armor"));
+        smeltBack(output, TGItems.TURRET_ARMOR_STEEL.get(), TGItems.STEEL_INGOT.get(), 5);
+        smeltBack(output, TGItems.TURRET_ARMOR_OBSIDIAN_STEEL.get(), TGItems.OBSIDIAN_STEEL_INGOT.get(), 5);
+    }
+
+    /** Techguns 2 smelting of plates and barrels back into the ingots they were made of (plus the newer netherite plate). */
+    private void buildSmeltBackRecipes(RecipeOutput output) {
+        smeltBack(output, TGItems.IRON_PLATE.get(), Items.IRON_INGOT, 1);
+        smeltBack(output, TGItems.COPPER_PLATE.get(), Items.COPPER_INGOT, 1);
+        smeltBack(output, TGItems.TIN_PLATE.get(), TGItems.TIN_INGOT.get(), 1);
+        smeltBack(output, TGItems.BRONZE_PLATE.get(), TGItems.BRONZE_INGOT.get(), 1);
+        smeltBack(output, TGItems.LEAD_PLATE.get(), TGItems.LEAD_INGOT.get(), 1);
+        smeltBack(output, TGItems.STEEL_PLATE.get(), TGItems.STEEL_INGOT.get(), 1);
+        smeltBack(output, TGItems.OBSIDIAN_STEEL_PLATE.get(), TGItems.OBSIDIAN_STEEL_INGOT.get(), 1);
+        smeltBack(output, TGItems.TITANIUM_PLATE.get(), TGItems.TITANIUM_INGOT.get(), 1);
+        smeltBack(output, TGItems.NETHERITE_PLATE.get(), Items.NETHERITE_INGOT, 1);
+        smeltBack(output, TGItems.IRON_BARREL.get(), Items.IRON_INGOT, 6);
+        smeltBack(output, TGItems.OBSIDIAN_STEEL_BARREL.get(), TGItems.OBSIDIAN_STEEL_INGOT.get(), 6);
+    }
+
+    /** A furnace recipe (no XP, as in Techguns 2) giving back the ingots of a part, id {@code techguns:<ingot>_from_smelting_<part>}. */
+    private static void smeltBack(RecipeOutput output, Item part, Item ingot, int count) {
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(part), RecipeCategory.MISC, new ItemStack(ingot, count), 0.0f, 200)
+                .unlockedBy(getHasName(part), has(part)).save(output, TGIds.id(getItemName(ingot) + "_from_smelting_" + getItemName(part)));
     }
 
     private void turretArmor(RecipeOutput output, Item plate, String material) {

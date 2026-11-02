@@ -154,4 +154,41 @@ public class TGRecipeTests {
         });
         helper.succeed();
     }
+
+    /** Techguns 2 smelting: the Chem Lab's raw rubber and raw plastic become rubber bars and plastic sheets. */
+    @GameTest(template = ARENA)
+    public static void rawRubberAndPlasticSmelt(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager();
+        java.util.Map<net.minecraft.world.item.Item, net.minecraft.world.item.Item> smelting = java.util.Map.of(
+                TGItems.RAW_RUBBER.get(), TGItems.RUBBER_BAR.get(), TGItems.RAW_PLASTIC.get(), TGItems.PLASTIC_SHEET.get());
+        smelting.forEach((raw, result) -> {
+            var input = new net.minecraft.world.item.crafting.SingleRecipeInput(new ItemStack(raw));
+            for (var type : List.of(RecipeType.SMELTING, RecipeType.BLASTING)) {
+                ItemStack smelted = recipes.getRecipeFor(type, input, helper.getLevel())
+                        .map(holder -> holder.value().assemble(input, helper.getLevel().registryAccess())).orElse(ItemStack.EMPTY);
+                helper.assertTrue(smelted.is(result), raw + " should " + type + " into " + result + ", was " + smelted);
+            }
+        });
+        helper.succeed();
+    }
+
+    /** Techguns 2 smelting gives plates, barrels and turret armor back as the ingots they cost. */
+    @GameTest(template = ARENA)
+    public static void partsSmeltBackIntoIngots(GameTestHelper helper) {
+        var recipes = helper.getLevel().getRecipeManager();
+        List<ItemStack[]> parts = List.of(
+                new ItemStack[]{new ItemStack(TGItems.STEEL_PLATE.get()), new ItemStack(TGItems.STEEL_INGOT.get())},
+                new ItemStack[]{new ItemStack(TGItems.COPPER_PLATE.get()), new ItemStack(Items.COPPER_INGOT)},
+                new ItemStack[]{new ItemStack(TGItems.TITANIUM_PLATE.get()), new ItemStack(TGItems.TITANIUM_INGOT.get())},
+                new ItemStack[]{new ItemStack(TGItems.NETHERITE_PLATE.get()), new ItemStack(Items.NETHERITE_INGOT)},
+                new ItemStack[]{new ItemStack(TGItems.OBSIDIAN_STEEL_BARREL.get()), new ItemStack(TGItems.OBSIDIAN_STEEL_INGOT.get(), 6)},
+                new ItemStack[]{new ItemStack(TGItems.TURRET_ARMOR_STEEL.get()), new ItemStack(TGItems.STEEL_INGOT.get(), 5)});
+        for (ItemStack[] part : parts) {
+            var input = new net.minecraft.world.item.crafting.SingleRecipeInput(part[0]);
+            ItemStack smelted = recipes.getRecipeFor(RecipeType.SMELTING, input, helper.getLevel())
+                    .map(holder -> holder.value().assemble(input, helper.getLevel().registryAccess())).orElse(ItemStack.EMPTY);
+            helper.assertTrue(ItemStack.matches(smelted, part[1]), part[0] + " should smelt into " + part[1] + ", was " + smelted);
+        }
+        helper.succeed();
+    }
 }

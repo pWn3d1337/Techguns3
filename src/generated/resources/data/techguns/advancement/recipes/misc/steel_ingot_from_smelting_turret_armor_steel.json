@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:steel_ingot_from_smelting_turret_armor_steel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_turret_armor_steel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:turret_armor_steel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_turret_armor_steel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:steel_ingot_from_smelting_turret_armor_steel"
+    ]
+  }
+}
