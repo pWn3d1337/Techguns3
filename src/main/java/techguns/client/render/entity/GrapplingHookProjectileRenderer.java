@@ -91,14 +91,15 @@ public class GrapplingHookProjectileRenderer extends EntityRenderer<GrapplingHoo
         float wirePitch = (float) Math.toDegrees(Math.asin(dir.y));
         float wireYaw = (float) Math.toDegrees(Math.atan2(dir.x, dir.z));
 
-        // the wire runs along +x of the pose: four flat quads around the axis form its cross section
+        // the wire runs along +x of the pose: four flat quads around the axis form its cross section; opposite quads share a
+        // plane facing away from each other, so the render type must cull back faces or each pair z-fights
         poseStack.pushPose();
         poseStack.translate(src.x - ex, src.y - ey, src.z - ez);
         TGMatrixOps.rotate(poseStack, wireYaw - 90.0f, 0f, 1f, 0f);
         TGMatrixOps.rotate(poseStack, wirePitch, 0f, 0f, 1f);
         TGMatrixOps.rotate(poseStack, 45f, 1f, 0f, 0f);
         float u2 = distance / WIRE_WIDTH * 0.25f;
-        VertexConsumer consumer = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE_WIRE));
+        VertexConsumer consumer = buffers.getBuffer(RenderType.entitySolid(TEXTURE_WIRE));
         for (int i = 0; i < 4; i++) {
             TGMatrixOps.rotate(poseStack, 90f, 1f, 0f, 0f);
             Matrix4f mat = poseStack.last().pose();
