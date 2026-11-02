@@ -38,6 +38,17 @@ public final class TGTags {
                 TGIds.id("uranium_deposits"));
     }
 
+    public static final class EntityTypes {
+        private EntityTypes() {
+        }
+
+        /**
+         * Entities a gore kill bursts into gibs (Techguns 2 {@code EntityDeathUtils.goreMap}); a whitelist, so entities of
+         * other mods aren't gored unless a pack adds them.
+         */
+        public static final TagKey<net.minecraft.world.entity.EntityType<?>> GORE = TagKey.create(Registries.ENTITY_TYPE, TGIds.id("gore"));
+    }
+
     public static final class Fluids {
         private Fluids() {
         }

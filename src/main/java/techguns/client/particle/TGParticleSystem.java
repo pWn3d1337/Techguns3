@@ -32,6 +32,8 @@ public class TGParticleSystem implements ITGParticle {
     /** Models for 3D particle systems (set by the creator of the system). */
     public ArrayList<ModelPart> models;
     public ResourceLocation modelsTexture;
+    /** Scale of the 3D models, e.g. the render scale of the entity the gibs come from. */
+    public float modelsScale = 1.0f;
 
     protected final ClientLevel level;
     protected final RandomSource random = RandomSource.create();

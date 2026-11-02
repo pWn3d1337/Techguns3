@@ -30,6 +30,7 @@ import techguns.gun.MeleeToolItem;
 import techguns.item.TGMeleeWeapon;
 import techguns.network.TGNetwork;
 import techguns.registry.TGAttributes;
+import techguns.registry.TGTags;
 
 /**
  * Hooks the Techguns damage system into NeoForge's damage pipeline (no mixins needed).
@@ -44,15 +45,16 @@ public final class TGDamageEvents {
     /** Death effects (gore, bio, laser) for kills by Techguns damage (Techguns 2 {@code onLivingDeathEvent}). */
     public static void onLivingDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
+        boolean bleeds = entity.getType().is(TGTags.EntityTypes.GORE);
         if (!entity.level().isClientSide && event.getSource() instanceof TGDamageSource source
-                && DeathEffectRules.playsDeathEffect(source.getDeathType(), debugAlwaysDeathEffect ? 1.0f : source.getGoreChance(),
+                && DeathEffectRules.playsDeathEffect(source.getDeathType(), bleeds, debugAlwaysDeathEffect ? 1.0f : source.getGoreChance(),
                         entity.getRandom().nextFloat())) {
             TGNetwork.sendEntityDeath(entity, source.getDeathType());
         } else if (!entity.level().isClientSide && event.getSource().is(DamageTypes.PLAYER_ATTACK)
                 && event.getSource().getEntity() instanceof Player player && player.getMainHandItem().getItem() instanceof TGMeleeWeapon tool) {
             // melee tools and weapons hit with the vanilla player attack; their death effect comes from the tool
             DeathType deathType = tool.meleeDeathType(player.getMainHandItem());
-            if (DeathEffectRules.playsDeathEffect(deathType, debugAlwaysDeathEffect ? 1.0f : tool.meleeGoreChance(), entity.getRandom().nextFloat())) {
+            if (DeathEffectRules.playsDeathEffect(deathType, bleeds, debugAlwaysDeathEffect ? 1.0f : tool.meleeGoreChance(), entity.getRandom().nextFloat())) {
                 TGNetwork.sendEntityDeath(entity, deathType);
             }
         }

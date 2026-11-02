@@ -26,6 +26,7 @@ import techguns.entity.npc.TGNpcFaction;
 import techguns.gun.GunItem;
 import techguns.registry.TGGuns;
 import techguns.registry.TGNpcs;
+import techguns.registry.TGTags;
 
 /** NPCs (Phase 6a): spawn loadouts, armor stat, gun and melee attacks, factions, loot tables. */
 @GameTestHolder(Techguns.MODID)
@@ -54,6 +55,11 @@ public class TGNpcTests {
         helper.assertTrue(miner.getAttributeValue(Attributes.MAX_HEALTH) == 20.0, "Zombie miner: 20 health");
         helper.assertTrue(TGNpcs.ZOMBIE_SOLDIER.type().get().is(EntityTypeTags.UNDEAD), "Zombie soldiers are undead");
         helper.assertTrue(TGNpcs.ZOMBIE_PIGMAN_SOLDIER.type().get().fireImmune(), "Pigman soldiers are fire immune");
+        helper.assertFalse(TGNpcs.ATTACK_HELICOPTER.type().get().is(TGTags.EntityTypes.GORE), "The attack helicopter bleeds no gore");
+        helper.assertFalse(techguns.registry.TGEntities.TURRET.get().is(TGTags.EntityTypes.GORE), "Turrets bleed no gore");
+        helper.assertFalse(EntityType.IRON_GOLEM.is(TGTags.EntityTypes.GORE), "Iron golems bleed no gore");
+        helper.assertTrue(TGNpcs.ARMY_SOLDIER.type().get().is(TGTags.EntityTypes.GORE), "Soldiers are gored");
+        helper.assertTrue(EntityType.ZOMBIE.is(TGTags.EntityTypes.GORE) && EntityType.PLAYER.is(TGTags.EntityTypes.GORE), "Zombies and players are gored");
         helper.succeed();
     }
 

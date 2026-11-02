@@ -186,6 +186,12 @@ public final class TGConfig {
             .comment("Shows the Techguns HUD elements in the bottom right corner: safe mode, power armor power, jetpack fuel, "
                     + "night vision, step assist and worn-out armor. The ammo of held guns and the radiation are always shown.")
             .define("showHudElements", true);
+    public static final ModConfigSpec.BooleanValue DEATH_EFFECTS = CLIENT
+            .comment("Plays the death effects of Techguns kills: gore, bio and laser deaths. Pure client side check.")
+            .define("enableDeathEffects", true);
+    public static final ModConfigSpec.BooleanValue GORE_DEATH_EFFECT = CLIENT
+            .comment("Plays the gore death effect (blood and flying gibs). Needs enableDeathEffects. Pure client side check.")
+            .define("enableGoreDeathEffect", true);
 
     static final ModConfigSpec CLIENT_SPEC = CLIENT.build();
 

@@ -82,6 +82,10 @@ public class TGParticle3D extends TGParticle {
             modelMaxY = Math.max(modelMaxY, cube.maxY);
             modelMaxZ = Math.max(modelMaxZ, cube.maxZ);
         });
+        if (modelMinX > modelMaxX) {
+            // a part without cubes (Techguns 2 slime gibs: invisible, only their blood trail shows)
+            modelMinX = modelMinY = modelMinZ = modelMaxX = modelMaxY = modelMaxZ = 0f;
+        }
     }
 
     @Override
@@ -141,6 +145,8 @@ public class TGParticle3D extends TGParticle {
         TGMatrixOps.rotate(poseStack, renderYaw, 0f, 1f, 0f);
         TGMatrixOps.rotate(poseStack, renderRoll, 0f, 0f, 1f);
 
+        float scale = this.particleSystem.modelsScale;
+        poseStack.scale(scale, scale, scale);
         poseStack.translate(offsetX, offsetY, offsetZ);
 
         model.render(poseStack, vertexConsumer, this.modelLight, OverlayTexture.NO_OVERLAY);
