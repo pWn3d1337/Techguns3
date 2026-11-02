@@ -1,5 +1,7 @@
 package techguns.client.model.machine;
 
+import java.util.Set;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
@@ -8,6 +10,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.core.Direction;
 
 /**
  * Techguns 2 {@code ModelChemLab}: the lab bench, liquid filling the bottle, three glasses one after another and the
@@ -78,13 +81,15 @@ public final class ChemLabModel implements MachineModel {
         base.addOrReplaceChild("shape25", CubeListBuilder.create().texOffs(106, 0).addBox(0F, 0F, 0F, 1F, 2F, 1F), PartPose.offsetAndRotation(4.5F, 10F, 5F, 0F, 0F, 0F));
         base.addOrReplaceChild("shape26", CubeListBuilder.create().texOffs(1, 30).addBox(0F, 0F, 0F, 1F, 3F, 1F), PartPose.offsetAndRotation(1.5F, 18.5F, 1.5F, 0F, 0F, 0F));
         glass.addOrReplaceChild("g8", CubeListBuilder.create().texOffs(0, 55).addBox(0F, 0F, 0F, 4F, 2F, 4F), PartPose.offsetAndRotation(3F, 17F, 3.5F, 0F, 0F, 0F));
-        base.addOrReplaceChild("shape27", CubeListBuilder.create().texOffs(50, 41).addBox(0F, 0F, 0F, 10F, 10F, 0F), PartPose.offsetAndRotation(-8F, 12F, 7F, 0F, 0F, 0F));
+        // the glass cage is made of zero-thickness boxes whose two faces lie in one plane with different textures; drawn
+        // without culling they z-fight, so each keeps only its outward face (what Techguns 2 showed from outside)
+        base.addOrReplaceChild("shape27", CubeListBuilder.create().texOffs(50, 41).addBox(0F, 0F, 0F, 10F, 10F, 0F, Set.of(Direction.SOUTH)), PartPose.offsetAndRotation(-8F, 12F, 7F, 0F, 0F, 0F));
         base.addOrReplaceChild("shape28", CubeListBuilder.create().texOffs(0, 38).addBox(0F, 0F, 0F, 1F, 1F, 1F), PartPose.offsetAndRotation(6.5F, 21F, 3F, 0F, 0F, 0F));
         base.addOrReplaceChild("shape29", CubeListBuilder.create().texOffs(0, 38).addBox(0F, 0F, 0F, 1F, 1F, 1F), PartPose.offsetAndRotation(6.5F, 21F, 7F, 0F, 0F, 0F));
         base.addOrReplaceChild("shape30", CubeListBuilder.create().texOffs(0, 38).addBox(0F, 0F, 0F, 1F, 1F, 1F), PartPose.offsetAndRotation(2.5F, 21F, 7F, 0F, 0F, 0F));
-        base.addOrReplaceChild("shape31", CubeListBuilder.create().texOffs(50, 37).addBox(0F, 0F, 0F, 10F, 0F, 3F), PartPose.offsetAndRotation(-8F, 12F, 4F, 0F, 0F, 0F));
-        base.addOrReplaceChild("shape32", CubeListBuilder.create().texOffs(43, 37).addBox(0F, 0F, 0F, 0F, 10F, 3F), PartPose.offsetAndRotation(2F, 12F, 4F, 0F, 0F, 0F));
-        base.addOrReplaceChild("shape33", CubeListBuilder.create().texOffs(43, 37).addBox(0F, 0F, 0F, 0F, 10F, 3F), PartPose.offsetAndRotation(-8F, 12F, 4F, 0F, 0F, 0F));
+        base.addOrReplaceChild("shape31", CubeListBuilder.create().texOffs(50, 37).addBox(0F, 0F, 0F, 10F, 0F, 3F, Set.of(Direction.DOWN)), PartPose.offsetAndRotation(-8F, 12F, 4F, 0F, 0F, 0F));
+        base.addOrReplaceChild("shape32", CubeListBuilder.create().texOffs(43, 37).addBox(0F, 0F, 0F, 0F, 10F, 3F, Set.of(Direction.EAST)), PartPose.offsetAndRotation(2F, 12F, 4F, 0F, 0F, 0F));
+        base.addOrReplaceChild("shape33", CubeListBuilder.create().texOffs(43, 37).addBox(0F, 0F, 0F, 0F, 10F, 3F, Set.of(Direction.WEST)), PartPose.offsetAndRotation(-8F, 12F, 4F, 0F, 0F, 0F));
         glass.addOrReplaceChild("g5", CubeListBuilder.create().texOffs(8, 45).addBox(-0.5F, 0F, -0.5F, 1F, 1F, 1F), PartPose.offsetAndRotation(5F, 13F, 5.5F, 0F, 0.785398F, 0F));
         glass.addOrReplaceChild("g4", CubeListBuilder.create().texOffs(0, 44).addBox(-1F, 0F, -1F, 2F, 1F, 2F), PartPose.offsetAndRotation(5F, 12F, 5.5F, 0F, 0F, 0F));
         root.addOrReplaceChild("l3", CubeListBuilder.create().texOffs(123, 47).addBox(-0.5F, 0F, -0.5F, 1F, 1F, 1F), PartPose.offsetAndRotation(-6F, 19.5F, 5.5F, 0F, 0.785398F, 0F));
@@ -108,7 +113,7 @@ public final class ChemLabModel implements MachineModel {
         glass.addOrReplaceChild("g6", CubeListBuilder.create().texOffs(0, 47).addBox(-1F, 0F, -1F, 2F, 1F, 2F), PartPose.offsetAndRotation(5F, 14F, 5.5F, 0F, 0F, 0F));
         glass.addOrReplaceChild("g11", CubeListBuilder.create().texOffs(41, 22).addBox(0F, 0F, 0F, 4F, 9F, 4F), PartPose.offsetAndRotation(3F, 12F, -7F, 0F, 0F, 0F));
         root.addOrReplaceChild("l7", CubeListBuilder.create().texOffs(114, 22).addBox(0F, 0F, 0F, 3F, 1F, 3F), PartPose.offsetAndRotation(3.5F, 19.5F, -6.5F, 0F, 0F, 0F));
-        base.addOrReplaceChild("shape46", CubeListBuilder.create().texOffs(50, 41).addBox(0F, 0F, 0F, 10F, 10F, 0F), PartPose.offsetAndRotation(-8F, 12F, 4F, 0F, 0F, 0F));
+        base.addOrReplaceChild("shape46", CubeListBuilder.create().texOffs(50, 41).addBox(0F, 0F, 0F, 10F, 10F, 0F, Set.of(Direction.NORTH)), PartPose.offsetAndRotation(-8F, 12F, 4F, 0F, 0F, 0F));
         return LayerDefinition.create(mesh, 128, 64);
     }
 
