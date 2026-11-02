@@ -1,15 +1,17 @@
 package techguns.gun;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import techguns.item.AmmoBagData;
+import techguns.slot.TabSlots;
 
 /**
- * Finding, consuming and returning ammo in a player's inventory, including ammo stored in Ammo Bags
- * (design doc §4.4). Loose items are used first, then bags.
+ * Finding, consuming and returning ammo in a player's inventory, including ammo stored in Ammo Bags in the inventory and
+ * in the ammo box slots of the Techguns inventory tab (design doc §4.4). Loose items are used first, then bags.
  */
 public final class AmmoInventory {
     private AmmoInventory() {
@@ -56,19 +58,18 @@ public final class AmmoInventory {
     }
 
     /**
-     * Moves as much of {@code stack} as fits into the Ammo Bags in the player's inventory (non-ammo is ignored)
+     * Moves as much of {@code stack} as fits into the player's Ammo Bags (non-ammo is ignored)
      * and shrinks {@code stack} by that amount.
      *
      * @return the number of items inserted
      */
     public static int insertIntoBags(Player player, ItemStack stack) {
         int inserted = 0;
-        Inventory inventory = player.getInventory();
-        for (int i = 0; i < inventory.getContainerSize() && !stack.isEmpty(); i++) {
-            ItemStack bag = inventory.getItem(i);
-            if (AmmoBagData.isBag(bag)) {
-                inserted += AmmoBagData.insert(bag, stack);
+        for (ItemStack bag : bags(player)) {
+            if (stack.isEmpty()) {
+                break;
             }
+            inserted += AmmoBagData.insert(bag, stack);
         }
         return inserted;
     }
@@ -78,15 +79,11 @@ public final class AmmoInventory {
         return countLoose(player.getInventory(), wanted) + countInBags(player, wanted);
     }
 
-    /** Number of matching items stored in Ammo Bags in the player's inventory. */
+    /** Number of matching items stored in the player's Ammo Bags. */
     public static int countInBags(Player player, ItemStack wanted) {
         int count = 0;
-        Inventory inventory = player.getInventory();
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack bag = inventory.getItem(i);
-            if (AmmoBagData.isBag(bag)) {
-                count += AmmoBagData.count(bag, wanted);
-            }
+        for (ItemStack bag : bags(player)) {
+            count += AmmoBagData.count(bag, wanted);
         }
         return count;
     }
@@ -107,13 +104,31 @@ public final class AmmoInventory {
                 left -= taken;
             }
         }
-        for (int i = 0; i < inventory.getContainerSize() && left > 0; i++) {
-            ItemStack bag = inventory.getItem(i);
-            if (AmmoBagData.isBag(bag)) {
-                left -= AmmoBagData.remove(bag, wanted, left);
+        for (ItemStack bag : bags(player)) {
+            if (left <= 0) {
+                break;
             }
+            left -= AmmoBagData.remove(bag, wanted, left);
         }
         return amount - left;
+    }
+
+    /** The player's Ammo Bags: in the inventory, then in the inventory tab's ammo box slots (live stacks). */
+    private static List<ItemStack> bags(Player player) {
+        List<ItemStack> bags = new ArrayList<>();
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (AmmoBagData.isBag(stack)) {
+                bags.add(stack);
+            }
+        }
+        for (ItemStack stack : TabSlots.of(player).ammoBoxes()) {
+            if (AmmoBagData.isBag(stack)) {
+                bags.add(stack);
+            }
+        }
+        return bags;
     }
 
     private static int countLoose(Inventory inventory, ItemStack wanted) {

@@ -65,6 +65,7 @@ public class TechgunsClient {
         NeoForge.EVENT_BUS.addListener(techguns.client.gui.RadiationOverlay::onTooltip);
         modEventBus.addListener(ClientAmmoBagTooltip::register);
         modEventBus.addListener(ClientArmorTooltip::register);
+        modEventBus.addListener(techguns.client.gui.ArmorSumLine::register);
         modEventBus.addListener(ExtraSlotsScreen::register);
         modEventBus.addListener(techguns.client.gui.machine.TGMachineScreens::register);
         techguns.client.render.block.TGMachineRenderers.init(modEventBus);

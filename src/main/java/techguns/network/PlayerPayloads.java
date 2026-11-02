@@ -7,6 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import techguns.TGIds;
 import techguns.player.TGPlayerData;
@@ -80,7 +81,7 @@ public final class PlayerPayloads {
         }
     }
 
-    /** Client to server: open the fallback extra slot screen (only used when Curios is not installed). */
+    /** Client to server: open the Techguns inventory tab (gear and food slots). */
     public record OpenExtraSlots() implements CustomPacketPayload {
         public static final Type<OpenExtraSlots> TYPE = new Type<>(TGIds.id("open_extra_slots"));
         public static final StreamCodec<ByteBuf, OpenExtraSlots> STREAM_CODEC = StreamCodec.unit(new OpenExtraSlots());
@@ -98,6 +99,36 @@ public final class PlayerPayloads {
                 ByteBufCodecs.VAR_INT, SyncExtraSlots::entityId,
                 ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()), SyncExtraSlots::stacks,
                 SyncExtraSlots::new);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    /** Server to client: the player's own inventory tab slots (food, heal, ammo boxes), resent when they change. */
+    public record SyncTabSlots(List<ItemStack> stacks) implements CustomPacketPayload {
+        public static final Type<SyncTabSlots> TYPE = new Type<>(TGIds.id("sync_tab_slots"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, SyncTabSlots> STREAM_CODEC = StreamCodec.composite(
+                ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()), SyncTabSlots::stacks,
+                SyncTabSlots::new);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * Server to client: a recipe was clicked in the recipe book of the Techguns inventory tab, which has no crafting grid;
+     * the client switches to the vanilla inventory and asks to place it there.
+     */
+    public record PlaceRecipeInInventory(ResourceLocation recipe, boolean placeAll) implements CustomPacketPayload {
+        public static final Type<PlaceRecipeInInventory> TYPE = new Type<>(TGIds.id("place_recipe_in_inventory"));
+        public static final StreamCodec<ByteBuf, PlaceRecipeInInventory> STREAM_CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, PlaceRecipeInInventory::recipe,
+                ByteBufCodecs.BOOL, PlaceRecipeInInventory::placeAll,
+                PlaceRecipeInInventory::new);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {

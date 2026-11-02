@@ -9,9 +9,6 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodConstants;
-import net.minecraft.world.food.FoodData;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -21,15 +18,15 @@ import techguns.TGConfig;
 import techguns.item.AmmoBagData;
 import techguns.item.StorageBag;
 import techguns.registry.TGComponents;
+import techguns.slot.AutoFeeding;
 import techguns.slot.ExtraSlots;
 import techguns.slot.TGSlotItem;
 import techguns.slot.TGSlotType;
 
 /**
  * Auto-Feeder, the replacement of the Techguns 2 auto-feeder slots of the Techguns inventory tab: a bundle-like food
- * container ({@link StorageBag}) worn in the mouth slot. While worn, whenever the player is hungry (Techguns 2: food
- * level 19 or less) it feeds them the first stored food like eating it (effects, bowls, stats); what doesn't fit into
- * the food bar is kept on the Auto-Feeder and fed first next time, so nothing is wasted (Techguns 2 {@code foodleft}).
+ * container ({@link StorageBag}) worn in the mouth slot. While worn it feeds the hungry player its stored food like the
+ * food slots of the inventory tab do ({@link AutoFeeding}); the leftover food points are kept on the Auto-Feeder.
  * Config {@code autoFeeder}.
  */
 public class AutoFeederItem extends TGSlotItem implements StorageBag {
@@ -73,42 +70,32 @@ public class AutoFeederItem extends TGSlotItem implements StorageBag {
     }
 
     /**
-     * Techguns 2 auto-feeder ({@code TGTickHandler}): one step per tick while the player is hungry, the kept food points
-     * first, else the first stored food. Players without hunger (creative, spectator) aren't fed.
+     * One {@link AutoFeeding} step from the first stored food, the kept food points first.
      *
      * @return whether the player was fed
      */
     public static boolean feed(Player player, ItemStack feeder) {
-        FoodData food = player.getFoodData();
-        int needed = FoodConstants.MAX_FOOD - food.getFoodLevel();
-        if (needed <= 0 || player.getAbilities().invulnerable) {
-            return false;
-        }
-        int left = foodLeft(feeder);
-        if (left > 0) {
-            int points = Math.min(left, needed);
-            // the saturation came with the meal
-            food.eat(points, 0.0f);
-            setFoodLeft(feeder, left - points);
-            return true;
-        }
-        List<ItemStack> stored = AmmoBagData.contents(feeder).items();
-        if (stored.isEmpty()) {
-            return false;
-        }
-        ItemStack meal = stored.get(0).copyWithCount(1);
-        FoodProperties properties = meal.getFoodProperties(player);
-        if (properties == null || AmmoBagData.remove(feeder, meal, 1) <= 0) {
-            return false;
-        }
-        int before = food.getFoodLevel();
-        // eaten like by hand: nutrition, saturation, effects, item specials (honey, chorus fruit), stats and the burp
-        ItemStack rest = meal.finishUsingItem(player.level(), player);
-        setFoodLeft(feeder, before + properties.nutrition() - FoodConstants.MAX_FOOD);
-        if (!rest.isEmpty() && !player.getInventory().add(rest)) {
-            player.drop(rest, false);
-        }
-        return true;
+        return AutoFeeding.feed(player, new AutoFeeding.Source() {
+            @Override
+            public int foodLeft() {
+                return AutoFeederItem.foodLeft(feeder);
+            }
+
+            @Override
+            public void setFoodLeft(int points) {
+                AutoFeederItem.setFoodLeft(feeder, points);
+            }
+
+            @Override
+            public ItemStack takeMeal(Player player) {
+                List<ItemStack> stored = AmmoBagData.contents(feeder).items();
+                if (stored.isEmpty()) {
+                    return ItemStack.EMPTY;
+                }
+                ItemStack meal = stored.get(0).copyWithCount(1);
+                return meal.getFoodProperties(player) != null && AmmoBagData.remove(feeder, meal, 1) > 0 ? meal : ItemStack.EMPTY;
+            }
+        });
     }
 
     @Override

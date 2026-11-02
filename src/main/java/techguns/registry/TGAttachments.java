@@ -10,6 +10,7 @@ import techguns.Techguns;
 import techguns.gun.ShooterState;
 import techguns.player.TGPlayerData;
 import techguns.slot.FallbackSlots;
+import techguns.slot.TabSlots;
 
 /**
  * Techguns data attachments (player data, shooter values, radiation, ...). Access them through facades
@@ -30,6 +31,10 @@ public final class TGAttachments {
     /** Fallback extra slots (face/back/hand/mouth) when Curios is absent; synced by TGNetwork. */
     public static final Supplier<AttachmentType<FallbackSlots.Inventory>> EXTRA_SLOTS = ATTACHMENTS.register("extra_slots",
             () -> AttachmentType.builder(FallbackSlots.Inventory::new).serialize(FallbackSlots.Inventory.CODEC).copyOnDeath().build());
+
+    /** Item slots of the Techguns inventory tab (food, heal, ammo boxes) and the kept food points; saved, copied on death, synced by the tab's menu. */
+    public static final Supplier<AttachmentType<TabSlots.Inventory>> TAB_SLOTS = ATTACHMENTS.register("tab_slots",
+            () -> AttachmentType.builder(TabSlots.Inventory::new).serialize(TabSlots.Inventory.CODEC).copyOnDeath().build());
 
     /** Player radiation level ({@code PlayerRadiation}); saved, copied on death, synced by TGNetwork. */
     public static final Supplier<AttachmentType<Integer>> RADIATION = ATTACHMENTS.register("radiation",

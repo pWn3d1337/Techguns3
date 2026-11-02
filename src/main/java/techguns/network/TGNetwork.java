@@ -1,7 +1,10 @@
 package techguns.network;
 
+import java.util.List;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleMenuProvider;
@@ -20,6 +23,7 @@ import techguns.gun.GunClientEffects;
 import techguns.gun.GunItem;
 import techguns.player.TGPlayerData;
 import techguns.slot.ExtraSlots;
+import techguns.slot.TabSlots;
 import techguns.slot.FallbackSlots;
 import techguns.slot.TGSlotType;
 import techguns.slot.item.JetpackItem;
@@ -55,6 +59,9 @@ public final class TGNetwork {
         registrar.playToClient(PlayerPayloads.SyncPlayerData.TYPE, PlayerPayloads.SyncPlayerData.STREAM_CODEC, TGNetwork::handleSyncPlayerData);
         registrar.playToClient(PlayerPayloads.SyncExtraSlots.TYPE, PlayerPayloads.SyncExtraSlots.STREAM_CODEC, TGNetwork::handleSyncExtraSlots);
         registrar.playToClient(PlayerPayloads.SyncRadiation.TYPE, PlayerPayloads.SyncRadiation.STREAM_CODEC, TGNetwork::handleSyncRadiation);
+        registrar.playToClient(PlayerPayloads.SyncTabSlots.TYPE, PlayerPayloads.SyncTabSlots.STREAM_CODEC, TGNetwork::handleSyncTabSlots);
+        registrar.playToClient(PlayerPayloads.PlaceRecipeInInventory.TYPE, PlayerPayloads.PlaceRecipeInInventory.STREAM_CODEC,
+                TGNetwork::handlePlaceRecipeInInventory);
         registrar.playToClient(StatPayloads.SyncStatOverrides.TYPE, StatPayloads.SyncStatOverrides.STREAM_CODEC, TGNetwork::handleSyncStatOverrides);
         registrar.playToServer(DebugPayloads.TemplateAction.TYPE, DebugPayloads.TemplateAction.STREAM_CODEC, TGNetwork::handleTemplateAction);
     }
@@ -90,6 +97,16 @@ public final class TGNetwork {
         if (!player.level().isClientSide) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, extraSlotsPayload(player));
         }
+    }
+
+    /** Tells the client to place a recipe clicked in the inventory tab's recipe book in the vanilla inventory. */
+    public static void sendPlaceRecipeInInventory(ServerPlayer player, ResourceLocation recipe, boolean placeAll) {
+        PacketDistributor.sendToPlayer(player, new PlayerPayloads.PlaceRecipeInInventory(recipe, placeAll));
+    }
+
+    /** Sends the player's inventory tab slots to their own client (server side). */
+    public static void syncTabSlots(ServerPlayer player, List<ItemStack> stacks) {
+        PacketDistributor.sendToPlayer(player, new PlayerPayloads.SyncTabSlots(stacks));
     }
 
     /** Sends {@code tracked}'s fallback extra slots to {@code receiver} (start tracking). */
@@ -215,7 +232,7 @@ public final class TGNetwork {
     }
 
     private static void handleOpenExtraSlots(PlayerPayloads.OpenExtraSlots payload, IPayloadContext context) {
-        if (!ExtraSlots.usesCurios() && context.player() instanceof ServerPlayer player && !player.isSpectator()) {
+        if (context.player() instanceof ServerPlayer player && !player.isSpectator()) {
             player.openMenu(new SimpleMenuProvider((id, inventory, ply) -> new ExtraSlotsMenu(id, inventory),
                     Component.translatable("gui.techguns.extra_slots")));
         }
@@ -235,6 +252,17 @@ public final class TGNetwork {
         // on an integrated server these are the values the server already set
         StatOverrides.setGuns(payload.guns());
         StatOverrides.setArmor(payload.armor());
+    }
+
+    private static void handlePlaceRecipeInInventory(PlayerPayloads.PlaceRecipeInInventory payload, IPayloadContext context) {
+        techguns.client.gui.ExtraSlotsScreen.placeRecipeInInventory(payload.recipe(), payload.placeAll());
+    }
+
+    private static void handleSyncTabSlots(PlayerPayloads.SyncTabSlots payload, IPayloadContext context) {
+        TabSlots.Inventory inventory = TabSlots.of(context.player());
+        for (int i = 0; i < payload.stacks().size() && i < TabSlots.SIZE; i++) {
+            inventory.stacks().set(i, payload.stacks().get(i));
+        }
     }
 
     private static void handleSyncRadiation(PlayerPayloads.SyncRadiation payload, IPayloadContext context) {

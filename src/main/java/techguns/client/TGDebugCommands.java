@@ -334,6 +334,27 @@ public final class TGDebugCommands {
                             ctx.getSource().sendSystemMessage(Component.literal("Camera: " + options.getCameraType()));
                             return 1;
                         }))
+                .then(Commands.literal("inventory")
+                        .executes(ctx -> {
+                            // opens the survival inventory screen (E); MCP has no key input. After the chat screen closed.
+                            Minecraft mc = Minecraft.getInstance();
+                            mc.tell(() -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+                            return 1;
+                        }))
+                .then(Commands.literal("cursor")
+                        .executes(ctx -> {
+                            // the mouse position in GUI coordinates (relative to an open container screen), to spot cursor jumps
+                            Minecraft mc = Minecraft.getInstance();
+                            double scale = mc.getWindow().getGuiScale();
+                            double x = mc.mouseHandler.xpos() / scale;
+                            double y = mc.mouseHandler.ypos() / scale;
+                            if (mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> container) {
+                                x -= container.getGuiLeft();
+                                y -= container.getGuiTop();
+                            }
+                            ctx.getSource().sendSystemMessage(Component.literal(String.format("Cursor at %.1f, %.1f", x, y)));
+                            return 1;
+                        }))
                 .then(Commands.literal("alwaysdeath")
                         .executes(ctx -> {
                             // works in singleplayer: client and integrated server share the static

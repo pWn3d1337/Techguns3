@@ -20,11 +20,12 @@ import techguns.armor.TGArmorTooltip;
  */
 // MIGRATION(26.x): ClientTooltipComponent / GuiGraphics blit changed in 1.21.2+.
 public class ClientArmorTooltip implements ClientTooltipComponent {
-    private static final ResourceLocation ICONS = TGIds.id("textures/gui/armor_value_icons.png");
-    private static final int ICON = 13;
+    static final ResourceLocation ICONS = TGIds.id("textures/gui/armor_value_icons.png");
+    static final int ICON = 13;
     /** Smallest column width; wider values (shield percentages) widen all columns so the numbers don't overlap. */
     private static final int SPACING = 16;
-    private static final ChatFormatting[] COLORS = {ChatFormatting.WHITE, ChatFormatting.GRAY, ChatFormatting.AQUA, ChatFormatting.GOLD,
+    /** Value colours in icon order (also used by {@link ArmorSumLine}). */
+    static final ChatFormatting[] COLORS = {ChatFormatting.WHITE, ChatFormatting.GRAY, ChatFormatting.AQUA, ChatFormatting.GOLD,
             ChatFormatting.RED, ChatFormatting.BLUE, ChatFormatting.YELLOW, ChatFormatting.DARK_GREEN, ChatFormatting.DARK_GRAY,
             ChatFormatting.GREEN};
 

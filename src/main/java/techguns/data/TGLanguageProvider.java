@@ -591,6 +591,12 @@ public class TGLanguageProvider extends LanguageProvider {
         add("gui.techguns.extra_slots.button", "TG");
         add("gui.techguns.inventory", "<");
         add("gui.techguns.inventory.tooltip", "Back to inventory");
+        add("gui.techguns.radiation", "Current Radioactive Contamination");
+        add("gui.techguns.armor_total", "Total Armor Values");
+        add("gui.techguns.radiation.level", "%s/%s");
+        add("gui.techguns.radiation.effects", "Effects");
+        add("gui.techguns.radiation.effects.none", "None");
+        add("gui.techguns.radiation.damage", "Radiation damage");
         add("tooltip.techguns.slot.face", "Face");
         add("tooltip.techguns.slot.back", "Back");
         add("tooltip.techguns.slot.hand", "Hand");

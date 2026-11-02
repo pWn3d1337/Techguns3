@@ -35,6 +35,8 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.TOOLS_WRENCH).add(TGItems.CROWBAR.get());
         tag(ItemTags.SWORDS).add(TGItems.COMBAT_KNIFE.get());
         // everything an Ammo Bag accepts: all ammo items, full and empty
+        // filled once the healing items are defined
+        tag(TGTags.Items.HEAL_ITEMS);
         TGAmmo.flatAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
         TGAmmo.modelAmmo().forEach(item -> tag(TGTags.Items.AMMO).add(item.get()));
         // Fabricator slots (Techguns 2 FabricatorRecipe slot lists)

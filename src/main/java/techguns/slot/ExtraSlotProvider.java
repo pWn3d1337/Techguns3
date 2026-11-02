@@ -14,6 +14,11 @@ public interface ExtraSlotProvider {
     /** Puts a stack into the slot (server side); returns false if the provider has no such slot for the player. */
     boolean set(Player player, TGSlotType slot, ItemStack stack);
 
+    /** Whether the player has the slot (a Curios slot can be removed by datapacks); the fallback slots always exist. */
+    default boolean hasSlot(Player player, TGSlotType slot) {
+        return true;
+    }
+
     /** Tells clients about a change made through {@link #set} or to the live stack (the fallback slots need it). */
     default void markChanged(Player player) {
     }

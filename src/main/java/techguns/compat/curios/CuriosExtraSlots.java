@@ -43,6 +43,14 @@ public final class CuriosExtraSlots implements ExtraSlotProvider {
                 .orElse(false);
     }
 
+    @Override
+    public boolean hasSlot(Player player, TGSlotType slot) {
+        return CuriosApi.getCuriosInventory(player)
+                .flatMap(handler -> handler.getStacksHandler(slot.curiosId()))
+                .map(stacks -> stacks.getSlots() > 0)
+                .orElse(false);
+    }
+
     /** The slot's render toggle (the eye button of the Curios screen), synced by Curios to everybody tracking the player. */
     @Override
     public boolean isRendered(Player player, TGSlotType slot) {

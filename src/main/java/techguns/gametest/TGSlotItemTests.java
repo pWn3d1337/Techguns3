@@ -28,6 +28,9 @@ import techguns.registry.TGAmmo;
 import techguns.registry.TGAttributes;
 import techguns.registry.TGSlotItems;
 import techguns.slot.ExtraSlots;
+import techguns.slot.TabSlots;
+import techguns.gun.AmmoInventory;
+import techguns.slot.menu.ExtraSlotsMenu;
 import techguns.slot.TGSlotItem;
 import techguns.slot.TGSlotType;
 
@@ -276,6 +279,104 @@ public class TGSlotItemTests {
         AutoFeederItem.feed(player, feeder);
         helper.assertTrue(player.getFoodData().getFoodLevel() == 11, "Stew (6) eaten");
         helper.assertTrue(player.getInventory().countItem(Items.BOWL) == 1, "The bowl is back in the inventory");
+        helper.succeed();
+    }
+
+    /**
+     * Techguns 2 auto-feed slots of the inventory tab: the first food in slot order is eaten when hungry, the leftover
+     * points are kept and fed first, bowls come back, config off feeds nothing.
+     */
+    @GameTest(template = ARENA)
+    public static void foodSlotsFeedHungryPlayer(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        TabSlots.Inventory food = TabSlots.of(player);
+        food.stacks().set(1, new ItemStack(Items.COOKED_BEEF, 2));
+        food.stacks().set(2, new ItemStack(Items.MUSHROOM_STEW));
+        player.getFoodData().setFoodLevel(10);
+        tick(player);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 18 && food.stacks().get(1).getCount() == 1, "A steak (8) eaten at 10");
+        tick(player);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 20 && food.stacks().get(1).isEmpty(), "The second steak fills the bar");
+        helper.assertTrue(food.foodLeft() == 6, "6 points kept, kept " + food.foodLeft());
+        tick(player);
+        helper.assertTrue(food.foodLeft() == 6, "A full player isn't fed");
+        player.getFoodData().setFoodLevel(16);
+        tick(player);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 20 && food.foodLeft() == 2, "The kept points are fed first");
+        food.setFoodLeft(0);
+        player.getFoodData().setFoodLevel(5);
+        tick(player);
+        helper.assertTrue(player.getFoodData().getFoodLevel() == 11 && player.getInventory().countItem(Items.BOWL) == 1,
+                "Stew eaten, the bowl is back");
+
+        food.stacks().set(0, new ItemStack(Items.BREAD));
+        player.getFoodData().setFoodLevel(10);
+        boolean before = TGConfig.AUTO_FEEDER.get();
+        TGConfig.AUTO_FEEDER.set(false);
+        try {
+            tick(player);
+            helper.assertTrue(player.getFoodData().getFoodLevel() == 10, "Auto-feeder off: nothing eaten");
+        } finally {
+            TGConfig.AUTO_FEEDER.set(before);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * The inventory tab's gear slots read and write the active slot provider (with Curios its slots), so the tab and the
+     * Curios screen show the same items; the tab slots take only their items (food, heal items, ammo boxes) and
+     * shift-click sorts gear, armor, food and ammo boxes into their slots.
+     */
+    @GameTest(template = ARENA)
+    public static void inventoryTabMirrorsExtraSlots(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ExtraSlotsMenu menu = new ExtraSlotsMenu(1, player.getInventory());
+        int face = ExtraSlotsMenu.GEAR.indexOf(TGSlotType.FACE);
+        ItemStack mask = new ItemStack(TGSlotItems.GAS_MASK.get());
+        helper.assertTrue(equip(player, mask), "Gas mask equipped through the provider");
+        helper.assertTrue(menu.getSlot(face).getItem().getItem() == TGSlotItems.GAS_MASK.get(), "The tab shows the provider's mask");
+
+        ItemStack taken = menu.getSlot(face).remove(1);
+        helper.assertTrue(taken.getItem() == TGSlotItems.GAS_MASK.get() && ExtraSlots.get(player, TGSlotType.FACE).isEmpty(),
+                "Taking it out of the tab empties the provider's slot");
+
+        int food = ExtraSlotsMenu.TAB_START + TabSlots.FOOD_START;
+        int heal = ExtraSlotsMenu.TAB_START + TabSlots.HEAL;
+        int ammo = ExtraSlotsMenu.TAB_START + TabSlots.AMMO_START;
+        helper.assertTrue(!menu.getSlot(food).mayPlace(new ItemStack(Items.IRON_INGOT)), "No iron in a food slot");
+        helper.assertTrue(!menu.getSlot(heal).mayPlace(new ItemStack(Items.BREAD)), "No bread in the heal slot");
+        helper.assertTrue(!menu.getSlot(ammo).mayPlace(new ItemStack(Items.BREAD)), "No bread in an ammo box slot");
+        helper.assertTrue(menu.getSlot(ammo).mayPlace(new ItemStack(TGItems.AMMO_BOX.get())), "Ammo boxes go into the ammo box slots");
+        helper.assertTrue(!menu.getSlot(face).mayPlace(new ItemStack(Items.BREAD)), "No bread in the face slot");
+
+        int inventory = ExtraSlotsMenu.INV_START;
+        menu.getSlot(inventory).set(new ItemStack(Items.BREAD, 5));
+        menu.getSlot(inventory + 1).set(new ItemStack(TGSlotItems.GAS_MASK.get()));
+        menu.getSlot(inventory + 2).set(new ItemStack(Items.IRON_HELMET));
+        menu.getSlot(inventory + 3).set(new ItemStack(TGItems.AMMO_BOX.get()));
+        for (int i = 0; i < 4; i++) {
+            menu.quickMoveStack(player, inventory + i);
+        }
+        helper.assertTrue(TabSlots.of(player).stacks().get(TabSlots.FOOD_START).getCount() == 5, "Shift-click puts bread into the food slots");
+        helper.assertTrue(ExtraSlots.get(player, TGSlotType.FACE).getItem() == TGSlotItems.GAS_MASK.get(), "Shift-click equips the mask");
+        helper.assertTrue(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).is(Items.IRON_HELMET), "Shift-click puts on the helmet");
+        helper.assertTrue(TabSlots.of(player).ammoBoxes().get(0).is(TGItems.AMMO_BOX.get()), "Shift-click puts the ammo box into its slot");
+        helper.succeed();
+    }
+
+    /** Ammo in an ammo box in the inventory tab counts and is used like ammo in a box in the inventory. */
+    @GameTest(template = ARENA)
+    public static void tabAmmoBoxesFeedReloads(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack box = new ItemStack(TGItems.AMMO_BOX.get());
+        ItemStack magazine = new ItemStack(TGAmmo.PISTOL_MAGAZINE.get());
+        AmmoBagData.insert(box, magazine.copyWithCount(2));
+        TabSlots.of(player).stacks().set(TabSlots.AMMO_START + 1, box);
+        helper.assertTrue(AmmoInventory.count(player, magazine) == 2, "Magazines in the tab's ammo box count");
+        helper.assertTrue(AmmoInventory.consume(player, java.util.List.of(magazine)), "A magazine is taken from the tab's ammo box");
+        helper.assertTrue(AmmoBagData.count(box, magazine) == 1, "One magazine left in the box");
+        AmmoInventory.give(player, magazine.copy());
+        helper.assertTrue(AmmoBagData.count(box, magazine) == 2, "Returned ammo goes back into the tab's ammo box");
         helper.succeed();
     }
 

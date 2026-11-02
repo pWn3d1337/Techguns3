@@ -127,14 +127,22 @@ public final class TGDamageEvents {
 
     private static float damageAfterTGArmor(LivingEntity target, DamageContainer container, float damage) {
         TGDamageCategory category = TGDamage.categoryOf(container.getSource());
-        float armor = target instanceof TGArmorProvider provider ? provider.tgArmorAgainst(category)
-                : TGArmorFormula.armorAgainst(category, target.getArmorValue(), bonusArmor(target, category), target.fireImmune());
+        float armor = armorAgainst(target, category);
         float toughness = (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
         float penetration = TGDamage.penetrationOf(container.getSource());
         if (target instanceof TGArmorProvider provider) {
             penetration = Math.max(penetration - provider.tgPenetrationResistance(category), 0.0f);
         }
         return TGArmorFormula.damageAfterArmor(damage, armor, toughness, penetration);
+    }
+
+    /**
+     * The target's total armor against a damage category: worn armor scaled for the category plus the bonus armor
+     * (Techguns 2 {@code DamageSystem.getTotalArmorAgainstType}); NPCs with their own armor values give those.
+     */
+    public static float armorAgainst(LivingEntity target, TGDamageCategory category) {
+        return target instanceof TGArmorProvider provider ? provider.tgArmorAgainst(category)
+                : TGArmorFormula.armorAgainst(category, target.getArmorValue(), bonusArmor(target, category), target.fireImmune());
     }
 
     private static float bonusArmor(LivingEntity target, TGDamageCategory category) {

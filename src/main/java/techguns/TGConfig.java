@@ -41,8 +41,9 @@ public final class TGConfig {
             .defineInRange("damageFactorNPC", 1.0, 0.0, 100.0);
 
     public static final ModConfigSpec.BooleanValue AUTO_FEEDER = COMMON
-            .comment("An Auto-Feeder worn in the mouth slot feeds its food to the player when they are hungry (the Techguns 2 auto-feeder; "
-                    + "Techguns 2 config disableAutofeeder). Switch it off if you think it breaks the balance.")
+            .comment("The food slots of the Techguns inventory tab and an Auto-Feeder worn in the mouth slot feed their food to the player "
+                    + "when they are hungry (the Techguns 2 auto-feeder; Techguns 2 config disableAutofeeder). Switch it off if you think "
+                    + "it breaks the balance.")
             .define("autoFeeder", true);
 
     public static final ModConfigSpec.BooleanValue ALLOW_UNSAFE_MODE = COMMON
@@ -196,6 +197,10 @@ public final class TGConfig {
     public static final ModConfigSpec.BooleanValue GORE_DEATH_EFFECT = CLIENT
             .comment("Plays the gore death effect (blood and flying gibs). Needs enableDeathEffects. Pure client side check.")
             .define("enableGoreDeathEffect", true);
+    public static final ModConfigSpec.BooleanValue INVENTORY_TAB_WITH_CURIOS = CLIENT
+            .comment("Shows the button of the Techguns inventory tab on the inventory screen when Curios is installed too. The tab's "
+                    + "gear slots show the same items as the Curios slots. Without Curios the button is always shown.")
+            .define("inventoryTabWithCurios", true);
 
     static final ModConfigSpec CLIENT_SPEC = CLIENT.build();
 

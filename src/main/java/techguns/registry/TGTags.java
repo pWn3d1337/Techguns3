@@ -75,6 +75,8 @@ public final class TGTags {
 
         /** Items that Ammo Bags accept: all ammo items, full and empty (magazines, cells, tanks, rounds, rockets). */
         public static final TagKey<Item> AMMO = TagKey.create(Registries.ITEM, TGIds.id("ammo"));
+        /** Items the heal slot of the Techguns inventory tab takes (Techguns 2 heal slot); empty until healing items are defined. */
+        public static final TagKey<Item> HEAL_ITEMS = TagKey.create(Registries.ITEM, TGIds.id("heal_items"));
         /** Fabricator slots (Techguns 2 {@code FabricatorRecipe.items_wireslot/powderslot/plateslot}). */
         public static final TagKey<Item> FABRICATOR_WIRES = TagKey.create(Registries.ITEM, TGIds.id("fabricator_wires"));
         public static final TagKey<Item> FABRICATOR_POWDERS = TagKey.create(Registries.ITEM, TGIds.id("fabricator_powders"));

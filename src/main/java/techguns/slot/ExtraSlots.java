@@ -32,6 +32,10 @@ public final class ExtraSlots {
         return provider.set(player, slot, stack);
     }
 
+    public static boolean hasSlot(Player player, TGSlotType slot) {
+        return provider.hasSlot(player, slot);
+    }
+
     public static void markChanged(Player player) {
         provider.markChanged(player);
     }

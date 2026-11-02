@@ -20,6 +20,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import techguns.TGConfig;
 import techguns.TGIds;
 import techguns.network.TGNetwork;
 import techguns.player.TGPlayerData;
@@ -28,7 +29,8 @@ import techguns.registry.TGAttributes;
 /**
  * Extra slot upkeep: every tick the worn gear's bonuses become transient attribute modifiers (one id per slot and
  * attribute, removed when the gear is gone or empty) and the gear ticks. Also night vision and flying speed from the
- * bonus attributes (Techguns 2 {@code TGTickHandler}), and the fallback slots' sync and death drops.
+ * bonus attributes (Techguns 2 {@code TGTickHandler}), auto-feeding from the inventory tab's food slots, and the fallback slots' sync and
+ * the death drops.
  */
 public final class ExtraSlotEvents {
     /** Techguns 2 default flying speed. */
@@ -51,7 +53,10 @@ public final class ExtraSlotEvents {
         gameBus.addListener(ExtraSlotEvents::onDrops);
         gameBus.addListener((PlayerEvent.PlayerLoggedInEvent event) -> ExtraSlots.markChanged(event.getEntity()));
         gameBus.addListener((PlayerEvent.PlayerRespawnEvent event) -> ExtraSlots.markChanged(event.getEntity()));
-        gameBus.addListener((PlayerEvent.PlayerChangedDimensionEvent event) -> ExtraSlots.markChanged(event.getEntity()));
+        gameBus.addListener((PlayerEvent.PlayerChangedDimensionEvent event) -> {
+            ExtraSlots.markChanged(event.getEntity());
+            TabSlots.forgetSent(event.getEntity());
+        });
         gameBus.addListener((PlayerEvent.StartTracking event) -> {
             if (!ExtraSlots.usesCurios() && event.getTarget() instanceof Player tracked && event.getEntity() instanceof ServerPlayer receiver) {
                 TGNetwork.syncExtraSlotsTo(tracked, receiver);
@@ -95,6 +100,12 @@ public final class ExtraSlotEvents {
 
         nightVision(player);
         flySpeed(player);
+        if (!player.level().isClientSide) {
+            if (TGConfig.AUTO_FEEDER.get()) {
+                TabSlots.feed(player);
+            }
+            TabSlots.syncIfChanged(player);
+        }
     }
 
     /**
@@ -123,22 +134,38 @@ public final class ExtraSlotEvents {
         }
     }
 
-    /** Fallback slots drop with the inventory on death (kept with keepInventory). */
+    /**
+     * Fallback slots and inventory tab slots drop with the inventory on death (kept with keepInventory); the kept food points are
+     * lost (Techguns 2).
+     */
     private static void onDrops(LivingDropsEvent event) {
-        if (ExtraSlots.usesCurios() || !(event.getEntity() instanceof Player player)
-                || player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        FallbackSlots.Inventory inventory = FallbackSlots.inventory(player);
-        for (TGSlotType slot : TGSlotType.values()) {
-            ItemStack stack = inventory.get(slot);
-            if (!stack.isEmpty()) {
-                ItemEntity drop = new ItemEntity(player.level(), player.getX(), player.getEyeY() - 0.3, player.getZ(), stack);
-                drop.setDefaultPickUpDelay();
-                event.getDrops().add(drop);
+        TabSlots.Inventory tab = TabSlots.of(player);
+        tab.setFoodLeft(0);
+        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+            return;
+        }
+        for (int i = 0; i < TabSlots.SIZE; i++) {
+            drop(event, player, tab.stacks().get(i));
+            tab.stacks().set(i, ItemStack.EMPTY);
+        }
+        if (!ExtraSlots.usesCurios()) {
+            FallbackSlots.Inventory inventory = FallbackSlots.inventory(player);
+            for (TGSlotType slot : TGSlotType.values()) {
+                drop(event, player, inventory.get(slot));
                 inventory.set(slot, ItemStack.EMPTY);
             }
+            ExtraSlots.markChanged(player);
         }
-        ExtraSlots.markChanged(player);
+    }
+
+    private static void drop(LivingDropsEvent event, Player player, ItemStack stack) {
+        if (!stack.isEmpty()) {
+            ItemEntity drop = new ItemEntity(player.level(), player.getX(), player.getEyeY() - 0.3, player.getZ(), stack);
+            drop.setDefaultPickUpDelay();
+            event.getDrops().add(drop);
+        }
     }
 }
