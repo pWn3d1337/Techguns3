@@ -88,4 +88,31 @@ public class TGWorldgenTests {
         }
         return count;
     }
+    /**
+     * Superflat worlds that list structures also get the Techguns sets; presets without structures and the GameTest
+     * world (itself a default flat world) keep theirs.
+     */
+    @GameTest(template = ARENA)
+    public static void flatWorldsGetTechgunsStructures(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        var sets = level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET);
+        var flat = (net.minecraft.world.level.levelgen.FlatLevelSource) level.getChunkSource().getGenerator();
+        var overrides = flat.settings().structureOverrides();
+        helper.assertTrue(overrides.isPresent() && overrides.get().stream().anyMatch(set -> set.is(net.minecraft.world.level.levelgen.structure.BuiltinStructureSets.VILLAGES)),
+                "The GameTest world is a default flat world with villages");
+
+        var withTechguns = techguns.world.structure.FlatWorldStructures.withTechgunsSets(overrides, sets).orElseThrow();
+        for (String name : java.util.List.of("overworld_small", "overworld_medium", "overworld_big")) {
+            helper.assertTrue(withTechguns.stream().anyMatch(set -> set.is(techguns.TGIds.id(name))), "A default flat world gets techguns:" + name);
+        }
+        helper.assertTrue(withTechguns.stream().anyMatch(set -> set.is(net.minecraft.world.level.levelgen.structure.BuiltinStructureSets.VILLAGES)),
+                "The preset's own structures stay");
+        helper.assertTrue(techguns.world.structure.FlatWorldStructures.withTechgunsSets(java.util.Optional.of(net.minecraft.core.HolderSet.direct()), sets).isEmpty(),
+                "A preset without structures (The Void) gets none");
+        helper.assertTrue(techguns.world.structure.FlatWorldStructures.withTechgunsSets(java.util.Optional.empty(), sets).isEmpty(),
+                "Without overrides the world already places every set");
+        helper.assertTrue(level.getChunkSource().getGeneratorState().possibleStructureSets().stream()
+                .noneMatch(set -> set.unwrapKey().orElseThrow().location().getNamespace().equals(Techguns.MODID)), "The GameTest world stays without them");
+        helper.succeed();
+    }
 }

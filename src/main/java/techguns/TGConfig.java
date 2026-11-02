@@ -150,6 +150,10 @@ public final class TGConfig {
             .comment("Generate uranium ore; disable if another mod already adds it and you want only one kind.").define("oreGenUranium", true);
     public static final ModConfigSpec.BooleanValue SPAWN_ORE_CLUSTER_STRUCTURES = COMMON
             .comment("Generate the structures that contain ore clusters (ore spike, meteor, Nether ore clusters).").define("spawnOreClusterStructures", true);
+    // Techguns 2 generated its structures in every world type
+    public static final ModConfigSpec.BooleanValue FLAT_WORLD_STRUCTURES = COMMON
+            .comment("Generate Techguns structures in superflat worlds whose preset has structures (like the default, with villages). "
+                    + "Presets without structures (The Void, Redstone Ready) never get them.").define("flatWorldStructures", true);
     // Techguns 2 used Chisel blocks in its structures when Chisel was installed
     public static final ModConfigSpec.BooleanValue DECOR_MOD_BLOCKS = COMMON
             .comment("Build structures from the blocks of Factory Blocks, Chisel Reborn and Laboratory Blocks where those mods are installed "
