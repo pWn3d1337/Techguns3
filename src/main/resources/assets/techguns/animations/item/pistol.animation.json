@@ -1,0 +1,27 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"fire": {
+			"animation_length": 1.0,
+			"bones": {
+				"slide": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.25": {"pre": [0, 0, 2.4], "post": [0, 0, 0]}
+					}
+				}
+			}
+		},
+		"fire_last": {
+			"animation_length": 1.0,
+			"bones": {
+				"slide": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.25": [0, 0, 2.4]
+					}
+				}
+			}
+		}
+	}
+}

@@ -205,6 +205,108 @@
               "mirror": true
             }
           ]
+        },
+        {
+          "name": "slide",
+          "parent": "root",
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "IS2",
+          "parent": "slide",
+          "pivot": [
+            -1.0,
+            0.5333,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -0.4667,
+                -0.5
+              ],
+              "size": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                21
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "IS1",
+          "parent": "slide",
+          "pivot": [
+            -1.0,
+            0.5,
+            9.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.0,
+                -0.5,
+                9.5
+              ],
+              "size": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "uv": [
+                0,
+                24
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "slide_body",
+          "parent": "slide",
+          "pivot": [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.0,
+                -2.0,
+                -2.0
+              ],
+              "size": [
+                3.0,
+                2.0,
+                14.0
+              ],
+              "uv": [
+                0,
+                0
+              ],
+              "mirror": true
+            }
+          ]
+        },
+        {
+          "name": "muzzle",
+          "parent": "root",
+          "pivot": [
+            -0.5,
+            -0.957,
+            -3.0
+          ]
         }
       ]
     }

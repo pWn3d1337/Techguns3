@@ -139,7 +139,7 @@ public final class TGItemRendererSetup {
                         {0f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(-0.38f, -0.78f).setRecoilAnim(GunAnimation.genericRecoil, 0.05f, 3.0f));
 
-        TGItemRenderers.register(TGGuns.PISTOL, new RenderGunBase(new GeoGunModel(new ModelPistol(), "pistol", "pistol_1"), 2, TGIds.id("textures/guns/pistol3.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.3f, -0.4f)
+        TGItemRenderers.register(TGGuns.PISTOL, new RenderGunBase(new GeoGunModel(new ModelPistol(), "pistol"), 2, TGIds.id("textures/guns/pistol3.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.3f, -0.4f)
                 .setBaseScale(1.2f).setGUIScale(0.9f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0.03f, 0.2f, -0.5f, 0.55f, -0.03f).setTransformTranslations(new float[][]{
                         {0, 0.09f, -0.02f}, // First Person
                         {0.0f, -0.03f, 0.0f}, // Third Person

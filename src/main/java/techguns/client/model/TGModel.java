@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
+import org.joml.Matrix4f;
 
 /**
  * Base class of Techguns 2 style multi-part item models (guns, magazines, rockets).
@@ -81,6 +82,15 @@ public abstract class TGModel extends Model {
     public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress, float chargeProgress,
                                 ItemDisplayContext context) {
         this.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
+    }
+
+    /**
+     * Pose of marker bone {@code name} ({@link TGGeoBridge#isMarker}) in the last draw, in the pose stack's root space;
+     * null if the model has no such bone (Java models have none).
+     */
+    @Nullable
+    public Matrix4f marker(String name) {
+        return null;
     }
 
     /** Java model of render part {@code part} (> 0) when it is a separate nested model; this model otherwise. */

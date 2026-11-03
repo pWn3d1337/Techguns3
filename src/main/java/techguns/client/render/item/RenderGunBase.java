@@ -4,12 +4,17 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Optional;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGModel;
 import techguns.client.render.CamoTextures;
 import techguns.client.render.TGMatrixOps;
@@ -389,12 +394,27 @@ public class RenderGunBase extends RenderItemBase {
         TGMatrixOps.rotate(poseStack, -90.0f, 0, 1.0f, 0);
     }
 
+    /**
+     * Position of the model's marker bone {@code name} (from the draw just done) relative to the current pose; null if
+     * the model has no such bone.
+     */
+    @Nullable
+    protected Vector3f markerOffset(PoseStack poseStack, String name) {
+        Matrix4f marker = this.model.marker(name);
+        if (marker == null) {
+            return null;
+        }
+        return new Matrix4f(poseStack.last().pose()).invert().transformPosition(marker.getTranslation(new Vector3f()));
+    }
+
+    /** At the model's {@code muzzle} bone if it has one, else at the configured offsets. */
     protected void drawMuzzleFx(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
         if (this.muzzleEffect != null && this.muzzleEffect.screenEffect != null) {
             float scale = this.muzzleEffect.effectScale;
-            float offsetX = leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
-            float offsetY = this.muzzleEffect.offsetY;
-            float offsetZ = this.muzzleEffect.offsetZ;
+            Vector3f muzzle = markerOffset(poseStack, TGGeoBridge.MUZZLE);
+            float offsetX = muzzle != null ? muzzle.x : leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
+            float offsetY = muzzle != null ? muzzle.y : this.muzzleEffect.offsetY;
+            float offsetZ = muzzle != null ? muzzle.z : this.muzzleEffect.offsetZ;
 
             if (this.muzzleEffect.jitterScale > 0.0f) scale += muzzleEffect.jitterScale * jitterScale;
             if (this.muzzleEffect.jitterX > 0.0f) offsetX += muzzleEffect.jitterX * jitterX;
@@ -406,7 +426,9 @@ public class RenderGunBase extends RenderItemBase {
 
     protected void drawMuzzleFx3P(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
         if (this.muzzleEffect != null && this.muzzleEffect.screenEffect != null) {
-            this.muzzleEffect.screenEffect.doRender(poseStack, buffers, progress, 0, this.muzzleEffect.offsetY_3p, this.muzzleEffect.offsetZ_3p,
+            Vector3f muzzle = markerOffset(poseStack, TGGeoBridge.MUZZLE);
+            this.muzzleEffect.screenEffect.doRender(poseStack, buffers, progress, muzzle != null ? muzzle.x : 0,
+                    muzzle != null ? muzzle.y : this.muzzleEffect.offsetY_3p, muzzle != null ? muzzle.z : this.muzzleEffect.offsetZ_3p,
                     this.muzzleEffect.effectScale * this.muzzleEffect.effectScale_3p, true, ammoVariant);
         }
     }

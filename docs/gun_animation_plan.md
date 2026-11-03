@@ -174,6 +174,17 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
    - Keep `TGGeoExporter` until the last gun is converted.
    - Update design doc §9.1, `port_status.md` and `migration_26.md` (GeckoLib 5 render-state rewrite of the bridge).
 
+## Progress
+- **2026-11-03, phase 1 core + pistol:**
+  - `GunAnimationSampler` replaces GeckoLib's controllers. `GeckoLibGunRenderer` overrides `GeoModel#handleAnimations`: every bone is reset to its rest pose, then `aim`, `reload`, `fire`/`fire_last` and `charge` are sampled from `GeoAnimInput` (timer progress) and added, then the code bones are applied. One animatable per gun model; the keyed per-holder states are gone.
+  - Marker bones (`muzzle*`, `charge*`, `idle_fx*`) are captured in `renderCubesOfBone` at their pivot. `RenderGunBase` draws the muzzle flash there when the model has a `muzzle` bone (first and third person), else at the old offsets.
+  - **Pistol:** `pistol_1.geo.json` is merged into `pistol.geo.json` (`slide` group bone, `muzzle` marker). `pistol.animation.json` has `fire` and `fire_last`; the slide stays back while the gun is empty.
+    - The slide travel is 2.4 px as in Techguns 2: the Fabric port's `* scale` had shrunk it to 0.15 px.
+    - A geo gun listing fewer geo ids than render parts no longer draws the rest; the Java fallback still has the separate part.
+  - **M4:** the M4 `reload` now lasts exactly the reload time; before, it played at its authored 2.25 s.
+  - Verified in game: first person, third person, flash at the barrel tip, slide lock, M4 reload.
+- **Next:** hold positions from the item model `display` block, the `aim` animation, `common.animation.json`, Molang queries, the `muzzle_follows_animation` flag (needs recoil on `root` first), sound and instruction keyframes.
+
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.
 - **Resource check:** a client reload listener logs every gun whose display JSON names a missing geo, animation or texture, or whose model lacks a `muzzle` bone while it has a muzzle effect. This runs in the dev client and is checked once per batch.
