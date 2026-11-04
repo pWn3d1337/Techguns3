@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGGeoExporter;
+import techguns.client.render.item.GunRenderState;
 import techguns.client.model.gun.ModelSawedOff;
 import techguns.client.model.gun.ModelChainsaw;
 import techguns.client.model.gun.ModelGrapplingHook;
@@ -139,6 +141,24 @@ public final class TGDebugCommands {
                             ctx.getSource().sendSystemMessage(Component.literal("Geo models: " + TGGeoBridge.enabled()));
                             return 1;
                         }))
+                .then(Commands.literal("pose")
+                        .then(Commands.literal("off").executes(ctx -> {
+                            GunRenderState.debugPose = null;
+                            ctx.getSource().sendSystemMessage(Component.literal("Gun pose: live"));
+                            return 1;
+                        }))
+                        .then(Commands.argument("timer", StringArgumentType.word())
+                                .suggests((ctx, builder) -> net.minecraft.commands.SharedSuggestionProvider.suggest(List.of("fire", "reload", "zoom"), builder))
+                                .then(Commands.argument("progress", FloatArgumentType.floatArg(0f, 1f))
+                                        .executes(ctx -> {
+                                            // freezes the held gun's timers, to compare the code and the model-file motion (/tgdebug geo)
+                                            String timer = StringArgumentType.getString(ctx, "timer");
+                                            float progress = FloatArgumentType.getFloat(ctx, "progress");
+                                            GunRenderState.debugPose = new float[]{timer.equals("fire") ? progress : 0f,
+                                                    timer.equals("reload") ? progress : 0f, timer.equals("zoom") ? progress : 0f};
+                                            ctx.getSource().sendSystemMessage(Component.literal("Gun pose: " + timer + " " + progress));
+                                            return 1;
+                                        }))))
                 .then(Commands.literal("reloadanim")
                         .then(Commands.argument("ticks", IntegerArgumentType.integer(1, 1200))
                                 .executes(ctx -> {

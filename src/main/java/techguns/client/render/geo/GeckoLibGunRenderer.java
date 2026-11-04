@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -46,6 +48,8 @@ import techguns.client.model.TGGeoExporter;
 // MIGRATION(26.x): GeckoLib 5 moves to render states; GeoObjectRenderer/GeoModel signatures change.
 public final class GeckoLibGunRenderer implements TGGeoBridge {
     private static final int FULL_BRIGHT = 0xF000F0;
+
+    private static final String ROOT = "root";
 
     private final Map<String, GunRenderer> renderers = new HashMap<>();
 
@@ -105,6 +109,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         final ResourceLocation model;
         final ResourceLocation animation;
         private final Map<String, GunAnimationSampler.BonePose> poses = new HashMap<>();
+        /** Only the aim layer: the pose of the marker bones at rest ({@link TGGeoBridge#REST}). */
+        final Map<String, GunAnimationSampler.BonePose> aimPoses = new HashMap<>();
 
         GunModel(String id) {
             this.model = TGIds.id("geo/item/" + id + ".geo.json");
@@ -129,22 +135,31 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
 
         /**
          * Poses every bone from scratch for this draw instead of GeckoLib's controller processing: rest pose, plus the
-         * sampled animations (aim, reload, fire, charge), then the code-driven bone changes.
+         * sampled animations (aim, reload and its whole-gun motion, fire and recoil, charge), then the code-driven bone
+         * changes.
          */
         @Override
         public void handleAnimations(GunAnimatable animatable, long instanceId, AnimationState<GunAnimatable> animationState,
                                      float partialTick) {
             GeoAnimInput anim = animatable.anim;
+            aimPoses.clear();
+            sample("aim", anim.aim(), 1f, 1f, aimPoses);
             poses.clear();
-            sample("aim", anim.aim());
-            sample("reload", anim.reload());
+            sample("aim", anim.aim(), 1f, 1f, poses);
+            sample("reload", anim.reload(), 1f, 1f, poses);
+            sample(anim.reloadMotion(), anim.reload());
             if (anim.empty() && GunAnimationSampler.find(animation, "fire_last") != null) {
                 // the shot that emptied the gun; its end pose stays while the gun is empty (slide locked back)
-                sample("fire_last", anim.fire() > 0f ? anim.fire() : 1f);
+                sample("fire_last", anim.fire() > 0f ? anim.fire() : 1f, 1f, 1f, poses);
             } else {
-                sample("fire", anim.fire());
+                sample("fire", anim.fire(), 1f, 1f, poses);
             }
-            sample("charge", anim.charge());
+            sample(anim.recoil(), anim.fire());
+            sample("charge", anim.charge(), 1f, 1f, poses);
+            if (anim.mirror()) {
+                mirrorRoot(poses);
+                mirrorRoot(aimPoses);
+            }
 
             for (GeoBone bone : getAnimationProcessor().getRegisteredBones()) {
                 BoneSnapshot rest = bone.getInitialSnapshot();
@@ -165,12 +180,26 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
             applyCodeBones(animatable);
         }
 
-        private void sample(String name, float progress) {
+        private void sample(String name, float progress, float move, float turn, Map<String, GunAnimationSampler.BonePose> into) {
             if (progress > 0f) {
                 Animation found = GunAnimationSampler.find(animation, name);
                 if (found != null) {
-                    GunAnimationSampler.sample(found, progress, poses);
+                    GunAnimationSampler.sample(found, progress, move, turn, into);
                 }
+            }
+        }
+
+        private void sample(@Nullable GeoAnimInput.Layer layer, float progress) {
+            if (layer != null) {
+                sample(layer.animation(), progress, layer.move(), layer.turn(), poses);
+            }
+        }
+
+        /** Left hand: the whole-gun motion is mirrored, the parts move as authored. */
+        private static void mirrorRoot(Map<String, GunAnimationSampler.BonePose> poses) {
+            GunAnimationSampler.BonePose root = poses.get(ROOT);
+            if (root != null) {
+                root.mirror();
             }
         }
 
@@ -238,15 +267,43 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
                     packedOverlay, colour);
         }
 
-        /** Called with the bone's full transform on the stack: reports marker bones at their pivot. */
+        /**
+         * Called with the bone's full transform on the stack: reports marker bones at their pivot, animated and at rest
+         * (only the aim layer applied, {@link TGGeoBridge#REST}).
+         */
         @Override
         public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay,
                                       int colour) {
             if (markers != null && TGGeoBridge.isMarker(bone.getName())) {
                 markers.accept(bone.getName(), new Matrix4f(poseStack.last().pose())
                         .translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f));
+                markers.accept(bone.getName() + TGGeoBridge.REST, restPose(bone).translate(
+                        bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f));
             }
             super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+        }
+
+        /**
+         * The pose of {@code bone}'s space like RenderUtil#prepMatrixForBone (offset, turn about the pivot), with the rest
+         * rotations plus only the aim layer.
+         */
+        private Matrix4f restPose(GeoBone bone) {
+            Matrix4f pose = bone.getParent() != null ? restPose(bone.getParent()) : new Matrix4f(modelRenderTranslations);
+            GunAnimationSampler.BonePose aim = gunModel.aimPoses.get(bone.getName());
+            BoneSnapshot rest = bone.getInitialSnapshot();
+            float rotX = rest.getRotX();
+            float rotY = rest.getRotY();
+            float rotZ = rest.getRotZ();
+            if (aim != null) {
+                pose.translate((float) -aim.posX / 16f, (float) aim.posY / 16f, (float) aim.posZ / 16f);
+                rotX += (float) aim.rotX;
+                rotY += (float) aim.rotY;
+                rotZ += (float) aim.rotZ;
+            }
+            float px = bone.getPivotX() / 16f;
+            float py = bone.getPivotY() / 16f;
+            float pz = bone.getPivotZ() / 16f;
+            return pose.translate(px, py, pz).rotateZYX(rotZ, rotY, rotX).translate(-px, -py, -pz);
         }
     }
 }

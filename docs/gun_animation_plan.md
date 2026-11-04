@@ -183,7 +183,32 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
     - A geo gun listing fewer geo ids than render parts no longer draws the rest; the Java fallback still has the separate part.
   - **M4:** the M4 `reload` now lasts exactly the reload time; before, it played at its authored 2.25 s.
   - Verified in game: first person, third person, flash at the barrel tip, slide lock, M4 reload.
-- **Next:** hold positions from the item model `display` block, the `aim` animation, `common.animation.json`, Molang queries, the `muzzle_follows_animation` flag (needs recoil on `root` first), sound and instruction keyframes.
+- **2026-11-03, whole-gun motion from files (pistol):**
+  - `common.animation.json` holds the `GunAnimation` presets as keyframes on `root`: `recoil_generic`, `recoil_pulse`, `recoil_scope`, `recoil_sway`, `reload_generic`, `reload_breech`.
+    - The easings are exact: `easeoutquad` = `C_FAST`, `easeinoutsine` = `C_SMOOTH`, and the sway uses Molang `math.sin`.
+    - Authored per unit: offsets per 1 `move`, rotations per 1 degree of `turn`.
+    - Tilted reload axes are converted to Euler angles at the reference angle (40 and 55 degrees), exact there; the ease-in and ease-out deviate by up to about 2 degrees.
+  - **Display file:** `assets/<ns>/techguns/gun_display/<gun>.json` (`GunDisplay`, loader `GunDisplays`).
+    - `recoil` / `reload`: animation, `move` (model pixels) and `turn` (degrees) for `first_person`, `aiming` (optional) and `third_person`; plus `muzzle_follows_animation`.
+    - Datagen (`TGGunDisplayProvider`) writes it from the renderer's presets (`RenderGunBase#exportDisplay`) for the guns in `TGItemRendererSetup.DATA_DRIVEN` (pistol only).
+  - **Renderer:** for a gun with a display file and a drawn geo model, `RenderGunBase` skips the code presets and ADS shift and hands everything over in `GeoAnimInput`.
+    - Sampled layers: `aim`, `reload` + reload motion, `fire`/`fire_last` + recoil, `charge`.
+    - The left hand mirrors the `root` motion (x offset, y and z turn).
+  - **Root pivot:** the `root` pivot must be the hand origin, i.e. minus the renderer's base translation (pistol: `[-0.5, -4.8, 6.4]`). Then whole-gun motion in model space equals the old hand-space motion: the gun base rotation and the bridge's 180 degree turn cancel, so the model axes are the hand axes.
+  - **Pistol aim:** the pistol's `aim` animation is the default ADS shift in model pixels.
+  - **Rest marker:** `muzzle_follows_animation: false` uses the marker rest pose (`muzzle#rest`: only the aim layer applied).
+  - **Verified in game with `/tgdebug pose <fire|reload|zoom> <progress>`** (freezes the held gun's timers) against `/tgdebug geo` (the code path), all identical:
+    - recoil peak, reload hold, full aim;
+    - third person reload;
+    - left hand reload.
+  - **Fix found on the way:** `TGMatrixOps.rotate` passed unnormalized axes to JOML (non-unit quaternion, skewed pose); Techguns 2's `glRotatef` normalized them. Now normalized for every gun, which changes the generic and sway animations of all guns slightly back to Techguns 2.
+- **Next:**
+  - hold positions from the item model `display` block (replaces base translation and scale, so `move` units and the root pivot change with it);
+  - normalizing the 90 degree guns;
+  - generating `aim` and the root pivot per gun when converting;
+  - charge translation;
+  - Molang queries;
+  - sound and instruction keyframes.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

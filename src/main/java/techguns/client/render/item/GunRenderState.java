@@ -1,5 +1,8 @@
 package techguns.client.render.item;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import techguns.client.gun.ClientGunController;
 import techguns.client.gun.ShooterValues;
@@ -24,6 +27,10 @@ import techguns.gun.GunItem;
 public record GunRenderState(float fireProgress, float reloadProgress, float muzzleFlashProgress, float chargeProgress,
                              float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant,
                              long muzzleFlashSeed) {
+
+    /** Dev: fixed fire, reload and zoom progress of the local player's held guns ({@code /tgdebug pose}); null = live. */
+    @Nullable
+    public static float[] debugPose;
 
     public static GunRenderState extract(ItemRenderContext context, GunItem gun) {
         float fire = 0f;
@@ -62,6 +69,11 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             ClientGunController controller = ClientGunController.get();
             zooming = controller.isZooming() && gun.stats().zoom().isPresent();
             zoomProgress = controller.zoomProgress(context.partialTick());
+        }
+        if (debugPose != null && context.isInHand() && context.entity() == Minecraft.getInstance().player) {
+            fire = debugPose[0];
+            reload = debugPose[1];
+            zoomProgress = debugPose[2];
         }
         return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()),
                 flashSeed);

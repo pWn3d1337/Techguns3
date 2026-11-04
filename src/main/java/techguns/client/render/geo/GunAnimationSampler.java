@@ -41,6 +41,13 @@ final class GunAnimationSampler {
         double rotX, rotY, rotZ;
         double posX, posY, posZ;
         double scaleX = 1, scaleY = 1, scaleZ = 1;
+
+        /** Mirrors the pose across the model's x = 0 plane (left hand). */
+        void mirror() {
+            posX = -posX;
+            rotY = -rotY;
+            rotZ = -rotZ;
+        }
     }
 
     /** The animation {@code name} from the gun's own file, else from {@link #COMMON}; null if neither has it. */
@@ -55,23 +62,26 @@ final class GunAnimationSampler {
         return animation;
     }
 
-    /** Adds {@code animation} sampled at {@code progress} (0..1 of its length) to {@code poses}, keyed by bone name. */
-    static void sample(Animation animation, float progress, Map<String, BonePose> poses) {
+    /**
+     * Adds {@code animation} sampled at {@code progress} (0..1 of its length) to {@code poses}, keyed by bone name, with its
+     * offsets times {@code move} and rotations times {@code turn}.
+     */
+    static void sample(Animation animation, float progress, float move, float turn, Map<String, BonePose> poses) {
         double tick = progress * animation.length();
         MathParser.setVariable(MolangQueries.ANIM_TIME, () -> tick / 20d);
         for (BoneAnimation bone : animation.boneAnimations()) {
             BonePose pose = poses.computeIfAbsent(bone.boneName(), k -> new BonePose());
             KeyframeStack<Keyframe<MathValue>> rotation = bone.rotationKeyFrames();
             if (!rotation.xKeyframes().isEmpty()) {
-                pose.rotX += value(rotation.xKeyframes(), tick, true, true);
-                pose.rotY += value(rotation.yKeyframes(), tick, true, true);
-                pose.rotZ += value(rotation.zKeyframes(), tick, true, false);
+                pose.rotX += turn * value(rotation.xKeyframes(), tick, true, true);
+                pose.rotY += turn * value(rotation.yKeyframes(), tick, true, true);
+                pose.rotZ += turn * value(rotation.zKeyframes(), tick, true, false);
             }
             KeyframeStack<Keyframe<MathValue>> position = bone.positionKeyFrames();
             if (!position.xKeyframes().isEmpty()) {
-                pose.posX += value(position.xKeyframes(), tick, false, false);
-                pose.posY += value(position.yKeyframes(), tick, false, false);
-                pose.posZ += value(position.zKeyframes(), tick, false, false);
+                pose.posX += move * value(position.xKeyframes(), tick, false, false);
+                pose.posY += move * value(position.yKeyframes(), tick, false, false);
+                pose.posZ += move * value(position.zKeyframes(), tick, false, false);
             }
             KeyframeStack<Keyframe<MathValue>> scale = bone.scaleKeyFrames();
             if (!scale.xKeyframes().isEmpty()) {

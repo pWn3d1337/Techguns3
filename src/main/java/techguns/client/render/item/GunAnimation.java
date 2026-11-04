@@ -60,6 +60,17 @@ public class GunAnimation {
 	public static GunAnimation swordSweepRecoil = new GunAnimation().addRotate(1.0f, 0, 0, 1.0f).addSegment(0, 0.25f, C_FAST, 0f, 1f).addSegment(0.25f, 1f, C_SMOOTH, 1f, 0f);
 	
 	
+	/** Name of the preset's keyframe version in {@code animations/item/common.animation.json}. */
+	public static String nameOf(GunAnimation anim) {
+		if (anim == genericRecoil) return "recoil_generic";
+		if (anim == swayRecoil) return "recoil_sway";
+		if (anim == pulseRifleRecoil) return "recoil_pulse";
+		if (anim == scopeRecoil) return "recoil_scope";
+		if (anim == genericReload) return "reload_generic";
+		if (anim == breechReload) return "reload_breech";
+		throw new IllegalArgumentException("No keyframe version of this gun animation");
+	}
+
 	private List<AnimationSegment> segments;
 	private List<Transformation> transformations;
 	

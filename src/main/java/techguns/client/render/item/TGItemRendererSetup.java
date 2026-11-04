@@ -1,5 +1,11 @@
 package techguns.client.render.item;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import techguns.TGIds;
 import techguns.client.model.gun.ModelAK;
 import techguns.client.model.gun.ModelChainsaw;
@@ -61,6 +67,21 @@ import techguns.registry.TGGuns;
  */
 public final class TGItemRendererSetup {
     private TGItemRendererSetup() {
+    }
+
+    /** Guns whose motion lives in their model files: datagen writes their display file ({@link GunDisplay}). */
+    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL);
+
+    /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
+    public static Map<Item, GunDisplay> exportDisplays() {
+        if (!TGItemRenderers.items().iterator().hasNext()) {
+            registerAll();
+        }
+        Map<Item, GunDisplay> displays = new LinkedHashMap<>();
+        for (ItemLike gun : DATA_DRIVEN) {
+            displays.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportDisplay());
+        }
+        return displays;
     }
 
     static void registerAll() {

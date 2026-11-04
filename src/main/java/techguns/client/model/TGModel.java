@@ -85,6 +85,13 @@ public abstract class TGModel extends Model {
     }
 
     /**
+     * The animation input for the next in-hand draws, set by the gun renderer around its parts; null = derive it from the
+     * render arguments. Only geo models animate.
+     */
+    public void setAnimInput(@Nullable GeoAnimInput input) {
+    }
+
+    /**
      * Pose of marker bone {@code name} ({@link TGGeoBridge#isMarker}) in the last draw, in the pose stack's root space;
      * null if the model has no such bone (Java models have none).
      */

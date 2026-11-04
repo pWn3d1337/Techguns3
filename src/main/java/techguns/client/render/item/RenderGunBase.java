@@ -14,6 +14,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import techguns.client.model.GeoAnimInput;
+import techguns.client.model.GeoGunModel;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGModel;
 import techguns.client.render.CamoTextures;
@@ -225,6 +227,8 @@ public class RenderGunBase extends RenderItemBase {
 
         boolean firstPerson = context.isFirstPerson();
         boolean renderScope = false;
+        // whole-gun motion from the model's animation files instead of the code presets below
+        GunDisplay display = this.dataDisplay(gun);
 
         // guard: the Techguns 2 flow leaves transforms on the stack in some branches
         poseStack.pushPose();
@@ -242,14 +246,24 @@ public class RenderGunBase extends RenderItemBase {
                     doADSrecoil = true;
                 }
             }
-            if (zoomProgress > 0F) {
+            if (zoomProgress > 0F && display == null) {
                 this.transformADS(poseStack, zoomProgress);
             }
 
-            this.transformFirstPerson(poseStack, fireProgress, reloadProgress, chargeProgress, leftHand, sneaking && isOffhand, doADSrecoil);
+            if (display != null) {
+                this.transformFirstPerson(poseStack, 0f, 0f, 0f, leftHand, sneaking && isOffhand, false);
+                this.model.setAnimInput(this.animInput(state, display, true, doADSrecoil, leftHand));
+            } else {
+                this.transformFirstPerson(poseStack, fireProgress, reloadProgress, chargeProgress, leftHand, sneaking && isOffhand, doADSrecoil);
+            }
 
         } else if (context.isThirdPerson()) {
-            this.transformThirdPerson(poseStack, entity, fireProgress, reloadProgress, leftHand, armPose);
+            if (display != null) {
+                this.transformThirdPerson(poseStack, entity, 0f, 0f, leftHand, armPose);
+                this.model.setAnimInput(this.animInput(state, display, false, false, leftHand));
+            } else {
+                this.transformThirdPerson(poseStack, entity, fireProgress, reloadProgress, leftHand, armPose);
+            }
 
         } else if (ItemDisplayContext.GUI == transform) {
             this.transformGUI(poseStack);
@@ -270,6 +284,7 @@ public class RenderGunBase extends RenderItemBase {
                 model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(this.partTexture(context, i), i, ammoVariant)), state.loadedAmmo(), reloadProgress,
                         transform, i, fireProgress, chargeProgress, light, overlay);
             }
+            this.model.setAnimInput(null);
             poseStack.popPose();
 
             // Draw muzzle FX (in the hand pose, without the gun's own transforms)
@@ -279,11 +294,11 @@ public class RenderGunBase extends RenderItemBase {
                     if (state.zooming() && this.scope == null) {
                         this.transformADS(poseStack, zoomProgress);
                     }
-                    this.drawMuzzleFx(poseStack, buffers, muzzleFlashProgress, leftHand, ammoVariant);
+                    this.drawMuzzleFx(poseStack, buffers, muzzleFlashProgress, leftHand, ammoVariant, muzzleMarker(display));
                 } else {
                     poseStack.pushPose();
                     this.transformThirdPersonArmPose(poseStack, entity, reloadProgress, armPose, leftHand);
-                    this.drawMuzzleFx3P(poseStack, buffers, muzzleFlashProgress, leftHand, ammoVariant);
+                    this.drawMuzzleFx3P(poseStack, buffers, muzzleFlashProgress, leftHand, ammoVariant, muzzleMarker(display));
                     poseStack.popPose();
                 }
             } else {
@@ -310,6 +325,7 @@ public class RenderGunBase extends RenderItemBase {
             }
 
         } else {
+            this.model.setAnimInput(null);
             poseStack.popPose();
             if (this.scopeRecoilAnim != null && fireProgress > 0f) {
                 this.scopeRecoilAnim.play(poseStack, fireProgress, ItemDisplayContext.FIRST_PERSON_LEFT_HAND == transform, this.scopeRecoilParams);
@@ -319,6 +335,51 @@ public class RenderGunBase extends RenderItemBase {
         }
 
         poseStack.popPose();
+    }
+
+    /**
+     * The gun's display file when its motion comes from its model files: it has one and is drawn as a geo model (not the
+     * Java fallback, {@code /tgdebug geo}); null = the code presets ({@link GunAnimation}) move it.
+     */
+    @Nullable
+    protected GunDisplay dataDisplay(GunItem gun) {
+        return this.model instanceof GeoGunModel && TGGeoBridge.enabled() ? GunDisplays.get(gun) : null;
+    }
+
+    /** Animation input of an in-hand draw whose whole-gun motion comes from the display file. */
+    protected GeoAnimInput animInput(GunRenderState state, GunDisplay display, boolean firstPerson, boolean aiming, boolean leftHand) {
+        return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
+                state.loadedAmmo() <= 0, leftHand, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
+                display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null));
+    }
+
+    /**
+     * This renderer's code presets as a display file (datagen, when a gun moves to its model files): the same animations
+     * from {@code common.animation.json} with the same strength. Offsets become model pixels: the presets move the hand
+     * pose, which is the model scaled by {@code baseScale} and the view's scale.
+     */
+    public GunDisplay exportDisplay() {
+        float firstPerson = baseScale * scale_ego;
+        float thirdPerson = baseScale * scale_thirdp;
+        // the scope overlay has its own recoil; only aiming without one moves the model
+        Optional<GunDisplay.Strength> aiming = this.scope == null && this.scopeRecoilAnim != null
+                ? Optional.of(strength(scopeRecoilAnim, scopeRecoilParams, firstPerson)) : Optional.empty();
+        return new GunDisplay(
+                Optional.of(new GunDisplay.Motion(strength(recoilAnim, recoilParams, firstPerson), aiming,
+                        strength(recoilAnim3p, recoilParams3p, thirdPerson))),
+                Optional.of(new GunDisplay.Motion(strength(reloadAnim, reloadParams, firstPerson), Optional.empty(),
+                        strength(reloadAnim3p, reloadParams3p, thirdPerson))),
+                true);
+    }
+
+    private static GunDisplay.Strength strength(GunAnimation anim, float[] params, float scale) {
+        return new GunDisplay.Strength(GunAnimation.nameOf(anim), params.length > 0 ? params[0] / SCALE / scale : 0f,
+                params.length > 1 ? params[1] : 0f);
+    }
+
+    /** The muzzle marker to draw the flash at: the animated bone, or its rest pose if the display file says so. */
+    protected static String muzzleMarker(@Nullable GunDisplay display) {
+        return display != null && !display.muzzleFollowsAnimation() ? TGGeoBridge.MUZZLE + TGGeoBridge.REST : TGGeoBridge.MUZZLE;
     }
 
     /** Texture of one render part; overridden where it depends on the stack (mining heads). */
@@ -407,11 +468,12 @@ public class RenderGunBase extends RenderItemBase {
         return new Matrix4f(poseStack.last().pose()).invert().transformPosition(marker.getTranslation(new Vector3f()));
     }
 
-    /** At the model's {@code muzzle} bone if it has one, else at the configured offsets. */
-    protected void drawMuzzleFx(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
+    /** At the model's {@code marker} bone if it has one, else at the configured offsets. */
+    protected void drawMuzzleFx(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant,
+                                String marker) {
         if (this.muzzleEffect != null && this.muzzleEffect.screenEffect != null) {
             float scale = this.muzzleEffect.effectScale;
-            Vector3f muzzle = markerOffset(poseStack, TGGeoBridge.MUZZLE);
+            Vector3f muzzle = markerOffset(poseStack, marker);
             float offsetX = muzzle != null ? muzzle.x : leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
             float offsetY = muzzle != null ? muzzle.y : this.muzzleEffect.offsetY;
             float offsetZ = muzzle != null ? muzzle.z : this.muzzleEffect.offsetZ;
@@ -424,9 +486,10 @@ public class RenderGunBase extends RenderItemBase {
         }
     }
 
-    protected void drawMuzzleFx3P(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
+    protected void drawMuzzleFx3P(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant,
+                                  String marker) {
         if (this.muzzleEffect != null && this.muzzleEffect.screenEffect != null) {
-            Vector3f muzzle = markerOffset(poseStack, TGGeoBridge.MUZZLE);
+            Vector3f muzzle = markerOffset(poseStack, marker);
             this.muzzleEffect.screenEffect.doRender(poseStack, buffers, progress, muzzle != null ? muzzle.x : 0,
                     muzzle != null ? muzzle.y : this.muzzleEffect.offsetY_3p, muzzle != null ? muzzle.z : this.muzzleEffect.offsetZ_3p,
                     this.muzzleEffect.effectScale * this.muzzleEffect.effectScale_3p, true, ammoVariant);

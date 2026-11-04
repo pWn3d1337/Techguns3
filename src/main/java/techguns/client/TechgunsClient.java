@@ -51,6 +51,7 @@ public class TechgunsClient {
         techguns.compat.fusion.FusionTextures.init(modEventBus);
         modEventBus.addListener(TechgunsClient::registerEntityRenderers);
         modEventBus.addListener(TGClientItemExtensions::register);
+        modEventBus.addListener(techguns.client.render.item.GunDisplays::register);
         modEventBus.addListener(TGArmorClientExtensions::register);
         modEventBus.addListener(TGShieldRenderer::register);
         modEventBus.addListener(techguns.client.render.item.GuideBookModel::registerAdditional);

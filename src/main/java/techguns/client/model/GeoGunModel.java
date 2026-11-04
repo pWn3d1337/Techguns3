@@ -32,6 +32,8 @@ public class GeoGunModel extends TGModel {
     private final TGModel fallback;
     private final String[] geoIds;
     private PartVisibility visibility = (part, ammoLeft, reloadProgress) -> true;
+    @Nullable
+    private GeoAnimInput animInput;
     /** Marker bone poses of the last draw (all parts). */
     private final Map<String, Matrix4f> markers = new HashMap<>();
 
@@ -64,7 +66,8 @@ public class GeoGunModel extends TGModel {
             }
             boolean inHand = entity != null && (context.firstPerson() || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
                     || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
-            GeoAnimInput anim = inHand ? new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft <= 0) : GeoAnimInput.NONE;
+            GeoAnimInput anim = !inHand ? GeoAnimInput.NONE : animInput != null ? animInput
+                    : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft <= 0, false, null, null);
             poseStack.pushPose();
             fallback.transformPart(poseStack, entity, context, part, ammoLeft, reloadProgress, fireProgress);
             boolean drawn = TGGeoBridge.get().render(geoIds[part], poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
@@ -77,6 +80,11 @@ public class GeoGunModel extends TGModel {
             }
         }
         fallback.render(entity, poseStack, vertices, ammoLeft, reloadProgress, context, part, fireProgress, chargeProgress, light, overlay);
+    }
+
+    @Override
+    public void setAnimInput(@Nullable GeoAnimInput input) {
+        this.animInput = input;
     }
 
     @Override

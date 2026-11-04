@@ -12,8 +12,11 @@ public final class TGMatrixOps {
     private TGMatrixOps() {
     }
 
-    /** Rotates by {@code deg} degrees around the axis (x, y, z). */
+    /**
+     * Rotates by {@code deg} degrees around the axis (x, y, z), which needn't be a unit vector (like {@code glRotatef} in
+     * Techguns 2: an unnormalized axis made a non-unit quaternion, which skewed the pose).
+     */
     public static void rotate(PoseStack poseStack, float deg, float x, float y, float z) {
-        poseStack.mulPose(new Quaternionf(new AxisAngle4f(DEG2RAD * deg, x, y, z)));
+        poseStack.mulPose(new Quaternionf(new AxisAngle4f(DEG2RAD * deg, x, y, z).normalize()));
     }
 }
