@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.ItemLike;
 import techguns.TGIds;
 import techguns.client.model.gun.ModelAK;
@@ -82,6 +83,18 @@ public final class TGItemRendererSetup {
             displays.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportDisplay());
         }
         return displays;
+    }
+
+    /** The item model display transforms of the data-driven guns, from their renderers' current placement (datagen). */
+    public static Map<Item, Map<ItemDisplayContext, RenderGunBase.DisplayTransform>> exportItemTransforms() {
+        if (!TGItemRenderers.items().iterator().hasNext()) {
+            registerAll();
+        }
+        Map<Item, Map<ItemDisplayContext, RenderGunBase.DisplayTransform>> transforms = new LinkedHashMap<>();
+        for (ItemLike gun : DATA_DRIVEN) {
+            transforms.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportItemTransforms());
+        }
+        return transforms;
     }
 
     static void registerAll() {

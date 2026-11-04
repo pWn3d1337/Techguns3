@@ -202,8 +202,19 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
     - third person reload;
     - left hand reload.
   - **Fix found on the way:** `TGMatrixOps.rotate` passed unnormalized axes to JOML (non-unit quaternion, skewed pose); Techguns 2's `glRotatef` normalized them. Now normalized for every gun, which changes the generic and sway animations of all guns slightly back to Techguns 2.
+- **2026-11-04, hold positions from the item model (pistol):**
+  - The pistol's `models/item/pistol.json` has a `display` block for every view: first and third person, both hands, GUI, ground and frame.
+    - Datagen writes it from the renderer's code placement (`RenderGunBase#exportItemTransforms`): context translation, GUI and frame turns, base scale, rotation and translation, and the geo bridge's turn.
+    - Each view's chain is decomposed into translation (pixels), rotation (XYZ degrees, as vanilla's `rotationXYZ`, own decomposition because JOML's loses the 90 degree frame turn) and uniform scale.
+    - Left-hand views are stored mirrored, because vanilla mirrors them when applying.
+  - **Renderer:** for a data-driven gun, `RenderGunBase` undoes vanilla's display transform at the start, so effects and the scope overlay stay in the old frame. It applies it again instead of its code chain right before drawing the model, in geo space.
+    - The two code turns about the hand that depend on state now turn the `root` bone: lowered offhand gun (`holdPitch`) and the crossbow hold in third person (`holdYaw`).
+    - With `/tgdebug geo` off, the code path still runs, since the display transform is undone there too.
+  - **Verified in game against the code path**, identical: first person reload, third person reload, item frame, hotbar and inventory icon; the dropped item matches apart from its spin.
+  - **Open:** whether Blockbench's Display tab previews these values exactly.
+    - Here the geo model origin sits at the item centre (vanilla's -0.5 and our +0.5 cancel), as GeckoLib's `GeoItemRenderer` does apart from its 0.01 lift.
+    - To check once in Blockbench with the GeckoLib plugin's animated item format.
 - **Next:**
-  - hold positions from the item model `display` block (replaces base translation and scale, so `move` units and the root pivot change with it);
   - normalizing the 90 degree guns;
   - generating `aim` and the root pivot per gun when converting;
   - charge translation;

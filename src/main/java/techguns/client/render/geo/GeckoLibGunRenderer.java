@@ -156,6 +156,12 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
             }
             sample(anim.recoil(), anim.fire());
             sample("charge", anim.charge(), 1f, 1f, poses);
+            if (anim.holdPitch() != 0f || anim.holdYaw() != 0f) {
+                // turns about the hand: the root pivot is the hand origin and the model axes are the hand axes
+                GunAnimationSampler.BonePose root = poses.computeIfAbsent(ROOT, k -> new GunAnimationSampler.BonePose());
+                root.rotX += Math.toRadians(anim.holdPitch());
+                root.rotY += Math.toRadians(anim.holdYaw());
+            }
             if (anim.mirror()) {
                 mirrorRoot(poses);
                 mirrorRoot(aimPoses);

@@ -14,13 +14,15 @@ import javax.annotation.Nullable;
  * @param charge       charge: {@code charge}
  * @param empty        no rounds left
  * @param mirror       left hand: the whole-gun motion on the {@code root} bone is mirrored (x offset, y and z turn)
+ * @param holdPitch    extra turn of the {@code root} bone about x in degrees (lowered offhand gun)
+ * @param holdYaw      extra turn of the {@code root} bone about y in degrees, for the right hand (crossbow hold)
  * @param recoil       whole-gun motion on the fire timer, null if the gun renderer still does it in code
  * @param reloadMotion whole-gun motion on the reload timer, null if the gun renderer still does it in code
  */
-public record GeoAnimInput(float fire, float reload, float aim, float charge, boolean empty, boolean mirror,
-                           @Nullable Layer recoil, @Nullable Layer reloadMotion) {
+public record GeoAnimInput(float fire, float reload, float aim, float charge, boolean empty, boolean mirror, float holdPitch,
+                           float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion) {
     /** Not animated (GUI, ground, item frames). */
-    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, false, false, null, null);
+    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, false, false, 0f, 0f, null, null);
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */
     public record Layer(String animation, float move, float turn) {

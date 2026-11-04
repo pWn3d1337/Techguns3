@@ -12,6 +12,8 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 import techguns.Techguns;
+import techguns.client.render.item.RenderGunBase;
+import techguns.client.render.item.TGItemRendererSetup;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGArmors;
 import techguns.registry.TGGuns;
@@ -107,6 +109,17 @@ public class TGItemModelProvider extends ItemModelProvider {
 
     // MIGRATION(26.x): becomes an item model definition with a special model renderer (1.21.4+).
     private void codeRendered(DeferredItem<? extends Item> item) {
-        getBuilder(item.getId().getPath()).parent(new ModelFile.UncheckedModelFile("builtin/entity")).guiLight(net.minecraft.client.renderer.block.model.BlockModel.GuiLight.FRONT);
+        var builder = getBuilder(item.getId().getPath()).parent(new ModelFile.UncheckedModelFile("builtin/entity"))
+                .guiLight(net.minecraft.client.renderer.block.model.BlockModel.GuiLight.FRONT);
+        // data-driven guns: the display transforms place the geo model (what Blockbench's Display tab edits)
+        var transforms = gunTransforms.get(item.get());
+        if (transforms != null) {
+            var display = builder.transforms();
+            transforms.forEach((context, t) -> display.transform(context).rotation(t.rotation().x, t.rotation().y, t.rotation().z)
+                    .translation(t.translation().x, t.translation().y, t.translation().z).scale(t.scale()).end());
+        }
     }
+
+    private final java.util.Map<Item, java.util.Map<net.minecraft.world.item.ItemDisplayContext, RenderGunBase.DisplayTransform>> gunTransforms =
+            TGItemRendererSetup.exportItemTransforms();
 }

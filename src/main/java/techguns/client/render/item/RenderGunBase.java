@@ -1,12 +1,17 @@
 package techguns.client.render.item;
 
 import net.minecraft.world.item.ItemStack;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
@@ -232,10 +237,18 @@ public class RenderGunBase extends RenderItemBase {
 
         // guard: the Techguns 2 flow leaves transforms on the stack in some branches
         poseStack.pushPose();
+        // a data-driven gun's item model places it (display transform, see exportItemTransforms); the effects below work in
+        // the frame before that, so it is undone here and applied again for the model
+        Matrix4f itemTransform = this.itemTransform(context);
+        if (itemTransform != null) {
+            poseStack.mulPose(new Matrix4f(itemTransform).invert());
+        }
 
         poseStack.pushPose();
 
-        this.applyTranslation(poseStack, transform);
+        if (display == null) {
+            this.applyTranslation(poseStack, transform);
+        }
 
         if (firstPerson) {
             boolean doADSrecoil = false;
@@ -251,19 +264,23 @@ public class RenderGunBase extends RenderItemBase {
             }
 
             if (display != null) {
-                this.transformFirstPerson(poseStack, 0f, 0f, 0f, leftHand, sneaking && isOffhand, false);
-                this.model.setAnimInput(this.animInput(state, display, true, doADSrecoil, leftHand));
+                // lowered offhand gun: the turn about the hand moves to the model's root bone
+                this.model.setAnimInput(this.animInput(state, display, true, doADSrecoil, leftHand, sneaking && isOffhand ? -35f : 0f, 0f));
             } else {
                 this.transformFirstPerson(poseStack, fireProgress, reloadProgress, chargeProgress, leftHand, sneaking && isOffhand, doADSrecoil);
             }
 
         } else if (context.isThirdPerson()) {
             if (display != null) {
-                this.transformThirdPerson(poseStack, entity, 0f, 0f, leftHand, armPose);
-                this.model.setAnimInput(this.animInput(state, display, false, false, leftHand));
+                // crossbow hold: the turn about the hand moves to the model's root bone (mirrored there for the left hand)
+                float holdYaw = reloadProgress <= 0 && ArmPose.CROSSBOW_HOLD == armPose ? -15f : 0f;
+                this.model.setAnimInput(this.animInput(state, display, false, false, leftHand, 0f, holdYaw));
             } else {
                 this.transformThirdPerson(poseStack, entity, fireProgress, reloadProgress, leftHand, armPose);
             }
+
+        } else if (display != null) {
+            // the item model's display transform places the gun
 
         } else if (ItemDisplayContext.GUI == transform) {
             this.transformGUI(poseStack);
@@ -276,9 +293,15 @@ public class RenderGunBase extends RenderItemBase {
         }
 
         if (!renderScope) {
-            this.setBaseScale(entity, poseStack, transform);
-            this.setBaseRotation(poseStack, transform);
-            this.applyBaseTranslation(poseStack);
+            if (display == null) {
+                this.setBaseScale(entity, poseStack, transform);
+                this.setBaseRotation(poseStack, transform);
+                this.applyBaseTranslation(poseStack);
+            } else if (itemTransform != null) {
+                poseStack.mulPose(itemTransform);
+                // the item transform maps geo model space; the geo bridge turns back from Java model space
+                poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
+            }
 
             for (int i = 0; i < parts; i++) {
                 model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(this.partTexture(context, i), i, ammoVariant)), state.loadedAmmo(), reloadProgress,
@@ -347,10 +370,86 @@ public class RenderGunBase extends RenderItemBase {
     }
 
     /** Animation input of an in-hand draw whose whole-gun motion comes from the display file. */
-    protected GeoAnimInput animInput(GunRenderState state, GunDisplay display, boolean firstPerson, boolean aiming, boolean leftHand) {
+    protected GeoAnimInput animInput(GunRenderState state, GunDisplay display, boolean firstPerson, boolean aiming, boolean leftHand,
+                                     float holdPitch, float holdYaw) {
         return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
-                state.loadedAmmo() <= 0, leftHand, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
+                state.loadedAmmo() <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
                 display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null));
+    }
+
+    /**
+     * The display transform vanilla applied from the item model for this view (left hand mirrored as vanilla does), if the
+     * gun is data-driven ({@link GunDisplays}); null otherwise (its item model has none).
+     */
+    @Nullable
+    protected Matrix4f itemTransform(ItemRenderContext context) {
+        if (GunDisplays.get(context.stack().getItem()) == null) {
+            return null;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        PoseStack pose = new PoseStack();
+        mc.getItemRenderer().getModel(context.stack(), null, null, 0).applyTransform(context.displayContext(), pose, context.isLeftSide());
+        return pose.last().pose();
+    }
+
+    /** A display transform as the item model JSON holds it: rotation (degrees, XYZ), translation (pixels), scale. */
+    public record DisplayTransform(Vector3f rotation, Vector3f translation, float scale) {
+    }
+
+    private static final ItemDisplayContext[] DISPLAY_CONTEXTS = {ItemDisplayContext.FIRST_PERSON_RIGHT_HAND,
+            ItemDisplayContext.FIRST_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
+            ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.GUI, ItemDisplayContext.GROUND, ItemDisplayContext.FIXED};
+
+    /**
+     * This renderer's code placement per view (context translation, GUI and frame turns, base scale, rotation and
+     * translation) as item model display transforms of the geo model (datagen, when a gun moves to its model files).
+     * Left-hand views are stored mirrored, because vanilla mirrors them when applying.
+     */
+    public Map<ItemDisplayContext, DisplayTransform> exportItemTransforms() {
+        Map<ItemDisplayContext, DisplayTransform> result = new LinkedHashMap<>();
+        for (ItemDisplayContext context : DISPLAY_CONTEXTS) {
+            PoseStack pose = new PoseStack();
+            this.applyTranslation(pose, context);
+            if (context == ItemDisplayContext.GUI) {
+                this.transformGUI(pose);
+            } else if (context == ItemDisplayContext.GROUND) {
+                this.transformGround(pose);
+            } else if (context == ItemDisplayContext.FIXED) {
+                this.transformFixed(pose);
+            }
+            this.setBaseScale(null, pose, context);
+            this.setBaseRotation(pose, context);
+            this.applyBaseTranslation(pose);
+            // the geo bridge's turn: the transform maps geo model space
+            pose.mulPose(Axis.ZP.rotationDegrees(180f));
+            Matrix4f m = new Matrix4f(pose.last().pose());
+            if (context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
+                Matrix4f mirror = new Matrix4f().scaling(-1f, 1f, 1f);
+                m = new Matrix4f(mirror).mul(m).mul(mirror);
+            }
+            float scale = m.getScale(new Vector3f()).x;
+            result.put(context, new DisplayTransform(eulerXYZ(new Matrix4f(m).scale(1f / scale)), m.getTranslation(new Vector3f()).mul(16f), scale));
+        }
+        return result;
+    }
+
+    /**
+     * Angles (degrees) of a rotation as vanilla display transforms build it, {@code rotationXYZ} = Rx Ry Rz; at y = +-90
+     * degrees (gimbal lock) z is 0. JOML's Euler getters lose that case.
+     */
+    private static Vector3f eulerXYZ(Matrix4f r) {
+        // row 0, column 2 is sin y (JOML element mCR: column C, row R)
+        float y = (float) Math.asin(Mth.clamp(r.m20(), -1f, 1f));
+        float x;
+        float z;
+        if (Math.abs(r.m20()) < 0.9999f) {
+            x = (float) Math.atan2(-r.m21(), r.m22());
+            z = (float) Math.atan2(-r.m10(), r.m00());
+        } else {
+            x = (float) Math.atan2(r.m12(), r.m11());
+            z = 0f;
+        }
+        return new Vector3f(x, y, z).mul(Mth.RAD_TO_DEG);
     }
 
     /**
