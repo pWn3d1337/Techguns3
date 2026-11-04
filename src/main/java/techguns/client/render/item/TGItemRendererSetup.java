@@ -61,6 +61,7 @@ import techguns.client.model.item.ModelLmgMag;
 import techguns.client.model.item.ModelRocket;
 import techguns.client.render.fx.ScreenEffect;
 import techguns.registry.TGAmmo;
+import techguns.gun.ChargeGunItem;
 import techguns.registry.TGGuns;
 
 /**
@@ -71,7 +72,7 @@ public final class TGItemRendererSetup {
     }
 
     /** Guns whose motion lives in their model files: datagen writes their display file ({@link GunDisplay}). */
-    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL, TGGuns.REVOLVER);
+    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL, TGGuns.REVOLVER, TGGuns.BIOGUN);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -80,7 +81,7 @@ public final class TGItemRendererSetup {
         }
         Map<Item, GunDisplay> displays = new LinkedHashMap<>();
         for (ItemLike gun : DATA_DRIVEN) {
-            displays.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportDisplay());
+            displays.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportDisplay(gun.asItem() instanceof ChargeGunItem));
         }
         return displays;
     }

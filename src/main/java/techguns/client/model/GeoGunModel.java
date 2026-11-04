@@ -102,7 +102,7 @@ public class GeoGunModel extends TGModel {
             boolean inHand = entity != null && (context.firstPerson() || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
                     || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
             GeoAnimInput anim = !inHand ? GeoAnimInput.NONE : animInput != null ? animInput
-                    : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft <= 0, false, 0f, 0f, null, null);
+                    : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft <= 0, false, 0f, 0f, null, null, null);
             poseStack.pushPose();
             if (turned) {
                 poseStack.mulPose(JAVA_TURN);

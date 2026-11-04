@@ -28,7 +28,7 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
                              float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant,
                              long muzzleFlashSeed) {
 
-    /** Dev: fixed fire, reload and zoom progress of the local player's held guns ({@code /tgdebug pose}); null = live. */
+    /** Dev: fixed fire, reload, zoom and charge progress of the local player's held guns ({@code /tgdebug pose}); null = live. */
     @Nullable
     public static float[] debugPose;
 
@@ -74,6 +74,8 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             fire = debugPose[0];
             reload = debugPose[1];
             zoomProgress = debugPose[2];
+            charge = debugPose[3];
+            chargeFull = debugPose[3];
         }
         return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()),
                 flashSeed);

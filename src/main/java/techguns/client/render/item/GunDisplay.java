@@ -12,12 +12,14 @@ import techguns.client.model.GeoAnimInput;
  * are animations on the model's {@code root} bone (the gun's own file or {@code common.animation.json}), played with a
  * strength per view: {@code move} scales positions (model pixels), {@code turn} rotations (degrees).
  *
+ * @param charge                 whole-gun motion while charging (charge guns), on the charge progress
  * @param muzzleFollowsAnimation the muzzle flash sits on the animated {@code muzzle} bone (true) or at its rest pose
  */
-public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, boolean muzzleFollowsAnimation) {
+public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optional<Motion> charge, boolean muzzleFollowsAnimation) {
     public static final Codec<GunDisplay> CODEC = RecordCodecBuilder.create(i -> i.group(
             Motion.CODEC.optionalFieldOf("recoil").forGetter(GunDisplay::recoil),
             Motion.CODEC.optionalFieldOf("reload").forGetter(GunDisplay::reload),
+            Motion.CODEC.optionalFieldOf("charge").forGetter(GunDisplay::charge),
             Codec.BOOL.optionalFieldOf("muzzle_follows_animation", true).forGetter(GunDisplay::muzzleFollowsAnimation)
     ).apply(i, GunDisplay::new));
 

@@ -18,11 +18,12 @@ import javax.annotation.Nullable;
  * @param holdYaw      extra turn of the {@code root} bone about y in degrees, for the right hand (crossbow hold)
  * @param recoil       whole-gun motion on the fire timer, null if the gun renderer still does it in code
  * @param reloadMotion whole-gun motion on the reload timer, null if the gun renderer still does it in code
+ * @param chargeMotion whole-gun motion on the charge progress, null if none or the gun renderer still does it in code
  */
 public record GeoAnimInput(float fire, float reload, float aim, float charge, boolean empty, boolean mirror, float holdPitch,
-                           float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion) {
+                           float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion, @Nullable Layer chargeMotion) {
     /** Not animated (GUI, ground, item frames). */
-    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, false, false, 0f, 0f, null, null);
+    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, false, false, 0f, 0f, null, null, null);
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */
     public record Layer(String animation, float move, float turn) {

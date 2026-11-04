@@ -189,7 +189,7 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
     - Authored per unit: offsets per 1 `move`, rotations per 1 degree of `turn`.
     - Tilted reload axes are converted to Euler angles at the reference angle (40 and 55 degrees), exact there; the ease-in and ease-out deviate by up to about 2 degrees.
   - **Display file:** `assets/<ns>/techguns/gun_display/<gun>.json` (`GunDisplay`, loader `GunDisplays`).
-    - `recoil` / `reload`: animation, `move` (model pixels) and `turn` (degrees) for `first_person`, `aiming` (optional) and `third_person`; plus `muzzle_follows_animation`.
+    - `recoil` / `reload` (and `charge`, added later): animation, `move` (model pixels) and `turn` (degrees) for `first_person`, `aiming` (optional) and `third_person`; plus `muzzle_follows_animation`.
     - Datagen (`TGGunDisplayProvider`) writes it from the renderer's presets (`RenderGunBase#exportDisplay`) for the guns in `TGItemRendererSetup.DATA_DRIVEN` (pistol only).
   - **Renderer:** for a gun with a display file and a drawn geo model, `RenderGunBase` skips the code presets and ADS shift and hands everything over in `GeoAnimInput`.
     - Sampled layers: `aim`, `reload` + reload motion, `fire`/`fire_last` + recoil, `charge`.
@@ -236,8 +236,15 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
     - JOML 1.10.5's `getNormalizedRotation` returns a non-unit quaternion for a scaled matrix; the scale is taken out first.
   - **Verified in game, revolver data path vs Java fallback:** idle, reload at 0.05 / 0.15 / 0.25 / 0.4 (matches, ease-in within the known Euler approximation), full aim, hotbar icons (identical).
   - Known geo vs Java difference, not from this work: the Java model lights the end faces of mirrored boxes from the inside (darker when aiming, where they face the camera); the geo files light them from the outside.
+- **2026-11-04, charge pull-back from files (biogun):**
+  - The first person pull-back while charging (`setChargeTranslationAmount`) is a third whole-gun motion in the display file: `charge`, sampled on the charge progress like `recoil` and `reload`.
+    - `common.animation.json` has `charge_generic`: `root` moves linearly by one unit along +z.
+    - Datagen writes it only for charge guns (`ChargeGunItem`) with a pull-back: `move` = translation in model pixels at the first person scale, third person `move` 0 (the code path never pulls back there).
+    - The gun's own `charge` animation (part motion, e.g. the TFG rails) still plays in every view, on top.
+  - **Biogun** is data-driven (turned gun, charge gun): seeded with `/tgdebug convertgun` (pivot `[0.6, -3.2, 5.6]`, `aim`), display file with `charge` move 1.6, item model `display` block.
+  - `/tgdebug pose charge <progress>` freezes the charge progress.
+  - **Verified in game, biogun data path vs Java fallback:** charge 1.0 and 0 in first person, identical gun pixels (the ground behind the gun differs between screenshots); third person charge 1.0 by eye.
 - **Next:**
-  - charge translation;
   - Molang queries;
   - sound and instruction keyframes.
 

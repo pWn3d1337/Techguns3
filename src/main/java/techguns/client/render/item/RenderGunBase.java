@@ -375,7 +375,8 @@ public class RenderGunBase extends RenderItemBase {
                                      float holdPitch, float holdYaw) {
         return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
                 state.loadedAmmo() <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
-                display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null));
+                display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null),
+                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null));
     }
 
     /**
@@ -480,20 +481,32 @@ public class RenderGunBase extends RenderItemBase {
      * This renderer's code presets as a display file (datagen, when a gun moves to its model files): the same animations
      * from {@code common.animation.json} with the same strength. Offsets become model pixels: the presets move the hand
      * pose, which is the model scaled by {@code baseScale} and the view's scale.
+     *
+     * @param charges the gun charges: its first person pull-back ({@link #setChargeTranslationAmount}) becomes
+     *                {@code charge_generic} on the charge progress
      */
-    public GunDisplay exportDisplay() {
+    public GunDisplay exportDisplay(boolean charges) {
         float firstPerson = baseScale * scale_ego;
         float thirdPerson = baseScale * scale_thirdp;
         // the scope overlay has its own recoil; only aiming without one moves the model
         Optional<GunDisplay.Strength> aiming = this.scope == null && this.scopeRecoilAnim != null
                 ? Optional.of(strength(scopeRecoilAnim, scopeRecoilParams, firstPerson)) : Optional.empty();
+        // only first person pulls back, as transformFirstPerson does
+        Optional<GunDisplay.Motion> charge = charges && this.chargeTranslation != 0f
+                ? Optional.of(new GunDisplay.Motion(new GunDisplay.Strength(CHARGE_ANIMATION, this.chargeTranslation / SCALE / firstPerson, 0f),
+                Optional.empty(), new GunDisplay.Strength(CHARGE_ANIMATION, 0f, 0f)))
+                : Optional.empty();
         return new GunDisplay(
                 Optional.of(new GunDisplay.Motion(strength(recoilAnim, recoilParams, firstPerson), aiming,
                         strength(recoilAnim3p, recoilParams3p, thirdPerson))),
                 Optional.of(new GunDisplay.Motion(strength(reloadAnim, reloadParams, firstPerson), Optional.empty(),
                         strength(reloadAnim3p, reloadParams3p, thirdPerson))),
+                charge,
                 true);
     }
+
+    /** {@code common.animation.json}: {@code root} moves back along +z by one unit over the charge. */
+    private static final String CHARGE_ANIMATION = "charge_generic";
 
     private static GunDisplay.Strength strength(GunAnimation anim, float[] params, float scale) {
         return new GunDisplay.Strength(GunAnimation.nameOf(anim), params.length > 0 ? params[0] / SCALE / scale : 0f,
