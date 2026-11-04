@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import techguns.client.model.GeoAnimInput;
 import techguns.client.model.GeoGunModel;
@@ -241,7 +242,7 @@ public class RenderGunBase extends RenderItemBase {
         // the frame before that, so it is undone here and applied again for the model
         Matrix4f itemTransform = this.itemTransform(context);
         if (itemTransform != null) {
-            poseStack.mulPose(new Matrix4f(itemTransform).invert());
+            applyDisplayTransform(poseStack, itemTransform, true);
         }
 
         poseStack.pushPose();
@@ -298,7 +299,7 @@ public class RenderGunBase extends RenderItemBase {
                 this.setBaseRotation(poseStack, transform);
                 this.applyBaseTranslation(poseStack);
             } else if (itemTransform != null) {
-                poseStack.mulPose(itemTransform);
+                applyDisplayTransform(poseStack, itemTransform, false);
                 // the item transform maps geo model space; the geo bridge turns back from Java model space
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             }
@@ -392,6 +393,27 @@ public class RenderGunBase extends RenderItemBase {
         return pose.last().pose();
     }
 
+    /**
+     * Applies a display transform (translation, rotation, uniform scale) or its inverse piece by piece, so the normal
+     * matrix stays unit length: {@code PoseStack#mulPose(Matrix4f)} recomputes it from the scaled pose, and GeckoLib
+     * uses it without normalising, which lights the model too bright.
+     */
+    private static void applyDisplayTransform(PoseStack poseStack, Matrix4f m, boolean inverse) {
+        Vector3f translation = m.getTranslation(new Vector3f());
+        float scale = m.getScale(new Vector3f()).x;
+        // JOML's getNormalizedRotation returns a non-unit quaternion for a scaled matrix: take the scale out first
+        Quaternionf rotation = new Matrix4f(m).scale(1f / scale).getNormalizedRotation(new Quaternionf()).normalize();
+        if (inverse) {
+            poseStack.scale(1f / scale, 1f / scale, 1f / scale);
+            poseStack.mulPose(rotation.conjugate());
+            poseStack.translate(-translation.x, -translation.y, -translation.z);
+        } else {
+            poseStack.translate(translation.x, translation.y, translation.z);
+            poseStack.mulPose(rotation);
+            poseStack.scale(scale, scale, scale);
+        }
+    }
+
     /** A display transform as the item model JSON holds it: rotation (degrees, XYZ), translation (pixels), scale. */
     public record DisplayTransform(Vector3f rotation, Vector3f translation, float scale) {
     }
@@ -418,8 +440,10 @@ public class RenderGunBase extends RenderItemBase {
                 this.transformFixed(pose);
             }
             this.setBaseScale(null, pose, context);
-            this.setBaseRotation(pose, context);
-            this.applyBaseTranslation(pose);
+            // the geo model's base placement, whether or not the geo bridge runs (datagen)
+            this.setGeoBaseRotation(pose, context);
+            float[] t = this.geoBaseTranslation();
+            pose.translate(t[0], t[1], t[2]);
             // the geo bridge's turn: the transform maps geo model space
             pose.mulPose(Axis.ZP.rotationDegrees(180f));
             Matrix4f m = new Matrix4f(pose.last().pose());
@@ -630,7 +654,42 @@ public class RenderGunBase extends RenderItemBase {
     }
 
     protected void transformADS(PoseStack poseStack, float zoomProgress) {
-        poseStack.translate((-0.5588f + this.adsOffsets[0]) * zoomProgress, (0.15f + this.adsOffsets[1]) * zoomProgress, (0.31f + this.adsOffsets[2]) * zoomProgress);
+        float[] shift = this.adsShift();
+        poseStack.translate(shift[0] * zoomProgress, shift[1] * zoomProgress, shift[2] * zoomProgress);
+    }
+
+    /** The first person hand shift at full zoom (blocks, hand space). */
+    private float[] adsShift() {
+        return new float[]{-0.5588f + this.adsOffsets[0], 0.15f + this.adsOffsets[1], 0.31f + this.adsOffsets[2]};
+    }
+
+    /** The base rotation of the geo model: the geo files of every gun point the same way (barrel along -Z). */
+    protected final void setGeoBaseRotation(PoseStack poseStack, ItemDisplayContext transform) {
+        super.setBaseRotation(poseStack, transform);
+    }
+
+    /** The base translation in the geo model's frame (turned for {@link RenderGunBase90}, whose geo files are turned). */
+    protected float[] geoBaseTranslation() {
+        return this.translateBase.clone();
+    }
+
+    /**
+     * Conversion seed ({@link GunConversion}): the {@code root} bone pivot, i.e. the hand origin in geo model pixels. Whole
+     * gun turns from the animation files then turn about the hand as the code presets did.
+     */
+    public float[] exportRootPivot() {
+        float[] t = this.geoBaseTranslation();
+        return new float[]{-16f * t[0], 16f * t[1], -16f * t[2]};
+    }
+
+    /**
+     * Conversion seed ({@link GunConversion}): the {@code root} offset of the {@code aim} pose (full zoom) in geo model
+     * pixels, from the hand shift of {@link #transformADS} through the first person scale.
+     */
+    public float[] exportAim() {
+        float[] shift = this.adsShift();
+        float s = this.baseScale * this.scale_ego;
+        return new float[]{-16f * shift[0] / s, 16f * shift[1] / s, 16f * shift[2] / s};
     }
 
     public RenderGunBase setMuzzleFlashJitter(float jX, float jY, float jAngle, float jScale) {

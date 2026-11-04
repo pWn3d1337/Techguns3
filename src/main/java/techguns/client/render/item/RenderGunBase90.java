@@ -39,7 +39,7 @@ public class RenderGunBase90 extends RenderGunBase {
     @Override
     protected void setBaseRotation(PoseStack poseStack, ItemDisplayContext transform) {
         if (this.geoTurned()) {
-            super.setBaseRotation(poseStack, transform);
+            this.setGeoBaseRotation(poseStack, transform);
             return;
         }
         TGMatrixOps.rotate(poseStack, -180.0f, 1.0f, 0, 0);
@@ -49,10 +49,16 @@ public class RenderGunBase90 extends RenderGunBase {
     @Override
     protected void applyBaseTranslation(PoseStack poseStack) {
         if (this.geoTurned()) {
-            // the Java turn Ry(90) moved in front of the translation: (x, y, z) -> (z, y, -x)
-            poseStack.translate(this.translateBase[2], this.translateBase[1], -this.translateBase[0]);
+            float[] t = this.geoBaseTranslation();
+            poseStack.translate(t[0], t[1], t[2]);
             return;
         }
         super.applyBaseTranslation(poseStack);
+    }
+
+    /** The Java turn Ry(90) moved in front of the translation: (x, y, z) -> (z, y, -x). */
+    @Override
+    protected float[] geoBaseTranslation() {
+        return new float[]{this.translateBase[2], this.translateBase[1], -this.translateBase[0]};
     }
 }

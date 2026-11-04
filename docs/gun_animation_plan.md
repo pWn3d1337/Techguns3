@@ -224,8 +224,19 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
     - `GeoGunModel#turned` turns what still works in Java model space: `transformPart` (turned there and back), code bone offsets and scales, and the Java fallback for a missing geo file.
   - **Verified in game, geo vs Java fallback, pixel diff of screenshots** (0 or 1 differing pixels): revolver, minigun barrel spin (fire pose), combat shotgun pump (fire pose), TFG (code bone offsets), mining drill spin, lasergun (per-face glow cubes), GML, rocket launcher, grappling hook, and all hotbar icons. Third person only by eye: the idle arm sway moves between frames even with `tick freeze`.
   - `/tgdebug exportgeo` still writes the unturned files; a re-export of a 90 degree gun needs `geo_turn.py` again.
+- **2026-11-04, conversion seeds and the first turned data-driven gun (revolver):**
+  - `/tgdebug convertgun` (`GunConversion`) seeds the held gun's source files from its code renderer, once, when the gun moves to its model files; they are hand-owned from then on.
+    - `root` pivot of every geo file of the gun: the hand origin, from the base translation in the geo frame (`RenderGunBase#exportRootPivot`; turned for `RenderGunBase90`).
+    - `aim` animation in `animations/item/<gun>.animation.json` (other animations kept, Blockbench tab layout): `root` moves to the ADS shift in model pixels (`RenderGunBase#exportAim`).
+    - Reproduces the pistol's hand-made pivot and `aim` exactly.
+  - **Revolver** is data-driven (`DATA_DRIVEN`): seeded pivot `[1.1, -3.2, -5.6]` and `aim`, display file and item model `display` block from datagen.
+  - **Fixes on the way:**
+    - The item model export ran without the geo bridge (datagen), so a turned gun got the Java 90 degree chain. It now always uses the geo frame (`setGeoBaseRotation`, `geoBaseTranslation`).
+    - The display transform was applied with `PoseStack#mulPose(Matrix4f)`. With a scale it recomputes the normal matrix at 1/scale length, and GeckoLib does not renormalise normals, so data-driven guns were lit too bright (2.7 times for the revolver; 1.7 for the pistol, missed before). It is now applied as translate, rotate and uniform scale.
+    - JOML 1.10.5's `getNormalizedRotation` returns a non-unit quaternion for a scaled matrix; the scale is taken out first.
+  - **Verified in game, revolver data path vs Java fallback:** idle, reload at 0.05 / 0.15 / 0.25 / 0.4 (matches, ease-in within the known Euler approximation), full aim, hotbar icons (identical).
+  - Known geo vs Java difference, not from this work: the Java model lights the end faces of mirrored boxes from the inside (darker when aiming, where they face the camera); the geo files light them from the outside.
 - **Next:**
-  - generating `aim` and the root pivot per gun when converting;
   - charge translation;
   - Molang queries;
   - sound and instruction keyframes.

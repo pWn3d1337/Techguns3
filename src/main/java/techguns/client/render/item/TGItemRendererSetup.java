@@ -71,7 +71,7 @@ public final class TGItemRendererSetup {
     }
 
     /** Guns whose motion lives in their model files: datagen writes their display file ({@link GunDisplay}). */
-    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL);
+    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL, TGGuns.REVOLVER);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {

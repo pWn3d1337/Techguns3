@@ -1,6 +1,7 @@
 package techguns.client.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -129,6 +130,11 @@ public class GeoGunModel extends TGModel {
             }
         }
         fallback.render(entity, poseStack, vertices, ammoLeft, reloadProgress, context, part, fireProgress, chargeProgress, light, overlay);
+    }
+
+    /** The geo model id of each render part. */
+    public List<String> geoIds() {
+        return List.of(geoIds);
     }
 
     @Override

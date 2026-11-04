@@ -16,6 +16,7 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGGeoExporter;
+import techguns.client.render.item.GunConversion;
 import techguns.client.render.item.GunRenderState;
 import techguns.client.model.gun.ModelSawedOff;
 import techguns.client.model.gun.ModelChainsaw;
@@ -171,6 +172,24 @@ public final class TGDebugCommands {
                                     }
                                     return 1;
                                 })))
+                .then(Commands.literal("convertgun")
+                        .executes(ctx -> {
+                            // seeds the held gun's source geo and animation files (root pivot, aim) from its code renderer
+                            var player = Minecraft.getInstance().player;
+                            if (player == null) {
+                                return 0;
+                            }
+                            var assets = Minecraft.getInstance().gameDirectory.toPath().toAbsolutePath().normalize().getParent()
+                                    .resolve("src/main/resources/assets/techguns");
+                            try {
+                                for (String line : GunConversion.convert(player.getMainHandItem().getItem(), assets)) {
+                                    ctx.getSource().sendSystemMessage(Component.literal(line));
+                                }
+                            } catch (Exception e) {
+                                ctx.getSource().sendSystemMessage(Component.literal("Conversion failed: " + e.getMessage()));
+                            }
+                            return 1;
+                        }))
                 .then(Commands.literal("exportgeo")
                         .executes(ctx -> {
                             // writes run/geo_export/<id>.geo.json from the Java gun models (copy to assets/techguns/geo/item);
