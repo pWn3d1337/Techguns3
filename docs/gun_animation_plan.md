@@ -214,8 +214,17 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **Open:** whether Blockbench's Display tab previews these values exactly.
     - Here the geo model origin sits at the item centre (vanilla's -0.5 and our +0.5 cancel), as GeckoLib's `GeoItemRenderer` does apart from its 0.01 lift.
     - To check once in Blockbench with the GeckoLib plugin's animated item format.
+- **2026-11-04, 90 degree guns normalized:**
+  - `tools/geo_turn.py` bakes the code turn of `RenderGunBase90` (Ry(90) in Java model space) into the geo files of all 22 guns (36 files, mining tools and flamethrower included). Every gun now points along -Z.
+    - Bones: pivot turned, rotation conjugated (N R N^-1, recomposed as Euler angles).
+    - Cubes: the box is turned and stays axis aligned. The faces land on other sides and top and bottom turn, which box UV cannot express, so turned cubes get per-face UV with `uv_rotation` (format 1.21.0, which Blockbench reads and writes). The UVs are found by emulating GeckoLib's quad building: every corner keeps the UV it had.
+    - Flat cubes (a size of 0) keep their box and get a cube rotation `[0, 90, 0]` about the origin instead: both faces on their plane draw, the later one wins, and rebuilt faces would swap which is drawn last (seen on the GML's holo sight, 20% brighter).
+    - Checked by the script's own test: one turn moves every quad corner and UV exactly, four turns give back the file.
+  - **Renderer:** for a geo draw, `RenderGunBase90` uses the normal base rotation and turns the base translation along ((x, y, z) -> (z, y, -x)). The Java fallback (`/tgdebug geo`) keeps the 90 degree turn.
+    - `GeoGunModel#turned` turns what still works in Java model space: `transformPart` (turned there and back), code bone offsets and scales, and the Java fallback for a missing geo file.
+  - **Verified in game, geo vs Java fallback, pixel diff of screenshots** (0 or 1 differing pixels): revolver, minigun barrel spin (fire pose), combat shotgun pump (fire pose), TFG (code bone offsets), mining drill spin, lasergun (per-face glow cubes), GML, rocket launcher, grappling hook, and all hotbar icons. Third person only by eye: the idle arm sway moves between frames even with `tick freeze`.
+  - `/tgdebug exportgeo` still writes the unturned files; a re-export of a 90 degree gun needs `geo_turn.py` again.
 - **Next:**
-  - normalizing the 90 degree guns;
   - generating `aim` and the root pivot per gun when converting;
   - charge translation;
   - Molang queries;
@@ -231,7 +240,7 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
 1. **Flash and recoil:** an option per gun.
    - Display JSON flag `"muzzle_follows_animation"`, default `true`.
    - When `false`, the effect sits at the bone's rest position: the bone's model-space pivot from the geo file, transformed by the gun pose but not by the animation. The flash then stays still while the gun kicks, as today. This works wherever the bone sits in the hierarchy.
-2. **Orientation:** normalized when converting. The converter bakes the 90° turn of `RenderGunBase90` into the geo file, so every gun points along −Z and `RenderGunBase90` goes away.
+2. **Orientation:** normalized when converting. The converter bakes the 90° turn of `RenderGunBase90` into the geo file, so every gun points along −Z and `RenderGunBase90` goes away. Done for all geo files (`tools/geo_turn.py`); `RenderGunBase90` stays until the Java fallback is deleted.
 3. **Grenade launcher:** convert the OBJ to geo if the shape can be kept. Check with a side-by-side screenshot. It stays an OBJ exception only if the shape cannot be matched with boxes and per-face UVs.
 4. **Display JSON in `assets`:** pure visuals can be changed by resource packs. Animation files also live in `assets`, but their length is only the shape of the motion: playback is always stretched to the gun's real durations from its stats (`data`, server-synced, datapack overridable):
    - `reload` → reload time;

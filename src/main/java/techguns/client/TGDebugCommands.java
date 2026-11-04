@@ -173,7 +173,8 @@ public final class TGDebugCommands {
                                 })))
                 .then(Commands.literal("exportgeo")
                         .executes(ctx -> {
-                            // writes run/geo_export/<id>.geo.json from the Java gun models (copy to assets/techguns/geo/item)
+                            // writes run/geo_export/<id>.geo.json from the Java gun models (copy to assets/techguns/geo/item);
+                            // the files of RenderGunBase90 guns then need the turn of tools/geo_turn.py
                             try {
                                 var dir = Minecraft.getInstance().gameDirectory.toPath().resolve("geo_export");
                                 TGGeoExporter.export(new ModelM4(), "m4",

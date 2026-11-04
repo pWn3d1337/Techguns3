@@ -12,7 +12,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
+import com.mojang.math.Axis;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 /**
  * Gun model drawn from Bedrock geo files through {@link TGGeoBridge} (Q3 decided: guns use GeckoLib). One geo file
@@ -36,6 +38,10 @@ public class GeoGunModel extends TGModel {
     private GeoAnimInput animInput;
     /** Marker bone poses of the last draw (all parts). */
     private final Map<String, Matrix4f> markers = new HashMap<>();
+    /** See {@link #turned()}. */
+    private boolean turned;
+    private static final Quaternionf JAVA_TURN = Axis.YP.rotationDegrees(90f);
+    private static final Quaternionf JAVA_TURN_BACK = Axis.YP.rotationDegrees(-90f);
 
     /**
      * @param geoIds geo model id per render part ({@code assets/techguns/geo/item/<id>.geo.json})
@@ -49,6 +55,34 @@ public class GeoGunModel extends TGModel {
     public GeoGunModel setVisibility(PartVisibility visibility) {
         this.visibility = visibility;
         return this;
+    }
+
+    /**
+     * The geo files are turned 90 degrees about Y against the Java model ({@code tools/geo_turn.py}, the guns of
+     * {@code RenderGunBase90}): Java model space = {@link #JAVA_TURN} x geo frame. The Java part transforms, code bone
+     * offsets and scales and the Java fallback are turned to match.
+     */
+    public GeoGunModel turned() {
+        this.turned = true;
+        return this;
+    }
+
+    /** Code bones of a turned model: Java offsets and scales turned by Ry(90), (x, y, z) -> (z, y, -x). */
+    private record TurnedBones(GeoBones bones) implements GeoBones {
+        @Override
+        public void setHidden(String bone, boolean hidden) {
+            bones.setHidden(bone, hidden);
+        }
+
+        @Override
+        public void setOffset(String bone, float x, float y, float z) {
+            bones.setOffset(bone, z, y, -x);
+        }
+
+        @Override
+        public void setScale(String bone, float x, float y, float z) {
+            bones.setScale(bone, z, y, x);
+        }
     }
 
     @Override
@@ -69,13 +103,28 @@ public class GeoGunModel extends TGModel {
             GeoAnimInput anim = !inHand ? GeoAnimInput.NONE : animInput != null ? animInput
                     : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft <= 0, false, 0f, 0f, null, null);
             poseStack.pushPose();
+            if (turned) {
+                poseStack.mulPose(JAVA_TURN);
+            }
             fallback.transformPart(poseStack, entity, context, part, ammoLeft, reloadProgress, fireProgress);
+            if (turned) {
+                poseStack.mulPose(JAVA_TURN_BACK);
+            }
             boolean drawn = TGGeoBridge.get().render(geoIds[part], poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
                     vertices, light, overlay, anim,
-                    bones -> partModel(part).animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, chargeProgress, context),
+                    bones -> partModel(part).animateGeoBones(turned ? new TurnedBones(bones) : bones, part, ammoLeft, reloadProgress,
+                            fireProgress, chargeProgress, context),
                     markers::put);
             poseStack.popPose();
             if (drawn) {
+                return;
+            }
+            if (turned) {
+                // geo file missing: the renderer placed the geo frame
+                poseStack.pushPose();
+                poseStack.mulPose(JAVA_TURN);
+                fallback.render(entity, poseStack, vertices, ammoLeft, reloadProgress, context, part, fireProgress, chargeProgress, light, overlay);
+                poseStack.popPose();
                 return;
             }
         }
