@@ -41,6 +41,8 @@ public class GeoGunModel extends TGModel {
     private final Map<String, Matrix4f> markers = new HashMap<>();
     /** See {@link #turned()}. */
     private boolean turned;
+    /** See {@link #motionInFiles()}. */
+    private boolean motionInFiles;
     private static final Quaternionf JAVA_TURN = Axis.YP.rotationDegrees(90f);
     private static final Quaternionf JAVA_TURN_BACK = Axis.YP.rotationDegrees(-90f);
 
@@ -65,6 +67,15 @@ public class GeoGunModel extends TGModel {
      */
     public GeoGunModel turned() {
         this.turned = true;
+        return this;
+    }
+
+    /**
+     * The geo files and animations hold all part motion (docs/gun_animation_plan.md, phase 5): the Java model's
+     * {@code transformPart} is only used by the Java fallback, not for the geo draw.
+     */
+    public GeoGunModel motionInFiles() {
+        this.motionInFiles = true;
         return this;
     }
 
@@ -101,15 +112,17 @@ public class GeoGunModel extends TGModel {
             }
             boolean inHand = entity != null && (context.firstPerson() || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
                     || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
-            GeoAnimInput anim = !inHand ? GeoAnimInput.NONE : animInput != null ? animInput
+            GeoAnimInput anim = !inHand ? (context == ItemDisplayContext.GUI ? GeoAnimInput.GUI : GeoAnimInput.NONE) : animInput != null ? animInput
                     // without the gun renderer's input the magazine size is unknown: full or empty
                     : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft > 0 ? 1f : 0f, ammoLeft, ammoLeft <= 0,
-                    false, 0f, 0f, null, null, null, null);
+                    false, 0f, 0f, null, null, null, null, false);
             poseStack.pushPose();
             if (turned) {
                 poseStack.mulPose(JAVA_TURN);
             }
-            fallback.transformPart(poseStack, entity, context, part, ammoLeft, reloadProgress, fireProgress);
+            if (!motionInFiles) {
+                fallback.transformPart(poseStack, entity, context, part, ammoLeft, reloadProgress, fireProgress);
+            }
             if (turned) {
                 poseStack.mulPose(JAVA_TURN_BACK);
             }

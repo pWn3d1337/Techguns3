@@ -23,12 +23,15 @@ import javax.annotation.Nullable;
  * @param chargeMotion whole-gun motion on the charge progress, null if none or the gun renderer still does it in code
  * @param events       who holds the gun and which timer runs, for the sound, particle and instruction keyframes; null
  *                     when no keyframe events fire (GUI, ground, frames)
+ * @param gui          drawn as a GUI icon, Molang {@code query.tg_gui} (e.g. a laser beam bone scaled to 0 in {@code hold})
  */
 public record GeoAnimInput(float fire, float reload, float aim, float charge, float ammo, int ammoCount, boolean empty, boolean mirror,
                            float holdPitch, float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion,
-                           @Nullable Layer chargeMotion, @Nullable Events events) {
+                           @Nullable Layer chargeMotion, @Nullable Events events, boolean gui) {
     /** Not animated (GUI, ground, item frames); a full magazine for queries. */
-    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, 1f, 0, false, false, 0f, 0f, null, null, null, null);
+    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, 1f, 0, false, false, 0f, 0f, null, null, null, null, false);
+    /** {@link #NONE} as a GUI icon. */
+    public static final GeoAnimInput GUI = new GeoAnimInput(0f, 0f, 0f, 0f, 1f, 0, false, false, 0f, 0f, null, null, null, null, true);
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */
     public record Layer(String animation, float move, float turn) {

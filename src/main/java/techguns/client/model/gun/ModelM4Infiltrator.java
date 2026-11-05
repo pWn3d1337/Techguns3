@@ -395,14 +395,5 @@ public class ModelM4Infiltrator extends TGModel {
 	    }
 	  }
 	  
-
-	/** The laser beam isn't drawn in inventory icons (same as {@link #render}). */
-	@Override
-	public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress,
-								ItemDisplayContext context) {
-		super.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
-		boolean gui = context == ItemDisplayContext.GUI;
-		bones.setHidden("LaserBeam", gui);
-		bones.setHidden("LaserBeam01", gui);
-	}
+	// the geo model hides the laser beam in inventory icons with its hold animation (query.tg_gui)
 }

@@ -11,14 +11,15 @@ import techguns.client.model.GeoAnimInput;
  *     reload in the {@code fire} animation);</li>
  *     <li>{@code query.tg_ammo}: loaded rounds as a fraction of the magazine; {@code query.tg_ammo_count}: loaded rounds
  *     (belts, magazines that empty visibly);</li>
- *     <li>{@code query.tg_time}: world time in seconds with the partial tick, for loops (spinning parts).</li>
+ *     <li>{@code query.tg_time}: world time in seconds with the partial tick, for loops (spinning parts);</li>
+ *     <li>{@code query.tg_gui}: 1 when drawn as a GUI icon, else 0.</li>
  * </ul>
  * The short prefix {@code q.} works as well. GeckoLib creates a variable the first time a file names it, so the order of
  * loading does not matter: the same instance is updated here.
  */
 // MIGRATION(26.x): GeckoLib 5 replaces MathParser variables with its own query registration.
 final class GunQueries {
-    private static double fire, reload, charge, zoom, ammo, ammoCount, time;
+    private static double fire, reload, charge, zoom, ammo, ammoCount, time, gui;
 
     static {
         MathParser.setVariable("query.tg_fire", () -> fire);
@@ -28,6 +29,7 @@ final class GunQueries {
         MathParser.setVariable("query.tg_ammo", () -> ammo);
         MathParser.setVariable("query.tg_ammo_count", () -> ammoCount);
         MathParser.setVariable("query.tg_time", () -> time);
+        MathParser.setVariable("query.tg_gui", () -> gui);
     }
 
     private GunQueries() {
@@ -42,5 +44,6 @@ final class GunQueries {
         ammo = anim.ammo();
         ammoCount = anim.ammoCount();
         time = seconds;
+        gui = anim.gui() ? 1 : 0;
     }
 }

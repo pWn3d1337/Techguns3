@@ -1,0 +1,47 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"LaserBeam": {
+					"scale": {
+						"0.0": [
+							"1 - q.tg_gui",
+							"1 - q.tg_gui",
+							"1 - q.tg_gui"
+						]
+					}
+				},
+				"LaserBeam01": {
+					"scale": {
+						"0.0": [
+							"1 - q.tg_gui",
+							"1 - q.tg_gui",
+							"1 - q.tg_gui"
+						]
+					}
+				}
+			}
+		},
+		"aim": {
+			"animation_length": 1.0,
+			"bones": {
+				"root": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"1.0": [
+							17.8816,
+							4.8,
+							9.92
+						]
+					}
+				}
+			}
+		}
+	}
+}

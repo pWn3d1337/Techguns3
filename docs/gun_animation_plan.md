@@ -275,8 +275,15 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **New layer `hold`:** sampled at its start in every draw, under all others: the static pose of a model, for what the geo format can't store. The SCAR bolt's static render scale (1, 0.7, 0.7) was applied by code bones to the part file only; it is now a `hold` scale keyframe on `bolt_body`. The static scales of the other models are still code bones (`TGModel#animateGeoBones`) until phase 7 moves them to `hold` the same way.
   - Display files, item model `display` blocks and `convertgun` seeds (root pivot, `aim`, `muzzle`) as in phase 4. The Java fallback keeps its separate part model (and `/tgdebug exportgeo` still writes the `_1` files) until phase 7.
   - **Verified in game, data path vs Java fallback, pixel diff:** SCAR `fire 0.3` bolt identical (before the `hold` fix the bolt was 1.4 times too big); the remaining 1400 px are the scope parts' known shear approximation (logged at startup, also at rest). AUG `fire 0.3` identical. Combat shotgun `fire 0.8` (pump peak) identical; `reload 0.95` differs only by the known reload tilt approximation (`reload 0.9`, pump at rest, differs as much).
+- **2026-11-05, phase 5: minigun, blaster shotgun (Lasergun 2), Grim Reaper, M4 Infiltrator:**
+  - `GeoGunModel#motionInFiles()`: the geo draw skips the Java model's `transformPart` (still used by the Java fallback).
+  - **Minigun:** `minigun_1` merged under `barrels`; `fire` turns it once, linear, `[0, 0, -360]` (the sign checked in game at `fire 0.1`: +360 turned the wrong way; the turned gun's Java x axis is the geo z axis and the y flip of the file reverses the angle).
+  - **Blaster shotgun:** `blaster_shotgun_1` merged under `pump` (`Handguard` renamed `pump_body`). The Fabric port's pump (Techguns 2 had none) runs from fire 0.15 to 0.95 at the speed of a 0.3 stroke, so after 0.45 the handguard slid up to 7 px forward and snapped back; the keyframes have the intended stroke: 2 px forward at 0.3, back at 0.45 (and 0.9 to 1.0 of the reload, peak at 0.95).
+  - **Grim Reaper:** its `transformPart` turned every part 180 degrees about y; the turn is baked into `grim_reaper.geo.json` (`tools/geo_turn.py` twice).
+  - **M4 Infiltrator:** the laser beam is hidden in inventory icons by its `hold` animation, scale `1 - q.tg_gui` on `LaserBeam` / `LaserBeam01`; the code override (`ModelM4Infiltrator#animateGeoBones`) is gone. New query `query.tg_gui` (1 for GUI icons, `GeoAnimInput.GUI`).
+  - **Verified in game, data path vs Java fallback, pixel diff:** minigun `fire 0.1` identical, blaster shotgun `fire 0.3` (pump peak) 26 px, Grim Reaper identical (also its hotbar icon), M4 Infiltrator identical in first person; its hotbar icon draws without the beam, the hand view with it.
 - **Next:**
-  - Phase 5: LMG belt, minigun, mining tools, grappling hook, NDR/GML, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator.
+  - Phase 5: TFG (charge rails: hold + charge keyframes), LMG belt (`q.tg_ammo_count`, first person only feed), mining tools, grappling hook, NDR/GML (translucent bones).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.
