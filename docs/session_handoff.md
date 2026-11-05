@@ -29,8 +29,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ### Next steps (gun animation)
 
-1. Commit the phase 5 mining tools step if not done.
-2. Phase 5 (rest) part-motion guns (grappling hook, NDR/GML translucent bones),
+1. Commit the phase 5 grappling hook step if not done.
+2. Phase 5 (rest) part-motion guns (NDR/GML translucent bones),
    phase 6 special renderers, phase 7 cleanup (delete Java gun models, `RenderGunBase90`, presets).
 3. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).

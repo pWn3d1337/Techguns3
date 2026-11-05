@@ -105,6 +105,7 @@ A gun without a `reload` of its own gets the shared one.
 | `query.tg_gui` | 1 when drawn as a GUI icon (implemented; hides the M4 Infiltrator laser in icons). |
 | `query.tg_first_person` | 1 when drawn in first person (implemented; the LMG belt feeds only there). |
 | `query.tg_in_hand` | 1 when held, 0 for GUI icons, on the ground and in frames (implemented; power hammer head). |
+| `query.tg_grapple` | Grappling hook of the holder: 0 in the gun, 1 launched, -1 attached or pulling (implemented; grappling hook). |
 | `query.tg_spin` | Barrel spin angle / speed (dropped, see Progress). |
 
 ### Muzzle and effect positions from bones
@@ -298,8 +299,13 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **Power hammer:** `power_hammer_1` has a `head` group bone; `hold` puts it at `3.2 + 3.2 * q.tg_in_hand` px along z (rest 6.4 in hand, 3.2 in GUI, on the ground and in frames, like the old `headProgress` 0 / 0.25) and `fire` moves it -6.4 at 0.5 and back. New query `query.tg_in_hand`.
   - `motionInFiles()` on the drill and the hammer (their `transformPart` stays for the Java fallback).
   - **Verified in game, data path vs Java fallback, pixel diff (time fixed: lighting drifts with the day cycle otherwise):** drill `fire 0.1`, hammer `fire 0.25`, chainsaw `fire 0.03` and `0.05` (both blade frames) identical in first person; hotbar icons: hammer 1 px, chainsaw 28 px, drill 19 px (display transform rounding, as with the phase 4 guns).
+- **2026-11-05, phase 5: grappling hook:**
+  - `grappling_hook_1` (hook) and `_2` (wheel) are merged into `grappling_hook.geo.json` (`tools/geo_merge.py`) under the group bones `hook` and `wheel`; one render part, `motionInFiles()`.
+  - New query `query.tg_grapple` from the holder's hook entity (`GunRenderState#grappleStatus`, only looked up for the grappling hook; the Java model uses it too).
+  - `hold` scales `hook` by `q.tg_grapple == 0` (gone while launched or attached) and turns `wheel1` about its pivot by `q.tg_grapple * ((q.tg_time * 1800) % 360)` on x (90 degrees per tick, unrolling while launched, rolling back while attached), as `ModelGrapplingHook#transformPart`.
+  - **Verified in game, data path vs Java fallback, pixel diff (hook in flight, `tick freeze`, `/tgdebug pose charge 0.5`, the use time keeps running under the freeze):** idle and in-flight gun identical above the wheel; at the wheel ~300 px of 1-px edges and z-fighting slivers (the Java path computes the angle from a float game time, 1/16 tick steps at a million ticks); the opposite spin sign differs by ~1300 px. Hotbar icon identical.
 - **Next:**
-  - Phase 5: grappling hook, NDR/GML (translucent bones).
+  - Phase 5: NDR/GML (translucent bones).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

@@ -3,10 +3,15 @@ package techguns.client.render.item;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import techguns.client.gun.ClientGunController;
 import techguns.client.gun.ShooterValues;
+import techguns.entity.projectile.GrapplingHookProjectile;
 import techguns.gun.ChargeGunItem;
+import techguns.gun.GrapplingHookItem;
 import techguns.gun.GunData;
 import techguns.gun.GunItem;
 
@@ -25,10 +30,11 @@ import techguns.gun.GunItem;
  * @param muzzleFlashSeed     differs for every muzzle flash (holder, hand and flash start): seeds the flash jitter
  * @param fireCycle           identifies the running recoil (its timer start), 0 if none: keyframe events fire once per run
  * @param reloadCycle         identifies the running reload, 0 if none
+ * @param grapple             grappling hook of the holder: 0 = in the gun, 1 = launched, -1 = attached or pulling
  */
 public record GunRenderState(float fireProgress, float reloadProgress, float muzzleFlashProgress, float chargeProgress,
                              float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant,
-                             long muzzleFlashSeed, long fireCycle, long reloadCycle) {
+                             long muzzleFlashSeed, long fireCycle, long reloadCycle, int grapple) {
 
     /** Dev: fixed fire, reload, zoom and charge progress of the local player's held guns ({@code /tgdebug pose}); null = live. */
     @Nullable
@@ -84,6 +90,26 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             chargeFull = debugPose[3];
         }
         return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()),
-                flashSeed, fireCycle, reloadCycle);
+                flashSeed, fireCycle, reloadCycle,
+                gun instanceof GrapplingHookItem && context.isInHand() && context.entity() != null ? grappleStatus(context.entity()) : 0);
+    }
+
+    /**
+     * Grappling state of {@code holder}, from its hook entity in the client level: 0 = hook in the gun, 1 = hook launched
+     * (the wheel unrolls), -1 = hook attached or pulling (the wheel rolls back).
+     */
+    public static int grappleStatus(LivingEntity holder) {
+        if (holder.level() instanceof ClientLevel level) {
+            for (Entity entity : level.entitiesForRendering()) {
+                if (entity instanceof GrapplingHookProjectile hook && hook.getOwner() == holder && hook.isAlive()) {
+                    return switch (hook.status()) {
+                        case NONE -> 0;
+                        case LAUNCHING -> 1;
+                        default -> -1;
+                    };
+                }
+            }
+        }
+        return 0;
     }
 }

@@ -5,37 +5,20 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import techguns.client.model.TGModel;
 import techguns.client.model.TGModelPart;
 import techguns.client.render.TGMatrixOps;
-import techguns.entity.projectile.GrapplingHookProjectile;
+import techguns.client.render.item.GunRenderState;
 
 public class ModelGrapplingHook extends TGModel {
 	private final HookPart hookPart = new HookPart();
 	private final WheelPart wheelPart = new WheelPart();
 
-	/**
-	 * Grappling state of the holder, from its hook entity in the client level: 0 = hook in the gun, 1 = hook launched
-	 * (wheel unrolls), -1 = hook attached or pulling (wheel rolls back).
-	 */
 	private static int status(LivingEntity holder) {
-		if (holder.level() instanceof ClientLevel level) {
-			for (Entity entity : level.entitiesForRendering()) {
-				if (entity instanceof GrapplingHookProjectile hook && hook.getOwner() == holder && hook.isAlive()) {
-					return switch (hook.status()) {
-						case NONE -> 0;
-						case LAUNCHING -> 1;
-						default -> -1;
-					};
-				}
-			}
-		}
-		return 0;
+		return GunRenderState.grappleStatus(holder);
 	}
 
 	/** Render part 1 is the hook, part 2 the wheel. */

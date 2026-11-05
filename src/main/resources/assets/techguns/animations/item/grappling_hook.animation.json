@@ -1,0 +1,43 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"hook": {
+					"scale": [
+						"q.tg_grapple == 0",
+						"q.tg_grapple == 0",
+						"q.tg_grapple == 0"
+					]
+				},
+				"wheel1": {
+					"rotation": [
+						"q.tg_grapple * ((q.tg_time * 1800) % 360)",
+						0,
+						0
+					]
+				}
+			}
+		},
+		"aim": {
+			"animation_length": 1.0,
+			"bones": {
+				"root": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"1.0": [
+							14.9013,
+							4,
+							8.2667
+						]
+					}
+				}
+			}
+		}
+	}
+}

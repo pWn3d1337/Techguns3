@@ -80,7 +80,7 @@ public final class TGItemRendererSetup {
             TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE,
             // phase 5: part motion in keyframes (merged geo files)
             TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
-            TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL);
+            TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -433,8 +433,9 @@ public final class TGItemRendererSetup {
                         {0f, -0.08f, -0.05f} // frame
                 }).setRecoilAnim(GunAnimation.genericRecoil, 0.05f, 1.0f));
 
-        // Part 1 is the hook (hidden while launched), part 2 the wheel (the Fabric port drew everything twice)
-        TGItemRenderers.register(TGGuns.GRAPPLING_HOOK, new RenderGunBase90(new GeoGunModel(new ModelGrapplingHook(), "grappling_hook", "grappling_hook_1", "grappling_hook_2"), 3,
+        // Java fallback: part 1 is the hook (hidden while launched), part 2 the wheel (the Fabric port drew everything twice);
+        // the geo file has them as the hook and wheel bones (query.tg_grapple)
+        TGItemRenderers.register(TGGuns.GRAPPLING_HOOK, new RenderGunBase90(new GeoGunModel(new ModelGrapplingHook(), "grappling_hook").motionInFiles(), 3,
                 TGIds.id("textures/guns/grappling_hook.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE * 0.5f - 0.10f)
                 .setBaseScale(1.2f).setGUIScale(0.85f).setTransformTranslations(new float[][]{
                         {0, 0.00f, 0f}, // First Person
