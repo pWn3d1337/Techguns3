@@ -318,8 +318,12 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - `hold` scales `rocket` by `(q.tg_reload == 0 && q.tg_ammo_count > 0) || q.tg_reload > 0.5` (loaded, or past the reload's midpoint). This replaces `GeoGunModel#setVisibility`, its only user, which is gone (the Java fallback always drew the rocket).
   - `motionInFiles()`, data-driven (`convertgun`: root pivot in both files, `aim`, `muzzle`).
   - **Verified in game, data path vs Java fallback, pixel diff:** loaded idle identical, hotbar icon 6 px; reload 0.3 hides the rocket, reload 0.7 shows it and matches the Java fallback.
+- **2026-11-05, phase 6: flamethrower:**
+  - `idle_fx` marker bone at the muzzle (the pilot flame used the muzzle flash offsets). `RenderFlamethrower` draws the pilot flame at that marker in first and third person, else at the old offsets (Java fallback). The under-water check stays in code.
+  - `motionInFiles()`, data-driven (`convertgun`: root pivot, `aim`, `muzzle`; `idle_fx` copied from `muzzle`).
+  - **Verified in game, data path vs Java fallback:** first person gun identical, the pilot flame starts at the same spot. Third person: the flame now sits on the nozzle; the old hand-tuned third person offset was slightly off-center.
 - **Next:**
-  - Phase 6: flamethrower idle FX bone, mining tools via queries, grenade launcher (OBJ).
+  - Phase 6: mining tools via queries, grenade launcher (OBJ).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

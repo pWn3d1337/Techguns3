@@ -4,15 +4,18 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.LivingEntity;
+import org.joml.Vector3f;
 import techguns.client.model.TGModel;
 import techguns.client.render.fx.IScreenEffect;
 
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Flamethrower: draws a small pilot flame at the muzzle while the gun is idle (and not under water).
+ * Flamethrower: draws a small pilot flame while the gun is idle (and not under water), at the model's {@code idle_fx}
+ * marker bone, else at the muzzle flash offsets.
  */
 public class RenderFlamethrower extends RenderGunBase90 {
+    private static final String IDLE_FX = "idle_fx";
 
     public RenderFlamethrower(TGModel model, ResourceLocation texture) {
         super(model, texture);
@@ -25,9 +28,11 @@ public class RenderFlamethrower extends RenderGunBase90 {
     @Override
     protected void drawIdleFx(LivingEntity entity, PoseStack poseStack, MultiBufferSource buffers, boolean leftHand, String ammoVariant) {
         if (entity != null && !entity.isUnderWater() && Minecraft.getInstance().level != null) {
-            float p = (float) (Minecraft.getInstance().level.getGameTime() % 20) / 20.0f;
-            float x = leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
-            IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, p, x, this.muzzleEffect.offsetY, this.muzzleEffect.offsetZ,
+            Vector3f marker = markerOffset(poseStack, IDLE_FX);
+            float x = marker != null ? marker.x : leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
+            float y = marker != null ? marker.y : this.muzzleEffect.offsetY;
+            float z = marker != null ? marker.z : this.muzzleEffect.offsetZ;
+            IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, pilotProgress(), x, y, z,
                     this.muzzleEffect.effectScale * 0.5f, false, ammoVariant);
         }
     }
@@ -35,9 +40,16 @@ public class RenderFlamethrower extends RenderGunBase90 {
     @Override
     protected void drawIdleFx3P(LivingEntity entity, PoseStack poseStack, MultiBufferSource buffers, boolean leftHand, String ammoVariant) {
         if (entity != null && !entity.isUnderWater() && Minecraft.getInstance().level != null) {
-            float p = (float) (Minecraft.getInstance().level.getGameTime() % 20) / 20.0f;
-            IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, p, 0, this.muzzleEffect.offsetY_3p, this.muzzleEffect.offsetZ_3p,
+            Vector3f marker = markerOffset(poseStack, IDLE_FX);
+            float x = marker != null ? marker.x : 0;
+            float y = marker != null ? marker.y : this.muzzleEffect.offsetY_3p;
+            float z = marker != null ? marker.z : this.muzzleEffect.offsetZ_3p;
+            IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, pilotProgress(), x, y, z,
                     this.muzzleEffect.effectScale * 0.5f * this.muzzleEffect.effectScale_3p, true, ammoVariant);
         }
+    }
+
+    private static float pilotProgress() {
+        return (float) (Minecraft.getInstance().level.getGameTime() % 20) / 20.0f;
     }
 }

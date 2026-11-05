@@ -81,7 +81,7 @@ public final class TGItemRendererSetup {
             // phase 5: part motion in keyframes (merged geo files)
             TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
             TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK,
-            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.ROCKET_LAUNCHER);
+            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.ROCKET_LAUNCHER, TGGuns.FLAMETHROWER);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -547,7 +547,7 @@ public final class TGItemRendererSetup {
                         {-0.07f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.09f, -1.14f).setChargeTranslationAmount(0.05f).setFirstPersonScale(0.45f));
 
-        TGItemRenderers.register(TGGuns.FLAMETHROWER, new RenderFlamethrower(new GeoGunModel(new ModelFlamethrower(), "flamethrower"), 1, TGIds.id("textures/guns/flamethrower.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
+        TGItemRenderers.register(TGGuns.FLAMETHROWER, new RenderFlamethrower(new GeoGunModel(new ModelFlamethrower(), "flamethrower").motionInFiles(), 1, TGIds.id("textures/guns/flamethrower.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
                 .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.FlamethrowerMuzzleFlash, 0, 0.16f, -0.9f, 0.45f, 0).setTransformTranslations(new float[][]{
                         {0f, 0f, 0f}, // First Person
                         {0f, 0f, -0.08f}, // Third Person
