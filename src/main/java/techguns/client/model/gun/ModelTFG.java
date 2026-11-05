@@ -7,8 +7,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
-import techguns.client.model.GeoBones;
-import techguns.client.model.TGGeoExporter;
 import techguns.client.model.TGModel;
 import techguns.client.model.TGModelPart;
 
@@ -618,33 +616,4 @@ public class ModelTFG extends TGModel {
 
 	}
 
-
-	/** Geo version of the charge animation in {@link #render}: the rails slide in and the upper/lower halves close. */
-	@Override
-	public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress, float chargeProgress,
-								ItemDisplayContext context) {
-		super.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
-		// same factors as render(), in model pixels
-		float f1 = 1f - Math.min(0.1f, chargeProgress) * 10.0f;
-		float f2 = 1f - Math.max(0.1f, Math.min(1.0f, (chargeProgress - 0.1f) * 10.0f));
-		// R03 / L03 are glow parts, exported with the glow suffix
-		for (String n : new String[]{"R01", "R02", "R03" + TGGeoExporter.GLOW_SUFFIX}) {
-			bones.setOffset(n, 0, 0, 2.0f * f1);
-		}
-		for (String n : new String[]{"RL01", "RL02", "RL03", "RL05"}) {
-			bones.setOffset(n, 0, -f2, 2.0f * f1);
-		}
-		for (String n : new String[]{"RU01", "RU02", "RU03", "RU04"}) {
-			bones.setOffset(n, 0, f2, 2.0f * f1);
-		}
-		for (String n : new String[]{"L01", "L02", "L03" + TGGeoExporter.GLOW_SUFFIX}) {
-			bones.setOffset(n, 0, 0, -2.0f * f1);
-		}
-		for (String n : new String[]{"LL01", "LL02", "LL03", "LL04"}) {
-			bones.setOffset(n, 0, -f2, -2.0f * f1);
-		}
-		for (String n : new String[]{"LU01", "LU02", "LU03", "LU04"}) {
-			bones.setOffset(n, 0, f2, -2.0f * f1);
-		}
-	}
 }

@@ -102,6 +102,8 @@ A gun without a `reload` of its own gets the shared one.
 | `query.tg_ammo` | Loaded ammo fraction (magazine bullets, LMG belt length, Grim Reaper). |
 | `query.tg_ammo_count` | Loaded rounds (implemented; added for belts). |
 | `query.tg_time` | World time in seconds (implemented; for loops, replaces `tg_spin`). |
+| `query.tg_gui` | 1 when drawn as a GUI icon (implemented; hides the M4 Infiltrator laser in icons). |
+| `query.tg_first_person` | 1 when drawn in first person (implemented; the LMG belt feeds only there). |
 | `query.tg_spin` | Barrel spin angle / speed (dropped, see Progress). |
 
 ### Muzzle and effect positions from bones
@@ -280,10 +282,15 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **Minigun:** `minigun_1` merged under `barrels`; `fire` turns it once, linear, `[0, 0, -360]` (the sign checked in game at `fire 0.1`: +360 turned the wrong way; the turned gun's Java x axis is the geo z axis and the y flip of the file reverses the angle).
   - **Blaster shotgun:** `blaster_shotgun_1` merged under `pump` (`Handguard` renamed `pump_body`). The Fabric port's pump (Techguns 2 had none) runs from fire 0.15 to 0.95 at the speed of a 0.3 stroke, so after 0.45 the handguard slid up to 7 px forward and snapped back; the keyframes have the intended stroke: 2 px forward at 0.3, back at 0.45 (and 0.9 to 1.0 of the reload, peak at 0.95).
   - **Grim Reaper:** its `transformPart` turned every part 180 degrees about y; the turn is baked into `grim_reaper.geo.json` (`tools/geo_turn.py` twice).
-  - **M4 Infiltrator:** the laser beam is hidden in inventory icons by its `hold` animation, scale `1 - q.tg_gui` on `LaserBeam` / `LaserBeam01`; the code override (`ModelM4Infiltrator#animateGeoBones`) is gone. New query `query.tg_gui` (1 for GUI icons, `GeoAnimInput.GUI`).
+  - **M4 Infiltrator:** the laser beam is hidden in inventory icons by its `hold` animation, scale `1 - q.tg_gui` on `LaserBeam` / `LaserBeam01`; the code override (`ModelM4Infiltrator#animateGeoBones`) is gone. New query `query.tg_gui` (1 for GUI icons).
   - **Verified in game, data path vs Java fallback, pixel diff:** minigun `fire 0.1` identical, blaster shotgun `fire 0.3` (pump peak) 26 px, Grim Reaper identical (also its hotbar icon), M4 Infiltrator identical in first person; its hotbar icon draws without the beam, the hand view with it.
+- **2026-11-05, phase 5: TFG, LMG:**
+  - **TFG:** `hold` puts the rails at their rest offsets (side rails 2 px out, upper/lower halves 0.9 px apart); `charge` pulls the rails in from 0 to 0.1 and closes the halves from 0.11 to 0.2 (the `f1`/`f2` factors of `ModelTFG#render`). `ModelTFG#animateGeoBones` is gone.
+  - **LMG belt:** `hold` scales `Bullet00` to 0 (a marker) and each `Bullet0i` to `(q.tg_ammo_count > i || (q.tg_ammo_count == i && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)`; `fire` moves each bullet to the pivot of the one before it from 0 to 0.25, scaled by the new `q.tg_first_person` (the feed shows only in first person). `ModelLMG#animateGeoBones` is gone.
+  - Not animated draws (GUI, ground, frames) now carry the stack's loaded rounds (`GeoAnimInput.still(gui, ammo)`), so an icon shows the belt the gun has, as the Java model did.
+  - **Verified in game, data path vs Java fallback, pixel diff:** TFG `charge 0.05`, `0.15`, `0.5` identical (0 to 1 px; 0.05 vs 0.15 differ by ~13000 px, so the rails do move in view); LMG `fire 0.1` belt identical, `reload 0.3` and its hotbar icon identical.
 - **Next:**
-  - Phase 5: TFG (charge rails: hold + charge keyframes), LMG belt (`q.tg_ammo_count`, first person only feed), mining tools, grappling hook, NDR/GML (translucent bones).
+  - Phase 5: mining tools, grappling hook, NDR/GML (translucent bones).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

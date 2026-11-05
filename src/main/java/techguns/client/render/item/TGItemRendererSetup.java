@@ -79,7 +79,8 @@ public final class TGItemRendererSetup {
             TGGuns.PULSE_RIFLE, TGGuns.LASER_PISTOL, TGGuns.TESLA_GUN, TGGuns.ALIEN_BLASTER, TGGuns.MIB_GUN, TGGuns.NETHER_BLASTER,
             TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE,
             // phase 5: part motion in keyframes (merged geo files)
-            TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR);
+            TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
+            TGGuns.TFG, TGGuns.LMG);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {

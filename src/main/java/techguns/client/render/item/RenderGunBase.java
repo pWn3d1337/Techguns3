@@ -386,12 +386,12 @@ public class RenderGunBase extends RenderItemBase {
         float ammo = clip > 0 ? Mth.clamp(loaded / (float) clip, 0f, 1f) : loaded > 0 ? 1f : 0f;
         if (display == null) {
             return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), 0f, state.chargeProgress(), ammo, loaded, loaded <= 0,
-                    false, 0f, 0f, null, null, null, events, false);
+                    false, 0f, 0f, null, null, null, events, false, firstPerson);
         }
         return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
                 ammo, loaded, loaded <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
                 display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null),
-                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null), events, false);
+                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null), events, false, firstPerson);
     }
 
     /** Source of the animation keyframe events of an in-hand draw (holder, hand, running timers); null without a holder. */

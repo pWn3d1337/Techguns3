@@ -1,0 +1,219 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"Bullet00": {
+					"scale": 0
+				},
+				"Bullet01": {
+					"scale": [
+						"(q.tg_ammo_count > 1 || (q.tg_ammo_count == 1 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 1 || (q.tg_ammo_count == 1 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 1 || (q.tg_ammo_count == 1 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				},
+				"Bullet02": {
+					"scale": [
+						"(q.tg_ammo_count > 2 || (q.tg_ammo_count == 2 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 2 || (q.tg_ammo_count == 2 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 2 || (q.tg_ammo_count == 2 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				},
+				"Bullet03": {
+					"scale": [
+						"(q.tg_ammo_count > 3 || (q.tg_ammo_count == 3 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 3 || (q.tg_ammo_count == 3 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 3 || (q.tg_ammo_count == 3 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				},
+				"Bullet04": {
+					"scale": [
+						"(q.tg_ammo_count > 4 || (q.tg_ammo_count == 4 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 4 || (q.tg_ammo_count == 4 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 4 || (q.tg_ammo_count == 4 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				},
+				"Bullet05": {
+					"scale": [
+						"(q.tg_ammo_count > 5 || (q.tg_ammo_count == 5 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 5 || (q.tg_ammo_count == 5 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 5 || (q.tg_ammo_count == 5 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				},
+				"Bullet06": {
+					"scale": [
+						"(q.tg_ammo_count > 6 || (q.tg_ammo_count == 6 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 6 || (q.tg_ammo_count == 6 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 6 || (q.tg_ammo_count == 6 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				},
+				"Bullet07": {
+					"scale": [
+						"(q.tg_ammo_count > 7 || (q.tg_ammo_count == 7 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 7 || (q.tg_ammo_count == 7 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)",
+						"(q.tg_ammo_count > 7 || (q.tg_ammo_count == 7 && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)"
+					]
+				}
+			}
+		},
+		"fire": {
+			"animation_length": 1.0,
+			"bones": {
+				"Bullet01": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							"-1 * q.tg_first_person",
+							0,
+							0
+						],
+						"1.0": [
+							"-1 * q.tg_first_person",
+							0,
+							0
+						]
+					}
+				},
+				"Bullet02": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							"-1 * q.tg_first_person",
+							"0.5 * q.tg_first_person",
+							0
+						],
+						"1.0": [
+							"-1 * q.tg_first_person",
+							"0.5 * q.tg_first_person",
+							0
+						]
+					}
+				},
+				"Bullet03": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							"-0.5 * q.tg_first_person",
+							"1 * q.tg_first_person",
+							0
+						],
+						"1.0": [
+							"-0.5 * q.tg_first_person",
+							"1 * q.tg_first_person",
+							0
+						]
+					}
+				},
+				"Bullet04": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							0,
+							"1 * q.tg_first_person",
+							0
+						],
+						"1.0": [
+							0,
+							"1 * q.tg_first_person",
+							0
+						]
+					}
+				},
+				"Bullet05": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							0,
+							"1 * q.tg_first_person",
+							0
+						],
+						"1.0": [
+							0,
+							"1 * q.tg_first_person",
+							0
+						]
+					}
+				},
+				"Bullet06": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							"-0.5 * q.tg_first_person",
+							"1 * q.tg_first_person",
+							0
+						],
+						"1.0": [
+							"-0.5 * q.tg_first_person",
+							"1 * q.tg_first_person",
+							0
+						]
+					}
+				},
+				"Bullet07": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.25": [
+							0,
+							"1 * q.tg_first_person",
+							0
+						],
+						"1.0": [
+							0,
+							"1 * q.tg_first_person",
+							0
+						]
+					}
+				}
+			}
+		},
+		"aim": {
+			"animation_length": 1.0,
+			"bones": {
+				"root": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"1.0": [
+							17.9136,
+							4.384,
+							9.92
+						]
+					}
+				}
+			}
+		}
+	}
+}

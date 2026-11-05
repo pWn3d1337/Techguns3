@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
-import techguns.client.model.GeoBones;
 import techguns.client.model.TGModel;
 import techguns.client.model.TGModelPart;
 
@@ -437,30 +436,6 @@ public class ModelLMG extends TGModel {
    }
  }
 	
-	/** Belt bullets for the geo model: same visibility and first person feed movement as {@link #render}. */
-	@Override
-	public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress,
-								ItemDisplayContext context) {
-		super.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
-		TGModelPart[] belt = {Bullet00, Bullet01, Bullet02, Bullet03, Bullet04, Bullet05, Bullet06, Bullet07};
-		boolean firstPerson = context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-		float feed = Math.min(fireProgress * 4.0f, 1.0f);
-		// Bullet00 only marks where Bullet01 moves to
-		bones.setHidden("Bullet00", true);
-		for (int i = 1; i < belt.length; i++) {
-			boolean visible = (reloadProgress == 0f || reloadProgress > 0.5f) && (ammoLeft > i || ammoLeft == i && fireProgress > 0);
-			String name = "Bullet0" + i;
-			bones.setHidden(name, !visible);
-			TGModelPart bullet = belt[i];
-			TGModelPart target = belt[i - 1];
-			if (visible && firstPerson) {
-				bones.setOffset(name, (target.pivotX - bullet.pivotX) * feed, (target.pivotY - bullet.pivotY) * feed,
-						(target.pivotZ - bullet.pivotZ) * feed);
-			} else {
-				bones.setOffset(name, 0, 0, 0);
-			}
-		}
-	}
 
 	protected void animateBullet(PoseStack matrices, TGModelPart bullet, ItemDisplayContext transform, TGModelPart targetPos, float recoilProgress, VertexConsumer vertices, int light,
 			int overlay) {
