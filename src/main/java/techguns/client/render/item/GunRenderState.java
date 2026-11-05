@@ -23,10 +23,12 @@ import techguns.gun.GunItem;
  * @param loadedAmmo          rounds in the gun
  * @param ammoVariant         loaded ammo variant key
  * @param muzzleFlashSeed     differs for every muzzle flash (holder, hand and flash start): seeds the flash jitter
+ * @param fireCycle           identifies the running recoil (its timer start), 0 if none: keyframe events fire once per run
+ * @param reloadCycle         identifies the running reload, 0 if none
  */
 public record GunRenderState(float fireProgress, float reloadProgress, float muzzleFlashProgress, float chargeProgress,
                              float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant,
-                             long muzzleFlashSeed) {
+                             long muzzleFlashSeed, long fireCycle, long reloadCycle) {
 
     /** Dev: fixed fire, reload, zoom and charge progress of the local player's held guns ({@code /tgdebug pose}); null = live. */
     @Nullable
@@ -39,6 +41,8 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
         float charge = 0f;
         float chargeFull = 0f;
         long flashSeed = 0L;
+        long fireCycle = 0L;
+        long reloadCycle = 0L;
         if (gun instanceof ChargeGunItem chargeGun && context.isInHand() && !context.isOffhand() && context.entity() != null
                 && context.entity().isUsingItem() && context.entity().getUseItem().getItem() == gun) {
             chargeFull = Math.max(0f, chargeGun.chargeFull(context.entity()));
@@ -50,8 +54,10 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             ShooterValues.Timer recoilTimer = values.recoil(context.hand());
             if (reloadTimer.isActive()) {
                 reload = reloadTimer.progress();
+                reloadCycle = reloadTimer.startId();
             } else if (recoilTimer.isActive()) {
                 fire = recoilTimer.progress();
+                fireCycle = recoilTimer.startId();
                 if (gun instanceof ChargeGunItem) {
                     charge = (1.0f - fire) * values.recoilCharge(context.hand());
                 }
@@ -78,6 +84,6 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
             chargeFull = debugPose[3];
         }
         return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()),
-                flashSeed);
+                flashSeed, fireCycle, reloadCycle);
     }
 }

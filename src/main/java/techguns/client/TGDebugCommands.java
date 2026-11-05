@@ -121,6 +121,13 @@ public final class TGDebugCommands {
                             ClientGunController.get().toggleZoomForHeldGun();
                             return 1;
                         }))
+                .then(Commands.literal("animevents")
+                        .executes(ctx -> {
+                            // prints every fired sound, particle and instruction keyframe of gun animations
+                            boolean on = techguns.client.render.geo.GunAnimationEvents.toggleDebug();
+                            ctx.getSource().sendSystemMessage(Component.literal("Animation event log: " + on));
+                            return 1;
+                        }))
                 .then(Commands.literal("fx")
                         .then(Commands.argument("name", StringArgumentType.word())
                                 .executes(ctx -> {

@@ -265,7 +265,8 @@ public class RenderGunBase extends RenderItemBase {
             }
 
             // lowered offhand gun: with a display file the turn about the hand moves to the model's root bone
-            this.model.setAnimInput(this.animInput(state, gun, display, true, doADSrecoil, leftHand, sneaking && isOffhand ? -35f : 0f, 0f));
+            this.model.setAnimInput(this.animInput(state, gun, display, true, doADSrecoil, leftHand, sneaking && isOffhand ? -35f : 0f, 0f,
+                    animEvents(context, state)));
             if (display == null) {
                 this.transformFirstPerson(poseStack, fireProgress, reloadProgress, chargeProgress, leftHand, sneaking && isOffhand, doADSrecoil);
             }
@@ -274,7 +275,7 @@ public class RenderGunBase extends RenderItemBase {
             // crossbow hold: with a display file the turn about the hand moves to the model's root bone (mirrored there for
             // the left hand)
             float holdYaw = reloadProgress <= 0 && ArmPose.CROSSBOW_HOLD == armPose ? -15f : 0f;
-            this.model.setAnimInput(this.animInput(state, gun, display, false, false, leftHand, 0f, holdYaw));
+            this.model.setAnimInput(this.animInput(state, gun, display, false, false, leftHand, 0f, holdYaw, animEvents(context, state)));
             if (display == null) {
                 this.transformThirdPerson(poseStack, entity, fireProgress, reloadProgress, leftHand, armPose);
             }
@@ -374,18 +375,28 @@ public class RenderGunBase extends RenderItemBase {
      * one ({@code display} null) the code presets move the gun, so only the parts animate (no aim, mirror or hold turns).
      */
     protected GeoAnimInput animInput(GunRenderState state, GunItem gun, @Nullable GunDisplay display, boolean firstPerson, boolean aiming,
-                                     boolean leftHand, float holdPitch, float holdYaw) {
+                                     boolean leftHand, float holdPitch, float holdYaw, @Nullable GeoAnimInput.Events events) {
         int loaded = state.loadedAmmo();
         int clip = gun.stats().firing().clipSize();
         float ammo = clip > 0 ? Mth.clamp(loaded / (float) clip, 0f, 1f) : loaded > 0 ? 1f : 0f;
         if (display == null) {
             return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), 0f, state.chargeProgress(), ammo, loaded, loaded <= 0,
-                    false, 0f, 0f, null, null, null);
+                    false, 0f, 0f, null, null, null, events);
         }
         return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
                 ammo, loaded, loaded <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
                 display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null),
-                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null));
+                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null), events);
+    }
+
+    /** Source of the animation keyframe events of an in-hand draw (holder, hand, running timers); null without a holder. */
+    @Nullable
+    private static GeoAnimInput.Events animEvents(ItemRenderContext context, GunRenderState state) {
+        if (context.entity() == null || context.hand() == null) {
+            return null;
+        }
+        return new GeoAnimInput.Events(context.entity().getId(), context.hand().ordinal(), context.isFirstPerson(), state.fireCycle(),
+                state.reloadCycle());
     }
 
     /**

@@ -1,6 +1,8 @@
 package techguns.client.render.geo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -75,9 +77,15 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         // Java model space (y down) from GeckoLib space (y up), see TGGeoExporter
         poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
         // render type null: GeckoLib draws into the given buffer, whose render type the gun renderer chose for this part
+        renderer.drawnMarkers.clear();
+        renderer.gunModel.particles.clear();
         renderer.render(poseStack, animatable, buffers, null, buffer, light, partialTick);
         poseStack.popPose();
         renderer.markers = null;
+        if (!renderer.gunModel.particles.isEmpty()) {
+            GunAnimationEvents.spawnParticles(renderer.gunModel.particles, renderer.drawnMarkers);
+            renderer.gunModel.particles.clear();
+        }
         return true;
     }
 
@@ -112,6 +120,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         private final Map<String, GunAnimationSampler.BonePose> poses = new HashMap<>();
         /** Only the aim layer: the pose of the marker bones at rest ({@link TGGeoBridge#REST}). */
         final Map<String, GunAnimationSampler.BonePose> aimPoses = new HashMap<>();
+        /** Particle keyframes passed in this draw, spawned once the marker bones are drawn. */
+        final List<GunAnimationEvents.Particle> particles = new ArrayList<>();
 
         GunModel(String id) {
             this.model = TGIds.id("geo/item/" + id + ".geo.json");
@@ -138,6 +148,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
          * Poses every bone from scratch for this draw instead of GeckoLib's controller processing: rest pose, plus the
          * sampled animations (aim, reload and its whole-gun motion, fire and recoil, charge), then the code-driven bone
          * changes. The Molang queries ({@link GunQueries}) hold this draw's values while the animations are sampled.
+         * Keyframe events (sound, particle, instruction) of the timer-driven layers fire as their time passes
+         * ({@link GunAnimationEvents}).
          */
         @Override
         public void handleAnimations(GunAnimatable animatable, long instanceId, AnimationState<GunAnimatable> animationState,
@@ -146,20 +158,23 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
             ClientLevel level = Minecraft.getInstance().level;
             GunQueries.set(anim, level != null ? (level.getGameTime() + partialTick) / 20d : 0d);
             aimPoses.clear();
-            sample("aim", anim.aim(), 1f, 1f, aimPoses);
+            GeoAnimInput.Events events = anim.events();
+            long reloadCycle = events != null ? events.reloadCycle() : 0L;
+            long fireCycle = events != null ? events.fireCycle() : 0L;
+            sample("aim", anim.aim(), 1f, 1f, aimPoses, null, 0L);
             poses.clear();
-            sample("aim", anim.aim(), 1f, 1f, poses);
-            sample("reload", anim.reload(), 1f, 1f, poses);
-            sample(anim.reloadMotion(), anim.reload());
+            sample("aim", anim.aim(), 1f, 1f, poses, null, 0L);
+            sample("reload", anim.reload(), 1f, 1f, poses, events, reloadCycle);
+            sample(anim.reloadMotion(), anim.reload(), events, reloadCycle);
             if (anim.empty() && GunAnimationSampler.find(animation, "fire_last") != null) {
                 // the shot that emptied the gun; its end pose stays while the gun is empty (slide locked back)
-                sample("fire_last", anim.fire() > 0f ? anim.fire() : 1f, 1f, 1f, poses);
+                sample("fire_last", anim.fire() > 0f ? anim.fire() : 1f, 1f, 1f, poses, events, anim.fire() > 0f ? fireCycle : 0L);
             } else {
-                sample("fire", anim.fire(), 1f, 1f, poses);
+                sample("fire", anim.fire(), 1f, 1f, poses, events, fireCycle);
             }
-            sample(anim.recoil(), anim.fire());
-            sample("charge", anim.charge(), 1f, 1f, poses);
-            sample(anim.chargeMotion(), anim.charge());
+            sample(anim.recoil(), anim.fire(), events, fireCycle);
+            sample("charge", anim.charge(), 1f, 1f, poses, null, 0L);
+            sample(anim.chargeMotion(), anim.charge(), null, 0L);
             if (anim.holdPitch() != 0f || anim.holdYaw() != 0f) {
                 // turns about the hand: the root pivot is the hand origin and the model axes are the hand axes
                 GunAnimationSampler.BonePose root = poses.computeIfAbsent(ROOT, k -> new GunAnimationSampler.BonePose());
@@ -190,18 +205,21 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
             applyCodeBones(animatable);
         }
 
-        private void sample(String name, float progress, float move, float turn, Map<String, GunAnimationSampler.BonePose> into) {
+        /** Samples {@code name} into {@code into} and fires its keyframe events for the timer run {@code cycle} (0 = none). */
+        private void sample(String name, float progress, float move, float turn, Map<String, GunAnimationSampler.BonePose> into,
+                            @Nullable GeoAnimInput.Events events, long cycle) {
             if (progress > 0f) {
                 Animation found = GunAnimationSampler.find(animation, name);
                 if (found != null) {
                     GunAnimationSampler.sample(found, progress, move, turn, into);
+                    GunAnimationEvents.advance(events, cycle, found, progress, particles);
                 }
             }
         }
 
-        private void sample(@Nullable GeoAnimInput.Layer layer, float progress) {
+        private void sample(@Nullable GeoAnimInput.Layer layer, float progress, @Nullable GeoAnimInput.Events events, long cycle) {
             if (layer != null) {
-                sample(layer.animation(), progress, layer.move(), layer.turn(), poses);
+                sample(layer.animation(), progress, layer.move(), layer.turn(), poses, events, cycle);
             }
         }
 
@@ -248,6 +266,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         final GunAnimatable animatable = new GunAnimatable();
         /** Receives the marker bone poses during a draw. */
         BiConsumer<String, Matrix4f> markers;
+        /** Marker bone poses of the current draw, for particle keyframes. */
+        final Map<String, Matrix4f> drawnMarkers = new HashMap<>();
         /** Missing model logged once. */
         boolean warned;
 
@@ -285,8 +305,10 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay,
                                       int colour) {
             if (markers != null && TGGeoBridge.isMarker(bone.getName())) {
-                markers.accept(bone.getName(), new Matrix4f(poseStack.last().pose())
-                        .translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f));
+                Matrix4f pose = new Matrix4f(poseStack.last().pose())
+                        .translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);
+                drawnMarkers.put(bone.getName(), pose);
+                markers.accept(bone.getName(), new Matrix4f(pose));
                 markers.accept(bone.getName() + TGGeoBridge.REST, restPose(bone).translate(
                         bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f));
             }

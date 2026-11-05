@@ -252,8 +252,19 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - The gun renderer now passes its animation input for every in-hand draw, also on the code path (parts only: no aim, mirror or hold turns there), so the ammo fraction knows the magazine size.
   - Dropped from the table above: `tg_recoil_move` / `tg_recoil_turn` (the display file's `move` / `turn` do it) and `tg_spin` (the minigun barrel turns once per recoil, a plain `fire` keyframe; a spin-up loop can use `tg_time` and `tg_fire`).
   - **Verified in game** with a temporary biogun animation reading every query: the pose followed charge, ammo (full vs empty) and time.
+- **2026-11-05, sound, particle and instruction keyframes:**
+  - `GunAnimationEvents` fires the Blockbench "Sound", "Particle" and "Instructions" timelines (`sound_effects`, `particle_effects`, `timeline`) of the timer-driven layers (`reload` and the reload motion on the reload timer; `fire` / `fire_last` and the recoil motion on the recoil timer) when the sampled time passes them.
+    - Once per holder, hand, animation and timer run: the run is the timer's start (`GunRenderState` `fireCycle` / `reloadCycle`, passed in `GeoAnimInput.Events`), so drawing the gun several times per frame (split geo files, first and third person) fires nothing twice.
+    - No events without a running timer: not for `aim`, `charge`, frozen `/tgdebug pose` draws or the held `fire_last` pose. An event on the very last frame can be missed (the timer can end between frames).
+    - The local player's third person draw while the camera is in first person (inventory screen model) fires nothing.
+  - **Sound:** a sound event id (`techguns:` when no namespace), played at the holder for this client only. Shot and reload start sounds stay server-side; keyframe sounds are timed details on top.
+  - **Particle:** a Techguns FX name (`TGFX`, as `/tgdebug fx`); the locator is a marker bone (default `muzzle`), else the holder's eyes. Spawned after the draw at the bone's world position (first person: view space turned by the camera rotation; third person: camera-relative world).
+  - **Instructions:** `name args`, several separated by `;`. Built in: `sound <id> [volume] [pitch]` (GeckoLib's sound keyframes have no volume or pitch). Others via `GunAnimationEvents.registerInstruction`; unknown names are logged once.
+  - `/tgdebug animevents` prints every fired event (and the particle position relative to the eyes) to chat.
+  - No gun uses them yet: today's guns have no timed sounds or effects besides the server-side shot and reload sounds.
+  - **Verified in game** with temporary pistol `fire` keyframes (sound at 0.1, particle at 0.0 on `muzzle`, two instructions at 0.3): each fired once per shot in order; the particle landed at the muzzle (first person 0.20 right, 0.28 down, 1.21 ahead of the eyes; third person 0.12 right, 0.23 down, 0.82 ahead); the unknown instruction was logged once.
 - **Next:**
-  - sound and instruction keyframes.
+  - Phase 4 bulk conversion of the guns without part motion.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

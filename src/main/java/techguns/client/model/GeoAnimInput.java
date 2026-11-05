@@ -21,14 +21,29 @@ import javax.annotation.Nullable;
  * @param recoil       whole-gun motion on the fire timer, null if the gun renderer still does it in code
  * @param reloadMotion whole-gun motion on the reload timer, null if the gun renderer still does it in code
  * @param chargeMotion whole-gun motion on the charge progress, null if none or the gun renderer still does it in code
+ * @param events       who holds the gun and which timer runs, for the sound, particle and instruction keyframes; null
+ *                     when no keyframe events fire (GUI, ground, frames)
  */
 public record GeoAnimInput(float fire, float reload, float aim, float charge, float ammo, int ammoCount, boolean empty, boolean mirror,
                            float holdPitch, float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion,
-                           @Nullable Layer chargeMotion) {
+                           @Nullable Layer chargeMotion, @Nullable Events events) {
     /** Not animated (GUI, ground, item frames); a full magazine for queries. */
-    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, 1f, 0, false, false, 0f, 0f, null, null, null);
+    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, 1f, 0, false, false, 0f, 0f, null, null, null, null);
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */
     public record Layer(String animation, float move, float turn) {
+    }
+
+    /**
+     * Source of keyframe events: an event fires once when the sampled time of its animation passes it, per holder, hand
+     * and run of the timer.
+     *
+     * @param holder      entity id of the holder
+     * @param hand        hand ordinal (main 0, off 1)
+     * @param firstPerson drawn in first person (view space), else in camera-relative world space
+     * @param fireCycle   identifies the running recoil (0 = none): {@code fire} / {@code fire_last} and recoil events
+     * @param reloadCycle identifies the running reload (0 = none): {@code reload} and reload motion events
+     */
+    public record Events(int holder, int hand, boolean firstPerson, long fireCycle, long reloadCycle) {
     }
 }

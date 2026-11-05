@@ -1,4 +1,4 @@
-# Session handoff (2026-11-04)
+# Session handoff (2026-11-05)
 
 State of the AI-assisted porting session, so it can continue on another PC (same `F:` mapping).
 Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Techguns3_design.md) (plan, decisions) and
@@ -19,7 +19,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 90 degree guns: turn baked into all geo files (`tools/geo_turn.py`) | `2ad2450` |
   | `/tgdebug convertgun` seeds, revolver data-driven, normal/brightness and JOML fixes | `6b87b31` |
   | Charge pull-back as display file `charge` motion, biogun data-driven, `/tgdebug pose charge` | `00a0cae` |
-  | Molang queries (`GunQueries`: `q.tg_fire/reload/charge/zoom/ammo/ammo_count/time`), renderer passes its animation input on every in-hand draw | **not committed yet** (`GunQueries.java` new; `GeoAnimInput`, `GeoGunModel`, `GeckoLibGunRenderer`, `RenderGunBase`, `gun_animation_plan.md`, `migration_26.md`) |
+  | Molang queries (`GunQueries`: `q.tg_fire/reload/charge/zoom/ammo/ammo_count/time`), renderer passes its animation input on every in-hand draw | `61a9a74` |
+  | Sound, particle and instruction keyframes (`GunAnimationEvents`), `/tgdebug animevents` | **not committed yet** |
 
 - Data-driven guns (`TGItemRendererSetup.DATA_DRIVEN`): pistol, revolver, biogun. All other guns still use the code
   presets (`GunAnimation`), with the same geo files.
@@ -27,15 +28,13 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ### Next steps (gun animation)
 
-1. Commit the Molang query step if not done.
-2. Sound and instruction keyframes (plan: "Effect and sound timing"): fire GeckoLib `sound_effects` / `timeline`
-   keyframes when the sampled time passes them (reload sounds, shell eject, flash).
-3. Phase 4 bulk conversion of the guns without part motion (~30): per gun add it to `DATA_DRIVEN`, `runData`,
+1. Commit the keyframe event step if not done.
+2. Phase 4 bulk conversion of the guns without part motion (~30): per gun add it to `DATA_DRIVEN`, `runData`,
    `/tgdebug convertgun` in game, restart, place a `muzzle` marker bone, compare.
-4. Phase 5 part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
+3. Phase 5 part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
    grappling hook, NDR/GML translucent bones, SCAR/AUG/combat shotgun, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator),
    phase 6 special renderers, phase 7 cleanup (delete Java gun models, `RenderGunBase90`, presets).
-5. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
+4. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).
 
 ### Converting one gun (workflow used so far)
@@ -56,6 +55,9 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
    when aiming); the geo files light them from the outside.
 
 ### Gun animation notes
+
+- MCP token: on 2026-11-05 `run/config/mcpfabric.config.json` held a different token than the MCP server config
+  (`unauthorized`); it was set to the server's token (read from `~/.claude.json`, never printed) and the client restarted.
 
 - The test world is not saved when the client is killed (MCP supervised control, which can save and quit, is off), so
   inventory changes are lost: put the gun into a hotbar slot with `item replace entity Dev hotbar.<n> with
