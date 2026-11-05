@@ -100,7 +100,9 @@ A gun without a `reload` of its own gets the shared one.
 | `query.tg_recoil_move`, `query.tg_recoil_turn` | Per-gun strength of a shared recoil from the display JSON (replaces the `setRecoilAnim` numbers; default 1). A gun with its own `fire` keyframes doesn't need them. |
 | `query.tg_fire`, `query.tg_reload`, `query.tg_charge`, `query.tg_zoom` | 0..1 progress of the existing timers. |
 | `query.tg_ammo` | Loaded ammo fraction (magazine bullets, LMG belt length, Grim Reaper). |
-| `query.tg_spin` | Barrel spin angle / speed. |
+| `query.tg_ammo_count` | Loaded rounds (implemented; added for belts). |
+| `query.tg_time` | World time in seconds (implemented; for loops, replaces `tg_spin`). |
+| `query.tg_spin` | Barrel spin angle / speed (dropped, see Progress). |
 
 ### Muzzle and effect positions from bones
 Yes: the flash position comes from the `muzzle` bone instead of the hand-tuned numbers.
@@ -244,8 +246,13 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **Biogun** is data-driven (turned gun, charge gun): seeded with `/tgdebug convertgun` (pivot `[0.6, -3.2, 5.6]`, `aim`), display file with `charge` move 1.6, item model `display` block.
   - `/tgdebug pose charge <progress>` freezes the charge progress.
   - **Verified in game, biogun data path vs Java fallback:** charge 1.0 and 0 in first person, identical gun pixels (the ground behind the gun differs between screenshots); third person charge 1.0 by eye.
+- **2026-11-04, Molang queries:**
+  - `GunQueries` sets the query values of each draw before its animations are sampled: `query.tg_fire`, `query.tg_reload`, `query.tg_charge`, `query.tg_zoom` (timer progress, 0..1), `query.tg_ammo` (loaded fraction of the magazine), `query.tg_ammo_count` (loaded rounds) and `query.tg_time` (world time in seconds with the partial tick, for loops). `q.` works as well; GeckoLib's ternary and comparisons work in the expressions (`q.tg_ammo_count > 3 ? 1 : 0`).
+    - GeckoLib creates a variable the first time a file names it, so load order does not matter.
+  - The gun renderer now passes its animation input for every in-hand draw, also on the code path (parts only: no aim, mirror or hold turns there), so the ammo fraction knows the magazine size.
+  - Dropped from the table above: `tg_recoil_move` / `tg_recoil_turn` (the display file's `move` / `turn` do it) and `tg_spin` (the minigun barrel turns once per recoil, a plain `fire` keyframe; a spin-up loop can use `tg_time` and `tg_fire`).
+  - **Verified in game** with a temporary biogun animation reading every query: the pose followed charge, ammo (full vs empty) and time.
 - **Next:**
-  - Molang queries;
   - sound and instruction keyframes.
 
 ## Verification

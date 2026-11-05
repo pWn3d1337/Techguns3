@@ -1,0 +1,46 @@
+package techguns.client.render.geo;
+
+import software.bernie.geckolib.loading.math.MathParser;
+import techguns.client.model.GeoAnimInput;
+
+/**
+ * Molang queries a gun animation can read (docs/gun_animation_plan.md), set before each gun's animations are sampled:
+ * <ul>
+ *     <li>{@code query.tg_fire}, {@code query.tg_reload}, {@code query.tg_charge}, {@code query.tg_zoom}: 0..1 progress of the
+ *     recoil, reload, charge and zoom timers (also outside the animation they drive, e.g. a part that moves with the
+ *     reload in the {@code fire} animation);</li>
+ *     <li>{@code query.tg_ammo}: loaded rounds as a fraction of the magazine; {@code query.tg_ammo_count}: loaded rounds
+ *     (belts, magazines that empty visibly);</li>
+ *     <li>{@code query.tg_time}: world time in seconds with the partial tick, for loops (spinning parts).</li>
+ * </ul>
+ * The short prefix {@code q.} works as well. GeckoLib creates a variable the first time a file names it, so the order of
+ * loading does not matter: the same instance is updated here.
+ */
+// MIGRATION(26.x): GeckoLib 5 replaces MathParser variables with its own query registration.
+final class GunQueries {
+    private static double fire, reload, charge, zoom, ammo, ammoCount, time;
+
+    static {
+        MathParser.setVariable("query.tg_fire", () -> fire);
+        MathParser.setVariable("query.tg_reload", () -> reload);
+        MathParser.setVariable("query.tg_charge", () -> charge);
+        MathParser.setVariable("query.tg_zoom", () -> zoom);
+        MathParser.setVariable("query.tg_ammo", () -> ammo);
+        MathParser.setVariable("query.tg_ammo_count", () -> ammoCount);
+        MathParser.setVariable("query.tg_time", () -> time);
+    }
+
+    private GunQueries() {
+    }
+
+    /** The values of this draw; {@code seconds} is the world time (render thread only, like the sampling). */
+    static void set(GeoAnimInput anim, double seconds) {
+        fire = anim.fire();
+        reload = anim.reload();
+        charge = anim.charge();
+        zoom = anim.aim();
+        ammo = anim.ammo();
+        ammoCount = anim.ammoCount();
+        time = seconds;
+    }
+}

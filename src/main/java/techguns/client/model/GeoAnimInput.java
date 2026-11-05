@@ -12,6 +12,8 @@ import javax.annotation.Nullable;
  * @param reload       reload timer: {@code reload}
  * @param aim          zoom: {@code aim} (runs backwards when zooming out)
  * @param charge       charge: {@code charge}
+ * @param ammo         loaded rounds as a fraction of the magazine (0..1), Molang {@code query.tg_ammo}
+ * @param ammoCount    loaded rounds, Molang {@code query.tg_ammo_count}
  * @param empty        no rounds left
  * @param mirror       left hand: the whole-gun motion on the {@code root} bone is mirrored (x offset, y and z turn)
  * @param holdPitch    extra turn of the {@code root} bone about x in degrees (lowered offhand gun)
@@ -20,10 +22,11 @@ import javax.annotation.Nullable;
  * @param reloadMotion whole-gun motion on the reload timer, null if the gun renderer still does it in code
  * @param chargeMotion whole-gun motion on the charge progress, null if none or the gun renderer still does it in code
  */
-public record GeoAnimInput(float fire, float reload, float aim, float charge, boolean empty, boolean mirror, float holdPitch,
-                           float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion, @Nullable Layer chargeMotion) {
-    /** Not animated (GUI, ground, item frames). */
-    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, false, false, 0f, 0f, null, null, null);
+public record GeoAnimInput(float fire, float reload, float aim, float charge, float ammo, int ammoCount, boolean empty, boolean mirror,
+                           float holdPitch, float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion,
+                           @Nullable Layer chargeMotion) {
+    /** Not animated (GUI, ground, item frames); a full magazine for queries. */
+    public static final GeoAnimInput NONE = new GeoAnimInput(0f, 0f, 0f, 0f, 1f, 0, false, false, 0f, 0f, null, null, null);
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */
     public record Layer(String animation, float move, float turn) {

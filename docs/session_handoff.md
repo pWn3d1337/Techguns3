@@ -1,12 +1,75 @@
-# Session handoff (2026-10-27)
+# Session handoff (2026-11-04)
 
 State of the AI-assisted porting session, so it can continue on another PC (same `F:` mapping).
 Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Techguns3_design.md) (plan, decisions) and
 [port_status.md](port_status.md) (what is done, per batch, with notes on what was not ported).
 
-## Where we are
+## Where we are: gun motion into model and animation files
 
-- Branch: `phase9` (base `master`, local only, never pushed). Phases 5 (PR pWn3d1337/Techguns3#6), 6 (PR pWn3d1337/Techguns3#7), 7 (PR pWn3d1337/Techguns3#8) and 8 (PR pWn3d1337/Techguns3#9) are merged into `master`.
+- Branch: `gun-anim-geckolib` (base `master`, local only, not pushed). Plan, decisions and a dated Progress entry per
+  step: [gun_animation_plan.md](gun_animation_plan.md). Read its Progress section first.
+- Commits on the branch (one per step, the user says "commit and continue" after each):
+
+  | Step | Commit |
+  |---|---|
+  | Plan | `a369ac5` |
+  | Sampler (GeckoLib keyframes sampled from the gun timers), pistol muzzle bone | `619250b` |
+  | Pistol recoil/reload/aim from animation files, `common.animation.json`, display files | `e05c0fb` |
+  | Pistol hold positions from the item model `display` block | `47e31e0` |
+  | 90 degree guns: turn baked into all geo files (`tools/geo_turn.py`) | `2ad2450` |
+  | `/tgdebug convertgun` seeds, revolver data-driven, normal/brightness and JOML fixes | `6b87b31` |
+  | Charge pull-back as display file `charge` motion, biogun data-driven, `/tgdebug pose charge` | `00a0cae` |
+  | Molang queries (`GunQueries`: `q.tg_fire/reload/charge/zoom/ammo/ammo_count/time`), renderer passes its animation input on every in-hand draw | **not committed yet** (`GunQueries.java` new; `GeoAnimInput`, `GeoGunModel`, `GeckoLibGunRenderer`, `RenderGunBase`, `gun_animation_plan.md`, `migration_26.md`) |
+
+- Data-driven guns (`TGItemRendererSetup.DATA_DRIVEN`): pistol, revolver, biogun. All other guns still use the code
+  presets (`GunAnimation`), with the same geo files.
+- Build OK, all 378 GameTests pass.
+
+### Next steps (gun animation)
+
+1. Commit the Molang query step if not done.
+2. Sound and instruction keyframes (plan: "Effect and sound timing"): fire GeckoLib `sound_effects` / `timeline`
+   keyframes when the sampled time passes them (reload sounds, shell eject, flash).
+3. Phase 4 bulk conversion of the guns without part motion (~30): per gun add it to `DATA_DRIVEN`, `runData`,
+   `/tgdebug convertgun` in game, restart, place a `muzzle` marker bone, compare.
+4. Phase 5 part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
+   grappling hook, NDR/GML translucent bones, SCAR/AUG/combat shotgun, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator),
+   phase 6 special renderers, phase 7 cleanup (delete Java gun models, `RenderGunBase90`, presets).
+5. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
+   item format).
+
+### Converting one gun (workflow used so far)
+
+1. Add the gun to `DATA_DRIVEN` in `TGItemRendererSetup`, run `./gradlew runData`: writes
+   `techguns/gun_display/<gun>.json` (recoil/reload/charge strengths from the renderer) and the `display` block of
+   `models/item/<gun>.json`.
+2. `runClient`, hold the gun, `/tgdebug convertgun`: writes the `root` pivot (hand origin) into the gun's source geo
+   files and an `aim` animation into `animations/item/<gun>.animation.json` (only once; the files are hand-owned
+   afterwards).
+3. Restart the client (it loads the processed resources, so source asset changes need a restart).
+4. Compare the data path with the code path: `/tgdebug pose <fire|reload|zoom|charge> <progress>` freezes the timers,
+   `/tgdebug geo` switches to the Java fallback (code path). MCP screenshots are saved under
+   `C:\Users\<user>\.claude\projects\F--Techguns3Work-Techguns3\<session>\tool-results\`; diff the gun area with
+   Pillow (threshold 8). Ground pixels next to the gun differ between shots; the gun pixels should be identical.
+   Third person only by eye (the arm sways between frames). `/tgdebug pose off` afterwards.
+5. Known difference not caused by this work: the Java model lights mirrored boxes' end faces from the inside (darker
+   when aiming); the geo files light them from the outside.
+
+### Gun animation notes
+
+- The test world is not saved when the client is killed (MCP supervised control, which can save and quit, is off), so
+  inventory changes are lost: put the gun into a hotbar slot with `item replace entity Dev hotbar.<n> with
+  techguns:<gun>` after each join (slot 7 holds the guided missile launcher on disk). Ammo:
+  `techguns:<gun>[techguns:gun_ammo={loaded:0}]`.
+- The first screenshots after switching slots show the equip animation (gun missing or the old one); take another.
+- Windows PowerShell 5.1: `git commit -F -` with a here-string does not work; write the message to a scratchpad file
+  and use `git commit -F <file>`.
+- Space conventions (file/GeckoLib frames, root pivot = hand origin, aim offset formula) are in the plan doc's Progress
+  entries and the `RenderGunBase#export*` javadocs.
+
+## Earlier phases
+
+- Phases 5 (PR pWn3d1337/Techguns3#6), 6 (PR pWn3d1337/Techguns3#7), 7 (PR pWn3d1337/Techguns3#8), 8 (PR pWn3d1337/Techguns3#9) and 9 (PR pWn3d1337/Techguns3#10) are merged into `master`.
 - Progress (one commit per batch):
 
   | Batch | Content | Commit |
@@ -54,9 +117,9 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | 9i | Decorative mod blocks in structures (Factory Blocks, Chisel Reborn, Laboratory Blocks), Rechiseled groups | `d0741a9` |
   | 9j | Connected textures through Fusion (the 19 Techguns 2 CTM textures) | `ecac8ff` |
 
-- All 353 GameTests pass (`alienBugBitesItsTarget` is flaky: it waits for the bug's AI) (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
+- At the end of phase 9 all 353 GameTests passed (now 378) (`alienBugBitesItsTarget` is flaky: it waits for the bug's AI) (the alien bug climb test was made deterministic in 7a); each batch was checked in game via MCP where visual (7a: counted in fresh default worlds on the dedicated server; `run/world_ore_test_7a` / `_7a2` are throwaway worlds).
 
-## Next steps
+## Other open work (besides the gun animation branch)
 
 1. Phase 9 is merged into `master` (PR #10, after two code review passes). Left: 9f balancing and the release, both the author's: create the CurseForge and Modrinth projects, put their ids into `gradle.properties`, add the `CURSEFORGE_TOKEN` and `MODRINTH_TOKEN` secrets and run the Release workflow (see README). Phase 9 batch plan in the design doc. Phase 8 batch plan in the design doc.
 2. Book content: the manual is the 1.12 text with ids remapped. Outdated topics (TG inventory tab buttons, RF) are for the author to rewrite in `src/legacy/book/techguns_manual` (Patchouli format; `runData` regenerates both books).
@@ -146,3 +209,13 @@ there (or just keep following them):
   `gamerule doDaylightCycle false`, `time set noon` before firing tests.
 - **Reference source priority**: Fabric only for gun mechanics/effects; 1.12 for armor, gear, machines and everything
   else.
+- **No `git add -A`**: stage only the batch's files (`git add -u` plus named new files); the user's own assets live
+  untracked in the tree (`art/`, `temp/`, `geo/entity/`, `geo/item/ice_shard_rifle.geo.json`,
+  `textures/entity/t34_tank.png`, `textures/guns/ice_shard_rifle.png`, `textures/item/copper_ladder.png`).
+- **Java home**: `jdk-21.0.12.101-hotspot`; `JAVA_HOME` set to it (old shells may still see 17).
+- **MCP setup**: token synced with `run/config/mcpfabric.config.json`, `enableUiControl` on; `container_transfer take`
+  cannot take from machine slots.
+- **Techguns 2 runtime dump**: the 1.12 workspace runs; dump 1.12 data via a temporary client tool instead of parsing
+  Java.
+- **`/place` masks worldgen shape bugs**: placing in a live level reshapes neighbours; check natural generation on a
+  fresh server world.

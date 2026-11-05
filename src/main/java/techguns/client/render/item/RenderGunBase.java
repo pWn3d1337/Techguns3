@@ -264,19 +264,18 @@ public class RenderGunBase extends RenderItemBase {
                 this.transformADS(poseStack, zoomProgress);
             }
 
-            if (display != null) {
-                // lowered offhand gun: the turn about the hand moves to the model's root bone
-                this.model.setAnimInput(this.animInput(state, display, true, doADSrecoil, leftHand, sneaking && isOffhand ? -35f : 0f, 0f));
-            } else {
+            // lowered offhand gun: with a display file the turn about the hand moves to the model's root bone
+            this.model.setAnimInput(this.animInput(state, gun, display, true, doADSrecoil, leftHand, sneaking && isOffhand ? -35f : 0f, 0f));
+            if (display == null) {
                 this.transformFirstPerson(poseStack, fireProgress, reloadProgress, chargeProgress, leftHand, sneaking && isOffhand, doADSrecoil);
             }
 
         } else if (context.isThirdPerson()) {
-            if (display != null) {
-                // crossbow hold: the turn about the hand moves to the model's root bone (mirrored there for the left hand)
-                float holdYaw = reloadProgress <= 0 && ArmPose.CROSSBOW_HOLD == armPose ? -15f : 0f;
-                this.model.setAnimInput(this.animInput(state, display, false, false, leftHand, 0f, holdYaw));
-            } else {
+            // crossbow hold: with a display file the turn about the hand moves to the model's root bone (mirrored there for
+            // the left hand)
+            float holdYaw = reloadProgress <= 0 && ArmPose.CROSSBOW_HOLD == armPose ? -15f : 0f;
+            this.model.setAnimInput(this.animInput(state, gun, display, false, false, leftHand, 0f, holdYaw));
+            if (display == null) {
                 this.transformThirdPerson(poseStack, entity, fireProgress, reloadProgress, leftHand, armPose);
             }
 
@@ -370,11 +369,21 @@ public class RenderGunBase extends RenderItemBase {
         return this.model instanceof GeoGunModel && TGGeoBridge.enabled() ? GunDisplays.get(gun) : null;
     }
 
-    /** Animation input of an in-hand draw whose whole-gun motion comes from the display file. */
-    protected GeoAnimInput animInput(GunRenderState state, GunDisplay display, boolean firstPerson, boolean aiming, boolean leftHand,
-                                     float holdPitch, float holdYaw) {
+    /**
+     * Animation input of an in-hand draw. With a display file the whole-gun motion comes from the model files; without
+     * one ({@code display} null) the code presets move the gun, so only the parts animate (no aim, mirror or hold turns).
+     */
+    protected GeoAnimInput animInput(GunRenderState state, GunItem gun, @Nullable GunDisplay display, boolean firstPerson, boolean aiming,
+                                     boolean leftHand, float holdPitch, float holdYaw) {
+        int loaded = state.loadedAmmo();
+        int clip = gun.stats().firing().clipSize();
+        float ammo = clip > 0 ? Mth.clamp(loaded / (float) clip, 0f, 1f) : loaded > 0 ? 1f : 0f;
+        if (display == null) {
+            return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), 0f, state.chargeProgress(), ammo, loaded, loaded <= 0,
+                    false, 0f, 0f, null, null, null);
+        }
         return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
-                state.loadedAmmo() <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
+                ammo, loaded, loaded <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
                 display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null),
                 display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null));
     }

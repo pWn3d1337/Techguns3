@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -136,12 +137,14 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         /**
          * Poses every bone from scratch for this draw instead of GeckoLib's controller processing: rest pose, plus the
          * sampled animations (aim, reload and its whole-gun motion, fire and recoil, charge), then the code-driven bone
-         * changes.
+         * changes. The Molang queries ({@link GunQueries}) hold this draw's values while the animations are sampled.
          */
         @Override
         public void handleAnimations(GunAnimatable animatable, long instanceId, AnimationState<GunAnimatable> animationState,
                                      float partialTick) {
             GeoAnimInput anim = animatable.anim;
+            ClientLevel level = Minecraft.getInstance().level;
+            GunQueries.set(anim, level != null ? (level.getGameTime() + partialTick) / 20d : 0d);
             aimPoses.clear();
             sample("aim", anim.aim(), 1f, 1f, aimPoses);
             poses.clear();
