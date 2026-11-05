@@ -29,8 +29,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ### Next steps (gun animation)
 
-1. Commit the phase 6 flamethrower step if not done.
-2. Phase 6 (rest) special renderers (mining tools via queries, grenade launcher OBJ), phase 7 cleanup (delete Java gun models, `RenderGunBase90`, presets).
+1. Commit the phase 6 grenade launcher step if not done (phase 6 is then done).
+2. Phase 7 cleanup (delete Java gun models except the grenade launcher meshes, `RenderGunBase90`, presets).
 3. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).
 

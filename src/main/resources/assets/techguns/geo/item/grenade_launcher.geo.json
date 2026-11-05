@@ -1,0 +1,65 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.techguns.grenade_launcher",
+        "texture_width": 128,
+        "texture_height": 128,
+        "visible_bounds_width": 4,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "muzzle",
+          "parent": "root",
+          "pivot": [
+            0,
+            7.68,
+            -138.24
+          ]
+        },
+        {
+          "name": "mesh_frame",
+          "parent": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "drum",
+          "parent": "root",
+          "pivot": [
+            0,
+            -32,
+            0
+          ]
+        },
+        {
+          "name": "mesh_drum",
+          "parent": "drum",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -14,7 +14,9 @@ import techguns.client.render.TGMatrixOps;
 
 /**
  * Grenade launcher (Fabric {@code ModelGrenadeLauncher}): two OBJ meshes, the frame (part 0) and the cylinder (part
- * 1), which turns by 60 degrees (one chamber) per shot. OBJ models have no GeckoLib version.
+ * 1), which turns by 60 degrees (one chamber) per shot. Geo cubes can't express the meshes (hexagonal and pentagonal
+ * end faces), so {@code grenade_launcher.geo.json} only has mesh bones ({@code mesh_frame}, {@code mesh_drum} under the
+ * animated {@code drum}) and {@link #renderMesh} draws the OBJ meshes there; {@link #render} is the Java fallback.
  */
 public class ModelGrenadeLauncher extends TGModel {
     private static final ObjMesh FRAME = new ObjMesh(TGIds.id("models/obj/grenadelauncher.obj"), true);
@@ -22,6 +24,20 @@ public class ModelGrenadeLauncher extends TGModel {
 
     public ModelGrenadeLauncher() {
         super(RenderType::entitySolid);
+    }
+
+    /** The geo frame points along -Z: the OBJ mesh space is the geo bone space turned by Ry(90). */
+    @Override
+    public void renderMesh(String bone, PoseStack poseStack, VertexConsumer vertices, int light, int overlay) {
+        ObjMesh mesh = switch (bone) {
+            case "mesh_frame" -> FRAME;
+            case "mesh_drum" -> CYLINDER;
+            default -> null;
+        };
+        if (mesh != null) {
+            TGMatrixOps.rotate(poseStack, 90.0f, 0f, 1.0f, 0f);
+            mesh.render(poseStack, vertices, light, overlay);
+        }
     }
 
     @Override

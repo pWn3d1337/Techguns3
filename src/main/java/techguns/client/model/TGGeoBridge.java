@@ -30,9 +30,14 @@ public interface TGGeoBridge {
      */
     String TRANSLUCENT = "_translucent";
     String CUTOUT = "_cutout";
+    /**
+     * Name prefix of mesh bones: empty bones (pivot 0) at whose pose the gun model draws a mesh geo cubes can't express
+     * ({@link TGModel#renderMesh}, the grenade launcher's OBJ meshes), so the mesh follows the bone's animation.
+     */
+    String MESH = "mesh_";
 
     static boolean isMarker(String bone) {
-        return bone.startsWith(MUZZLE) || bone.startsWith("charge") || bone.startsWith("idle_fx");
+        return bone.startsWith(MUZZLE) || bone.startsWith("charge") || bone.startsWith("idle_fx") || bone.startsWith(MESH);
     }
 
     /**

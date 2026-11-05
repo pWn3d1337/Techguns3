@@ -55,6 +55,13 @@ public abstract class TGModel extends Model {
         this.transformPart(poseStack, part, ammoLeft, reloadProgress, fireProgress);
     }
 
+    /**
+     * Draws the mesh of a geo model's mesh bone ({@link TGGeoBridge#MESH}); {@code poseStack} is at that bone's space
+     * (GeckoLib space, y up, blocks). Models whose shape geo cubes can't express (OBJ meshes) draw it here.
+     */
+    public void renderMesh(String bone, PoseStack poseStack, VertexConsumer vertices, int light, int overlay) {
+    }
+
     /** Whether a render part is drawn for this holder (e.g. the grappling hook while it is launched). */
     public boolean isPartVisible(@Nullable LivingEntity entity, int part) {
         return true;

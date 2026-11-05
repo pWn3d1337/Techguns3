@@ -81,7 +81,7 @@ public final class TGItemRendererSetup {
             // phase 5: part motion in keyframes (merged geo files)
             TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
             TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK,
-            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.ROCKET_LAUNCHER, TGGuns.FLAMETHROWER);
+            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.ROCKET_LAUNCHER, TGGuns.FLAMETHROWER, TGGuns.GRENADE_LAUNCHER);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -456,8 +456,8 @@ public final class TGItemRendererSetup {
                         {0f, 0.0f, 0.0f} // frame
                 }).setReloadAnim(GunAnimation.breechReload, -0.15f, 55.0f).setReloadAnim3p(GunAnimation.breechReload, 0f, 55.0f));
 
-        // OBJ mesh model, no geo version
-        TGItemRenderers.register(TGGuns.GRENADE_LAUNCHER, new RenderGunBaseObj(new ModelGrenadeLauncher(), 2, TGIds.id("textures/guns/grenadelauncher.png"), 90.0f)
+        // OBJ meshes drawn at the geo file's mesh bones (ModelGrenadeLauncher#renderMesh)
+        TGItemRenderers.register(TGGuns.GRENADE_LAUNCHER, new RenderGunBaseObj(new GeoGunModel(new ModelGrenadeLauncher(), "grenade_launcher").motionInFiles(), 2, TGIds.id("textures/guns/grenadelauncher.png"), 90.0f)
                 .setBaseTranslation(0f, 0f, 0f)
                 .setBaseScale(0.125f).setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.22f, -0.63f, 0.5f, 0).setTransformTranslations(new float[][]{
                         {0f, 0.19f, -0.09f}, // First Person

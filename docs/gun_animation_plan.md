@@ -38,6 +38,7 @@ Shared animations and code find bones by name. Every gun uses:
 | `muzzle`, `muzzle_2`, … | Empty marker bones at the barrel tip: muzzle flash (below). |
 | `charge`, `idle_fx` | Empty marker bones for the charge effect and idle FX (flamethrower pilot flame). |
 | `*_glow` | Drawn full bright (already supported). |
+| `mesh_*` | Empty bones (pivot 0) where the gun model draws a mesh geo cubes can't express (`TGModel#renderMesh`); the grenade launcher's OBJ meshes (implemented). |
 | `*_translucent` / `*_cutout` | Bone (and its children) drawn in a second pass with that render type and the part's texture; replaces the split files of NDR and GML (implemented). |
 | `ammo_*` | Variant bones shown only for the matching loaded ammo (rocket launcher rocket), instead of a separate geo file and texture swap. |
 
@@ -322,8 +323,15 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - `idle_fx` marker bone at the muzzle (the pilot flame used the muzzle flash offsets). `RenderFlamethrower` draws the pilot flame at that marker in first and third person, else at the old offsets (Java fallback). The under-water check stays in code.
   - `motionInFiles()`, data-driven (`convertgun`: root pivot, `aim`, `muzzle`; `idle_fx` copied from `muzzle`).
   - **Verified in game, data path vs Java fallback:** first person gun identical, the pilot flame starts at the same spot. Third person: the flame now sits on the nozzle; the old hand-tuned third person offset was slightly off-center.
+- **2026-11-05, phase 6: mining tools, grenade launcher; phase 6 done:**
+  - **Mining tools:** nothing left for queries. Their motion moved to the model files in phase 5; `RenderMiningTool` only picks the head texture of part 1 by head level, which a query can't do (one texture per GeckoLib model), like the rocket launcher's ammo textures.
+  - **Grenade launcher, OBJ meshes on mesh bones** (decision 3): the triangulated OBJ (324 triangles) pairs into 160 quads, but 19 planar polygons are not rectangles. The hexagonal drum housing ends and pentagonal barrel ends have slanted edges and detailed texture (815 colors on the housing ends), which flat rotated cubes can't map with per-face UV.
+    - New bone kind `mesh_*` (`TGGeoBridge.MESH`, reported like a marker). After the geo draw, `GeoGunModel` calls `TGModel#renderMesh(bone, pose, ...)` for each mesh bone of the part, with a pose stack at the bone's pose (normal matrix: inverse transpose scaled by the cube root of its absolute determinant, as `PoseStack#scale` keeps the sign of the GUI's mirroring pose; with the sign lost the icon was dark).
+    - `grenade_launcher.geo.json`: `root`, `mesh_frame`, `drum` (pivot (0, -32, 0), the old turn axis) with `mesh_drum`, plus `muzzle` from `convertgun`. `ModelGrenadeLauncher#renderMesh` turns by Ry(90) (the OBJ points along x) and draws the frame or cylinder mesh; `render` stays the Java fallback.
+    - `fire` turns `drum` `[0, 0, -60]` (one chamber per shot). `RenderGunBaseObj` uses the normal base rotation for a geo draw. Geo pixels are 8x the usual size (base scale 0.125 kept), e.g. the muzzle at z -138.
+    - **Verified in game, data path vs Java fallback, pixel diff:** idle, `fire 0.25` (drum turn) and `zoom 1` identical in first person, hotbar icon identical; third person by eye.
 - **Next:**
-  - Phase 6: mining tools via queries, grenade launcher (OBJ).
+  - Phase 7 cleanup. `ModelGrenadeLauncher` stays for its meshes (only its `render` fallback goes).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.
@@ -336,7 +344,7 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
    - Display JSON flag `"muzzle_follows_animation"`, default `true`.
    - When `false`, the effect sits at the bone's rest position: the bone's model-space pivot from the geo file, transformed by the gun pose but not by the animation. The flash then stays still while the gun kicks, as today. This works wherever the bone sits in the hierarchy.
 2. **Orientation:** normalized when converting. The converter bakes the 90° turn of `RenderGunBase90` into the geo file, so every gun points along −Z and `RenderGunBase90` goes away. Done for all geo files (`tools/geo_turn.py`); `RenderGunBase90` stays until the Java fallback is deleted.
-3. **Grenade launcher:** convert the OBJ to geo if the shape can be kept. Check with a side-by-side screenshot. It stays an OBJ exception only if the shape cannot be matched with boxes and per-face UVs.
+3. **Grenade launcher:** convert the OBJ to geo if the shape can be kept. Check with a side-by-side screenshot. It stays an OBJ exception only if the shape cannot be matched with boxes and per-face UVs. **Result (2026-11-05):** it can't (hexagonal and pentagonal end faces with detailed texture; GeckoLib 4 parses `poly_mesh` but never draws it). Author's choice: the OBJ meshes are drawn at mesh bones of a geo file, so its motion is still in the animation files.
 4. **Display JSON in `assets`:** pure visuals can be changed by resource packs. Animation files also live in `assets`, but their length is only the shape of the motion: playback is always stretched to the gun's real durations from its stats (`data`, server-synced, datapack overridable):
    - `reload` → reload time;
    - `fire` / `recoil_*` → recoil time, capped by the fire interval;

@@ -1,5 +1,6 @@
 package techguns.client.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import com.mojang.math.Axis;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -116,13 +118,22 @@ public class GeoGunModel extends TGModel {
             if (turned) {
                 poseStack.mulPose(JAVA_TURN_BACK);
             }
+            List<String> meshes = new ArrayList<>();
             boolean drawn = TGGeoBridge.get().render(geoIds[part], poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
                     vertices, partTexture, light, overlay, anim,
                     bones -> partModel(part).animateGeoBones(turned ? new TurnedBones(bones) : bones, part, ammoLeft, reloadProgress,
                             fireProgress, chargeProgress, context),
-                    markers::put);
+                    (name, pose) -> {
+                        markers.put(name, pose);
+                        if (name.startsWith(TGGeoBridge.MESH) && !name.endsWith(TGGeoBridge.REST)) {
+                            meshes.add(name);
+                        }
+                    });
             poseStack.popPose();
             if (drawn) {
+                for (String mesh : meshes) {
+                    partModel(part).renderMesh(mesh, meshPose(markers.get(mesh)), vertices, light, overlay);
+                }
                 return;
             }
             if (turned) {
@@ -135,6 +146,18 @@ public class GeoGunModel extends TGModel {
             }
         }
         fallback.render(entity, poseStack, vertices, ammoLeft, reloadProgress, context, part, fireProgress, chargeProgress, light, overlay);
+    }
+
+    /**
+     * A pose stack at a mesh bone's absolute pose. The normal matrix is the inverse transpose scaled like
+     * {@code PoseStack#scale} does, keeping the sign of a mirroring pose (the GUI's negative y scale).
+     */
+    private static PoseStack meshPose(Matrix4f pose) {
+        PoseStack stack = new PoseStack();
+        stack.last().pose().set(pose);
+        Matrix3f normal = new Matrix3f(pose).normal();
+        stack.last().normal().set(normal.scale(1f / (float) Math.cbrt(Math.abs(normal.determinant()))));
+        return stack;
     }
 
     /** The geo model id of each render part. */
