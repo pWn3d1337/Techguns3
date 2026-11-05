@@ -72,7 +72,12 @@ public final class TGItemRendererSetup {
     }
 
     /** Guns whose motion lives in their model files: datagen writes their display file ({@link GunDisplay}). */
-    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL, TGGuns.REVOLVER, TGGuns.BIOGUN);
+    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL, TGGuns.REVOLVER, TGGuns.BIOGUN,
+            // phase 4: guns without code part motion
+            TGGuns.M4, TGGuns.AK47, TGGuns.MAC10, TGGuns.VECTOR, TGGuns.THOMPSON, TGGuns.BOLT_ACTION, TGGuns.GOLDEN_REVOLVER,
+            TGGuns.AS50, TGGuns.SAWED_OFF, TGGuns.HAND_CANNON, TGGuns.LASERGUN, TGGuns.BLASTER_RIFLE, TGGuns.GAUSS_RIFLE, TGGuns.PDW,
+            TGGuns.PULSE_RIFLE, TGGuns.LASER_PISTOL, TGGuns.TESLA_GUN, TGGuns.ALIEN_BLASTER, TGGuns.MIB_GUN, TGGuns.NETHER_BLASTER,
+            TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {

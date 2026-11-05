@@ -263,8 +263,14 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - `/tgdebug animevents` prints every fired event (and the particle position relative to the eyes) to chat.
   - No gun uses them yet: today's guns have no timed sounds or effects besides the server-side shot and reload sounds.
   - **Verified in game** with temporary pistol `fire` keyframes (sound at 0.1, particle at 0.0 on `muzzle`, two instructions at 0.3): each fired once per shot in order; the particle landed at the muzzle (first person 0.20 right, 0.28 down, 1.21 ahead of the eyes; third person 0.12 right, 0.23 down, 0.82 ahead); the unknown instruction was logged once.
+- **2026-11-05, phase 4: guns without part motion (23 guns):**
+  - `/tgdebug convertgun` also places the `muzzle` marker bone (child of `root`) in the first geo file: at the next first person frame of the gun at rest it maps the old first person flash offset (`setMuzzleFx` x/y/z) through the drawn pose into model space (`RenderGunBase#placeMuzzle`; the bridge reports each geo file's model origin as `#model:<id>`). The flash then lands exactly where it was (checked: the M4's bone puts it at its old offset). `/tgdebug convertgun muzzle` does only that; on a gun that already has a bone it reports the computed and existing positions instead (the pistol's existing bone round-trips exactly, so the axis convention is right; its hand-placed bone, at the barrel tip, stays).
+  - Data-driven now: M4, AK47, MAC-10, Vector, Thompson, bolt action, golden revolver, AS50, sawed-off, hand cannon, lasergun, blaster rifle, gauss rifle, PDW, pulse rifle, laser pistol, Tesla gun, alien blaster, MIB gun, Nether blaster, sonic shotgun, Shishkebap (no flash, no bone), magic rifle. Each: `DATA_DRIVEN`, `runData` (display file and item model `display` block), `convertgun` (root pivot, `aim`, `muzzle`).
+  - **Verified in game, data path vs Java fallback, first person `fire 0.3`, pixel diff:** 0 to 4 differing gun pixels for 22 guns; the AK47 35 (one small patch, the known mirrored-box lighting difference). Aim (magic rifle) identical. Reload poses differ only at the edges during the ease-in (the known Euler approximation of the tilted reload axes).
+  - **M4 reload:** its own `reload` animation (from the GeckoLib prototype) also rolled `root` by -18 degrees, which Techguns 2 and the Java fallback never had; the roll is dropped (author's decision), the animation keeps the magazine and bolt motion. Whole-gun motion comes only from the display file's `reload`.
+  - Third person: the flash now sits at the bone, so it differs from the separately tuned third person offsets (`setMuzzleFXPos3P`); checked by eye on the M4 (at the muzzle).
 - **Next:**
-  - Phase 4 bulk conversion of the guns without part motion.
+  - Phase 5 part-motion guns.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

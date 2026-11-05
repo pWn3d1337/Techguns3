@@ -311,6 +311,11 @@ public class RenderGunBase extends RenderItemBase {
             this.model.setAnimInput(null);
             poseStack.popPose();
 
+            if (firstPerson && !leftHand && fireProgress <= 0f && reloadProgress <= 0f && zoomProgress <= 0f && chargeProgress <= 0f
+                    && GunConversion.wantsMuzzle(gun)) {
+                this.placeMuzzle(poseStack);
+            }
+
             // Draw muzzle FX (in the hand pose, without the gun's own transforms)
             if (muzzleFlashProgress > 0) {
                 updateJitter(state.muzzleFlashSeed());
@@ -723,6 +728,31 @@ public class RenderGunBase extends RenderItemBase {
         float[] shift = this.adsShift();
         float s = this.baseScale * this.scale_ego;
         return new float[]{-16f * shift[0] / s, 16f * shift[1] / s, 16f * shift[2] / s};
+    }
+
+    /**
+     * Conversion seed ({@link GunConversion}), at a first person rest frame: the {@code muzzle} marker bone where the old
+     * first person flash offset is, in the first geo file's model space. {@code fxPose} is the flash's frame (the pose
+     * {@link #drawMuzzleFx} draws in).
+     */
+    private void placeMuzzle(PoseStack fxPose) {
+        if (!(this.model instanceof techguns.client.model.GeoGunModel geo) || this.muzzleEffect == null) {
+            GunConversion.muzzleFailed("no geo model or muzzle effect");
+            return;
+        }
+        Matrix4f origin = geo.marker(TGGeoBridge.MODEL + geo.geoIds().get(0));
+        if (origin == null) {
+            GunConversion.muzzleFailed("geo model not drawn");
+            return;
+        }
+        Vector3f flash = new Vector3f(this.muzzleEffect.offsetX_r, this.muzzleEffect.offsetY, this.muzzleEffect.offsetZ);
+        Vector3f local = new Matrix4f(origin).invert().mul(fxPose.last().pose()).transformPosition(new Vector3f(flash));
+        // an existing bone, in the same space: checks the conversion against a hand-placed bone
+        Matrix4f existing = geo.marker(TGGeoBridge.MUZZLE + TGGeoBridge.REST);
+        Vector3f existingLocal = existing == null ? null
+                : new Matrix4f(origin).invert().transformPosition(existing.getTranslation(new Vector3f()));
+        Vector3f existingFlash = existing == null ? null : this.markerOffset(fxPose, TGGeoBridge.MUZZLE + TGGeoBridge.REST);
+        GunConversion.placeMuzzle(local, existingLocal, existingFlash, flash);
     }
 
     public RenderGunBase setMuzzleFlashJitter(float jX, float jY, float jAngle, float jScale) {

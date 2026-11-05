@@ -20,21 +20,20 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | `/tgdebug convertgun` seeds, revolver data-driven, normal/brightness and JOML fixes | `6b87b31` |
   | Charge pull-back as display file `charge` motion, biogun data-driven, `/tgdebug pose charge` | `00a0cae` |
   | Molang queries (`GunQueries`: `q.tg_fire/reload/charge/zoom/ammo/ammo_count/time`), renderer passes its animation input on every in-hand draw | `61a9a74` |
-  | Sound, particle and instruction keyframes (`GunAnimationEvents`), `/tgdebug animevents` | **not committed yet** |
+  | Sound, particle and instruction keyframes (`GunAnimationEvents`), `/tgdebug animevents` | `02a4da0` |
 
-- Data-driven guns (`TGItemRendererSetup.DATA_DRIVEN`): pistol, revolver, biogun. All other guns still use the code
+- Data-driven guns (`TGItemRendererSetup.DATA_DRIVEN`): pistol, revolver, biogun and the 23 phase 4 guns (no code part
+  motion; list in the plan's Progress). All other guns (part motion, special renderers) still use the code
   presets (`GunAnimation`), with the same geo files.
 - Build OK, all 378 GameTests pass.
 
 ### Next steps (gun animation)
 
-1. Commit the keyframe event step if not done.
-2. Phase 4 bulk conversion of the guns without part motion (~30): per gun add it to `DATA_DRIVEN`, `runData`,
-   `/tgdebug convertgun` in game, restart, place a `muzzle` marker bone, compare.
-3. Phase 5 part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
+1. Commit the phase 4 step if not done.
+2. Phase 5 part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
    grappling hook, NDR/GML translucent bones, SCAR/AUG/combat shotgun, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator),
    phase 6 special renderers, phase 7 cleanup (delete Java gun models, `RenderGunBase90`, presets).
-4. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
+3. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).
 
 ### Converting one gun (workflow used so far)
@@ -42,7 +41,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 1. Add the gun to `DATA_DRIVEN` in `TGItemRendererSetup`, run `./gradlew runData`: writes
    `techguns/gun_display/<gun>.json` (recoil/reload/charge strengths from the renderer) and the `display` block of
    `models/item/<gun>.json`.
-2. `runClient`, hold the gun, `/tgdebug convertgun`: writes the `root` pivot (hand origin) into the gun's source geo
+2. `runClient`, hold the gun, `/tgdebug convertgun` (one gun at a time: the muzzle bone waits for a rest frame of
+   that gun): writes the `muzzle` marker bone, and the `root` pivot (hand origin) into the gun's source geo
    files and an `aim` animation into `animations/item/<gun>.animation.json` (only once; the files are hand-owned
    afterwards).
 3. Restart the client (it loads the processed resources, so source asset changes need a restart).
@@ -185,7 +185,8 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 - Java 21: `export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot"` (Git Bash). Installed on both PCs; on the second PC the user/machine `JAVA_HOME` points to it.
 - Build + tests: `./gradlew build runGameTestServer -Puse_mcpfabric=false`; data: `./gradlew runData`.
-- Dev client runs windowed at 2560x1080 (`--width/--height` in `build.gradle`, `fullscreen:false` in the git-ignored `run/options.txt`) so it doesn't cover the screen.
+- Dev client runs windowed at 2560x1080 (`--width/--height` in `build.gradle`, `fullscreen:false` in the git-ignored `run/options.txt`) so it doesn't cover the screen. Per PC: `client_width` / `client_height` in the user's `~/.gradle/gradle.properties` (this PC: 1280x720).
+- MCP screenshots: the first one after an item swap can be stale; send any chat command (e.g. `/tgdebug geo`) before the screenshot. `scratchpad/shotdiff.py`-style diffs should ignore the chat band and the hunger bar (it shakes).
 - Dev client: `./gradlew runClient` in the background; ready when the log shows "Sound engine started", world joined
   when `run/logs/latest.log` shows "Dev joined". Join with MCP `join_world` `sp:TestworldFlat`.
 - MCP on a new PC: Node.js 20+, then `claude mcp add mcpfabric --scope user -e MCPFABRIC_URL=http://127.0.0.1:25599 -e MCPFABRIC_TOKEN=<token> -- node F:/Techguns3Work/tools/mcpfabric/mcp-server/dist/index.js` (server already built on F:). The token must match `run/config/mcpfabric.config.json` (git-ignored); `enableUiControl` is on there for `get_ui`/`click_widget`. The MCP `container_transfer take` cannot take from machine (`SlotItemHandler`) slots; use GameTests for that.

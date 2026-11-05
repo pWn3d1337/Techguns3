@@ -18,6 +18,8 @@ public interface TGGeoBridge {
     String MUZZLE = "muzzle";
     /** Suffix of a marker's rest pose: the whole-gun and part motion left out, only aiming applied. */
     String REST = "#rest";
+    /** Prefix of the pose of a geo file's model origin (plus the geo id), reported with the markers; for conversion tools. */
+    String MODEL = "#model:";
 
     static boolean isMarker(String bone) {
         return bone.startsWith(MUZZLE) || bone.startsWith("charge") || bone.startsWith("idle_fx");
@@ -30,7 +32,7 @@ public interface TGGeoBridge {
      * @param anim    timer progress the keyframe animations are sampled at
      * @param bones   code-driven bone changes, applied after the keyframe animations
      * @param markers receives the pose of each marker bone's pivot ({@link #isMarker}), in the pose stack's root space, and
-     *                its rest pose under the name plus {@link #REST}
+     *                its rest pose under the name plus {@link #REST}; also the model origin under {@link #MODEL} plus {@code id}
      * @return false if the model isn't available, so the caller draws the Java model instead
      */
     boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, int light, int overlay,

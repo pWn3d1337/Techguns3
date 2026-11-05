@@ -1,0 +1,24 @@
+{
+  "recoil": {
+    "first_person": {
+      "animation": "recoil_generic",
+      "move": 4.266667,
+      "turn": 15.0
+    },
+    "third_person": {
+      "animation": "recoil_generic",
+      "turn": 5.0
+    }
+  },
+  "reload": {
+    "first_person": {
+      "animation": "reload_generic",
+      "move": 42.666668,
+      "turn": 40.0
+    },
+    "third_person": {
+      "animation": "reload_generic",
+      "turn": 40.0
+    }
+  }
+}

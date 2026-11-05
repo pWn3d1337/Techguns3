@@ -76,6 +76,7 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         poseStack.pushPose();
         // Java model space (y down) from GeckoLib space (y up), see TGGeoExporter
         poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
+        markers.accept(TGGeoBridge.MODEL + id, new Matrix4f(poseStack.last().pose()));
         // render type null: GeckoLib draws into the given buffer, whose render type the gun renderer chose for this part
         renderer.drawnMarkers.clear();
         renderer.gunModel.particles.clear();

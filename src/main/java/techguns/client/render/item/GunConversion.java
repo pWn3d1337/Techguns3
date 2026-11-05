@@ -17,8 +17,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
+import javax.annotation.Nullable;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import org.joml.Vector3f;
 import techguns.client.model.GeoGunModel;
+import techguns.client.model.TGGeoBridge;
 
 /**
  * Dev tool ({@code /tgdebug convertgun}): seeds a gun's model files with the values of its code renderer when the gun
@@ -27,7 +33,10 @@ import techguns.client.model.GeoGunModel;
  * <ul>
  *     <li>the {@code root} bone pivot of every geo file of the gun: the hand origin ({@link RenderGunBase#exportRootPivot});</li>
  *     <li>the {@code aim} animation in {@code animations/item/<first geo id>.animation.json}: {@code root} moves to the
- *     aim offset over the animation ({@link RenderGunBase#exportAim}); other animations in the file are kept.</li>
+ *     aim offset over the animation ({@link RenderGunBase#exportAim}); other animations in the file are kept;</li>
+ *     <li>the {@code muzzle} marker bone (child of {@code root}) in the first geo file, where the old first person flash
+ *     offset is: placed at the next first person frame of the gun at rest ({@link RenderGunBase}), since it needs the
+ *     drawn pose. Skipped if the file has one; then the computed position is only reported.</li>
  * </ul>
  * The hold positions ({@code display} block) and the display file come from datagen once the gun is listed in
  * {@code TGItemRendererSetup.DATA_DRIVEN}.
@@ -36,6 +45,15 @@ public final class GunConversion {
     private static final Pattern ROOT_PIVOT = Pattern.compile("(\"name\"\\s*:\\s*\"root\"[^{}]*?\"pivot\"\\s*:\\s*\\[)([^\\]]*)(\\])",
             Pattern.DOTALL);
     private static final Pattern NUMBER = Pattern.compile("-?\\d+(?:\\.\\d+)?(?:[eE][-+]?\\d+)?");
+    /** The {@code root} bone without cubes or rotation, as the exporter writes it. */
+    private static final Pattern ROOT_BONE = Pattern.compile("\\{\\s*\"name\"\\s*:\\s*\"root\"\\s*,\\s*\"pivot\"\\s*:\\s*\\[[^\\]]*\\]\\s*}");
+
+    /** A muzzle bone waiting for a first person rest frame of {@code gun}. */
+    private record MuzzleRequest(Item gun, Path file) {
+    }
+
+    @Nullable
+    private static MuzzleRequest muzzleRequest;
 
     private GunConversion() {
     }
@@ -81,7 +99,87 @@ public final class GunConversion {
         Streams.write(root, writer);
         Files.writeString(animFile, out + "\n", StandardCharsets.UTF_8);
         report.add(animId + ".animation.json: aim " + format(aim));
+        report.add(requestMuzzle(gun, assets));
         return report;
+    }
+
+    /** Asks for the {@code muzzle} bone at the next first person rest frame of {@code gun}; returns a report line. */
+    public static String requestMuzzle(Item gun, Path assets) {
+        if (!(TGItemRenderers.get(gun) instanceof RenderGunBase renderer) || !(renderer.model instanceof GeoGunModel geo)) {
+            throw new IllegalArgumentException("not a gun drawn from geo files");
+        }
+        if (renderer.muzzleEffect == null) {
+            return "muzzle: no muzzle effect, no bone";
+        }
+        muzzleRequest = new MuzzleRequest(gun, assets.resolve("geo/item/" + geo.geoIds().get(0) + ".geo.json"));
+        return "muzzle: placed at the next first person frame at rest (main hand, not aiming)";
+    }
+
+    /** True while a muzzle bone for {@code gun} waits for a rest frame. */
+    public static boolean wantsMuzzle(Item gun) {
+        return muzzleRequest != null && muzzleRequest.gun() == gun;
+    }
+
+    static void muzzleFailed(String reason) {
+        muzzleRequest = null;
+        chat("muzzle: failed, " + reason);
+    }
+
+    /**
+     * Writes the requested muzzle bone at {@code local}: GeckoLib model space of the first geo file, in blocks. If the file
+     * already has one ({@code existing*} non-null), only reports: the computed pivot, the existing bone through the same
+     * conversion, and where the existing bone puts the flash against the old offset {@code flash}.
+     */
+    static void placeMuzzle(Vector3f local, @Nullable Vector3f existingLocal, @Nullable Vector3f existingFlash, Vector3f flash) {
+        MuzzleRequest request = muzzleRequest;
+        muzzleRequest = null;
+        if (request == null) {
+            return;
+        }
+        float[] pivot = filePivot(local);
+        String name = request.file().getFileName().toString();
+        try {
+            String text = Files.readString(request.file(), StandardCharsets.UTF_8);
+            if (text.contains("\"name\": \"" + TGGeoBridge.MUZZLE + "\"")) {
+                chat("muzzle: " + name + " already has one; computed " + format(pivot)
+                        + (existingLocal != null ? ", existing " + format(filePivot(existingLocal)) : "")
+                        + (existingFlash != null ? ", its flash " + format(new float[]{existingFlash.x(), existingFlash.y(), existingFlash.z()})
+                        + " vs old " + format(new float[]{flash.x(), flash.y(), flash.z()}) : ""));
+                return;
+            }
+            Matcher m = ROOT_BONE.matcher(text);
+            if (!m.find()) {
+                chat("muzzle: failed, no plain root bone in " + name);
+                return;
+            }
+            String nl = text.contains("\r\n") ? "\r\n" : "\n";
+            String bone = "," + nl
+                    + "        {" + nl
+                    + "          \"name\": \"" + TGGeoBridge.MUZZLE + "\"," + nl
+                    + "          \"parent\": \"root\"," + nl
+                    + "          \"pivot\": [" + nl
+                    + "            " + round(pivot[0]).toPlainString() + "," + nl
+                    + "            " + round(pivot[1]).toPlainString() + "," + nl
+                    + "            " + round(pivot[2]).toPlainString() + nl
+                    + "          ]" + nl
+                    + "        }";
+            Files.writeString(request.file(), text.substring(0, m.end()) + bone + text.substring(m.end()), StandardCharsets.UTF_8);
+            chat("muzzle: " + name + " bone at " + format(pivot));
+        } catch (IOException e) {
+            chat("muzzle: failed, " + e.getMessage());
+        }
+    }
+
+    /** File pivot (pixels) of a point in GeckoLib model space (blocks): GeckoLib bakes a bone pivot as (-x, y, z) of the file. */
+    private static float[] filePivot(Vector3f local) {
+        return new float[]{-16f * local.x(), 16f * local.y(), 16f * local.z()};
+    }
+
+    private static void chat(String text) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            mc.player.displayClientMessage(Component.literal(text), false);
+        }
     }
 
     /** {@code root} from rest to the aim offset over one second (sampled by zoom progress). */

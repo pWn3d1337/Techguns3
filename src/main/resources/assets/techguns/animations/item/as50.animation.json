@@ -1,0 +1,24 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"aim": {
+			"animation_length": 1.0,
+			"bones": {
+				"root": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"1.0": [
+							21.0372,
+							5.6471,
+							11.6706
+						]
+					}
+				}
+			}
+		}
+	}
+}

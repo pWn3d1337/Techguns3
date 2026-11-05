@@ -181,6 +181,23 @@ public final class TGDebugCommands {
                                     return 1;
                                 })))
                 .then(Commands.literal("convertgun")
+                        .then(Commands.literal("muzzle")
+                                .executes(ctx -> {
+                                    // only the muzzle marker bone (reports the computed position if the gun has one)
+                                    var player = Minecraft.getInstance().player;
+                                    if (player == null) {
+                                        return 0;
+                                    }
+                                    var assets = Minecraft.getInstance().gameDirectory.toPath().toAbsolutePath().normalize().getParent()
+                                            .resolve("src/main/resources/assets/techguns");
+                                    try {
+                                        ctx.getSource().sendSystemMessage(Component.literal(
+                                                GunConversion.requestMuzzle(player.getMainHandItem().getItem(), assets)));
+                                    } catch (Exception e) {
+                                        ctx.getSource().sendSystemMessage(Component.literal("Conversion failed: " + e.getMessage()));
+                                    }
+                                    return 1;
+                                }))
                         .executes(ctx -> {
                             // seeds the held gun's source geo and animation files (root pivot, aim) from its code renderer
                             var player = Minecraft.getInstance().player;
