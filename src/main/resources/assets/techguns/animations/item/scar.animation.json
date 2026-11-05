@@ -1,0 +1,62 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"bolt_body": {
+					"scale": {
+						"0.0": [
+							1,
+							0.7,
+							0.7
+						]
+					}
+				}
+			}
+		},
+		"fire": {
+			"animation_length": 1.0,
+			"bones": {
+				"bolt": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"0.4": [
+							0,
+							0,
+							9.6
+						],
+						"1.0": [
+							0,
+							0,
+							0
+						]
+					}
+				}
+			}
+		},
+		"aim": {
+			"animation_length": 1.0,
+			"bones": {
+				"root": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"1.0": [
+							17.8816,
+							4.8,
+							9.92
+						]
+					}
+				}
+			}
+		}
+	}
+}

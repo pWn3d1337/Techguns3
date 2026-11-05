@@ -77,7 +77,9 @@ public final class TGItemRendererSetup {
             TGGuns.M4, TGGuns.AK47, TGGuns.MAC10, TGGuns.VECTOR, TGGuns.THOMPSON, TGGuns.BOLT_ACTION, TGGuns.GOLDEN_REVOLVER,
             TGGuns.AS50, TGGuns.SAWED_OFF, TGGuns.HAND_CANNON, TGGuns.LASERGUN, TGGuns.BLASTER_RIFLE, TGGuns.GAUSS_RIFLE, TGGuns.PDW,
             TGGuns.PULSE_RIFLE, TGGuns.LASER_PISTOL, TGGuns.TESLA_GUN, TGGuns.ALIEN_BLASTER, TGGuns.MIB_GUN, TGGuns.NETHER_BLASTER,
-            TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE);
+            TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE,
+            // phase 5: part motion in keyframes (merged geo files)
+            TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -143,7 +145,7 @@ public final class TGItemRendererSetup {
                         {0f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.14f, -1.15f).setScope(ScreenEffect.sniperScope).setScopeRecoilAnim(GunAnimation.scopeRecoil, 0.05f, 1.0f));
 
-        TGItemRenderers.register(TGGuns.SCAR, new RenderGunBase(new GeoGunModel(new ModelScar(), "scar", "scar_1"), 2, TGIds.id("textures/guns/scar_texture.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.1f, 0.1f)
+        TGItemRenderers.register(TGGuns.SCAR, new RenderGunBase(new GeoGunModel(new ModelScar(), "scar"), 2, TGIds.id("textures/guns/scar_texture.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.1f, 0.1f)
                 .setGUIScale(0.35f).setMuzzleFx(ScreenEffect.muzzleFlash_rifle, 0, 0.23f, -1.48f, 0.78f, 0).setRecoilAnim(GunAnimation.genericRecoil, 0.1f, 4.0f).setTransformTranslations(new float[][]{
                         {0f, 0.04f, -0.15f}, // First Person
                         {0f, 0.02f, -0.11f}, // Third Person
@@ -161,7 +163,7 @@ public final class TGItemRendererSetup {
                         {0f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.08f, -1.02f).setMuzzleFlashJitter(0.02f, 0.02f, 5.0f, 0.1f));
 
-        TGItemRenderers.register(TGGuns.AUG, new RenderGunBase(new GeoGunModel(new ModelAUG(), "aug", "aug_1"), 2, TGIds.id("textures/guns/augtexture.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.1f, 0.1f)
+        TGItemRenderers.register(TGGuns.AUG, new RenderGunBase(new GeoGunModel(new ModelAUG(), "aug"), 2, TGIds.id("textures/guns/augtexture.png")).setBaseTranslation(RenderItemBase.SCALE * 0.5f, -0.1f, 0.1f)
                 .setGUIScale(0.35f).setMuzzleFx(ScreenEffect.muzzleFlash_rifle, 0, 0.19f, -1.45f, 0.75f, 0).setRecoilAnim(GunAnimation.genericRecoil, 0.1f, 4.0f).setTransformTranslations(new float[][]{
                         {0f, 0.01f, -0.15f}, // First Person
                         {0f, 0.0f, -0.01f}, // Third Person
@@ -254,7 +256,7 @@ public final class TGItemRendererSetup {
                         {0f, -0.2f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.17f, -1.29f).setScope(ScreenEffect.sniperScope).setRecoilAnim(GunAnimation.genericRecoil, 0.25f, 5.0f).setScopeRecoilAnim(GunAnimation.scopeRecoil, 0.2f, 2.0f));
 
-        TGItemRenderers.register(TGGuns.COMBAT_SHOTGUN, new RenderGunBase90(new GeoGunModel(new ModelCombatShotgun(), "combat_shotgun", "combat_shotgun_1"), 2, TGIds.id("textures/guns/combatshotgun.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
+        TGItemRenderers.register(TGGuns.COMBAT_SHOTGUN, new RenderGunBase90(new GeoGunModel(new ModelCombatShotgun(), "combat_shotgun"), 2, TGIds.id("textures/guns/combatshotgun.png")).setBaseTranslation(0, -0.2f, RenderItemBase.SCALE - 0.1f)
                 .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.21f, -0.91f, 0.75f, 0).setTransformTranslations(new float[][]{
                         {0f, 0.03f, 0f}, // First Person
                         {0f, -0.01f, -0.10f}, // Third Person

@@ -147,7 +147,7 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
 
         /**
          * Poses every bone from scratch for this draw instead of GeckoLib's controller processing: rest pose, plus the
-         * sampled animations (aim, reload and its whole-gun motion, fire and recoil, charge), then the code-driven bone
+         * sampled animations (hold, aim, reload and its whole-gun motion, fire and recoil, charge), then the code-driven bone
          * changes. The Molang queries ({@link GunQueries}) hold this draw's values while the animations are sampled.
          * Keyframe events (sound, particle, instruction) of the timer-driven layers fire as their time passes
          * ({@link GunAnimationEvents}).
@@ -162,8 +162,10 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
             GeoAnimInput.Events events = anim.events();
             long reloadCycle = events != null ? events.reloadCycle() : 0L;
             long fireCycle = events != null ? events.fireCycle() : 0L;
+            hold(aimPoses);
             sample("aim", anim.aim(), 1f, 1f, aimPoses, null, 0L);
             poses.clear();
+            hold(poses);
             sample("aim", anim.aim(), 1f, 1f, poses, null, 0L);
             sample("reload", anim.reload(), 1f, 1f, poses, events, reloadCycle);
             sample(anim.reloadMotion(), anim.reload(), events, reloadCycle);
@@ -204,6 +206,17 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
                 }
             }
             applyCodeBones(animatable);
+        }
+
+        /**
+         * The {@code hold} animation at its start, in every draw: the static pose of the model (e.g. a part's scale that
+         * the geo format can't store), under all other layers.
+         */
+        private void hold(Map<String, GunAnimationSampler.BonePose> into) {
+            Animation found = GunAnimationSampler.find(animation, "hold");
+            if (found != null) {
+                GunAnimationSampler.sample(found, 0f, 1f, 1f, into);
+            }
         }
 
         /** Samples {@code name} into {@code into} and fires its keyframe events for the timer run {@code cycle} (0 = none). */

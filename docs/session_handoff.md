@@ -29,9 +29,9 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ### Next steps (gun animation)
 
-1. Commit the phase 4 step if not done.
-2. Phase 5 part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
-   grappling hook, NDR/GML translucent bones, SCAR/AUG/combat shotgun, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator),
+1. Commit the phase 5 bolt/pump step if not done.
+2. Phase 5 (rest) part-motion guns (minigun, LMG belt with `q.tg_ammo_count`, chainsaw/drill/hammer loops with `q.tg_time`,
+   grappling hook, NDR/GML translucent bones, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator),
    phase 6 special renderers, phase 7 cleanup (delete Java gun models, `RenderGunBase90`, presets).
 3. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).

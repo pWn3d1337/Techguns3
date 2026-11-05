@@ -269,8 +269,14 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **Verified in game, data path vs Java fallback, first person `fire 0.3`, pixel diff:** 0 to 4 differing gun pixels for 22 guns; the AK47 35 (one small patch, the known mirrored-box lighting difference). Aim (magic rifle) identical. Reload poses differ only at the edges during the ease-in (the known Euler approximation of the tilted reload axes).
   - **M4 reload:** its own `reload` animation (from the GeckoLib prototype) also rolled `root` by -18 degrees, which Techguns 2 and the Java fallback never had; the roll is dropped (author's decision), the animation keeps the magazine and bolt motion. Whole-gun motion comes only from the display file's `reload`.
   - Third person: the flash now sits at the bone, so it differs from the separately tuned third person offsets (`setMuzzleFXPos3P`); checked by eye on the M4 (at the muzzle).
+- **2026-11-05, phase 5 start: bolts and pump (SCAR, AUG, combat shotgun):**
+  - `tools/geo_merge.py` merges a split part file (`<gun>_1.geo.json`) into the main geo file under a new group bone (child of `root`, pivot 0) and deletes it; it writes the `geo_turn.py` layout. Merged: SCAR and AUG under `bolt`, combat shotgun under `pump`. The part's own bones were renamed (`bolt_body`, `pump_body`), since GeckoLib bone names must be unique case-insensitively in Blockbench.
+  - The `transformPart` motion is now keyframes on the group bone (Java blocks x 16 = pixels): SCAR `fire` bolt back 9.6 px at 0.4, AUG 8 px, combat shotgun `fire` pump back 6.4 px between 0.65 and 0.95 and `reload` between 0.9 and 1.0. Linear, exact like the code.
+  - **New layer `hold`:** sampled at its start in every draw, under all others: the static pose of a model, for what the geo format can't store. The SCAR bolt's static render scale (1, 0.7, 0.7) was applied by code bones to the part file only; it is now a `hold` scale keyframe on `bolt_body`. The static scales of the other models are still code bones (`TGModel#animateGeoBones`) until phase 7 moves them to `hold` the same way.
+  - Display files, item model `display` blocks and `convertgun` seeds (root pivot, `aim`, `muzzle`) as in phase 4. The Java fallback keeps its separate part model (and `/tgdebug exportgeo` still writes the `_1` files) until phase 7.
+  - **Verified in game, data path vs Java fallback, pixel diff:** SCAR `fire 0.3` bolt identical (before the `hold` fix the bolt was 1.4 times too big); the remaining 1400 px are the scope parts' known shear approximation (logged at startup, also at rest). AUG `fire 0.3` identical. Combat shotgun `fire 0.8` (pump peak) identical; `reload 0.95` differs only by the known reload tilt approximation (`reload 0.9`, pump at rest, differs as much).
 - **Next:**
-  - Phase 5 part-motion guns.
+  - Phase 5: LMG belt, minigun, mining tools, grappling hook, NDR/GML, TFG, Grim Reaper, Lasergun 2, M4 Infiltrator.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.
