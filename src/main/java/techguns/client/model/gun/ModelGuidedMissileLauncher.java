@@ -10,8 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import techguns.client.gun.LockOnTracker;
-import techguns.client.model.GeoBones;
-import techguns.client.model.TGGeoExporter;
 import techguns.client.model.TGModel;
 import techguns.client.model.TGModelPart;
 import techguns.gun.LockOnGunItem;
@@ -256,16 +254,6 @@ public class ModelGuidedMissileLauncher extends TGModel {
 			} else {
 				this.Holo2.render(matrices, vertices, bright_light, overlay);
 			}
-		}
-
-		@Override
-		public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress,
-				ItemDisplayContext context) {
-			super.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
-			boolean locked = isLocked(context);
-			// glow parts export with the glow suffix
-			bones.setHidden("Holo2" + TGGeoExporter.GLOW_SUFFIX, locked);
-			bones.setHidden("Holo2_1" + TGGeoExporter.GLOW_SUFFIX, !locked);
 		}
 	}
 }

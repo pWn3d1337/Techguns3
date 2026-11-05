@@ -27,11 +27,12 @@ import javax.annotation.Nullable;
  * @param firstPerson  drawn in first person, Molang {@code query.tg_first_person} (e.g. a belt that feeds only there)
  * @param inHand       held (first or third person), Molang {@code query.tg_in_hand}; false for GUI, ground and frames
  * @param grapple      grappling hook of the holder (0 in the gun, 1 launched, -1 attached), Molang {@code query.tg_grapple}
+ * @param locked       first person and the lock-on is complete, Molang {@code query.tg_locked} (GML holo sight)
  */
 public record GeoAnimInput(float fire, float reload, float aim, float charge, float ammo, int ammoCount, boolean empty, boolean mirror,
                            float holdPitch, float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion,
                            @Nullable Layer chargeMotion, @Nullable Events events, boolean gui, boolean firstPerson,
-                           boolean inHand, int grapple) {
+                           boolean inHand, int grapple, boolean locked) {
     /** Not animated and nothing loaded. */
     public static final GeoAnimInput NONE = still(false, 0);
 
@@ -41,7 +42,7 @@ public record GeoAnimInput(float fire, float reload, float aim, float charge, fl
      */
     public static GeoAnimInput still(boolean gui, int ammoCount) {
         return new GeoAnimInput(0f, 0f, 0f, 0f, ammoCount > 0 ? 1f : 0f, ammoCount, false, false, 0f, 0f, null, null, null, null, gui,
-                false, false, 0);
+                false, false, 0, false);
     }
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */

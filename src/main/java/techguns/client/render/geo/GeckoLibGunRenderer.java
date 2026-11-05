@@ -2,8 +2,11 @@ package techguns.client.render.geo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -19,6 +22,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -47,7 +51,8 @@ import techguns.client.model.TGGeoExporter;
  * animations (optional): {@code assets/techguns/animations/item/<id>.animation.json} (a split part file
  * {@code <id>_1} uses the gun's {@code <id>} file), falling back to {@code common.animation.json} per animation name. Animations are sampled from the gun's timers by
  * {@link GunAnimationSampler}, not played by GeckoLib's controllers. Bones whose name contains
- * {@link TGGeoExporter#GLOW_SUFFIX} are drawn full bright.
+ * {@link TGGeoExporter#GLOW_SUFFIX} are drawn full bright; bones ending in {@link TGGeoBridge#TRANSLUCENT} or
+ * {@link TGGeoBridge#CUTOUT} are drawn in a second pass with that render type.
  */
 // MIGRATION(26.x): GeckoLib 5 moves to render states; GeoObjectRenderer/GeoModel signatures change.
 public final class GeckoLibGunRenderer implements TGGeoBridge {
@@ -60,8 +65,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
     private final Map<String, GunRenderer> renderers = new HashMap<>();
 
     @Override
-    public boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, int light, int overlay,
-                          GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers) {
+    public boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer,
+                          @Nullable ResourceLocation texture, int light, int overlay, GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers) {
         GunRenderer renderer = renderers.computeIfAbsent(id, GunRenderer::new);
         if (!GeckoLibCache.getBakedModels().containsKey(renderer.gunModel.model)) {
             if (!renderer.warned) {
@@ -83,7 +88,14 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         // render type null: GeckoLib draws into the given buffer, whose render type the gun renderer chose for this part
         renderer.drawnMarkers.clear();
         renderer.gunModel.particles.clear();
+        renderer.pass = null;
         renderer.render(poseStack, animatable, buffers, null, buffer, light, partialTick);
+        if (texture != null) {
+            // after the main draw: switching the buffer source to another render type ends the main buffer's batch
+            renderer.renderPass(TGGeoBridge.TRANSLUCENT, RenderType.entityTranslucent(texture), poseStack, buffers, light, partialTick);
+            renderer.renderPass(TGGeoBridge.CUTOUT, RenderType.entityCutout(texture), poseStack, buffers, light, partialTick);
+            renderer.pass = null;
+        }
         poseStack.popPose();
         renderer.markers = null;
         if (!renderer.gunModel.particles.isEmpty()) {
@@ -289,6 +301,19 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         final Map<String, Matrix4f> drawnMarkers = new HashMap<>();
         /** Missing model logged once. */
         boolean warned;
+        /**
+         * Render pass of the current draw: null = the main draw (bones ending in a pass suffix left out), else that suffix
+         * ({@link TGGeoBridge#TRANSLUCENT}, {@link TGGeoBridge#CUTOUT}): only bones ending in it and their children.
+         */
+        @Nullable
+        String pass;
+        /** Bones of the current pass entered and not left yet (cubes are drawn inside one). */
+        private int passDepth;
+        /** The baked model {@link #passes} belongs to (models are rebaked on resource reload). */
+        @Nullable
+        private BakedGeoModel passModel;
+        /** Pass suffixes the model's bones use. */
+        private final Set<String> passes = new HashSet<>();
 
         GunRenderer(String id) {
             this(new GunModel(id));
@@ -306,14 +331,54 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
             this.objectRenderTranslations = new Matrix4f(poseStack.last().pose());
         }
 
-        /** Glow bones (red dots, energy cells) are drawn full bright like in the Java models. */
+        /**
+         * Draws the bones of render pass {@code suffix} (if the model has any) into {@code type}'s buffer, in the pose of the
+         * draw before (GeckoLib's re-render skips the animation step).
+         */
+        void renderPass(String suffix, RenderType type, PoseStack poseStack, MultiBufferSource buffers, int light, float partialTick) {
+            BakedGeoModel model = getGeoModel().getBakedModel(gunModel.model);
+            if (model != passModel) {
+                passModel = model;
+                passes.clear();
+                for (GeoBone bone : getGeoModel().getAnimationProcessor().getRegisteredBones()) {
+                    passSuffix(bone.getName()).ifPresent(passes::add);
+                }
+            }
+            if (passes.contains(suffix)) {
+                pass = suffix;
+                passDepth = 0;
+                reRender(model, poseStack, buffers, animatable, type, buffers.getBuffer(type), partialTick, light,
+                        OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+            }
+        }
+
+        private static Optional<String> passSuffix(String bone) {
+            return bone.endsWith(TGGeoBridge.TRANSLUCENT) ? Optional.of(TGGeoBridge.TRANSLUCENT)
+                    : bone.endsWith(TGGeoBridge.CUTOUT) ? Optional.of(TGGeoBridge.CUTOUT) : Optional.empty();
+        }
+
+        /**
+         * Glow bones (red dots, energy cells) are drawn full bright like in the Java models. The main draw leaves out the
+         * bones of the extra render passes; a pass draws only the cubes inside its bones.
+         */
         @Override
         public void renderRecursively(PoseStack poseStack, GunAnimatable animatable, GeoBone bone, RenderType renderType,
                                       MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
                                       int packedLight, int packedOverlay, int colour) {
+            Optional<String> suffix = passSuffix(bone.getName());
+            if (pass == null && suffix.isPresent()) {
+                return;
+            }
+            boolean enters = pass != null && suffix.isPresent() && pass.equals(suffix.get());
+            if (enters) {
+                passDepth++;
+            }
             int light = bone.getName().contains(TGGeoExporter.GLOW_SUFFIX) ? FULL_BRIGHT : packedLight;
             super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, light,
                     packedOverlay, colour);
+            if (enters) {
+                passDepth--;
+            }
         }
 
         /**
@@ -323,6 +388,12 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         @Override
         public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay,
                                       int colour) {
+            if (pass != null) {
+                if (passDepth > 0) {
+                    super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+                }
+                return;
+            }
             if (markers != null && TGGeoBridge.isMarker(bone.getName())) {
                 Matrix4f pose = new Matrix4f(poseStack.last().pose())
                         .translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);

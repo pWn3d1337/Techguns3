@@ -92,6 +92,13 @@ public abstract class TGModel extends Model {
     }
 
     /**
+     * Texture of the next part draws, set by the gun renderer around each part: a geo model draws its extra render
+     * passes ({@link TGGeoBridge#TRANSLUCENT}, {@link TGGeoBridge#CUTOUT}) with it. Only geo models use it.
+     */
+    public void setPartTexture(@Nullable ResourceLocation texture) {
+    }
+
+    /**
      * Pose of marker bone {@code name} ({@link TGGeoBridge#isMarker}) in the last draw, in the pose stack's root space;
      * null if the model has no such bone (Java models have none).
      */

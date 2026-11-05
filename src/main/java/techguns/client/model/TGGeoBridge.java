@@ -5,7 +5,10 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 /**
@@ -20,6 +23,13 @@ public interface TGGeoBridge {
     String REST = "#rest";
     /** Prefix of the pose of a geo file's model origin (plus the geo id), reported with the markers; for conversion tools. */
     String MODEL = "#model:";
+    /**
+     * Bone name suffixes of the extra render passes: such a bone and its children are drawn after the rest of the model,
+     * with the part's texture as {@code entityTranslucent} / {@code entityCutout} (the NDR's glow rings, the GML's holo
+     * sight).
+     */
+    String TRANSLUCENT = "_translucent";
+    String CUTOUT = "_cutout";
 
     static boolean isMarker(String bone) {
         return bone.startsWith(MUZZLE) || bone.startsWith("charge") || bone.startsWith("idle_fx");
@@ -29,14 +39,16 @@ public interface TGGeoBridge {
      * Draws geo model {@code id} in Java model space (the gun pipeline's pose stack) into {@code buffer}, whose render
      * type the gun renderer chose for this part.
      *
+     * @param texture the part's texture for the {@link #TRANSLUCENT} and {@link #CUTOUT} bones; null = those bones are not
+     *                drawn
      * @param anim    timer progress the keyframe animations are sampled at
      * @param bones   code-driven bone changes, applied after the keyframe animations
      * @param markers receives the pose of each marker bone's pivot ({@link #isMarker}), in the pose stack's root space, and
      *                its rest pose under the name plus {@link #REST}; also the model origin under {@link #MODEL} plus {@code id}
      * @return false if the model isn't available, so the caller draws the Java model instead
      */
-    boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, int light, int overlay,
-                   GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers);
+    boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, @Nullable ResourceLocation texture,
+                   int light, int overlay, GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers);
 
     static TGGeoBridge get() {
         return Holder.bridge;

@@ -38,7 +38,7 @@ Shared animations and code find bones by name. Every gun uses:
 | `muzzle`, `muzzle_2`, … | Empty marker bones at the barrel tip: muzzle flash (below). |
 | `charge`, `idle_fx` | Empty marker bones for the charge effect and idle FX (flamethrower pilot flame). |
 | `*_glow` | Drawn full bright (already supported). |
-| `*_translucent` / `*_cutout` | Bone drawn in a second pass with that render type; replaces the split files of NDR and GML. |
+| `*_translucent` / `*_cutout` | Bone (and its children) drawn in a second pass with that render type and the part's texture; replaces the split files of NDR and GML (implemented). |
 | `ammo_*` | Variant bones shown only for the matching loaded ammo (rocket launcher rocket), instead of a separate geo file and texture swap. |
 
 Missing bones are fine: GeckoLib skips animation tracks whose bone the model lacks.
@@ -106,6 +106,7 @@ A gun without a `reload` of its own gets the shared one.
 | `query.tg_first_person` | 1 when drawn in first person (implemented; the LMG belt feeds only there). |
 | `query.tg_in_hand` | 1 when held, 0 for GUI icons, on the ground and in frames (implemented; power hammer head). |
 | `query.tg_grapple` | Grappling hook of the holder: 0 in the gun, 1 launched, -1 attached or pulling (implemented; grappling hook). |
+| `query.tg_locked` | 1 in first person once the lock-on is complete (implemented; GML holo sight). |
 | `query.tg_spin` | Barrel spin angle / speed (dropped, see Progress). |
 
 ### Muzzle and effect positions from bones
@@ -304,8 +305,15 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - New query `query.tg_grapple` from the holder's hook entity (`GunRenderState#grappleStatus`, only looked up for the grappling hook; the Java model uses it too).
   - `hold` scales `hook` by `q.tg_grapple == 0` (gone while launched or attached) and turns `wheel1` about its pivot by `q.tg_grapple * ((q.tg_time * 1800) % 360)` on x (90 degrees per tick, unrolling while launched, rolling back while attached), as `ModelGrapplingHook#transformPart`.
   - **Verified in game, data path vs Java fallback, pixel diff (hook in flight, `tick freeze`, `/tgdebug pose charge 0.5`, the use time keeps running under the freeze):** idle and in-flight gun identical above the wheel; at the wheel ~300 px of 1-px edges and z-fighting slivers (the Java path computes the angle from a float game time, 1/16 tick steps at a million ticks); the opposite spin sign differs by ~1300 px. Hotbar icon identical.
+- **2026-11-05, phase 5: NDR, GML (render pass bones); phase 5 done:**
+  - **Render pass bones:** a bone whose name ends in `_translucent` or `_cutout` is left out of the main draw and drawn with its children in a second pass, `entityTranslucent` / `entityCutout` with the part's texture (`TGModel#setPartTexture`, set by `RenderGunBase` around each part). The pass is a GeckoLib `reRender` after the main draw: it keeps the pose (no second animation step), and only then switches the buffer source to the other render type (switching mid-draw would end the main buffer's batch).
+  - **NDR:** `nuclear_deathray_1` merged under `rings_translucent`; `hold` scales it by `q.tg_fire > 0 ? (0.9 + math.sin(q.tg_fire * 360) * 0.1) : 0` (GeckoLib's `math.sin` takes degrees), as `ModelNDR#transformPart`.
+  - **GML:** `guided_missile_launcher_1` merged under `holo_cutout` (pivot at the holo, file (5, 3, -23.5)); `hold` scales it 0.5 and shows `Holo2_glow` / `Holo2_1_glow` by `1 - q.tg_locked` / `q.tg_locked`. New query `query.tg_locked` (`GunRenderState#locked`, as the Java model's `isLocked`); the `HoloPart#animateGeoBones` override is gone.
+  - Both `motionInFiles()` and data-driven (`convertgun`: root pivot, `aim`, `muzzle`).
+  - **Verified in game, data path vs Java fallback, pixel diff:** NDR idle identical; NDR `fire 0.25` rings identical, ~1000 px of 1 to 3 px edge shifts on the gun from `recoil_sway` (the first data-driven sway gun; its Euler turns approximate the preset's tilted axis, like the reload poses); GML idle and locked (pig target, `/tgdebug aim`) identical in first person; NDR hotbar icon identical, GML icon 32 px (display transform rounding).
+  - **Phase 5 is done:** AUG, SCAR, combat shotgun and pistol keep `transformPart` only for render part 1, which their merged geo files no longer have, so the geo path never runs it (Java fallback only). The only split geo files left are the mining tool heads (per-head texture).
 - **Next:**
-  - Phase 5: NDR/GML (translucent bones).
+  - Phase 6: special renderers (rocket launcher `ammo_*` bones, flamethrower idle FX bone, mining tools via queries).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

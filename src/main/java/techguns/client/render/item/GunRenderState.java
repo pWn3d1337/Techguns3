@@ -8,12 +8,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import techguns.client.gun.ClientGunController;
+import techguns.client.gun.LockOnTracker;
 import techguns.client.gun.ShooterValues;
 import techguns.entity.projectile.GrapplingHookProjectile;
 import techguns.gun.ChargeGunItem;
 import techguns.gun.GrapplingHookItem;
 import techguns.gun.GunData;
 import techguns.gun.GunItem;
+import techguns.gun.LockOnGunItem;
 
 /**
  * Animation state of a gun for one frame, extracted before rendering.
@@ -31,10 +33,12 @@ import techguns.gun.GunItem;
  * @param fireCycle           identifies the running recoil (its timer start), 0 if none: keyframe events fire once per run
  * @param reloadCycle         identifies the running reload, 0 if none
  * @param grapple             grappling hook of the holder: 0 = in the gun, 1 = launched, -1 = attached or pulling
+ * @param locked              first person, and the local player's lock-on with the gun in the main hand is complete (GML holo)
  */
 public record GunRenderState(float fireProgress, float reloadProgress, float muzzleFlashProgress, float chargeProgress,
                              float chargeProgressFull, float zoomProgress, boolean zooming, int loadedAmmo, String ammoVariant,
-                             long muzzleFlashSeed, long fireCycle, long reloadCycle, int grapple) {
+                             long muzzleFlashSeed, long fireCycle, long reloadCycle, int grapple,
+                             boolean locked) {
 
     /** Dev: fixed fire, reload, zoom and charge progress of the local player's held guns ({@code /tgdebug pose}); null = live. */
     @Nullable
@@ -91,7 +95,9 @@ public record GunRenderState(float fireProgress, float reloadProgress, float muz
         }
         return new GunRenderState(fire, reload, flash, charge, chargeFull, zoomProgress, zooming, GunData.loaded(context.stack()), GunData.variant(context.stack()),
                 flashSeed, fireCycle, reloadCycle,
-                gun instanceof GrapplingHookItem && context.isInHand() && context.entity() != null ? grappleStatus(context.entity()) : 0);
+                gun instanceof GrapplingHookItem && context.isInHand() && context.entity() != null ? grappleStatus(context.entity()) : 0,
+                context.isFirstPerson() && context.entity() != null
+                        && context.entity().getMainHandItem().getItem() instanceof LockOnGunItem lockOn && LockOnTracker.isLocked(lockOn));
     }
 
     /**

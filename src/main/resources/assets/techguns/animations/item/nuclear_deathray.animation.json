@@ -1,0 +1,36 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"rings_translucent": {
+					"scale": [
+						"q.tg_fire > 0 ? (0.9 + math.sin(q.tg_fire * 360) * 0.1) : 0",
+						"q.tg_fire > 0 ? (0.9 + math.sin(q.tg_fire * 360) * 0.1) : 0",
+						"q.tg_fire > 0 ? (0.9 + math.sin(q.tg_fire * 360) * 0.1) : 0"
+					]
+				}
+			}
+		},
+		"aim": {
+			"animation_length": 1.0,
+			"bones": {
+				"root": {
+					"position": {
+						"0.0": [
+							0,
+							0,
+							0
+						],
+						"1.0": [
+							14.9013,
+							4,
+							8.2667
+						]
+					}
+				}
+			}
+		}
+	}
+}

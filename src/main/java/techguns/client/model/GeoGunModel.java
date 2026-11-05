@@ -37,6 +37,8 @@ public class GeoGunModel extends TGModel {
     private PartVisibility visibility = (part, ammoLeft, reloadProgress) -> true;
     @Nullable
     private GeoAnimInput animInput;
+    @Nullable
+    private ResourceLocation partTexture;
     /** Marker bone poses of the last draw (all parts). */
     private final Map<String, Matrix4f> markers = new HashMap<>();
     /** See {@link #turned()}. */
@@ -115,7 +117,7 @@ public class GeoGunModel extends TGModel {
             GeoAnimInput anim = !inHand ? GeoAnimInput.still(context == ItemDisplayContext.GUI, ammoLeft) : animInput != null ? animInput
                     // without the gun renderer's input the magazine size is unknown: full or empty
                     : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft > 0 ? 1f : 0f, ammoLeft, ammoLeft <= 0,
-                    false, 0f, 0f, null, null, null, null, false, context.firstPerson(), true, 0);
+                    false, 0f, 0f, null, null, null, null, false, context.firstPerson(), true, 0, false);
             poseStack.pushPose();
             if (turned) {
                 poseStack.mulPose(JAVA_TURN);
@@ -127,7 +129,7 @@ public class GeoGunModel extends TGModel {
                 poseStack.mulPose(JAVA_TURN_BACK);
             }
             boolean drawn = TGGeoBridge.get().render(geoIds[part], poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
-                    vertices, light, overlay, anim,
+                    vertices, partTexture, light, overlay, anim,
                     bones -> partModel(part).animateGeoBones(turned ? new TurnedBones(bones) : bones, part, ammoLeft, reloadProgress,
                             fireProgress, chargeProgress, context),
                     markers::put);
@@ -155,6 +157,11 @@ public class GeoGunModel extends TGModel {
     @Override
     public void setAnimInput(@Nullable GeoAnimInput input) {
         this.animInput = input;
+    }
+
+    @Override
+    public void setPartTexture(@Nullable ResourceLocation texture) {
+        this.partTexture = texture;
     }
 
     @Override

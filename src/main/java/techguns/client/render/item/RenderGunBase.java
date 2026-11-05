@@ -305,9 +305,12 @@ public class RenderGunBase extends RenderItemBase {
             }
 
             for (int i = 0; i < parts; i++) {
-                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(this.partTexture(context, i), i, ammoVariant)), state.loadedAmmo(), reloadProgress,
+                ResourceLocation texture = this.partTexture(context, i);
+                model.setPartTexture(texture);
+                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(texture, i, ammoVariant)), state.loadedAmmo(), reloadProgress,
                         transform, i, fireProgress, chargeProgress, light, overlay);
             }
+            this.model.setPartTexture(null);
             this.model.setAnimInput(null);
             poseStack.popPose();
 
@@ -386,12 +389,12 @@ public class RenderGunBase extends RenderItemBase {
         float ammo = clip > 0 ? Mth.clamp(loaded / (float) clip, 0f, 1f) : loaded > 0 ? 1f : 0f;
         if (display == null) {
             return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), 0f, state.chargeProgress(), ammo, loaded, loaded <= 0,
-                    false, 0f, 0f, null, null, null, events, false, firstPerson, true, state.grapple());
+                    false, 0f, 0f, null, null, null, events, false, firstPerson, true, state.grapple(), state.locked());
         }
         return new GeoAnimInput(state.fireProgress(), state.reloadProgress(), firstPerson ? state.zoomProgress() : 0f, state.chargeProgress(),
                 ammo, loaded, loaded <= 0, leftHand, holdPitch, holdYaw, display.recoil().map(m -> m.layer(firstPerson, aiming)).orElse(null),
                 display.reload().map(m -> m.layer(firstPerson, aiming)).orElse(null),
-                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null), events, false, firstPerson, true, state.grapple());
+                display.charge().map(m -> m.layer(firstPerson, aiming)).orElse(null), events, false, firstPerson, true, state.grapple(), state.locked());
     }
 
     /** Source of the animation keyframe events of an in-hand draw (holder, hand, running timers); null without a holder. */

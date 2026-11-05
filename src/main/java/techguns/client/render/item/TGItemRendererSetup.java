@@ -80,7 +80,8 @@ public final class TGItemRendererSetup {
             TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE,
             // phase 5: part motion in keyframes (merged geo files)
             TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
-            TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK);
+            TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK,
+            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -330,7 +331,7 @@ public final class TGItemRendererSetup {
                         {0, 0, 0f} // frame
                 }).setRecoilAnim(GunAnimation.genericRecoil, 0.0125f, 6.0f).setMuzzleFXPos3P(0.07f, -0.26f));
 
-        TGItemRenderers.register(TGGuns.NUCLEAR_DEATHRAY, new RenderGunBase90(new GeoGunModel(new ModelNDR(), "nuclear_deathray", "nuclear_deathray_1"), 2, TGIds.id("textures/guns/ndr.png")).setBaseTranslation(1f, -0.2f, RenderItemBase.SCALE * 1.5f - 0.09f)
+        TGItemRenderers.register(TGGuns.NUCLEAR_DEATHRAY, new RenderGunBase90(new GeoGunModel(new ModelNDR(), "nuclear_deathray").motionInFiles(), 2, TGIds.id("textures/guns/ndr.png")).setBaseTranslation(1f, -0.2f, RenderItemBase.SCALE * 1.5f - 0.09f)
                 .setBaseScale(1.2f).setGUIScale(0.40f).setMuzzleFx(ScreenEffect.muzzleFlashNukeBeam, 0, 0.19f, -0.91f, 0.65f, 0).setTransformTranslations(new float[][]{
                         {0f, 0.02f, 0.09f}, // First Person
                         {-0.01f, 0.04f, 0.3f}, // Third Person
@@ -384,7 +385,7 @@ public final class TGItemRendererSetup {
                         {-0.18f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.11f, -0.81f));
 
-        TGItemRenderers.register(TGGuns.GUIDED_MISSILE_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelGuidedMissileLauncher(), "guided_missile_launcher", "guided_missile_launcher_1"), 2, TGIds.id("textures/guns/guidedmissilelauncher.png")).setBaseTranslation(-0.4f, -0.2f, RenderItemBase.SCALE * 0.5f)
+        TGItemRenderers.register(TGGuns.GUIDED_MISSILE_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelGuidedMissileLauncher(), "guided_missile_launcher").motionInFiles(), 2, TGIds.id("textures/guns/guidedmissilelauncher.png")).setBaseTranslation(-0.4f, -0.2f, RenderItemBase.SCALE * 0.5f)
                 .setGUIScale(0.35f).setChargeTranslationAmount(0).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.39f, -0.6f, 0.87f, 0).setTransformTranslations(new float[][]{
                         {-0.13f, 0.3f, 0.62f}, // First Person
                         {0, 0.09f, 0.28f}, // Third Person
