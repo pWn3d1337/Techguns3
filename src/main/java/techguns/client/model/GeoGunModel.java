@@ -26,15 +26,8 @@ import org.joml.Quaternionf;
  * reads the marker bones ({@link #marker}) of the last draw.
  */
 public class GeoGunModel extends TGModel {
-    /** Whether a render part is drawn, e.g. the loaded rocket. */
-    @FunctionalInterface
-    public interface PartVisibility {
-        boolean isVisible(int part, int ammoLeft, float reloadProgress);
-    }
-
     private final TGModel fallback;
     private final String[] geoIds;
-    private PartVisibility visibility = (part, ammoLeft, reloadProgress) -> true;
     @Nullable
     private GeoAnimInput animInput;
     @Nullable
@@ -55,11 +48,6 @@ public class GeoGunModel extends TGModel {
         super(RenderType::entitySolid);
         this.fallback = fallback;
         this.geoIds = geoIds;
-    }
-
-    public GeoGunModel setVisibility(PartVisibility visibility) {
-        this.visibility = visibility;
-        return this;
     }
 
     /**
@@ -109,7 +97,7 @@ public class GeoGunModel extends TGModel {
             if (part >= geoIds.length) {
                 return;
             }
-            if (!visibility.isVisible(part, ammoLeft, reloadProgress) || !fallback.isPartVisible(entity, part)) {
+            if (!fallback.isPartVisible(entity, part)) {
                 return;
             }
             boolean inHand = entity != null && (context.firstPerson() || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND

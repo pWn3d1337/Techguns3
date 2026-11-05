@@ -3,7 +3,7 @@
   "minecraft:geometry": [
     {
       "description": {
-        "identifier": "geometry.techguns.rocket_launcher_rocket",
+        "identifier": "geometry.techguns.rocket_launcher_1",
         "texture_width": 128,
         "texture_height": 64,
         "visible_bounds_width": 4,
@@ -18,6 +18,15 @@
         {
           "name": "root",
           "pivot": [
+            0.5,
+            -3.2,
+            -6.4
+          ]
+        },
+        {
+          "name": "rocket",
+          "parent": "root",
+          "pivot": [
             0,
             0,
             0
@@ -25,7 +34,7 @@
         },
         {
           "name": "R1",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             -1.5,
             1.5,
@@ -56,7 +65,7 @@
         },
         {
           "name": "R7",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             -2.5,
             0,
@@ -87,7 +96,7 @@
         },
         {
           "name": "R4",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             -2,
             0.5,
@@ -118,7 +127,7 @@
         },
         {
           "name": "R2",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             -1,
             1,
@@ -149,7 +158,7 @@
         },
         {
           "name": "R5",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             -0.5,
             2,
@@ -180,7 +189,7 @@
         },
         {
           "name": "R3",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             -0.5,
             0.5,
@@ -211,7 +220,7 @@
         },
         {
           "name": "R6",
-          "parent": "root",
+          "parent": "rocket",
           "pivot": [
             0,
             2.5,

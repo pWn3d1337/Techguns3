@@ -172,7 +172,7 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
      - TFG, Grim Reaper, Lasergun 2, M4 Infiltrator (laser bone hidden in GUI → `query.tg_gui` or a display flag).
    - Merge the split geo files.
 6. **Special renderers**
-   - Rocket launcher rocket → `ammo_*` bones.
+   - Rocket launcher rocket → `ammo_*` bones (done differently: the rocket keeps its own file and per-ammo texture, see Progress).
    - Flamethrower → idle FX bone.
    - Mining tools → `RenderMiningTool` logic via queries.
    - Grenade launcher: convert the OBJ to geo if the shape can be kept (decision 3).
@@ -312,8 +312,14 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - Both `motionInFiles()` and data-driven (`convertgun`: root pivot, `aim`, `muzzle`).
   - **Verified in game, data path vs Java fallback, pixel diff:** NDR idle identical; NDR `fire 0.25` rings identical, ~1000 px of 1 to 3 px edge shifts on the gun from `recoil_sway` (the first data-driven sway gun; its Euler turns approximate the preset's tilted axis, like the reload poses); GML idle and locked (pig target, `/tgdebug aim`) identical in first person; NDR hotbar icon identical, GML icon 32 px (display transform rounding).
   - **Phase 5 is done:** AUG, SCAR, combat shotgun and pistol keep `transformPart` only for render part 1, which their merged geo files no longer have, so the geo path never runs it (Java fallback only). The only split geo files left are the mining tool heads (per-head texture).
+- **2026-11-05, phase 6: rocket launcher:**
+  - **No `ammo_*` bones:** the rockets have their own 64x32 textures per ammo (`rocket`, `rocket_hv`, `rocket_nuke`), and the launcher texture has camo variants (`rocketlauncher_1`); baking the rockets into the gun texture would mean copying them into every camo. So the rocket stays a split file with its ammo texture (`ModelRocketLauncher#getRenderType`), like the mining tool heads.
+  - `rocket_launcher_rocket.geo.json` is renamed `rocket_launcher_1.geo.json`, so it shares `rocket_launcher.animation.json`; its bones sit under a new `rocket` group bone (a scale on `root` would hit the launcher too).
+  - `hold` scales `rocket` by `(q.tg_reload == 0 && q.tg_ammo_count > 0) || q.tg_reload > 0.5` (loaded, or past the reload's midpoint). This replaces `GeoGunModel#setVisibility`, its only user, which is gone (the Java fallback always drew the rocket).
+  - `motionInFiles()`, data-driven (`convertgun`: root pivot in both files, `aim`, `muzzle`).
+  - **Verified in game, data path vs Java fallback, pixel diff:** loaded idle identical, hotbar icon 6 px; reload 0.3 hides the rocket, reload 0.7 shows it and matches the Java fallback.
 - **Next:**
-  - Phase 6: special renderers (rocket launcher `ammo_*` bones, flamethrower idle FX bone, mining tools via queries).
+  - Phase 6: flamethrower idle FX bone, mining tools via queries, grenade launcher (OBJ).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

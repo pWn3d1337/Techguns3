@@ -227,7 +227,7 @@ public final class TGDebugCommands {
                                 TGGeoExporter.export(new ModelLasergun(), "lasergun", Map.of(), Set.of("Glow1", "Glow2", "Glow3", "Glow5"), dir);
                                 ModelRocketLauncher launcher = new ModelRocketLauncher();
                                 TGGeoExporter.export(launcher, "rocket_launcher", Map.of(), Set.of(), dir);
-                                TGGeoExporter.export(launcher.partModel(1), "rocket_launcher_rocket", Map.of(), Set.of(), dir);
+                                TGGeoExporter.export(launcher.partModel(1), "rocket_launcher_1", Map.of(), Set.of(), dir);
                                 TGGeoExporter.export(new ModelRevolver(), "revolver", Map.of(), Set.of(), dir);
                                 TGGeoExporter.export(new ModelGoldenRevolver(), "golden_revolver", Map.of(), Set.of(), dir);
                                 ModelPistol pistol = new ModelPistol();

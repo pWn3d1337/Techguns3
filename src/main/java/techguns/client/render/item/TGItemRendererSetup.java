@@ -81,7 +81,7 @@ public final class TGItemRendererSetup {
             // phase 5: part motion in keyframes (merged geo files)
             TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
             TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK,
-            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER);
+            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.ROCKET_LAUNCHER);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -119,8 +119,8 @@ public final class TGItemRendererSetup {
                         {0f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.13f, -1f).setMuzzleFlashJitter(0.02f, 0.02f, 5.0f, 0.1f).setAdsOffsets(-0.001F, 0F, 0F).setScopeRecoilAnim(GunAnimation.genericRecoil, 0.05F, 2.0F));
 
-        TGItemRenderers.register(TGGuns.ROCKET_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelRocketLauncher(), "rocket_launcher", "rocket_launcher_rocket")
-                .setVisibility((part, ammo, reload) -> part != 1 || (reload == 0 && ammo > 0) || reload > 0.5f), 2, TGIds.id("textures/guns/rocketlauncher.png")).setBaseTranslation(-0.4f, -0.2f, -RenderItemBase.SCALE * 0.5f)
+        TGItemRenderers.register(TGGuns.ROCKET_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelRocketLauncher(), "rocket_launcher", "rocket_launcher_1")
+                .motionInFiles(), 2, TGIds.id("textures/guns/rocketlauncher.png")).setBaseTranslation(-0.4f, -0.2f, -RenderItemBase.SCALE * 0.5f)
                 .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.39f, -0.6f, 0.87f, 0).setTransformTranslations(new float[][]{
                         {-0.13f, 0.3f, 0.32f}, // First Person
                         {0, 0.02f, 0.07f}, // Third Person
