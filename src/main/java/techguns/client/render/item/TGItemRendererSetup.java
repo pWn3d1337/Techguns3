@@ -80,7 +80,7 @@ public final class TGItemRendererSetup {
             TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE,
             // phase 5: part motion in keyframes (merged geo files)
             TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
-            TGGuns.TFG, TGGuns.LMG);
+            TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL);
 
     /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
     public static Map<Item, GunDisplay> exportDisplays() {
@@ -413,7 +413,7 @@ public final class TGItemRendererSetup {
                         {-0.07f, -0.03f, -0.11f} // frame
                 }));
 
-        TGItemRenderers.register(TGGuns.POWER_HAMMER, new RenderMiningTool(new GeoGunModel(new ModelPowerHammer(), "power_hammer", "power_hammer_1"), 2, TGIds.id("textures/guns/powerhammer.png"),
+        TGItemRenderers.register(TGGuns.POWER_HAMMER, new RenderMiningTool(new GeoGunModel(new ModelPowerHammer(), "power_hammer", "power_hammer_1").motionInFiles(), 2, TGIds.id("textures/guns/powerhammer.png"),
                 TGIds.id("textures/guns/powerhammer.png"), TGIds.id("textures/guns/powerhammer_obsidian.png"), TGIds.id("textures/guns/powerhammer_carbon.png"))
                 .setBaseTranslation(0.15f, -0.2f, RenderItemBase.SCALE - 0.09f).setBaseScale(1.25f).setGUIScale(0.45f).setMuzzleFx(null, 0, 0.26f, -0.67f, 0.5f, 0).setTransformTranslations(new float[][]{
                         {0f, 0.18f, 0.09f}, // First Person
@@ -423,7 +423,7 @@ public final class TGItemRendererSetup {
                         {-0.07f, -0.03f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.12f, -0.65f).setChargeTranslationAmount(0.125f));
 
-        TGItemRenderers.register(TGGuns.MINING_DRILL, new RenderMiningTool(new GeoGunModel(new ModelMiningDrill(), "mining_drill", "mining_drill_1"), 2, TGIds.id("textures/guns/miningdrill_obsidian.png"),
+        TGItemRenderers.register(TGGuns.MINING_DRILL, new RenderMiningTool(new GeoGunModel(new ModelMiningDrill(), "mining_drill", "mining_drill_1").motionInFiles(), 2, TGIds.id("textures/guns/miningdrill_obsidian.png"),
                 TGIds.id("textures/guns/miningdrill_obsidian.png"), TGIds.id("textures/guns/miningdrill_carbon.png"))
                 .setBaseTranslation(0, -0.2f, -RenderItemBase.SCALE * 0.5f).setBaseScale(2.0f).setGUIScale(0.35f).setTransformTranslations(new float[][]{
                         {0f, -0.03f, 0.0f}, // First Person

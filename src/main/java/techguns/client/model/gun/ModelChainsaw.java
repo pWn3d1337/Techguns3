@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
-import techguns.client.model.GeoBones;
 import techguns.client.model.TGModel;
 import techguns.client.model.TGModelPart;
 
@@ -304,13 +303,5 @@ public class ModelChainsaw extends TGModel {
 				blade2.render(matrices, vertices, light, overlay);
 			}
 		}
-
-	@Override
-	public void animateGeoBones(GeoBones bones, int part, int ammoLeft, float reloadProgress, float fireProgress, ItemDisplayContext context) {
-		super.animateGeoBones(bones, part, ammoLeft, reloadProgress, fireProgress, context);
-		int frame = bladeFrame(fireProgress);
-		bones.setHidden("blade1", frame != 0);
-		bones.setHidden("blade2", frame == 0);
-	}
 	}
 }

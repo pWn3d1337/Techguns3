@@ -115,7 +115,7 @@ public class GeoGunModel extends TGModel {
             GeoAnimInput anim = !inHand ? GeoAnimInput.still(context == ItemDisplayContext.GUI, ammoLeft) : animInput != null ? animInput
                     // without the gun renderer's input the magazine size is unknown: full or empty
                     : new GeoAnimInput(fireProgress, reloadProgress, 0f, chargeProgress, ammoLeft > 0 ? 1f : 0f, ammoLeft, ammoLeft <= 0,
-                    false, 0f, 0f, null, null, null, null, false, context.firstPerson());
+                    false, 0f, 0f, null, null, null, null, false, context.firstPerson(), true);
             poseStack.pushPose();
             if (turned) {
                 poseStack.mulPose(JAVA_TURN);

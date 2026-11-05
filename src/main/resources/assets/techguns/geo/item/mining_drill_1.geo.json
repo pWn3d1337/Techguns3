@@ -18,14 +18,23 @@
         {
           "name": "root",
           "pivot": [
-            0,
-            0,
+            0.5,
+            -3.2,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "root",
+          "pivot": [
+            0.64,
+            -1.6,
             0
           ]
         },
         {
           "name": "Drill011",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -61,7 +70,7 @@
         },
         {
           "name": "Drill06",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -92,7 +101,7 @@
         },
         {
           "name": "Drill07",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -128,7 +137,7 @@
         },
         {
           "name": "Drill03",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -164,7 +173,7 @@
         },
         {
           "name": "Drill02",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -200,7 +209,7 @@
         },
         {
           "name": "Drill08",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -231,7 +240,7 @@
         },
         {
           "name": "Drill09",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -262,7 +271,7 @@
         },
         {
           "name": "Drill04",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -293,7 +302,7 @@
         },
         {
           "name": "Drill010",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -329,7 +338,7 @@
         },
         {
           "name": "Drill01",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,
@@ -360,7 +369,7 @@
         },
         {
           "name": "Drill05",
-          "parent": "root",
+          "parent": "head",
           "pivot": [
             0.5,
             -1.5,

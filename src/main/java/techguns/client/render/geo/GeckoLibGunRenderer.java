@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -43,8 +44,8 @@ import techguns.client.model.TGGeoExporter;
  * GeckoLib implementation of {@link TGGeoBridge}: draws gun geo models inside the Techguns gun renderer.
  * <p>
  * Models: {@code assets/techguns/geo/item/<id>.geo.json} (exported from the Java models by {@link TGGeoExporter}),
- * animations (optional): {@code assets/techguns/animations/item/<id>.animation.json}, falling back to
- * {@code common.animation.json} per animation name. Animations are sampled from the gun's timers by
+ * animations (optional): {@code assets/techguns/animations/item/<id>.animation.json} (a split part file
+ * {@code <id>_1} uses the gun's {@code <id>} file), falling back to {@code common.animation.json} per animation name. Animations are sampled from the gun's timers by
  * {@link GunAnimationSampler}, not played by GeckoLib's controllers. Bones whose name contains
  * {@link TGGeoExporter#GLOW_SUFFIX} are drawn full bright.
  */
@@ -53,6 +54,8 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
     private static final int FULL_BRIGHT = 0xF000F0;
 
     private static final String ROOT = "root";
+    /** The suffix of a split part's geo id ({@code chainsaw_1}). */
+    private static final Pattern PART_SUFFIX = Pattern.compile("_\\d+$");
 
     private final Map<String, GunRenderer> renderers = new HashMap<>();
 
@@ -126,7 +129,9 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
 
         GunModel(String id) {
             this.model = TGIds.id("geo/item/" + id + ".geo.json");
-            this.animation = TGIds.id("animations/item/" + id + ".animation.json");
+            // a split part (<gun>_1, _2, ...) shares the gun's animation file: root keys move every part, part bones
+            // are only found in their own file
+            this.animation = TGIds.id("animations/item/" + PART_SUFFIX.matcher(id).replaceFirst("") + ".animation.json");
         }
 
         @Override

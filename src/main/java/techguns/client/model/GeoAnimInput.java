@@ -25,10 +25,12 @@ import javax.annotation.Nullable;
  *                     when no keyframe events fire (GUI, ground, frames)
  * @param gui          drawn as a GUI icon, Molang {@code query.tg_gui} (e.g. a laser beam bone scaled to 0 in {@code hold})
  * @param firstPerson  drawn in first person, Molang {@code query.tg_first_person} (e.g. a belt that feeds only there)
+ * @param inHand       held (first or third person), Molang {@code query.tg_in_hand}; false for GUI, ground and frames
  */
 public record GeoAnimInput(float fire, float reload, float aim, float charge, float ammo, int ammoCount, boolean empty, boolean mirror,
                            float holdPitch, float holdYaw, @Nullable Layer recoil, @Nullable Layer reloadMotion,
-                           @Nullable Layer chargeMotion, @Nullable Events events, boolean gui, boolean firstPerson) {
+                           @Nullable Layer chargeMotion, @Nullable Events events, boolean gui, boolean firstPerson,
+                           boolean inHand) {
     /** Not animated and nothing loaded. */
     public static final GeoAnimInput NONE = still(false, 0);
 
@@ -38,7 +40,7 @@ public record GeoAnimInput(float fire, float reload, float aim, float charge, fl
      */
     public static GeoAnimInput still(boolean gui, int ammoCount) {
         return new GeoAnimInput(0f, 0f, 0f, 0f, ammoCount > 0 ? 1f : 0f, ammoCount, false, false, 0f, 0f, null, null, null, null, gui,
-                false);
+                false, false);
     }
 
     /** An animation played with a strength: {@code move} scales its offsets, {@code turn} its rotations. */

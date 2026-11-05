@@ -104,6 +104,7 @@ A gun without a `reload` of its own gets the shared one.
 | `query.tg_time` | World time in seconds (implemented; for loops, replaces `tg_spin`). |
 | `query.tg_gui` | 1 when drawn as a GUI icon (implemented; hides the M4 Infiltrator laser in icons). |
 | `query.tg_first_person` | 1 when drawn in first person (implemented; the LMG belt feeds only there). |
+| `query.tg_in_hand` | 1 when held, 0 for GUI icons, on the ground and in frames (implemented; power hammer head). |
 | `query.tg_spin` | Barrel spin angle / speed (dropped, see Progress). |
 
 ### Muzzle and effect positions from bones
@@ -289,8 +290,16 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - **LMG belt:** `hold` scales `Bullet00` to 0 (a marker) and each `Bullet0i` to `(q.tg_ammo_count > i || (q.tg_ammo_count == i && q.tg_fire > 0)) && (q.tg_reload == 0 || q.tg_reload > 0.5)`; `fire` moves each bullet to the pivot of the one before it from 0 to 0.25, scaled by the new `q.tg_first_person` (the feed shows only in first person). `ModelLMG#animateGeoBones` is gone.
   - Not animated draws (GUI, ground, frames) now carry the stack's loaded rounds (`GeoAnimInput.still(gui, ammo)`), so an icon shows the belt the gun has, as the Java model did.
   - **Verified in game, data path vs Java fallback, pixel diff:** TFG `charge 0.05`, `0.15`, `0.5` identical (0 to 1 px; 0.05 vs 0.15 differ by ~13000 px, so the rails do move in view); LMG `fire 0.1` belt identical, `reload 0.3` and its hotbar icon identical.
+- **2026-11-05, phase 5: mining tools (chainsaw, power hammer, mining drill):**
+  - Their head files (`<tool>_1`) stay split: render part 1 takes the texture of the installed mining head (`RenderMiningTool`), and a GeckoLib model has one texture.
+  - **A split part file shares the gun's animation file:** `GeckoLibGunRenderer` maps geo id `<gun>_N` to `animations/item/<gun>.animation.json`, so one file per gun drives every part (root keys move all parts alike; a part's own bones are only found in its file). `convertgun` already set the `root` pivot of every geo file of the gun.
+  - **Chainsaw:** `hold` scales `blade1` / `blade2` by `math.floor(q.tg_fire * 40 + 0.5) % 2 == 0` / `== 1` (the two blade frames of `ModelChainsaw`); its `animateGeoBones` is gone.
+  - **Mining drill:** `mining_drill_1` has a `head` group bone (pivot at the old spin axis, file (0.64, -1.6, 0)); `fire` turns it `[0, 0, -360]` as the minigun.
+  - **Power hammer:** `power_hammer_1` has a `head` group bone; `hold` puts it at `3.2 + 3.2 * q.tg_in_hand` px along z (rest 6.4 in hand, 3.2 in GUI, on the ground and in frames, like the old `headProgress` 0 / 0.25) and `fire` moves it -6.4 at 0.5 and back. New query `query.tg_in_hand`.
+  - `motionInFiles()` on the drill and the hammer (their `transformPart` stays for the Java fallback).
+  - **Verified in game, data path vs Java fallback, pixel diff (time fixed: lighting drifts with the day cycle otherwise):** drill `fire 0.1`, hammer `fire 0.25`, chainsaw `fire 0.03` and `0.05` (both blade frames) identical in first person; hotbar icons: hammer 1 px, chainsaw 28 px, drill 19 px (display transform rounding, as with the phase 4 guns).
 - **Next:**
-  - Phase 5: mining tools, grappling hook, NDR/GML (translucent bones).
+  - Phase 5: grappling hook, NDR/GML (translucent bones).
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

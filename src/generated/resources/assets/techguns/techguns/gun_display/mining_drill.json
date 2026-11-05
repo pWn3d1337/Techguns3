@@ -1,0 +1,33 @@
+{
+  "charge": {
+    "first_person": {
+      "animation": "charge_generic",
+      "move": 4.0
+    },
+    "third_person": {
+      "animation": "charge_generic"
+    }
+  },
+  "recoil": {
+    "first_person": {
+      "animation": "recoil_generic",
+      "move": 0.8,
+      "turn": 1.0
+    },
+    "third_person": {
+      "animation": "recoil_generic",
+      "turn": 5.0
+    }
+  },
+  "reload": {
+    "first_person": {
+      "animation": "reload_generic",
+      "move": 16.0,
+      "turn": 40.0
+    },
+    "third_person": {
+      "animation": "reload_generic",
+      "turn": 40.0
+    }
+  }
+}
