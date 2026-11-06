@@ -1,4 +1,4 @@
-# Session handoff (2026-11-05)
+# Session handoff (2026-11-06)
 
 State of the AI-assisted porting session, so it can continue on another PC (same `F:` mapping).
 Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Techguns3_design.md) (plan, decisions) and
@@ -21,35 +21,34 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | Charge pull-back as display file `charge` motion, biogun data-driven, `/tgdebug pose charge` | `00a0cae` |
   | Molang queries (`GunQueries`: `q.tg_fire/reload/charge/zoom/ammo/ammo_count/time`), renderer passes its animation input on every in-hand draw | `61a9a74` |
   | Sound, particle and instruction keyframes (`GunAnimationEvents`), `/tgdebug animevents` | `02a4da0` |
+  | Phase 4: guns without part motion driven by their model files | `dba6ad8` |
+  | Phase 5: part motion in keyframes (SCAR, AUG, combat shotgun, minigun, blaster shotgun, Grim Reaper, M4 Infiltrator, TFG, LMG, mining tools, grappling hook) | `d78a6e1` .. `af666ad` |
+  | Phase 6: second render pass for translucent/cutout bones, rocket visibility, flamethrower `idle_fx`, grenade launcher OBJ meshes at mesh bones | `88989aa` .. `8eff3e2` |
+  | Phase 7: static part scales and markers baked, effects/scope/parts in the display JSON, JSON out of datagen | `af4cdba`, `015c4ed`, `fdf6202` |
 
-- Data-driven guns (`TGItemRendererSetup.DATA_DRIVEN`): pistol, revolver, biogun and the 23 phase 4 guns (no code part
-  motion; list in the plan's Progress). All other guns (part motion, special renderers) still use the code
-  presets (`GunAnimation`), with the same geo files.
+- All 44 guns are data-driven: geo, animation, item model (`display` block) and `techguns/gun_display/<gun>.json`
+  (motion strengths, texture, parts, effects, scope). The gun JSON is hand-maintained in `src/main/resources` since
+  `fdf6202`; datagen no longer writes it.
 - Build OK, all 378 GameTests pass.
 
 ### Next steps (gun animation)
 
-1. Commit the phase 6 grenade launcher step if not done (phase 6 is then done).
-2. Phase 7 cleanup (delete Java gun models except the grenade launcher meshes, `RenderGunBase90`, presets).
+1. Author decision (2026-11-06): **keep** the Java gun models, the fallback code path and the conversion tools
+   (`/tgdebug geo`, `exportgeo`, `convertgun`, `GunConversion`, `TGGeoExporter`, `GunAnimation`) for now. Don't
+   delete them unless the author asks.
+2. Phase 7 docs: design doc section 9.1, `port_status.md`, `migration_26.md`.
 3. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).
 
-### Converting one gun (workflow used so far)
+### Checking a gun against the code path
 
-1. Add the gun to `DATA_DRIVEN` in `TGItemRendererSetup`, run `./gradlew runData`: writes
-   `techguns/gun_display/<gun>.json` (recoil/reload/charge strengths from the renderer) and the `display` block of
-   `models/item/<gun>.json`.
-2. `runClient`, hold the gun, `/tgdebug convertgun` (one gun at a time: the muzzle bone waits for a rest frame of
-   that gun): writes the `muzzle` marker bone, and the `root` pivot (hand origin) into the gun's source geo
-   files and an `aim` animation into `animations/item/<gun>.animation.json` (only once; the files are hand-owned
-   afterwards).
-3. Restart the client (it loads the processed resources, so source asset changes need a restart).
-4. Compare the data path with the code path: `/tgdebug pose <fire|reload|zoom|charge> <progress>` freezes the timers,
+1. `runClient`, hold the gun. `/tgdebug pose <fire|reload|zoom|charge> <progress>` freezes the timers,
    `/tgdebug geo` switches to the Java fallback (code path). MCP screenshots are saved under
    `C:\Users\<user>\.claude\projects\F--Techguns3Work-Techguns3\<session>\tool-results\`; diff the gun area with
    Pillow (threshold 8). Ground pixels next to the gun differ between shots; the gun pixels should be identical.
    Third person only by eye (the arm sways between frames). `/tgdebug pose off` afterwards.
-5. Known difference not caused by this work: the Java model lights mirrored boxes' end faces from the inside (darker
+2. Source asset changes need a client restart (it loads the processed resources).
+3. Known difference not caused by this work: the Java model lights mirrored boxes' end faces from the inside (darker
    when aiming); the geo files light them from the outside.
 
 ### Gun animation notes
