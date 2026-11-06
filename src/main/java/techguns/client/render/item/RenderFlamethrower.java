@@ -1,6 +1,5 @@
 package techguns.client.render.item;
 
-import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -48,12 +47,6 @@ public class RenderFlamethrower extends RenderGunBase90 {
             IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, pilotProgress(), x, y, z,
                     this.muzzleEffect.effectScale * 0.5f * this.muzzleEffect.effectScale_3p, true, ammoVariant);
         }
-    }
-
-    @Override
-    protected Optional<GunDisplay.Effect> exportIdleEffect() {
-        return Optional.of(new GunDisplay.Effect(IScreenEffect.FlamethrowerMuzzleFlame, this.muzzleEffect.effectScale * 0.5f,
-                this.muzzleEffect.effectScale_3p, Optional.empty()));
     }
 
     private static float pilotProgress() {

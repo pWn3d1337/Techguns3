@@ -1,12 +1,6 @@
 package techguns.client.render.item;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.level.ItemLike;
 import techguns.TGIds;
 import techguns.client.model.gun.ModelAK;
 import techguns.client.model.gun.ModelChainsaw;
@@ -61,7 +55,6 @@ import techguns.client.model.item.ModelLmgMag;
 import techguns.client.model.item.ModelRocket;
 import techguns.client.render.fx.ScreenEffect;
 import techguns.registry.TGAmmo;
-import techguns.gun.ChargeGunItem;
 import techguns.registry.TGGuns;
 
 /**
@@ -69,42 +62,6 @@ import techguns.registry.TGGuns;
  */
 public final class TGItemRendererSetup {
     private TGItemRendererSetup() {
-    }
-
-    /** Guns whose motion lives in their model files: datagen writes their display file ({@link GunDisplay}). */
-    private static final List<ItemLike> DATA_DRIVEN = List.of(TGGuns.PISTOL, TGGuns.REVOLVER, TGGuns.BIOGUN,
-            // phase 4: guns without code part motion
-            TGGuns.M4, TGGuns.AK47, TGGuns.MAC10, TGGuns.VECTOR, TGGuns.THOMPSON, TGGuns.BOLT_ACTION, TGGuns.GOLDEN_REVOLVER,
-            TGGuns.AS50, TGGuns.SAWED_OFF, TGGuns.HAND_CANNON, TGGuns.LASERGUN, TGGuns.BLASTER_RIFLE, TGGuns.GAUSS_RIFLE, TGGuns.PDW,
-            TGGuns.PULSE_RIFLE, TGGuns.LASER_PISTOL, TGGuns.TESLA_GUN, TGGuns.ALIEN_BLASTER, TGGuns.MIB_GUN, TGGuns.NETHER_BLASTER,
-            TGGuns.SONIC_SHOTGUN, TGGuns.SHISHKEBAP, TGGuns.MAGIC_RIFLE,
-            // phase 5: part motion in keyframes (merged geo files)
-            TGGuns.SCAR, TGGuns.AUG, TGGuns.COMBAT_SHOTGUN, TGGuns.MINIGUN, TGGuns.BLASTER_SHOTGUN, TGGuns.GRIM_REAPER, TGGuns.M4_INFILTRATOR,
-            TGGuns.TFG, TGGuns.LMG, TGGuns.CHAINSAW, TGGuns.POWER_HAMMER, TGGuns.MINING_DRILL, TGGuns.GRAPPLING_HOOK,
-            TGGuns.NUCLEAR_DEATHRAY, TGGuns.GUIDED_MISSILE_LAUNCHER, TGGuns.ROCKET_LAUNCHER, TGGuns.FLAMETHROWER, TGGuns.GRENADE_LAUNCHER);
-
-    /** The display files of the data-driven guns, from their renderers' current settings (datagen). */
-    public static Map<Item, GunDisplay> exportDisplays() {
-        if (!TGItemRenderers.items().iterator().hasNext()) {
-            registerAll();
-        }
-        Map<Item, GunDisplay> displays = new LinkedHashMap<>();
-        for (ItemLike gun : DATA_DRIVEN) {
-            displays.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportDisplay(gun.asItem() instanceof ChargeGunItem));
-        }
-        return displays;
-    }
-
-    /** The item model display transforms of the data-driven guns, from their renderers' current placement (datagen). */
-    public static Map<Item, Map<ItemDisplayContext, RenderGunBase.DisplayTransform>> exportItemTransforms() {
-        if (!TGItemRenderers.items().iterator().hasNext()) {
-            registerAll();
-        }
-        Map<Item, Map<ItemDisplayContext, RenderGunBase.DisplayTransform>> transforms = new LinkedHashMap<>();
-        for (ItemLike gun : DATA_DRIVEN) {
-            transforms.put(gun.asItem(), ((RenderGunBase) TGItemRenderers.get(gun.asItem())).exportItemTransforms());
-        }
-        return transforms;
     }
 
     static void registerAll() {

@@ -1,6 +1,5 @@
 package techguns.client.model;
 
-import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -119,11 +118,6 @@ public abstract class TGModel extends Model {
     }
 
     /** Render type for one part of this model, for models whose texture depends on the loaded ammo variant. */
-    /** Texture of render part {@code part} per loaded ammo variant, if it depends on the ammo (datagen); none by default. */
-    public Map<String, ResourceLocation> ammoTextures(int part) {
-        return Map.of();
-    }
-
     public RenderType getRenderType(ResourceLocation texture, int part, String ammoVariant) {
         return this.getRenderType(texture, part);
     }

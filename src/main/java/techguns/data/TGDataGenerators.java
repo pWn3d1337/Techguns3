@@ -79,7 +79,6 @@ public final class TGDataGenerators {
         generator.addProvider(event.includeClient(), new TGBlockStateProvider(output, fileHelper));
         generator.addProvider(event.includeClient(), new TGShapedBlockStateProvider(output, fileHelper));
         generator.addProvider(event.includeClient(), new TGItemModelProvider(output, fileHelper));
-        generator.addProvider(event.includeClient(), new TGGunDisplayProvider(output));
         generator.addProvider(event.includeClient(), new TGLanguageProvider(output));
         for (String locale : LegacyLanguageProvider.LOCALES) {
             generator.addProvider(event.includeClient(), new LegacyLanguageProvider(output, locale));

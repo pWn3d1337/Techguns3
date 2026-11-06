@@ -1,6 +1,5 @@
 package techguns.client.render.item;
 
-import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import techguns.client.model.TGModel;
 import techguns.gun.MeleeToolItem;
@@ -20,11 +19,6 @@ public class RenderMiningTool extends RenderGunBase90 {
     public RenderMiningTool(TGModel model, int parts, ResourceLocation texture, ResourceLocation... headTextures) {
         super(model, parts, texture);
         this.headTextures = headTextures;
-    }
-
-    @Override
-    protected List<ResourceLocation> exportHeadLevelTextures(int part) {
-        return part == 1 ? List.of(headTextures) : List.of();
     }
 
     @Override
