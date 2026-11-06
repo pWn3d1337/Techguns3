@@ -8,6 +8,9 @@
       "animation": "charge_generic"
     }
   },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -29,5 +32,6 @@
       "animation": "reload_breech",
       "turn": 55.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/shishkebab_texture.png"
 }

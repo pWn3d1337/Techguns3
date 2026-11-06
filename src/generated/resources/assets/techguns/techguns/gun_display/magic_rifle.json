@@ -8,6 +8,18 @@
       "animation": "charge_generic"
     }
   },
+  "charge_effect": {
+    "effect": "magic_rifle_charge",
+    "scale": 2.5,
+    "third_person_scale": 3.0
+  },
+  "muzzle_flash": {
+    "effect": "gun",
+    "scale": 1.1
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -29,5 +41,6 @@
       "animation": "reload_breech",
       "turn": 55.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/magic_rifle.png"
 }

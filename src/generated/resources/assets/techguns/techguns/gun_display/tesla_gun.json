@@ -1,4 +1,11 @@
 {
+  "muzzle_flash": {
+    "effect": "lightning",
+    "scale": 0.5
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "aiming": {
       "animation": "recoil_generic",
@@ -25,5 +32,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/teslagun.png"
 }

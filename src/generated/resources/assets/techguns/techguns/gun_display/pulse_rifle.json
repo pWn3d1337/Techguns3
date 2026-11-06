@@ -1,4 +1,11 @@
 {
+  "muzzle_flash": {
+    "effect": "blue",
+    "scale": 0.6
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_pulse",
@@ -20,5 +27,15 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "scope": {
+    "effect": "tech_scope",
+    "recoil": {
+      "animation": "recoil_scope",
+      "move": 0.1,
+      "turn": 1.5
+    },
+    "scale": 2.125
+  },
+  "texture": "techguns:textures/guns/pulserifle.png"
 }

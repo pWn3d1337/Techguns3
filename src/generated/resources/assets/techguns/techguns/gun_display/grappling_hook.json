@@ -8,6 +8,9 @@
       "animation": "charge_generic"
     }
   },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -29,5 +32,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/grappling_hook.png"
 }

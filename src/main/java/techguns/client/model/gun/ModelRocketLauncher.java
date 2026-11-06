@@ -1,5 +1,6 @@
 package techguns.client.model.gun;
 
+import java.util.Map;
 import java.util.HashMap;
 
 import javax.annotation.Nullable;
@@ -196,6 +197,11 @@ public class ModelRocketLauncher extends TGModel {
 	@Override
 	public TGModel partModel(int part) {
 		return part == 1 ? rocket : this;
+	}
+
+	@Override
+	public Map<String, ResourceLocation> ammoTextures(int part) {
+		return part == 1 ? Map.copyOf(textures) : Map.of();
 	}
 
 	@Override

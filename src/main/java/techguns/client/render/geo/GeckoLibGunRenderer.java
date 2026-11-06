@@ -105,6 +105,31 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         return true;
     }
 
+    @Override
+    public void applyRootMotion(PoseStack poseStack, String gun, String animation, float progress, float move, float turn, boolean mirror) {
+        if (progress <= 0f) {
+            return;
+        }
+        Animation found = GunAnimationSampler.find(TGIds.id("animations/item/" + gun + ".animation.json"), animation);
+        if (found == null) {
+            return;
+        }
+        Map<String, GunAnimationSampler.BonePose> poses = new HashMap<>();
+        GunAnimationSampler.sample(found, progress, move, turn, poses);
+        GunAnimationSampler.BonePose root = poses.get(ROOT);
+        if (root == null) {
+            return;
+        }
+        if (mirror) {
+            root.mirror();
+        }
+        // as GeckoLib moves a bone: x negated, rotations z, y, x
+        poseStack.translate(-root.posX, root.posY, root.posZ);
+        poseStack.mulPose(Axis.ZP.rotation((float) root.rotZ));
+        poseStack.mulPose(Axis.YP.rotation((float) root.rotY));
+        poseStack.mulPose(Axis.XP.rotation((float) root.rotX));
+    }
+
     /** Input of the current draw; a gun's pose depends only on it, so one animatable serves every holder. */
     private static final class GunAnimatable implements GeoAnimatable {
         private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);

@@ -334,8 +334,14 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - Survey: on the data path the code placement is already bypassed. Still read from code: the static part scales (reflection over the Java models every draw), the muzzle offsets of biogun and revolver (no `muzzle` bone), the Magic Rifle charge effect (offsets only), the effect types/scales/jitter, the scope overlay and its recoil (`GunAnimation`), and the part textures (mining heads, rocket ammo).
   - **Static part scales** (Vector, SCAR, Shishkebap, mining drill; 37 bones) are constant `hold` keyframes now (scale, plus the offset that keeps the Java scale origin). `TGModel#animateGeoBones` no longer applies them. Verified in game against the Java fallback: Vector, Shishkebap and mining drill identical, SCAR differs by 1-px edges on the scope parts (the shear approximation of scaled rotated parts, as before).
   - **Marker bones:** `muzzle` for biogun and revolver, `charge` for the Magic Rifle (`/tgdebug convertgun charge`). The charge effect is drawn at the `charge` marker in first and third person (old offsets only without one). Checked by eye: the charge circle sits on the muzzle as before.
+- **2026-11-06, phase 7: visual settings in the display JSON.** New fields of `gun_display/<gun>.json`, written by datagen from the code renderers:
+  - `texture` (all parts) and `parts` (one entry per drawn geo part: `render_type` solid/cutout/translucent, `head_level_textures` for the powered melee tools, `ammo_textures` for the rocket launcher's rocket). The part count now comes from the file.
+  - `muzzle_flash`, `charge_effect`, `idle_effect` (flamethrower pilot flame, loops every second, not under water): `effect` by name (`ScreenEffects`: `rifle`, `gun`, `laser`, `tech_scope`, ...), `scale`, `third_person_scale`, `jitter` {x, y, scale}. Drawn at the `muzzle` / `charge` / `idle_fx` bones.
+  - `scope`: `effect`, `scale`, and `recoil` = an animation strength. The overlay recoil samples the animation's `root` bone (`TGGeoBridge#applyRootMotion`) instead of playing a `GunAnimation`.
+  - Code renderers without a display file keep their fields (converted to the same effect records) until the fallback is deleted.
+  - Checked in game: M4 flash with jitter, SCAR scope overlay with recoil, flamethrower pilot flame, mining drill head texture, rocket launcher rocket texture. Build and 378 GameTests pass.
 - **Next:**
-  - Phase 7: effects, scope (with its recoil as an animation) and part textures into the display JSON; move the gun JSON to `src/main/resources` (hand-maintained); delete the Java gun models (`ModelGrenadeLauncher` keeps its meshes), the fallback, `GunAnimation`, the conversion tools, `RenderGunBase90`.
+  - Phase 7: move the gun JSON to `src/main/resources` (hand-maintained); delete the Java gun models (`ModelGrenadeLauncher` keeps its meshes), the fallback, `GunAnimation`, the conversion tools, `RenderGunBase90`.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

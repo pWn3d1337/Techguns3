@@ -1,4 +1,11 @@
 {
+  "muzzle_flash": {
+    "effect": "minigun",
+    "scale": 0.8
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +27,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/minigun.png"
 }

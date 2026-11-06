@@ -55,6 +55,14 @@ public interface TGGeoBridge {
     boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, @Nullable ResourceLocation texture,
                    int light, int overlay, GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers);
 
+    /**
+     * Moves {@code poseStack} by the {@code root} bone of animation {@code animation} (the gun's file
+     * {@code animations/item/<gun>.animation.json}, else {@code common.animation.json}) at {@code progress}: positions
+     * times {@code move} in blocks, rotations times {@code turn}; mirrored for the left hand. Used where no geo model is
+     * drawn (the scope overlay's recoil). Does nothing if the animation isn't loaded.
+     */
+    void applyRootMotion(PoseStack poseStack, String gun, String animation, float progress, float move, float turn, boolean mirror);
+
     static TGGeoBridge get() {
         return Holder.bridge;
     }

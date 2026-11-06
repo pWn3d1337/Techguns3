@@ -1,4 +1,11 @@
 {
+  "muzzle_flash": {
+    "effect": "mib_gun",
+    "scale": 0.55
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +27,6 @@
       "animation": "reload_breech",
       "turn": 55.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/mibgun.png"
 }

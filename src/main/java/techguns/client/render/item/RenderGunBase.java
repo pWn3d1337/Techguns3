@@ -1,7 +1,10 @@
 package techguns.client.render.item;
 
 import net.minecraft.world.item.ItemStack;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -14,6 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -29,6 +34,7 @@ import techguns.client.render.TGMatrixOps;
 import techguns.client.render.fx.GunEffect;
 import techguns.client.render.fx.IScreenEffect;
 import techguns.gun.GunItem;
+import techguns.gun.MeleeToolItem;
 
 /**
  * Renders a gun: base transform per display context, recoil/reload animation, model parts, muzzle flash.
@@ -235,6 +241,7 @@ public class RenderGunBase extends RenderItemBase {
         boolean renderScope = false;
         // whole-gun motion from the model's animation files instead of the code presets below
         GunDisplay display = this.dataDisplay(gun);
+        IScreenEffect scope = display != null ? display.scope().map(GunDisplay.Scope::effect).orElse(null) : this.scope;
 
         // guard: the Techguns 2 flow leaves transforms on the stack in some branches
         poseStack.pushPose();
@@ -254,7 +261,7 @@ public class RenderGunBase extends RenderItemBase {
         if (firstPerson) {
             boolean doADSrecoil = false;
             if (state.zooming()) {
-                if (this.scope != null) {
+                if (scope != null) {
                     renderScope = true;
                 } else {
                     doADSrecoil = true;
@@ -304,10 +311,13 @@ public class RenderGunBase extends RenderItemBase {
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             }
 
-            for (int i = 0; i < parts; i++) {
-                ResourceLocation texture = this.partTexture(context, i);
+            int partCount = display != null ? display.parts().size() : parts;
+            for (int i = 0; i < partCount; i++) {
+                ResourceLocation texture = this.partTexture(context, i, display, ammoVariant);
+                RenderType renderType = display != null ? display.parts().get(i).renderType().renderType(texture)
+                        : model.getRenderType(texture, i, ammoVariant);
                 model.setPartTexture(texture);
-                model.render(entity, poseStack, buffers.getBuffer(model.getRenderType(texture, i, ammoVariant)), state.loadedAmmo(), reloadProgress,
+                model.render(entity, poseStack, buffers.getBuffer(renderType), state.loadedAmmo(), reloadProgress,
                         transform, i, fireProgress, chargeProgress, light, overlay);
             }
             this.model.setPartTexture(null);
@@ -320,37 +330,52 @@ public class RenderGunBase extends RenderItemBase {
             }
 
             // Draw muzzle FX (in the hand pose, without the gun's own transforms)
+            GunDisplay.Effect muzzleFx = display != null ? display.muzzleFlash().orElse(null) : legacyEffect(this.muzzleEffect);
+            GunDisplay.Effect chargeFx = display != null ? display.chargeEffect().orElse(null) : legacyEffect(this.chargeEffect);
+            GunDisplay.Effect idleFx = display != null ? display.idleEffect().orElse(null) : null;
             if (muzzleFlashProgress > 0) {
                 updateJitter(state.muzzleFlashSeed());
                 if (firstPerson) {
-                    if (state.zooming() && this.scope == null) {
+                    if (state.zooming() && scope == null && display == null) {
                         this.transformADS(poseStack, zoomProgress);
                     }
-                    this.drawMuzzleFx(poseStack, buffers, muzzleFlashProgress, leftHand, ammoVariant, muzzleMarker(display));
+                    this.drawEffect(poseStack, buffers, muzzleFx, this.muzzleEffect, muzzleMarker(display), muzzleFlashProgress, true, leftHand,
+                            ammoVariant);
                 } else {
                     poseStack.pushPose();
                     this.transformThirdPersonArmPose(poseStack, entity, reloadProgress, armPose, leftHand);
-                    this.drawMuzzleFx3P(poseStack, buffers, muzzleFlashProgress, leftHand, ammoVariant, muzzleMarker(display));
+                    this.drawEffect(poseStack, buffers, muzzleFx, this.muzzleEffect, muzzleMarker(display), muzzleFlashProgress, false, leftHand,
+                            ammoVariant);
                     poseStack.popPose();
                 }
             } else {
                 if (reloadProgress <= 0) {
                     if (firstPerson) {
-                        this.drawIdleFx(entity, poseStack, buffers, leftHand, ammoVariant);
+                        if (idleFx != null) {
+                            this.drawIdleEffect(entity, poseStack, buffers, idleFx, true, leftHand, ammoVariant);
+                        } else {
+                            this.drawIdleFx(entity, poseStack, buffers, leftHand, ammoVariant);
+                        }
                     } else {
                         poseStack.pushPose();
                         this.transformThirdPersonArmPose(poseStack, entity, reloadProgress, armPose, leftHand);
-                        this.drawIdleFx3P(entity, poseStack, buffers, leftHand, ammoVariant);
+                        if (idleFx != null) {
+                            this.drawIdleEffect(entity, poseStack, buffers, idleFx, false, leftHand, ammoVariant);
+                        } else {
+                            this.drawIdleFx3P(entity, poseStack, buffers, leftHand, ammoVariant);
+                        }
                         poseStack.popPose();
                     }
                 }
-                if (chargeProgress > 0.0f && this.chargeEffect != null) {
+                if (chargeProgress > 0.0f && chargeFx != null) {
                     if (firstPerson) {
-                        this.drawChargeFx(poseStack, buffers, chargeProgressFull, leftHand, ammoVariant);
+                        this.drawEffect(poseStack, buffers, chargeFx, this.chargeEffect, GunConversion.CHARGE, chargeProgressFull, true, leftHand,
+                                ammoVariant);
                     } else {
                         poseStack.pushPose();
                         this.transformThirdPersonArmPose(poseStack, entity, reloadProgress, armPose, leftHand);
-                        this.drawChargeFx3P(poseStack, buffers, chargeProgressFull, leftHand, ammoVariant);
+                        this.drawEffect(poseStack, buffers, chargeFx, this.chargeEffect, GunConversion.CHARGE, chargeProgressFull, false, leftHand,
+                                ammoVariant);
                         poseStack.popPose();
                     }
                 }
@@ -359,11 +384,18 @@ public class RenderGunBase extends RenderItemBase {
         } else {
             this.model.setAnimInput(null);
             poseStack.popPose();
-            if (this.scopeRecoilAnim != null && fireProgress > 0f) {
-                this.scopeRecoilAnim.play(poseStack, fireProgress, ItemDisplayContext.FIRST_PERSON_LEFT_HAND == transform, this.scopeRecoilParams);
+            if (display != null) {
+                GunDisplay.Scope scopeDisplay = display.scope().orElseThrow();
+                scopeDisplay.recoil().ifPresent(recoil -> TGGeoBridge.get().applyRootMotion(poseStack,
+                        BuiltInRegistries.ITEM.getKey(gun).getPath(), recoil.animation(), fireProgress, recoil.move(), recoil.turn(),
+                        ItemDisplayContext.FIRST_PERSON_LEFT_HAND == transform));
+                this.drawScope(poseStack, buffers, scopeDisplay.effect(), scopeDisplay.scale(), fireProgress, leftHand);
+            } else {
+                if (this.scopeRecoilAnim != null && fireProgress > 0f) {
+                    this.scopeRecoilAnim.play(poseStack, fireProgress, ItemDisplayContext.FIRST_PERSON_LEFT_HAND == transform, this.scopeRecoilParams);
+                }
+                this.drawScope(poseStack, buffers, this.scope, this.scopescale, fireProgress, leftHand);
             }
-
-            this.renderScope(poseStack, buffers, fireProgress, leftHand);
         }
 
         poseStack.popPose();
@@ -530,7 +562,40 @@ public class RenderGunBase extends RenderItemBase {
                 Optional.of(new GunDisplay.Motion(strength(reloadAnim, reloadParams, firstPerson), Optional.empty(),
                         strength(reloadAnim3p, reloadParams3p, thirdPerson))),
                 charge,
-                true);
+                true,
+                this.texture,
+                this.exportParts(),
+                Optional.ofNullable(legacyEffect(this.muzzleEffect)),
+                Optional.ofNullable(legacyEffect(this.chargeEffect)),
+                this.exportIdleEffect(),
+                Optional.ofNullable(this.scope).map(scope -> new GunDisplay.Scope(scope, this.scopescale, this.scopeRecoilAnim == null
+                        ? Optional.empty() : Optional.of(new GunDisplay.Strength(GunAnimation.nameOf(this.scopeRecoilAnim),
+                        this.scopeRecoilParams.length > 0 ? this.scopeRecoilParams[0] : 0f,
+                        this.scopeRecoilParams.length > 1 ? this.scopeRecoilParams[1] : 0f)))));
+    }
+
+    /** The drawn render parts (a geo model may have merged some) with their render type and stack-dependent textures. */
+    private List<GunDisplay.Part> exportParts() {
+        int count = this.model instanceof GeoGunModel geo ? Math.min(this.parts, geo.geoIds().size()) : this.parts;
+        List<GunDisplay.Part> result = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            RenderType type = this.model.getRenderType(this.texture, i);
+            GunDisplay.PartRenderType renderType = Arrays.stream(GunDisplay.PartRenderType.values())
+                    .filter(t -> t.renderType(this.texture) == type).findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Render type of part without a display file name: " + type));
+            result.add(new GunDisplay.Part(renderType, this.exportHeadLevelTextures(i), this.model.ammoTextures(i)));
+        }
+        return result;
+    }
+
+    /** Textures of render part {@code part} per mining head level (datagen); none by default. */
+    protected List<ResourceLocation> exportHeadLevelTextures(int part) {
+        return List.of();
+    }
+
+    /** The idle effect for the display file (datagen); none by default. */
+    protected Optional<GunDisplay.Effect> exportIdleEffect() {
+        return Optional.empty();
     }
 
     /** {@code common.animation.json}: {@code root} moves back along +z by one unit over the charge. */
@@ -544,6 +609,19 @@ public class RenderGunBase extends RenderItemBase {
     /** The muzzle marker to draw the flash at: the animated bone, or its rest pose if the display file says so. */
     protected static String muzzleMarker(@Nullable GunDisplay display) {
         return display != null && !display.muzzleFollowsAnimation() ? TGGeoBridge.MUZZLE + TGGeoBridge.REST : TGGeoBridge.MUZZLE;
+    }
+
+    /**
+     * Texture of one render part: with a display file its part texture (mining head, loaded ammo), else the camo, else the
+     * file's texture; without one the code renderer's.
+     */
+    protected ResourceLocation partTexture(ItemRenderContext context, int part, @Nullable GunDisplay display, @Nullable String ammoVariant) {
+        if (display == null) {
+            return this.partTexture(context, part);
+        }
+        int headLevel = context.stack().getItem() instanceof MeleeToolItem tool ? tool.headLevel(context.stack()) : -1;
+        ResourceLocation texture = display.partTexture(part, headLevel, ammoVariant);
+        return texture != null ? texture : camoTexture(context.stack()).orElse(display.texture());
     }
 
     /** Texture of one render part; overridden where it depends on the stack (mining heads). */
@@ -632,63 +710,68 @@ public class RenderGunBase extends RenderItemBase {
         return new Matrix4f(poseStack.last().pose()).invert().transformPosition(marker.getTranslation(new Vector3f()));
     }
 
-    /** At the model's {@code marker} bone if it has one, else at the configured offsets. */
-    protected void drawMuzzleFx(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant,
-                                String marker) {
-        if (this.muzzleEffect != null && this.muzzleEffect.screenEffect != null) {
-            float scale = this.muzzleEffect.effectScale;
-            Vector3f muzzle = markerOffset(poseStack, marker);
-            float offsetX = muzzle != null ? muzzle.x : leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
-            float offsetY = muzzle != null ? muzzle.y : this.muzzleEffect.offsetY;
-            float offsetZ = muzzle != null ? muzzle.z : this.muzzleEffect.offsetZ;
+    /**
+     * Draws {@code effect} at the model's {@code marker} bone if it has one, else at {@code offsets} (the code renderer's
+     * effect positions; nothing without them).
+     */
+    protected void drawEffect(PoseStack poseStack, MultiBufferSource buffers, @Nullable GunDisplay.Effect effect, @Nullable GunEffect offsets,
+                              String marker, float progress, boolean firstPerson, boolean leftHand, String ammoVariant) {
+        if (effect == null) {
+            return;
+        }
+        Vector3f at = markerOffset(poseStack, marker);
+        if (at == null) {
+            if (offsets == null) {
+                return;
+            }
+            at = firstPerson ? new Vector3f(leftHand ? offsets.offsetX_l : offsets.offsetX_r, offsets.offsetY, offsets.offsetZ)
+                    : new Vector3f(0f, offsets.offsetY_3p, offsets.offsetZ_3p);
+        }
+        float scale = effect.scale();
+        if (firstPerson) {
+            if (effect.jitter().isPresent()) {
+                GunDisplay.Jitter jitter = effect.jitter().get();
+                scale += jitter.scale() * jitterScale;
+                at.add(jitter.x() * jitterX, jitter.y() * jitterY, 0f);
+            }
+        } else {
+            scale *= effect.thirdPersonScale();
+        }
+        effect.effect().doRender(poseStack, buffers, progress, at.x, at.y, at.z, scale, !firstPerson, ammoVariant);
+    }
 
-            if (this.muzzleEffect.jitterScale > 0.0f) scale += muzzleEffect.jitterScale * jitterScale;
-            if (this.muzzleEffect.jitterX > 0.0f) offsetX += muzzleEffect.jitterX * jitterX;
-            if (this.muzzleEffect.jitterY > 0.0f) offsetY += muzzleEffect.jitterY * jitterY;
+    /** Marker bone of the idle effect. */
+    protected static final String IDLE_FX = "idle_fx";
 
-            this.muzzleEffect.screenEffect.doRender(poseStack, buffers, progress, offsetX, offsetY, offsetZ, scale, false, ammoVariant);
+    /** The idle effect at the {@code idle_fx} bone, looping every second; not under water. */
+    protected void drawIdleEffect(@Nullable LivingEntity entity, PoseStack poseStack, MultiBufferSource buffers, GunDisplay.Effect effect,
+                                  boolean firstPerson, boolean leftHand, String ammoVariant) {
+        if (entity != null && !entity.isUnderWater() && Minecraft.getInstance().level != null) {
+            this.drawEffect(poseStack, buffers, effect, null, IDLE_FX, idleProgress(), firstPerson, leftHand, ammoVariant);
         }
     }
 
-    protected void drawMuzzleFx3P(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant,
-                                  String marker) {
-        if (this.muzzleEffect != null && this.muzzleEffect.screenEffect != null) {
-            Vector3f muzzle = markerOffset(poseStack, marker);
-            this.muzzleEffect.screenEffect.doRender(poseStack, buffers, progress, muzzle != null ? muzzle.x : 0,
-                    muzzle != null ? muzzle.y : this.muzzleEffect.offsetY_3p, muzzle != null ? muzzle.z : this.muzzleEffect.offsetZ_3p,
-                    this.muzzleEffect.effectScale * this.muzzleEffect.effectScale_3p, true, ammoVariant);
-        }
+    /** Progress of the looping idle effect: one loop per second of game time. */
+    protected static float idleProgress() {
+        return (float) (Minecraft.getInstance().level.getGameTime() % 20) / 20.0f;
     }
 
-    protected void drawChargeFx(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
-        if (this.chargeEffect != null && this.chargeEffect.screenEffect != null) {
-            float scale = this.chargeEffect.effectScale;
-            Vector3f marker = markerOffset(poseStack, GunConversion.CHARGE);
-            float offsetX = marker != null ? marker.x : leftHand ? this.chargeEffect.offsetX_l : this.chargeEffect.offsetX_r;
-            float offsetY = marker != null ? marker.y : this.chargeEffect.offsetY;
-            float offsetZ = marker != null ? marker.z : this.chargeEffect.offsetZ;
-
-            if (this.chargeEffect.jitterScale > 0.0f) scale += chargeEffect.jitterScale * jitterScale;
-            if (this.chargeEffect.jitterX > 0.0f) offsetX += chargeEffect.jitterX * jitterX;
-            if (this.chargeEffect.jitterY > 0.0f) offsetY += chargeEffect.jitterY * jitterY;
-
-            this.chargeEffect.screenEffect.doRender(poseStack, buffers, progress, offsetX, offsetY, offsetZ, scale, false, ammoVariant);
+    /** The code renderer's effect as a display file effect; null without one. */
+    @Nullable
+    protected static GunDisplay.Effect legacyEffect(@Nullable GunEffect effect) {
+        if (effect == null || effect.screenEffect == null) {
+            return null;
         }
+        Optional<GunDisplay.Jitter> jitter = effect.jitterX != 0f || effect.jitterY != 0f || effect.jitterScale != 0f
+                ? Optional.of(new GunDisplay.Jitter(effect.jitterX, effect.jitterY, effect.jitterScale)) : Optional.empty();
+        return new GunDisplay.Effect(effect.screenEffect, effect.effectScale, effect.effectScale_3p, jitter);
     }
 
-    protected void drawChargeFx3P(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
-        if (this.chargeEffect != null && this.chargeEffect.screenEffect != null) {
-            Vector3f marker = markerOffset(poseStack, GunConversion.CHARGE);
-            this.chargeEffect.screenEffect.doRender(poseStack, buffers, progress, marker != null ? marker.x : 0,
-                    marker != null ? marker.y : this.chargeEffect.offsetY_3p, marker != null ? marker.z : this.chargeEffect.offsetZ_3p,
-                    this.chargeEffect.effectScale * this.chargeEffect.effectScale_3p, true, ammoVariant);
-        }
-    }
-
-    protected void renderScope(PoseStack poseStack, MultiBufferSource buffers, float fireProgress, boolean leftHand) {
-        if (this.scope != null) {
+    protected void drawScope(PoseStack poseStack, MultiBufferSource buffers, @Nullable IScreenEffect scope, float scale, float fireProgress,
+                             boolean leftHand) {
+        if (scope != null) {
             float x = leftHand ? 0.56f : -0.56f;
-            this.scope.doRender(poseStack, buffers, fireProgress, x, 0.52f, 0f, scopescale, false, null);
+            scope.doRender(poseStack, buffers, fireProgress, x, 0.52f, 0f, scale, false, null);
         }
     }
 

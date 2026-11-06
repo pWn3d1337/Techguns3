@@ -1,4 +1,15 @@
 {
+  "idle_effect": {
+    "effect": "flamethrower_flame",
+    "scale": 0.225
+  },
+  "muzzle_flash": {
+    "effect": "flamethrower_flash",
+    "scale": 0.45
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_sway",
@@ -20,5 +31,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/flamethrower.png"
 }

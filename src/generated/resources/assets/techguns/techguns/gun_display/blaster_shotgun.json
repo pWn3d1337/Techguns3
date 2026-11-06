@@ -1,4 +1,13 @@
 {
+  "muzzle_flash": {
+    "effect": "laser",
+    "scale": 0.75
+  },
+  "parts": [
+    {
+      "render_type": "cutout"
+    }
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +29,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/lasergunnew.png"
 }

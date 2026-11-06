@@ -1,4 +1,10 @@
 {
+  "muzzle_flash": {
+    "effect": "sonic"
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +26,15 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "scope": {
+    "effect": "tech_scope",
+    "recoil": {
+      "animation": "recoil_scope",
+      "move": 0.15,
+      "turn": 1.0
+    },
+    "scale": 2.125
+  },
+  "texture": "techguns:textures/guns/gaussrifle.png"
 }

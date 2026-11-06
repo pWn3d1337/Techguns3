@@ -193,6 +193,11 @@ public class GeoGunModel extends TGModel {
     }
 
     @Override
+    public Map<String, ResourceLocation> ammoTextures(int part) {
+        return fallback.ammoTextures(part);
+    }
+
+    @Override
     public RenderType getRenderType(ResourceLocation texture, int part, String ammoVariant) {
         return fallback.getRenderType(texture, part, ammoVariant);
     }

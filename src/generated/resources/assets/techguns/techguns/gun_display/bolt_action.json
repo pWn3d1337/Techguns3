@@ -1,4 +1,11 @@
 {
+  "muzzle_flash": {
+    "effect": "gun",
+    "scale": 0.9
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +27,14 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "scope": {
+    "effect": "sniper_scope",
+    "recoil": {
+      "animation": "recoil_scope",
+      "move": 0.2,
+      "turn": 2.0
+    }
+  },
+  "texture": "techguns:textures/guns/boltactionrifle.png"
 }

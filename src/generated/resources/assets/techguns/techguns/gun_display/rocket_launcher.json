@@ -1,4 +1,21 @@
 {
+  "muzzle_flash": {
+    "effect": "gun",
+    "scale": 0.87
+  },
+  "parts": [
+    {
+      "render_type": "cutout"
+    },
+    {
+      "ammo_textures": {
+        "default": "techguns:textures/guns/rocket.png",
+        "high_velocity": "techguns:textures/guns/rocket_hv.png",
+        "nuke": "techguns:textures/guns/rocket_nuke.png"
+      },
+      "render_type": "cutout"
+    }
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +37,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/rocketlauncher.png"
 }

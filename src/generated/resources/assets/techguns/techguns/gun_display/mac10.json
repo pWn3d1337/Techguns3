@@ -1,4 +1,16 @@
 {
+  "muzzle_flash": {
+    "effect": "rifle",
+    "jitter": {
+      "scale": 0.1,
+      "x": 0.02,
+      "y": 0.05
+    },
+    "scale": 0.5
+  },
+  "parts": [
+    {}
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_generic",
@@ -20,5 +32,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/mac10texture.png"
 }

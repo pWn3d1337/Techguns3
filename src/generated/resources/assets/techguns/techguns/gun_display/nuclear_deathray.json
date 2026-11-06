@@ -1,4 +1,13 @@
 {
+  "muzzle_flash": {
+    "effect": "nuke_beam",
+    "scale": 0.65
+  },
+  "parts": [
+    {
+      "render_type": "cutout"
+    }
+  ],
   "recoil": {
     "first_person": {
       "animation": "recoil_sway",
@@ -20,5 +29,6 @@
       "animation": "reload_generic",
       "turn": 40.0
     }
-  }
+  },
+  "texture": "techguns:textures/guns/ndr.png"
 }
