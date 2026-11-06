@@ -36,8 +36,7 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 1. Author decision (2026-11-06): **keep** the Java gun models, the fallback code path and the conversion tools
    (`/tgdebug geo`, `exportgeo`, `convertgun`, `GunConversion`, `TGGeoExporter`, `GunAnimation`) for now. Don't
    delete them unless the author asks.
-2. Phase 7 docs: design doc section 9.1, `port_status.md`, `migration_26.md`.
-3. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
+2. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).
 
 ### Checking a gun against the code path

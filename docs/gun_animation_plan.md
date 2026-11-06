@@ -343,7 +343,7 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
 - **2026-11-06, phase 7: gun JSON out of datagen.** The 44 `gun_display/<gun>.json` and gun item models (`models/item/<gun>.json`, with the Blockbench display transforms) moved from `src/generated` to `src/main/resources` and are edited by hand now. `TGGunDisplayProvider`, the renderers' `exportDisplay` / `exportItemTransforms` and their helpers are gone; `TGItemModelProvider` no longer writes gun models. Build, runData and 378 GameTests pass.
 - **Next:**
   - Author decision (2026-11-06): the Java gun models, the fallback, `GunAnimation`, the conversion tools and `RenderGunBase90` stay for now; delete them only when the author asks.
-  - Phase 7 docs: design doc section 9.1, `port_status.md`, `migration_26.md`.
+  - Phase 7 docs done (design doc section 9.1, `port_status.md`, `migration_26.md`); phase 7 is complete apart from the deferred deletions.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

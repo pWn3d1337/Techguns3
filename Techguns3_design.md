@@ -648,6 +648,14 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 - Tabula "scale" render code became `TGModelPart.setRenderScale`, applied as a bone scale plus offset. A scale that doesn't commute with the part's rotation (SCAR scope tubes) shears the box in Java; GeckoLib can't shear, so those use the geometric mean (visible only as 1-pixel edge differences).
 - GeckoLib floors box-UV sizes; sub-pixel cubes (red-dot glows) get explicit per-face UVs on their texel. Glow parts must be listed in `exportgeo` (`_glow` bones are drawn full bright).
 
+**Gun motion in model files (branch `gun-anim-geckolib`, phases 1-7, 2026-11-03 to 2026-11-06; plan: `docs/gun_animation_plan.md`):** every gun is now driven by data, not by `RenderGunBase` code presets:
+- `geo/item/<gun>*.geo.json`: bones, plus marker bones `muzzle`, `charge`, `idle_fx` and `mesh_*` (OBJ meshes drawn at a bone); static part scales are constant `hold` keyframes.
+- `animations/item/<gun>.animation.json` (shared ones in `common.animation.json`): recoil, reload, aim, charge and part motion, sampled from the gun timers (`GunAnimationSampler`); Molang queries `q.tg_*`; sound, particle and instruction keyframes.
+- `models/item/<gun>.json`: `builtin/entity` parent with the hold positions as `display` transforms (Blockbench's Display tab).
+- `techguns/gun_display/<gun>.json` (`GunDisplay`): motion strengths, texture, parts (render type, head level and ammo textures), muzzle/charge/idle effects (`ScreenEffects` names, scale, jitter) and the scope overlay with its recoil animation.
+- These files are hand-maintained in `src/main/resources`; datagen no longer writes them. A resource pack can override each one.
+- **Decision (author, 2026-11-06):** the Java gun models, the code fallback (`/tgdebug geo`) and the conversion tools (`exportgeo`, `convertgun`, `GunConversion`, `TGGeoExporter`, `GunAnimation`) stay for now.
+
 ## Appendix A — Name mapping cheat-sheet (1.12 MCP / Fabric Yarn → Mojmap)
 
 | 1.12 (MCP) | Fabric 1.19 (Yarn) | NeoForge 1.21.1 (Mojmap) |
