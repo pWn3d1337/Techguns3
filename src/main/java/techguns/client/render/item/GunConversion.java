@@ -49,7 +49,7 @@ public final class GunConversion {
     private static final Pattern ROOT_BONE = Pattern.compile("\\{\\s*\"name\"\\s*:\\s*\"root\"\\s*,\\s*\"pivot\"\\s*:\\s*\\[[^\\]]*\\]\\s*}");
 
     /** A muzzle bone waiting for a first person rest frame of {@code gun}. */
-    private record MuzzleRequest(Item gun, Path file) {
+    private record MuzzleRequest(Item gun, Path file, String bone) {
     }
 
     @Nullable
@@ -105,14 +105,30 @@ public final class GunConversion {
 
     /** Asks for the {@code muzzle} bone at the next first person rest frame of {@code gun}; returns a report line. */
     public static String requestMuzzle(Item gun, Path assets) {
+        return requestMarker(gun, assets, TGGeoBridge.MUZZLE);
+    }
+
+    /**
+     * Asks for marker bone {@code bone} ({@code muzzle}, or {@code charge} at the charge effect's offsets) at the next first
+     * person rest frame of {@code gun}; returns a report line.
+     */
+    public static String requestMarker(Item gun, Path assets, String bone) {
         if (!(TGItemRenderers.get(gun) instanceof RenderGunBase renderer) || !(renderer.model instanceof GeoGunModel geo)) {
             throw new IllegalArgumentException("not a gun drawn from geo files");
         }
-        if (renderer.muzzleEffect == null) {
-            return "muzzle: no muzzle effect, no bone";
+        if ((CHARGE.equals(bone) ? renderer.chargeEffect : renderer.muzzleEffect) == null) {
+            return bone + ": no such effect, no bone";
         }
-        muzzleRequest = new MuzzleRequest(gun, assets.resolve("geo/item/" + geo.geoIds().get(0) + ".geo.json"));
-        return "muzzle: placed at the next first person frame at rest (main hand, not aiming)";
+        muzzleRequest = new MuzzleRequest(gun, assets.resolve("geo/item/" + geo.geoIds().get(0) + ".geo.json"), bone);
+        return bone + ": placed at the next first person frame at rest (main hand, not aiming)";
+    }
+
+    /** Marker bone of the charge effect. */
+    public static final String CHARGE = "charge";
+
+    /** The marker bone the pending request asks for. */
+    static String requestedBone() {
+        return muzzleRequest != null ? muzzleRequest.bone() : TGGeoBridge.MUZZLE;
     }
 
     /** True while a muzzle bone for {@code gun} waits for a rest frame. */
@@ -140,8 +156,9 @@ public final class GunConversion {
         String name = request.file().getFileName().toString();
         try {
             String text = Files.readString(request.file(), StandardCharsets.UTF_8);
-            if (text.contains("\"name\": \"" + TGGeoBridge.MUZZLE + "\"")) {
-                chat("muzzle: " + name + " already has one; computed " + format(pivot)
+            String boneName = request.bone();
+            if (text.contains("\"name\": \"" + boneName + "\"")) {
+                chat(boneName + ": " + name + " already has one; computed " + format(pivot)
                         + (existingLocal != null ? ", existing " + format(filePivot(existingLocal)) : "")
                         + (existingFlash != null ? ", its flash " + format(new float[]{existingFlash.x(), existingFlash.y(), existingFlash.z()})
                         + " vs old " + format(new float[]{flash.x(), flash.y(), flash.z()}) : ""));
@@ -155,7 +172,7 @@ public final class GunConversion {
             String nl = text.contains("\r\n") ? "\r\n" : "\n";
             String bone = "," + nl
                     + "        {" + nl
-                    + "          \"name\": \"" + TGGeoBridge.MUZZLE + "\"," + nl
+                    + "          \"name\": \"" + boneName + "\"," + nl
                     + "          \"parent\": \"root\"," + nl
                     + "          \"pivot\": [" + nl
                     + "            " + round(pivot[0]).toPlainString() + "," + nl
@@ -164,7 +181,7 @@ public final class GunConversion {
                     + "          ]" + nl
                     + "        }";
             Files.writeString(request.file(), text.substring(0, m.end()) + bone + text.substring(m.end()), StandardCharsets.UTF_8);
-            chat("muzzle: " + name + " bone at " + format(pivot));
+            chat(boneName + ": " + name + " bone at " + format(pivot));
         } catch (IOException e) {
             chat("muzzle: failed, " + e.getMessage());
         }

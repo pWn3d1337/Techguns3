@@ -330,8 +330,12 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
     - `grenade_launcher.geo.json`: `root`, `mesh_frame`, `drum` (pivot (0, -32, 0), the old turn axis) with `mesh_drum`, plus `muzzle` from `convertgun`. `ModelGrenadeLauncher#renderMesh` turns by Ry(90) (the OBJ points along x) and draws the frame or cylinder mesh; `render` stays the Java fallback.
     - `fire` turns `drum` `[0, 0, -60]` (one chamber per shot). `RenderGunBaseObj` uses the normal base rotation for a geo draw. Geo pixels are 8x the usual size (base scale 0.125 kept), e.g. the muzzle at z -138.
     - **Verified in game, data path vs Java fallback, pixel diff:** idle, `fire 0.25` (drum turn) and `zoom 1` identical in first person, hotbar icon identical; third person by eye.
+- **2026-11-06, phase 7 start: code still read at runtime (author: every visual setting from JSON):**
+  - Survey: on the data path the code placement is already bypassed. Still read from code: the static part scales (reflection over the Java models every draw), the muzzle offsets of biogun and revolver (no `muzzle` bone), the Magic Rifle charge effect (offsets only), the effect types/scales/jitter, the scope overlay and its recoil (`GunAnimation`), and the part textures (mining heads, rocket ammo).
+  - **Static part scales** (Vector, SCAR, Shishkebap, mining drill; 37 bones) are constant `hold` keyframes now (scale, plus the offset that keeps the Java scale origin). `TGModel#animateGeoBones` no longer applies them. Verified in game against the Java fallback: Vector, Shishkebap and mining drill identical, SCAR differs by 1-px edges on the scope parts (the shear approximation of scaled rotated parts, as before).
+  - **Marker bones:** `muzzle` for biogun and revolver, `charge` for the Magic Rifle (`/tgdebug convertgun charge`). The charge effect is drawn at the `charge` marker in first and third person (old offsets only without one). Checked by eye: the charge circle sits on the muzzle as before.
 - **Next:**
-  - Phase 7 cleanup. `ModelGrenadeLauncher` stays for its meshes (only its `render` fallback goes).
+  - Phase 7: effects, scope (with its recoil as an animation) and part textures into the display JSON; move the gun JSON to `src/main/resources` (hand-maintained); delete the Java gun models (`ModelGrenadeLauncher` keeps its meshes), the fallback, `GunAnimation`, the conversion tools, `RenderGunBase90`.
 
 ## Verification
 - Before deleting a gun's code path, compare screenshots of the old and new render (first person idle/fire/reload, third person, GUI) via MCP.

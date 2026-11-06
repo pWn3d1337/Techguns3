@@ -663,9 +663,10 @@ public class RenderGunBase extends RenderItemBase {
     protected void drawChargeFx(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
         if (this.chargeEffect != null && this.chargeEffect.screenEffect != null) {
             float scale = this.chargeEffect.effectScale;
-            float offsetX = leftHand ? this.chargeEffect.offsetX_l : this.chargeEffect.offsetX_r;
-            float offsetY = this.chargeEffect.offsetY;
-            float offsetZ = this.chargeEffect.offsetZ;
+            Vector3f marker = markerOffset(poseStack, GunConversion.CHARGE);
+            float offsetX = marker != null ? marker.x : leftHand ? this.chargeEffect.offsetX_l : this.chargeEffect.offsetX_r;
+            float offsetY = marker != null ? marker.y : this.chargeEffect.offsetY;
+            float offsetZ = marker != null ? marker.z : this.chargeEffect.offsetZ;
 
             if (this.chargeEffect.jitterScale > 0.0f) scale += chargeEffect.jitterScale * jitterScale;
             if (this.chargeEffect.jitterX > 0.0f) offsetX += chargeEffect.jitterX * jitterX;
@@ -677,7 +678,9 @@ public class RenderGunBase extends RenderItemBase {
 
     protected void drawChargeFx3P(PoseStack poseStack, MultiBufferSource buffers, float progress, boolean leftHand, String ammoVariant) {
         if (this.chargeEffect != null && this.chargeEffect.screenEffect != null) {
-            this.chargeEffect.screenEffect.doRender(poseStack, buffers, progress, 0, this.chargeEffect.offsetY_3p, this.chargeEffect.offsetZ_3p,
+            Vector3f marker = markerOffset(poseStack, GunConversion.CHARGE);
+            this.chargeEffect.screenEffect.doRender(poseStack, buffers, progress, marker != null ? marker.x : 0,
+                    marker != null ? marker.y : this.chargeEffect.offsetY_3p, marker != null ? marker.z : this.chargeEffect.offsetZ_3p,
                     this.chargeEffect.effectScale * this.chargeEffect.effectScale_3p, true, ammoVariant);
         }
     }
@@ -739,8 +742,10 @@ public class RenderGunBase extends RenderItemBase {
      * {@link #drawMuzzleFx} draws in).
      */
     private void placeMuzzle(PoseStack fxPose) {
-        if (!(this.model instanceof techguns.client.model.GeoGunModel geo) || this.muzzleEffect == null) {
-            GunConversion.muzzleFailed("no geo model or muzzle effect");
+        String bone = GunConversion.requestedBone();
+        GunEffect effect = GunConversion.CHARGE.equals(bone) ? this.chargeEffect : this.muzzleEffect;
+        if (!(this.model instanceof techguns.client.model.GeoGunModel geo) || effect == null) {
+            GunConversion.muzzleFailed("no geo model or effect");
             return;
         }
         Matrix4f origin = geo.marker(TGGeoBridge.MODEL + geo.geoIds().get(0));
@@ -748,13 +753,13 @@ public class RenderGunBase extends RenderItemBase {
             GunConversion.muzzleFailed("geo model not drawn");
             return;
         }
-        Vector3f flash = new Vector3f(this.muzzleEffect.offsetX_r, this.muzzleEffect.offsetY, this.muzzleEffect.offsetZ);
+        Vector3f flash = new Vector3f(effect.offsetX_r, effect.offsetY, effect.offsetZ);
         Vector3f local = new Matrix4f(origin).invert().mul(fxPose.last().pose()).transformPosition(new Vector3f(flash));
         // an existing bone, in the same space: checks the conversion against a hand-placed bone
-        Matrix4f existing = geo.marker(TGGeoBridge.MUZZLE + TGGeoBridge.REST);
+        Matrix4f existing = geo.marker(bone + TGGeoBridge.REST);
         Vector3f existingLocal = existing == null ? null
                 : new Matrix4f(origin).invert().transformPosition(existing.getTranslation(new Vector3f()));
-        Vector3f existingFlash = existing == null ? null : this.markerOffset(fxPose, TGGeoBridge.MUZZLE + TGGeoBridge.REST);
+        Vector3f existingFlash = existing == null ? null : this.markerOffset(fxPose, bone + TGGeoBridge.REST);
         GunConversion.placeMuzzle(local, existingLocal, existingFlash, flash);
     }
 

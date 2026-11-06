@@ -1,6 +1,42 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"Grip": {
+					"scale": [
+						1,
+						1.5,
+						1.5
+					]
+				},
+				"Grip03_1": {
+					"position": [
+						-0.05061,
+						0,
+						0
+					],
+					"scale": [
+						0.96,
+						1,
+						1
+					]
+				},
+				"Grip03": {
+					"position": [
+						-0.00723,
+						0,
+						0
+					],
+					"scale": [
+						0.98,
+						1,
+						1
+					]
+				}
+			}
+		},
 		"fire": {
 			"animation_length": 1.0,
 			"bones": {

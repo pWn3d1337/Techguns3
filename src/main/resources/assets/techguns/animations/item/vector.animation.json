@@ -1,6 +1,125 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
+		"hold": {
+			"animation_length": 1.0,
+			"bones": {
+				"Eotech01": {
+					"scale": [
+						0.8,
+						0.8,
+						0.8
+					]
+				},
+				"Receiver03": {
+					"scale": [
+						0.8,
+						1,
+						1
+					]
+				},
+				"Eotech02": {
+					"scale": [
+						0.8,
+						0.8,
+						0.8
+					]
+				},
+				"Eotech03": {
+					"scale": [
+						0.8,
+						0.8,
+						0.8
+					]
+				},
+				"Eotech04": {
+					"scale": [
+						0.8,
+						0.8,
+						0.8
+					]
+				},
+				"Receiver02": {
+					"position": [
+						0.00349,
+						0,
+						0
+					],
+					"scale": [
+						0.99,
+						1,
+						1
+					]
+				},
+				"Receiver03_1": {
+					"position": [
+						0.00349,
+						0,
+						0
+					],
+					"scale": [
+						0.99,
+						1,
+						1
+					]
+				},
+				"Grip03": {
+					"position": [
+						0.00311,
+						0,
+						0
+					],
+					"scale": [
+						0.99,
+						1,
+						1
+					]
+				},
+				"Receiver05": {
+					"position": [
+						-0.00698,
+						0,
+						0
+					],
+					"scale": [
+						0.98,
+						1,
+						1
+					]
+				},
+				"Barrel02": {
+					"scale": [
+						0.7,
+						0.7,
+						1
+					]
+				},
+				"Magazine": {
+					"position": [
+						0.00349,
+						0,
+						0
+					],
+					"scale": [
+						0.99,
+						1,
+						1
+					]
+				},
+				"stock06": {
+					"position": [
+						-0.00349,
+						0,
+						0
+					],
+					"scale": [
+						0.99,
+						1,
+						1
+					]
+				}
+			}
+		},
 		"aim": {
 			"animation_length": 1.0,
 			"bones": {

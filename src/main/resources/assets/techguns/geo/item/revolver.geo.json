@@ -24,6 +24,15 @@
           ]
         },
         {
+          "name": "muzzle",
+          "parent": "root",
+          "pivot": [
+            1.1,
+            1.4933,
+            -23.52
+          ]
+        },
+        {
           "name": "Shape1",
           "parent": "root",
           "pivot": [

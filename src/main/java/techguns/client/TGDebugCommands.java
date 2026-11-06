@@ -181,6 +181,18 @@ public final class TGDebugCommands {
                                     return 1;
                                 })))
                 .then(Commands.literal("convertgun")
+                        .then(Commands.literal("charge")
+                                .executes(ctx -> {
+                                    var player = Minecraft.getInstance().player;
+                                    if (player == null) {
+                                        return 0;
+                                    }
+                                    var assets = Minecraft.getInstance().gameDirectory.toPath().toAbsolutePath().normalize().getParent()
+                                            .resolve("src/main/resources/assets/techguns");
+                                    ctx.getSource().sendSystemMessage(Component.literal(
+                                            GunConversion.requestMarker(player.getMainHandItem().getItem(), assets, GunConversion.CHARGE)));
+                                    return 1;
+                                }))
                         .then(Commands.literal("muzzle")
                                 .executes(ctx -> {
                                     // only the muzzle marker bone (reports the computed position if the gun has one)

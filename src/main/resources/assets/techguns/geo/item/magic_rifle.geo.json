@@ -24,6 +24,15 @@
           ]
         },
         {
+          "name": "charge",
+          "parent": "root",
+          "pivot": [
+            -2.6,
+            -2.24,
+            -47.36
+          ]
+        },
+        {
           "name": "muzzle",
           "parent": "root",
           "pivot": [
