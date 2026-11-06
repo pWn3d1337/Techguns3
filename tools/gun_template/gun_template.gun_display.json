@@ -1,0 +1,42 @@
+{
+  "texture": "techguns:textures/guns/gun_template.png",
+  "parts": [
+    {}
+  ],
+  "muzzle_flash": {
+    "effect": "rifle",
+    "scale": 0.75,
+    "jitter": {
+      "x": 0.02,
+      "y": 0.02,
+      "scale": 0.1
+    }
+  },
+  "recoil": {
+    "first_person": {
+      "animation": "recoil_generic",
+      "move": 3.2,
+      "turn": 4.0
+    },
+    "aiming": {
+      "animation": "recoil_generic",
+      "move": 1.6,
+      "turn": 2.0
+    },
+    "third_person": {
+      "animation": "recoil_generic",
+      "turn": 5.0
+    }
+  },
+  "reload": {
+    "first_person": {
+      "animation": "reload_generic",
+      "move": 32.0,
+      "turn": 40.0
+    },
+    "third_person": {
+      "animation": "reload_generic",
+      "turn": 40.0
+    }
+  }
+}
