@@ -47,7 +47,7 @@ import techguns.client.model.TGGeoExporter;
 /**
  * GeckoLib implementation of {@link TGGeoBridge}: draws gun geo models inside the Techguns gun renderer.
  * <p>
- * Models: {@code assets/techguns/geo/item/<id>.geo.json} (exported from the Java models by {@link TGGeoExporter}),
+ * Models: {@code assets/<namespace>/geo/item/<id>.geo.json} (geo id {@code <id>} for techguns, {@code <namespace>:<id>} else) (exported from the Java models by {@link TGGeoExporter}),
  * animations (optional): {@code assets/techguns/animations/item/<id>.animation.json} (a split part file
  * {@code <id>_1} uses the gun's {@code <id>} file), falling back to {@code common.animation.json} per animation name. Animations are sampled from the gun's timers by
  * {@link GunAnimationSampler}, not played by GeckoLib's controllers. Bones whose name contains
@@ -114,7 +114,7 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         if (progress <= 0f) {
             return;
         }
-        Animation found = GunAnimationSampler.find(TGIds.id("animations/item/" + gun + ".animation.json"), animation);
+        Animation found = GunAnimationSampler.find(resource(gun, "animations/item/", ".animation.json"), animation);
         if (found == null) {
             return;
         }
@@ -132,6 +132,15 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         poseStack.mulPose(Axis.ZP.rotation((float) root.rotZ));
         poseStack.mulPose(Axis.YP.rotation((float) root.rotY));
         poseStack.mulPose(Axis.XP.rotation((float) root.rotX));
+    }
+
+    /**
+     * A gun model resource: geo id {@code <path>} (techguns namespace) or {@code <namespace>:<path>} (addon guns), in
+     * {@code folder} of that namespace.
+     */
+    private static ResourceLocation resource(String id, String folder, String suffix) {
+        ResourceLocation base = TGIds.orTechguns(id);
+        return TGIds.of(base.getNamespace(), folder + base.getPath() + suffix);
     }
 
     /** Input of the current draw; a gun's pose depends only on it, so one animatable serves every holder. */
@@ -169,10 +178,10 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
         final List<GunAnimationEvents.Particle> particles = new ArrayList<>();
 
         GunModel(String id) {
-            this.model = TGIds.id("geo/item/" + id + ".geo.json");
+            this.model = resource(id, "geo/item/", ".geo.json");
             // a split part (<gun>_1, _2, ...) shares the gun's animation file: root keys move every part, part bones
             // are only found in their own file
-            this.animation = TGIds.id("animations/item/" + PART_SUFFIX.matcher(id).replaceFirst("") + ".animation.json");
+            this.animation = resource(PART_SUFFIX.matcher(id).replaceFirst(""), "animations/item/", ".animation.json");
         }
 
         @Override

@@ -51,4 +51,7 @@ The group `root > m4_reference` holds the M4 with its own texture, hidden and no
 - Texture: box UV, each part has its own color so the UV islands are easy to find. Paint over it.
 - A bone that needs its own texture (a head that changes with the mining head level, a round that changes with the
   loaded ammo) stays in the same model: list it under `bone_textures` in the display json.
-- A new gun item still needs its registration and renderer in code (`TGGuns`, `TGItemRendererSetup`).
+- A new gun item still needs its registration in code (`TGGuns`, or an addon's own item registry). It needs no renderer
+  code: every gun without a setup in `TGItemRendererSetup` is drawn from these files. An addon gun keeps its files in
+  its own namespace (`assets/<namespace>/geo/item/<gun>.geo.json`, `animations/item/`, `models/item/`,
+  `techguns/gun_display/`).

@@ -56,9 +56,13 @@ import techguns.client.model.item.ModelRocket;
 import techguns.client.render.fx.ScreenEffect;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGGuns;
+import techguns.gun.GunItem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
 
 /**
- * Creates and registers all item renderers (Techguns 2 {@code ClientProxy} item renderer section).
+ * Creates and registers all item renderers (Techguns 2 {@code ClientProxy} item renderer section). The gun setups below
+ * hold the Java models (fallback, {@code /tgdebug geo}); a gun without one is drawn from its data files only.
  */
 public final class TGItemRendererSetup {
     private TGItemRendererSetup() {
@@ -441,6 +445,19 @@ public final class TGItemRendererSetup {
         }));
 
         registerAmmo();
+        registerDataGuns();
+    }
+
+    /**
+     * Every gun (any mod) without a renderer above gets the data-driven one: its geo model, animations, item model and
+     * display file are all it needs ({@link RenderGunBase#dataDriven}).
+     */
+    private static void registerDataGuns() {
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item instanceof GunItem && TGItemRenderers.get(item) == null) {
+                TGItemRenderers.register(item, RenderGunBase.dataDriven(item));
+            }
+        }
     }
 
     private static void registerAmmo() {

@@ -15,7 +15,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
+import techguns.Techguns;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -81,6 +84,21 @@ public class RenderGunBase extends RenderItemBase {
         super(model, texture);
         this.parts = parts;
         this.scale_ground = this.scale_thirdp;
+    }
+
+    /**
+     * The renderer of a gun without code setup: geo model {@link #geoId} with no Java model behind it; everything else
+     * comes from its model files and display file. Without a display file (or with geo models off, {@code /tgdebug geo})
+     * it draws nothing.
+     */
+    public static RenderGunBase dataDriven(Item gun) {
+        return new RenderGunBase(GeoGunModel.dataOnly(geoId(gun)), MissingTextureAtlasSprite.getLocation());
+    }
+
+    /** The geo id of a gun: its item path for Techguns guns, its full item id for addon guns. */
+    public static String geoId(Item gun) {
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(gun);
+        return key.getNamespace().equals(Techguns.MODID) ? key.getPath() : key.toString();
     }
 
     /**
@@ -386,7 +404,7 @@ public class RenderGunBase extends RenderItemBase {
             if (display != null) {
                 GunDisplay.Scope scopeDisplay = display.scope().orElseThrow();
                 scopeDisplay.recoil().ifPresent(recoil -> TGGeoBridge.get().applyRootMotion(poseStack,
-                        BuiltInRegistries.ITEM.getKey(gun).getPath(), recoil.animation(), fireProgress, recoil.move(), recoil.turn(),
+                        geoId(gun), recoil.animation(), fireProgress, recoil.move(), recoil.turn(),
                         ItemDisplayContext.FIRST_PERSON_LEFT_HAND == transform));
                 this.drawScope(poseStack, buffers, scopeDisplay.effect(), scopeDisplay.scale(), fireProgress, leftHand);
             } else {

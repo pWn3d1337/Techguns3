@@ -17,6 +17,11 @@ public final class TGIds {
         return ResourceLocation.fromNamespaceAndPath(Techguns.MODID, path);
     }
 
+    /** Identifier from {@code namespace:path}, or a bare path in the techguns namespace (model ids of addon guns). */
+    public static ResourceLocation orTechguns(String id) {
+        return id.indexOf(':') >= 0 ? ResourceLocation.parse(id) : id(id);
+    }
+
     /** Identifier in the minecraft namespace. */
     public static ResourceLocation vanilla(String path) {
         return ResourceLocation.withDefaultNamespace(path);

@@ -55,6 +55,26 @@ public class GeoGunModel extends TGModel {
     }
 
     /**
+     * A geo model with no Java model behind it (guns set up from data only, {@code RenderGunBase#dataDriven}): all motion
+     * comes from the model files, and nothing is drawn while geo models are off or the geo file is missing.
+     */
+    public static GeoGunModel dataOnly(String geoId) {
+        return new GeoGunModel(new NoJavaModel(), geoId).motionInFiles();
+    }
+
+    /** Stands in for the Java model of a data-only gun: draws nothing, moves nothing. */
+    private static final class NoJavaModel extends TGModel {
+        NoJavaModel() {
+            super(RenderType::entitySolid);
+        }
+
+        @Override
+        public void render(@Nullable LivingEntity entity, PoseStack poseStack, VertexConsumer vertices, int ammoLeft, float reloadProgress,
+                           ItemDisplayContext context, int part, float fireProgress, float chargeProgress, int light, int overlay) {
+        }
+    }
+
+    /**
      * The geo files are turned 90 degrees about Y against the Java model ({@code tools/geo_turn.py}, the guns of
      * {@code RenderGunBase90}): Java model space = {@link #JAVA_TURN} x geo frame. The Java part transforms, code bone
      * offsets and scales and the Java fallback are turned to match.

@@ -46,6 +46,7 @@ public interface TGGeoBridge {
      * Draws geo model {@code id} in Java model space (the gun pipeline's pose stack) into {@code buffer}, whose render
      * type the gun renderer chose for this part.
      *
+     * @param id      geo id: {@code <path>} in the techguns namespace or {@code <namespace>:<path>}
      * @param texture the part's texture for the {@link #TRANSLUCENT} and {@link #CUTOUT} bones; null = those bones are not
      *                drawn
      * @param boneTypes bones (with their children) left out of the main draw and drawn after it with their own render type,
@@ -60,7 +61,7 @@ public interface TGGeoBridge {
                    Map<String, RenderType> boneTypes, int light, int overlay, GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers);
 
     /**
-     * Moves {@code poseStack} by the {@code root} bone of animation {@code animation} (the gun's file
+     * Moves {@code poseStack} by the {@code root} bone of animation {@code animation} (the file of geo id {@code gun},
      * {@code animations/item/<gun>.animation.json}, else {@code common.animation.json}) at {@code progress}: positions
      * times {@code move} in blocks, rotations times {@code turn}; mirrored for the left hand. Used where no geo model is
      * drawn (the scope overlay's recoil). Does nothing if the animation isn't loaded.
