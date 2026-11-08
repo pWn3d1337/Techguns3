@@ -1,4 +1,4 @@
-# Session handoff (2026-11-06)
+# Session handoff (2026-11-08)
 
 State of the AI-assisted porting session, so it can continue on another PC (same `F:` mapping).
 Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Techguns3_design.md) (plan, decisions) and
@@ -6,9 +6,10 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
 
 ## Where we are: gun motion into model and animation files
 
-- Branch: `gun-anim-geckolib` (base `master`, local only, not pushed). Plan, decisions and a dated Progress entry per
-  step: [gun_animation_plan.md](gun_animation_plan.md). Read its Progress section first.
-- Commits on the branch (one per step, the user says "commit and continue" after each):
+- Branch `gun-anim-geckolib` was fast-forward merged into `master` on 2026-11-08 (no PR; the branch still exists
+  locally). Continue on `master` or a new branch from it. Plan, decisions and a dated Progress entry per step:
+  [gun_animation_plan.md](gun_animation_plan.md). Read its Progress section first.
+- Commits of the gun animation work (one per step, the user says "commit and continue" after each):
 
   | Step | Commit |
   |---|---|
@@ -25,11 +26,22 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   | Phase 5: part motion in keyframes (SCAR, AUG, combat shotgun, minigun, blaster shotgun, Grim Reaper, M4 Infiltrator, TFG, LMG, mining tools, grappling hook) | `d78a6e1` .. `af666ad` |
   | Phase 6: second render pass for translucent/cutout bones, rocket visibility, flamethrower `idle_fx`, grenade launcher OBJ meshes at mesh bones | `88989aa` .. `8eff3e2` |
   | Phase 7: static part scales and markers baked, effects/scope/parts in the display JSON, JSON out of datagen | `af4cdba`, `015c4ed`, `fdf6202` |
+  | Docs, author decision to keep the Java models | `bb0207d`, `0e17da6` |
+  | Blockbench gun template (`tools/gun_template/`, based on the M4) | `0df1cc9` |
+  | Per-bone textures (`bone_textures`), split part geo files merged | `347858d` |
+  | Guns without renderer code (`RenderGunBase.dataDriven`, `GeoGunModel.dataOnly`, namespaced geo ids for addons) | `1959cfe` |
+  | OBJ meshes at mesh bones from the display file (`meshes`) | `d528376` |
+  | Data file check at resource reload (`GunDisplayCheck`, log lines `Gun data check:`) | `e4b3e06` |
+  | Screen effects as files (`techguns/screen_effect/<name>.json`, `ScreenEffects`) | `3975b99` |
 
 - All 44 guns are data-driven: geo, animation, item model (`display` block) and `techguns/gun_display/<gun>.json`
-  (motion strengths, texture, parts, effects, scope). The gun JSON is hand-maintained in `src/main/resources` since
-  `fdf6202`; datagen no longer writes it.
-- Build OK, all 378 GameTests pass.
+  (motion strengths, texture, parts, bone textures, meshes, effects, scope); muzzle flashes, charge effects and scope
+  overlays are `techguns/screen_effect/<name>.json` files. The gun JSON is hand-maintained in `src/main/resources`
+  since `fdf6202`; datagen no longer writes it. A `GunItem` with no setup in `TGItemRendererSetup` is drawn from its
+  data files alone. After F3+T the log ends with `Gun data check: 44 guns, 44 display files, 18 screen effects, 0
+  problem(s)`.
+- Build OK on `master` after the merge. The last full GameTest run (378 pass) was before the 2026-11-08 steps; those
+  were client-only and checked in game, `runData` and `runGameTestServer` were not run since.
 
 ### Next steps (gun animation)
 
@@ -38,6 +50,10 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
    delete them unless the author asks.
 2. Open: whether Blockbench's Display tab previews the item model `display` values exactly (GeckoLib plugin, animated
    item format).
+3. Candidates for the next step (none chosen): a full `build runData runGameTestServer` run and push of `master`;
+   projectile and beam looks as data files; sounds in data; ammo-to-projectile mapping; arm pose / NPC offsets in the
+   display file; guns defined entirely by data (stats too). The data-only checks of `GunDisplayCheck` are untested
+   with a real data-only gun (none ships).
 
 ### Checking a gun against the code path
 
