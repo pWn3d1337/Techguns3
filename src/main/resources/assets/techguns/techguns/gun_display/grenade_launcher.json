@@ -1,4 +1,22 @@
 {
+  "meshes": {
+    "mesh_drum": {
+      "model": "techguns:models/obj/grenadelauncher_1.obj",
+      "rotation": [
+        0,
+        90,
+        0
+      ]
+    },
+    "mesh_frame": {
+      "model": "techguns:models/obj/grenadelauncher.obj",
+      "rotation": [
+        0,
+        90,
+        0
+      ]
+    }
+  },
   "muzzle_flash": {
     "effect": "gun",
     "scale": 0.5

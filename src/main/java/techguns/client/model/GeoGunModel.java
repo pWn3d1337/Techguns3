@@ -36,6 +36,7 @@ public class GeoGunModel extends TGModel {
     @Nullable
     private ResourceLocation partTexture;
     private Map<String, RenderType> boneTypes = Map.of();
+    private Map<String, GeoMesh> meshes = Map.of();
     /** Marker bone poses of the last draw (all parts). */
     private final Map<String, Matrix4f> markers = new HashMap<>();
     /** See {@link #turned()}. */
@@ -140,7 +141,7 @@ public class GeoGunModel extends TGModel {
             if (turned) {
                 poseStack.mulPose(JAVA_TURN_BACK);
             }
-            List<String> meshes = new ArrayList<>();
+            List<String> meshBones = new ArrayList<>();
             boolean drawn = TGGeoBridge.get().render(geoIds[part], poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
                     vertices, partTexture, boneTypes, light, overlay, anim,
                     bones -> partModel(part).animateGeoBones(turned ? new TurnedBones(bones) : bones, part, ammoLeft, reloadProgress,
@@ -148,13 +149,18 @@ public class GeoGunModel extends TGModel {
                     (name, pose) -> {
                         markers.put(name, pose);
                         if (name.startsWith(TGGeoBridge.MESH) && !name.endsWith(TGGeoBridge.REST)) {
-                            meshes.add(name);
+                            meshBones.add(name);
                         }
                     });
             poseStack.popPose();
             if (drawn) {
-                for (String mesh : meshes) {
-                    partModel(part).renderMesh(mesh, meshPose(markers.get(mesh)), vertices, light, overlay);
+                for (String mesh : meshBones) {
+                    GeoMesh dataMesh = this.meshes.get(mesh);
+                    if (dataMesh != null) {
+                        dataMesh.render(meshPose(markers.get(mesh)), vertices, light, overlay);
+                    } else {
+                        partModel(part).renderMesh(mesh, meshPose(markers.get(mesh)), vertices, light, overlay);
+                    }
                 }
                 return;
             }
@@ -200,6 +206,11 @@ public class GeoGunModel extends TGModel {
     @Override
     public void setBoneTypes(Map<String, RenderType> boneTypes) {
         this.boneTypes = boneTypes;
+    }
+
+    @Override
+    public void setMeshes(Map<String, GeoMesh> meshes) {
+        this.meshes = meshes;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package techguns.client.render.item;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -11,8 +13,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import techguns.client.model.GeoAnimInput;
+import techguns.client.model.GeoMesh;
+import techguns.client.model.ObjMesh;
 import techguns.client.render.fx.IScreenEffect;
 import techguns.client.render.fx.ScreenEffects;
 import techguns.gun.ammo.AmmoType;
@@ -35,10 +42,12 @@ import techguns.gun.ammo.AmmoType;
  * @param idleEffect             drawn at the {@code idle_fx} bone while the gun is idle and not under water, looping every
  *                               second (the flamethrower's pilot flame)
  * @param scope                  overlay drawn instead of the gun while aiming
+ * @param meshes                 meshes drawn at mesh bones ({@code mesh_*}), by bone name: shapes geo cubes can't
+ *                               express (the grenade launcher's OBJ frame and drum)
  */
 public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optional<Motion> charge, boolean muzzleFollowsAnimation,
                          ResourceLocation texture, List<Part> parts, Map<String, Part> boneTextures, Optional<Effect> muzzleFlash, Optional<Effect> chargeEffect,
-                         Optional<Effect> idleEffect, Optional<Scope> scope) {
+                         Optional<Effect> idleEffect, Optional<Scope> scope, Map<String, Mesh> meshes) {
     public static final Codec<GunDisplay> CODEC = RecordCodecBuilder.create(i -> i.group(
             Motion.CODEC.optionalFieldOf("recoil").forGetter(GunDisplay::recoil),
             Motion.CODEC.optionalFieldOf("reload").forGetter(GunDisplay::reload),
@@ -50,8 +59,44 @@ public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optio
             Effect.CODEC.optionalFieldOf("muzzle_flash").forGetter(GunDisplay::muzzleFlash),
             Effect.CODEC.optionalFieldOf("charge_effect").forGetter(GunDisplay::chargeEffect),
             Effect.CODEC.optionalFieldOf("idle_effect").forGetter(GunDisplay::idleEffect),
-            Scope.CODEC.optionalFieldOf("scope").forGetter(GunDisplay::scope)
+            Scope.CODEC.optionalFieldOf("scope").forGetter(GunDisplay::scope),
+            Codec.unboundedMap(Codec.STRING, Mesh.CODEC).optionalFieldOf("meshes", Map.of()).forGetter(GunDisplay::meshes)
     ).apply(i, GunDisplay::new));
+
+    private static final Map<Map<String, Mesh>, Map<String, GeoMesh>> GEO_MESHES = new WeakHashMap<>();
+
+    /** {@link #meshes} ready to draw (the OBJ files are loaded once per mesh). */
+    public Map<String, GeoMesh> geoMeshes() {
+        if (meshes.isEmpty()) {
+            return Map.of();
+        }
+        return GEO_MESHES.computeIfAbsent(meshes, m -> {
+            Map<String, GeoMesh> result = new HashMap<>();
+            m.forEach((bone, mesh) -> result.put(bone, mesh.geoMesh()));
+            return Map.copyOf(result);
+        });
+    }
+
+    /**
+     * A mesh at a mesh bone.
+     *
+     * @param model    OBJ file, e.g. {@code techguns:models/obj/grenadelauncher.obj}; materials are ignored, the gun's
+     *                 texture is used
+     * @param flipV    use {@code 1 - v} (OBJ v points up, Minecraft texture v down)
+     * @param rotation turn of the mesh inside the bone's space, degrees about x, y, z (applied z, y, x like geo bones)
+     */
+    public record Mesh(ResourceLocation model, boolean flipV, Vector3f rotation) {
+        public static final Codec<Mesh> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ResourceLocation.CODEC.fieldOf("model").forGetter(Mesh::model),
+                Codec.BOOL.optionalFieldOf("flip_v", true).forGetter(Mesh::flipV),
+                ExtraCodecs.VECTOR3F.optionalFieldOf("rotation", new Vector3f()).forGetter(Mesh::rotation)
+        ).apply(i, Mesh::new));
+
+        GeoMesh geoMesh() {
+            return new GeoMesh(new ObjMesh(model, flipV), new Quaternionf().rotationZYX((float) Math.toRadians(rotation.z),
+                    (float) Math.toRadians(rotation.y), (float) Math.toRadians(rotation.x)));
+        }
+    }
 
     /** The texture of render part {@code part}: by mining head level or loaded ammo if the part has one, else null. */
     @Nullable

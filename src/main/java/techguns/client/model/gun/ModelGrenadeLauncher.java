@@ -16,7 +16,8 @@ import techguns.client.render.TGMatrixOps;
  * Grenade launcher (Fabric {@code ModelGrenadeLauncher}): two OBJ meshes, the frame (part 0) and the cylinder (part
  * 1), which turns by 60 degrees (one chamber) per shot. Geo cubes can't express the meshes (hexagonal and pentagonal
  * end faces), so {@code grenade_launcher.geo.json} only has mesh bones ({@code mesh_frame}, {@code mesh_drum} under the
- * animated {@code drum}) and {@link #renderMesh} draws the OBJ meshes there; {@link #render} is the Java fallback.
+ * animated {@code drum}); the display file's {@code meshes} draw the OBJ meshes there. {@link #renderMesh} draws them
+ * while the display file has none; {@link #render} is the Java fallback.
  */
 public class ModelGrenadeLauncher extends TGModel {
     private static final ObjMesh FRAME = new ObjMesh(TGIds.id("models/obj/grenadelauncher.obj"), true);

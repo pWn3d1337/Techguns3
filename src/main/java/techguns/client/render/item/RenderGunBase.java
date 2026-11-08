@@ -328,6 +328,7 @@ public class RenderGunBase extends RenderItemBase {
 
             int partCount = display != null ? display.parts().size() : parts;
             model.setBoneTypes(display != null ? this.boneTypes(context, display, ammoVariant) : Map.of());
+            model.setMeshes(display != null ? display.geoMeshes() : Map.of());
             for (int i = 0; i < partCount; i++) {
                 ResourceLocation texture = this.partTexture(context, i, display, ammoVariant);
                 RenderType renderType = display != null ? display.parts().get(i).renderType().renderType(texture)
@@ -338,6 +339,7 @@ public class RenderGunBase extends RenderItemBase {
             }
             this.model.setPartTexture(null);
             this.model.setBoneTypes(Map.of());
+            this.model.setMeshes(Map.of());
             this.model.setAnimInput(null);
             poseStack.popPose();
 

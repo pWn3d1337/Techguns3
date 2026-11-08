@@ -107,6 +107,13 @@ public abstract class TGModel extends Model {
     }
 
     /**
+     * Meshes drawn at mesh bones in the next part draws (the display file's {@code meshes}), by bone name; set by the gun
+     * renderer. A mesh bone without one is left to {@link #renderMesh}. Only geo models use it.
+     */
+    public void setMeshes(Map<String, GeoMesh> meshes) {
+    }
+
+    /**
      * Pose of marker bone {@code name} ({@link TGGeoBridge#isMarker}) in the last draw, in the pose stack's root space;
      * null if the model has no such bone (Java models have none).
      */
