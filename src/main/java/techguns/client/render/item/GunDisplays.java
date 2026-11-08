@@ -47,5 +47,6 @@ public final class GunDisplays extends SimpleJsonResourceReloadListener {
                 .ifSuccess(display -> result.put(id, display))
                 .ifError(error -> Techguns.LOGGER.warn("Gun display {} skipped: {}", id, error.message())));
         displays = result;
+        GunDisplayCheck.run(result, resourceManager);
     }
 }

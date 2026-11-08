@@ -63,6 +63,11 @@ public class GeoGunModel extends TGModel {
         return new GeoGunModel(new NoJavaModel(), geoId).motionInFiles();
     }
 
+    /** Whether this model has no Java model behind it ({@link #dataOnly(String)}). */
+    public boolean dataOnly() {
+        return fallback instanceof NoJavaModel;
+    }
+
     /** Stands in for the Java model of a data-only gun: draws nothing, moves nothing. */
     private static final class NoJavaModel extends TGModel {
         NoJavaModel() {

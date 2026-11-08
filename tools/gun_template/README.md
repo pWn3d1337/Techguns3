@@ -55,3 +55,5 @@ The group `root > m4_reference` holds the M4 with its own texture, hidden and no
   code: every gun without a setup in `TGItemRendererSetup` is drawn from these files. An addon gun keeps its files in
   its own namespace (`assets/<namespace>/geo/item/<gun>.geo.json`, `animations/item/`, `models/item/`,
   `techguns/gun_display/`).
+- After a resource reload (F3+T) search the log for `Gun data check:`: missing files, bone names the geo file lacks
+  and unknown animation names are listed there, one line each, with a summary line at the end.
