@@ -1,0 +1,8 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/flamethrower.png",
+  "columns": 4,
+  "rows": 4,
+  "blend": "additive",
+  "flip_y": true
+}

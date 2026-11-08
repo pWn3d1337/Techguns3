@@ -16,6 +16,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import techguns.Techguns;
+import techguns.client.render.fx.ScreenEffects;
 
 /**
  * Loads the {@link GunDisplay} files of the resource packs. The file id is the item id:
@@ -42,6 +43,8 @@ public final class GunDisplays extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
+        // the display files name these; loaded here so the data check below sees both
+        ScreenEffects.reload(resourceManager);
         Map<ResourceLocation, GunDisplay> result = new HashMap<>();
         files.forEach((id, json) -> GunDisplay.CODEC.parse(JsonOps.INSTANCE, json)
                 .ifSuccess(display -> result.put(id, display))

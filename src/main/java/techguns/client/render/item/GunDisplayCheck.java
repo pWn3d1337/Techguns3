@@ -24,12 +24,15 @@ import techguns.TGIds;
 import techguns.Techguns;
 import techguns.client.model.GeoGunModel;
 import techguns.client.model.TGGeoBridge;
+import techguns.client.render.fx.IScreenEffect;
+import techguns.client.render.fx.ScreenEffects;
 import techguns.gun.GunItem;
 
 /**
- * Checks the data files of every gun at resource reload and logs one warning per problem, so a broken resource pack or
+ * Checks the data files of every gun and the screen effect files ({@link ScreenEffects#check}) at resource reload and logs one warning per problem, so a broken resource pack or
  * addon gun shows up in the log instead of drawing nothing: missing geo, animation, item model, texture or OBJ files,
- * display entries ({@code bone_textures}, {@code meshes}, effects) naming bones the geo file lacks, and motion animations
+ * display entries ({@code bone_textures}, {@code meshes}, effects) naming bones the geo file lacks, unknown screen
+ * effects, and motion animations
  * neither the gun's file nor {@code common.animation.json} has. Guns drawn by data alone ({@link RenderGunBase#dataDriven})
  * are also checked for a display file and for mesh bones nothing draws; guns with a Java model behind them may leave
  * those to code.
@@ -59,10 +62,12 @@ final class GunDisplayCheck {
                 check.gun(id, geo, displays.get(id));
             }
         }
+        ScreenEffects.check(resources, check.problems::add);
         displays.keySet().stream().filter(id -> !guns.contains(id)).sorted()
                 .forEach(id -> check.problems.add("display file " + id + " names no gun"));
         check.problems.forEach(problem -> Techguns.LOGGER.warn("Gun data check: {}", problem));
-        Techguns.LOGGER.info("Gun data check: {} guns, {} display files, {} problem(s)", guns.size(), displays.size(), check.problems.size());
+        Techguns.LOGGER.info("Gun data check: {} guns, {} display files, {} screen effects, {} problem(s)", guns.size(), displays.size(),
+                ScreenEffects.count(), check.problems.size());
     }
 
     private void gun(ResourceLocation gun, GeoGunModel geo, @Nullable GunDisplay display) {
@@ -123,13 +128,29 @@ final class GunDisplayCheck {
             bones.stream().filter(b -> b.startsWith(TGGeoBridge.MESH) && !display.meshes().containsKey(b)).sorted()
                     .forEach(b -> problems.add(gun + ": mesh bone " + b + " has no meshes entry, nothing is drawn there"));
         }
-        display.muzzleFlash().ifPresent(e -> marker(gun, bones, "muzzle_flash", TGGeoBridge.MUZZLE));
-        display.chargeEffect().ifPresent(e -> marker(gun, bones, "charge_effect", "charge"));
-        display.idleEffect().ifPresent(e -> marker(gun, bones, "idle_effect", "idle_fx"));
+        display.muzzleFlash().ifPresent(e -> {
+            marker(gun, bones, "muzzle_flash", TGGeoBridge.MUZZLE);
+            effect(gun, "muzzle_flash", e.effect());
+        });
+        display.chargeEffect().ifPresent(e -> {
+            marker(gun, bones, "charge_effect", "charge");
+            effect(gun, "charge_effect", e.effect());
+        });
+        display.idleEffect().ifPresent(e -> {
+            marker(gun, bones, "idle_effect", "idle_fx");
+            effect(gun, "idle_effect", e.effect());
+        });
+        display.scope().ifPresent(s -> effect(gun, "scope", s.effect()));
         display.recoil().ifPresent(m -> motion(gun, animations, "recoil", m));
         display.reload().ifPresent(m -> motion(gun, animations, "reload", m));
         display.charge().ifPresent(m -> motion(gun, animations, "charge", m));
         display.scope().flatMap(GunDisplay.Scope::recoil).ifPresent(s -> animation(gun, animations, "scope recoil", s.animation()));
+    }
+
+    private void effect(ResourceLocation gun, String where, IScreenEffect effect) {
+        if (effect instanceof ScreenEffects.Ref ref && !ref.exists()) {
+            problems.add(gun + ": " + where + ": unknown screen effect " + ref.id() + " (" + ScreenEffects.DIRECTORY + "/)");
+        }
     }
 
     private void part(ResourceLocation gun, String where, GunDisplay.Part part) {

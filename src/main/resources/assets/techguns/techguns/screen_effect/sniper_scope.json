@@ -1,0 +1,5 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/testscope.png",
+  "blend": "scope"
+}

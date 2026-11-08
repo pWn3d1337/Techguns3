@@ -1,0 +1,6 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/techscope.png",
+  "blend": "scope",
+  "flip_y": true
+}

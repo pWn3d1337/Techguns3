@@ -1,0 +1,8 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/muzzleflashnew_2_add_2.png",
+  "columns": 4,
+  "rows": 4,
+  "frames": 11,
+  "blend": "additive"
+}

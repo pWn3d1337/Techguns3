@@ -1,0 +1,7 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/fireball_4x4_alpha.png",
+  "columns": 4,
+  "rows": 4,
+  "blend": "alpha"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/sonicwave4x4.png",
+  "columns": 4,
+  "rows": 4,
+  "blend": "additive"
+}

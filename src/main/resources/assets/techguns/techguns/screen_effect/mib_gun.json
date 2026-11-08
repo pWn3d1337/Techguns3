@@ -1,0 +1,14 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/alienflare.png",
+  "columns": 4,
+  "rows": 4,
+  "frames": 14,
+  "blend": "additive",
+  "color": [
+    0.15686,
+    1.0,
+    0.549,
+    1.0
+  ]
+}

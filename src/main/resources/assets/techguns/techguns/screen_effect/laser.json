@@ -1,0 +1,8 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/laserflare02.png",
+  "columns": 4,
+  "rows": 4,
+  "frames": 7,
+  "blend": "additive"
+}

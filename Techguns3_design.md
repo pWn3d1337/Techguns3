@@ -652,7 +652,8 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 - `geo/item/<gun>*.geo.json`: bones, plus marker bones `muzzle`, `charge`, `idle_fx` and `mesh_*` (OBJ meshes drawn at a bone); static part scales are constant `hold` keyframes.
 - `animations/item/<gun>.animation.json` (shared ones in `common.animation.json`): recoil, reload, aim, charge and part motion, sampled from the gun timers (`GunAnimationSampler`); Molang queries `q.tg_*`; sound, particle and instruction keyframes.
 - `models/item/<gun>.json`: `builtin/entity` parent with the hold positions as `display` transforms (Blockbench's Display tab).
-- `techguns/gun_display/<gun>.json` (`GunDisplay`): motion strengths, texture, parts (render type, head level and ammo textures), muzzle/charge/idle effects (`ScreenEffects` names, scale, jitter) and the scope overlay with its recoil animation.
+- `techguns/gun_display/<gun>.json` (`GunDisplay`): motion strengths, texture, parts (render type, head level and ammo textures), muzzle/charge/idle effects (screen effect names, scale, jitter) and the scope overlay with its recoil animation.
+- `techguns/screen_effect/<name>.json` (`ScreenEffects`): the muzzle flashes, charge effects and scope overlays the display files name: `sprite` (sprite sheet, blend, color, fade, flips, third-person planes), `layers` (effects over parts of the progress, the TFG flash) or `by_ammo` (by loaded ammo, the Magic Rifle charge circle).
 - These files are hand-maintained in `src/main/resources`; datagen no longer writes them. A resource pack can override each one.
 - **Decision (author, 2026-11-06):** the Java gun models, the code fallback (`/tgdebug geo`) and the conversion tools (`exportgeo`, `convertgun`, `GunConversion`, `TGGeoExporter`, `GunAnimation`) stay for now.
 

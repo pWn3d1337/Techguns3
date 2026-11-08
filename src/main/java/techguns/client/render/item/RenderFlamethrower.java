@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.joml.Vector3f;
 import techguns.client.model.TGModel;
 import techguns.client.render.fx.IScreenEffect;
+import techguns.client.render.fx.ScreenEffects;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,6 +16,9 @@ import net.minecraft.resources.ResourceLocation;
  * marker bone, else at the muzzle flash offsets.
  */
 public class RenderFlamethrower extends RenderGunBase90 {
+    /** The pilot flame of the Java renderer (data guns name it in {@code idle_effect}). */
+    private static final IScreenEffect PILOT_FLAME = ScreenEffects.ref("flamethrower_flame");
+
     private static final String IDLE_FX = "idle_fx";
 
     public RenderFlamethrower(TGModel model, ResourceLocation texture) {
@@ -32,7 +36,7 @@ public class RenderFlamethrower extends RenderGunBase90 {
             float x = marker != null ? marker.x : leftHand ? this.muzzleEffect.offsetX_l : this.muzzleEffect.offsetX_r;
             float y = marker != null ? marker.y : this.muzzleEffect.offsetY;
             float z = marker != null ? marker.z : this.muzzleEffect.offsetZ;
-            IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, pilotProgress(), x, y, z,
+            PILOT_FLAME.doRender(poseStack, buffers, pilotProgress(), x, y, z,
                     this.muzzleEffect.effectScale * 0.5f, false, ammoVariant);
         }
     }
@@ -44,7 +48,7 @@ public class RenderFlamethrower extends RenderGunBase90 {
             float x = marker != null ? marker.x : 0;
             float y = marker != null ? marker.y : this.muzzleEffect.offsetY_3p;
             float z = marker != null ? marker.z : this.muzzleEffect.offsetZ_3p;
-            IScreenEffect.FlamethrowerMuzzleFlame.doRender(poseStack, buffers, pilotProgress(), x, y, z,
+            PILOT_FLAME.doRender(poseStack, buffers, pilotProgress(), x, y, z,
                     this.muzzleEffect.effectScale * 0.5f * this.muzzleEffect.effectScale_3p, true, ammoVariant);
         }
     }

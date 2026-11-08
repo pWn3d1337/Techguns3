@@ -1,0 +1,10 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/bluemuzzleflash.png",
+  "columns": 4,
+  "rows": 4,
+  "frames": 8,
+  "blend": "additive",
+  "flip_x": true,
+  "flip_y": true
+}

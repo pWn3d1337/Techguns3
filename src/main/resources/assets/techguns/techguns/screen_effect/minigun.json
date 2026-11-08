@@ -1,0 +1,7 @@
+{
+  "type": "sprite",
+  "texture": "techguns:textures/fx/muzzleflash_minigun.png",
+  "columns": 2,
+  "rows": 2,
+  "blend": "additive"
+}

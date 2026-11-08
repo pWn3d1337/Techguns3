@@ -1,0 +1,61 @@
+{
+  "type": "by_ammo",
+  "ammo": {
+    "default": {
+      "type": "sprite",
+      "texture": "techguns:textures/fx/magic_circle_arcane.png",
+      "blend": "additive",
+      "color": [
+        0.75,
+        0.75,
+        0.75,
+        1.0
+      ],
+      "fade": "rise_smooth_and_pulse_fast",
+      "scale_fade": "rise_smooth",
+      "third_person": "plane_z"
+    },
+    "fire": {
+      "type": "sprite",
+      "texture": "techguns:textures/fx/magic_circle_fire.png",
+      "blend": "additive",
+      "color": [
+        0.75,
+        0.75,
+        0.75,
+        1.0
+      ],
+      "fade": "rise_smooth_and_pulse_fast",
+      "scale_fade": "rise_smooth",
+      "third_person": "plane_z"
+    },
+    "lightning": {
+      "type": "sprite",
+      "texture": "techguns:textures/fx/magic_circle_01.png",
+      "blend": "additive",
+      "color": [
+        0.55,
+        0.75,
+        1.0,
+        1.0
+      ],
+      "fade": "rise_smooth_and_pulse_fast",
+      "scale_fade": "rise_smooth",
+      "third_person": "plane_z"
+    }
+  },
+  "default": {
+    "type": "sprite",
+    "texture": "techguns:textures/fx/magic_circle_01.png",
+    "blend": "additive",
+    "color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "fade": "rise_smooth_and_pulse_fast",
+    "scale_fade": "rise_smooth",
+    "third_person": "plane_z"
+  }
+}
