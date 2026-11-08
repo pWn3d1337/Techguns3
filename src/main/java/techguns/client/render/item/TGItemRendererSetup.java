@@ -76,7 +76,7 @@ public final class TGItemRendererSetup {
                         {0f, 0f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.13f, -1f).setMuzzleFlashJitter(0.02f, 0.02f, 5.0f, 0.1f).setAdsOffsets(-0.001F, 0F, 0F).setScopeRecoilAnim(GunAnimation.genericRecoil, 0.05F, 2.0F));
 
-        TGItemRenderers.register(TGGuns.ROCKET_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelRocketLauncher(), "rocket_launcher", "rocket_launcher_1")
+        TGItemRenderers.register(TGGuns.ROCKET_LAUNCHER, new RenderGunBase90(new GeoGunModel(new ModelRocketLauncher(), "rocket_launcher")
                 .motionInFiles(), 2, TGIds.id("textures/guns/rocketlauncher.png")).setBaseTranslation(-0.4f, -0.2f, -RenderItemBase.SCALE * 0.5f)
                 .setGUIScale(0.45f).setMuzzleFx(ScreenEffect.muzzleFlash_gun, 0, 0.39f, -0.6f, 0.87f, 0).setTransformTranslations(new float[][]{
                         {-0.13f, 0.3f, 0.32f}, // First Person
@@ -361,7 +361,7 @@ public final class TGItemRendererSetup {
                 }).setMuzzleFXPos3P(0.24f, -0.56f).setBaseScale(1.25f).setFirstPersonScale(0.4f).setGroundAndFrameScale(0.35f));
 
         // Tools: the head level picks the texture of render part 1 (Fabric/Techguns 2 values)
-        TGItemRenderers.register(TGGuns.CHAINSAW, new RenderMiningTool(new GeoGunModel(new ModelChainsaw(), "chainsaw", "chainsaw_1"), 2, TGIds.id("textures/guns/chainsaw.png"),
+        TGItemRenderers.register(TGGuns.CHAINSAW, new RenderMiningTool(new GeoGunModel(new ModelChainsaw(), "chainsaw"), 2, TGIds.id("textures/guns/chainsaw.png"),
                 TGIds.id("textures/guns/chainsaw.png"), TGIds.id("textures/guns/chainsaw_blades_obsidian.png"), TGIds.id("textures/guns/chainsaw_blades_carbon.png"))
                 .setBaseTranslation(-0.4f, -0.2f, RenderItemBase.SCALE - 0.09f).setBaseScale(0.95f).setGUIScale(0.45f).setTransformTranslations(new float[][]{
                         {0f, -0.08f, 0.15f}, // First Person
@@ -371,7 +371,7 @@ public final class TGItemRendererSetup {
                         {-0.07f, -0.03f, -0.11f} // frame
                 }));
 
-        TGItemRenderers.register(TGGuns.POWER_HAMMER, new RenderMiningTool(new GeoGunModel(new ModelPowerHammer(), "power_hammer", "power_hammer_1").motionInFiles(), 2, TGIds.id("textures/guns/powerhammer.png"),
+        TGItemRenderers.register(TGGuns.POWER_HAMMER, new RenderMiningTool(new GeoGunModel(new ModelPowerHammer(), "power_hammer").motionInFiles(), 2, TGIds.id("textures/guns/powerhammer.png"),
                 TGIds.id("textures/guns/powerhammer.png"), TGIds.id("textures/guns/powerhammer_obsidian.png"), TGIds.id("textures/guns/powerhammer_carbon.png"))
                 .setBaseTranslation(0.15f, -0.2f, RenderItemBase.SCALE - 0.09f).setBaseScale(1.25f).setGUIScale(0.45f).setMuzzleFx(null, 0, 0.26f, -0.67f, 0.5f, 0).setTransformTranslations(new float[][]{
                         {0f, 0.18f, 0.09f}, // First Person
@@ -381,7 +381,7 @@ public final class TGItemRendererSetup {
                         {-0.07f, -0.03f, -0.05f} // frame
                 }).setMuzzleFXPos3P(0.12f, -0.65f).setChargeTranslationAmount(0.125f));
 
-        TGItemRenderers.register(TGGuns.MINING_DRILL, new RenderMiningTool(new GeoGunModel(new ModelMiningDrill(), "mining_drill", "mining_drill_1").motionInFiles(), 2, TGIds.id("textures/guns/miningdrill_obsidian.png"),
+        TGItemRenderers.register(TGGuns.MINING_DRILL, new RenderMiningTool(new GeoGunModel(new ModelMiningDrill(), "mining_drill").motionInFiles(), 2, TGIds.id("textures/guns/miningdrill_obsidian.png"),
                 TGIds.id("textures/guns/miningdrill_obsidian.png"), TGIds.id("textures/guns/miningdrill_carbon.png"))
                 .setBaseTranslation(0, -0.2f, -RenderItemBase.SCALE * 0.5f).setBaseScale(2.0f).setGUIScale(0.35f).setTransformTranslations(new float[][]{
                         {0f, -0.03f, 0.0f}, // First Person

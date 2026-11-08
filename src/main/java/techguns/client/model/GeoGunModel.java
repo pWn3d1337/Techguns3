@@ -20,9 +20,10 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 /**
- * Gun model drawn from Bedrock geo files through {@link TGGeoBridge} (Q3 decided: guns use GeckoLib). One geo file
- * per render part, because parts may use different textures (e.g. the rocket in the launcher); a gun whose parts were
- * merged into one geo file lists fewer geo ids than render parts, and the remaining parts are not drawn. The ported Java
+ * Gun model drawn from Bedrock geo files through {@link TGGeoBridge} (Q3 decided: guns use GeckoLib). Usually one geo
+ * file; bones with their own texture (the rocket in the launcher, mining heads) are drawn in extra passes of the same
+ * model ({@link #setBoneTypes}). A gun whose parts were merged into one geo file lists fewer geo ids than render parts,
+ * and the remaining parts are not drawn. The ported Java
  * model stays as the export source ({@code /tgdebug exportgeo}) and as fallback while a geo file is missing.
  * Keyframe animations run in hand (holder known); transforms, recoil and the muzzle flash stay in the gun renderer, which
  * reads the marker bones ({@link #marker}) of the last draw.
@@ -34,6 +35,7 @@ public class GeoGunModel extends TGModel {
     private GeoAnimInput animInput;
     @Nullable
     private ResourceLocation partTexture;
+    private Map<String, RenderType> boneTypes = Map.of();
     /** Marker bone poses of the last draw (all parts). */
     private final Map<String, Matrix4f> markers = new HashMap<>();
     /** See {@link #turned()}. */
@@ -120,7 +122,7 @@ public class GeoGunModel extends TGModel {
             }
             List<String> meshes = new ArrayList<>();
             boolean drawn = TGGeoBridge.get().render(geoIds[part], poseStack, Minecraft.getInstance().renderBuffers().bufferSource(),
-                    vertices, partTexture, light, overlay, anim,
+                    vertices, partTexture, boneTypes, light, overlay, anim,
                     bones -> partModel(part).animateGeoBones(turned ? new TurnedBones(bones) : bones, part, ammoLeft, reloadProgress,
                             fireProgress, chargeProgress, context),
                     (name, pose) -> {
@@ -173,6 +175,11 @@ public class GeoGunModel extends TGModel {
     @Override
     public void setPartTexture(@Nullable ResourceLocation texture) {
         this.partTexture = texture;
+    }
+
+    @Override
+    public void setBoneTypes(Map<String, RenderType> boneTypes) {
+        this.boneTypes = boneTypes;
     }
 
     @Override

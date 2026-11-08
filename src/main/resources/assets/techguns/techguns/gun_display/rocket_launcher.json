@@ -1,18 +1,20 @@
 {
+  "bone_textures": {
+    "rocket": {
+      "ammo_textures": {
+        "default": "techguns:textures/guns/rocket.png",
+        "high_velocity": "techguns:textures/guns/rocket_hv.png",
+        "nuke": "techguns:textures/guns/rocket_nuke.png"
+      },
+      "render_type": "cutout"
+    }
+  },
   "muzzle_flash": {
     "effect": "gun",
     "scale": 0.87
   },
   "parts": [
     {
-      "render_type": "cutout"
-    },
-    {
-      "ammo_textures": {
-        "default": "techguns:textures/guns/rocket.png",
-        "high_velocity": "techguns:textures/guns/rocket_hv.png",
-        "nuke": "techguns:textures/guns/rocket_nuke.png"
-      },
       "render_type": "cutout"
     }
   ],

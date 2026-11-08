@@ -27,6 +27,9 @@ import techguns.gun.ammo.AmmoType;
  * @param muzzleFollowsAnimation the muzzle flash sits on the animated {@code muzzle} bone (true) or at its rest pose
  * @param texture                the texture of every render part (a camo or a {@link Part} texture replaces it)
  * @param parts                  the render parts, one per geo file of the gun
+ * @param boneTextures           bones (with their children) drawn with their own texture and render type, after the rest of
+ *                               the model: by mining head level or loaded ammo, else the gun's texture (a blade, a drill
+ *                               head, the loaded rocket)
  * @param muzzleFlash            drawn at the {@code muzzle} bone when the gun fires
  * @param chargeEffect           drawn at the {@code charge} bone while the gun charges
  * @param idleEffect             drawn at the {@code idle_fx} bone while the gun is idle and not under water, looping every
@@ -34,7 +37,7 @@ import techguns.gun.ammo.AmmoType;
  * @param scope                  overlay drawn instead of the gun while aiming
  */
 public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optional<Motion> charge, boolean muzzleFollowsAnimation,
-                         ResourceLocation texture, List<Part> parts, Optional<Effect> muzzleFlash, Optional<Effect> chargeEffect,
+                         ResourceLocation texture, List<Part> parts, Map<String, Part> boneTextures, Optional<Effect> muzzleFlash, Optional<Effect> chargeEffect,
                          Optional<Effect> idleEffect, Optional<Scope> scope) {
     public static final Codec<GunDisplay> CODEC = RecordCodecBuilder.create(i -> i.group(
             Motion.CODEC.optionalFieldOf("recoil").forGetter(GunDisplay::recoil),
@@ -43,6 +46,7 @@ public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optio
             Codec.BOOL.optionalFieldOf("muzzle_follows_animation", true).forGetter(GunDisplay::muzzleFollowsAnimation),
             ResourceLocation.CODEC.fieldOf("texture").forGetter(GunDisplay::texture),
             Part.CODEC.listOf().fieldOf("parts").forGetter(GunDisplay::parts),
+            Codec.unboundedMap(Codec.STRING, Part.CODEC).optionalFieldOf("bone_textures", Map.of()).forGetter(GunDisplay::boneTextures),
             Effect.CODEC.optionalFieldOf("muzzle_flash").forGetter(GunDisplay::muzzleFlash),
             Effect.CODEC.optionalFieldOf("charge_effect").forGetter(GunDisplay::chargeEffect),
             Effect.CODEC.optionalFieldOf("idle_effect").forGetter(GunDisplay::idleEffect),
@@ -55,19 +59,11 @@ public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optio
         if (part >= parts.size()) {
             return null;
         }
-        Part p = parts.get(part);
-        if (headLevel >= 0 && headLevel < p.headLevelTextures().size()) {
-            return p.headLevelTextures().get(headLevel);
-        }
-        if (!p.ammoTextures().isEmpty()) {
-            ResourceLocation byAmmo = ammoVariant != null ? p.ammoTextures().get(ammoVariant) : null;
-            return byAmmo != null ? byAmmo : p.ammoTextures().get(AmmoType.DEFAULT);
-        }
-        return null;
+        return parts.get(part).texture(headLevel, ammoVariant);
     }
 
     /**
-     * One render part (geo file).
+     * One render part (geo file), or one bone drawn with its own texture ({@link #boneTextures}).
      *
      * @param renderType        how the part is blended
      * @param headLevelTextures the part's texture per installed mining head level (powered melee tools); higher levels use
@@ -81,6 +77,19 @@ public record GunDisplay(Optional<Motion> recoil, Optional<Motion> reload, Optio
                 ResourceLocation.CODEC.listOf().optionalFieldOf("head_level_textures", List.of()).forGetter(Part::headLevelTextures),
                 Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("ammo_textures", Map.of()).forGetter(Part::ammoTextures)
         ).apply(i, Part::new));
+
+        /** The texture by mining head level or loaded ammo if the part has one, else null (the gun's texture). */
+        @Nullable
+        public ResourceLocation texture(int headLevel, @Nullable String ammoVariant) {
+            if (headLevel >= 0 && headLevel < headLevelTextures.size()) {
+                return headLevelTextures.get(headLevel);
+            }
+            if (!ammoTextures.isEmpty()) {
+                ResourceLocation byAmmo = ammoVariant != null ? ammoTextures.get(ammoVariant) : null;
+                return byAmmo != null ? byAmmo : ammoTextures.get(AmmoType.DEFAULT);
+            }
+            return null;
+        }
     }
 
     public enum PartRenderType implements StringRepresentable {

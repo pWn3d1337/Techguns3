@@ -1,6 +1,8 @@
 package techguns.client.render.item;
 
 import net.minecraft.world.item.ItemStack;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -307,6 +309,7 @@ public class RenderGunBase extends RenderItemBase {
             }
 
             int partCount = display != null ? display.parts().size() : parts;
+            model.setBoneTypes(display != null ? this.boneTypes(context, display, ammoVariant) : Map.of());
             for (int i = 0; i < partCount; i++) {
                 ResourceLocation texture = this.partTexture(context, i, display, ammoVariant);
                 RenderType renderType = display != null ? display.parts().get(i).renderType().renderType(texture)
@@ -316,6 +319,7 @@ public class RenderGunBase extends RenderItemBase {
                         transform, i, fireProgress, chargeProgress, light, overlay);
             }
             this.model.setPartTexture(null);
+            this.model.setBoneTypes(Map.of());
             this.model.setAnimInput(null);
             poseStack.popPose();
 
@@ -483,9 +487,30 @@ public class RenderGunBase extends RenderItemBase {
         if (display == null) {
             return this.partTexture(context, part);
         }
-        int headLevel = context.stack().getItem() instanceof MeleeToolItem tool ? tool.headLevel(context.stack()) : -1;
-        ResourceLocation texture = display.partTexture(part, headLevel, ammoVariant);
+        ResourceLocation texture = display.partTexture(part, headLevel(context), ammoVariant);
         return texture != null ? texture : camoTexture(context.stack()).orElse(display.texture());
+    }
+
+    /**
+     * Render type of each bone with its own texture ({@link GunDisplay#boneTextures}): by mining head level or loaded ammo,
+     * else the camo, else the file's texture.
+     */
+    protected Map<String, RenderType> boneTypes(ItemRenderContext context, GunDisplay display, @Nullable String ammoVariant) {
+        if (display.boneTextures().isEmpty()) {
+            return Map.of();
+        }
+        int headLevel = headLevel(context);
+        Map<String, RenderType> types = new HashMap<>();
+        display.boneTextures().forEach((bone, part) -> {
+            ResourceLocation texture = part.texture(headLevel, ammoVariant);
+            types.put(bone, part.renderType().renderType(texture != null ? texture : camoTexture(context.stack()).orElse(display.texture())));
+        });
+        return types;
+    }
+
+    /** The installed mining head level of a powered melee tool, else -1. */
+    private static int headLevel(ItemRenderContext context) {
+        return context.stack().getItem() instanceof MeleeToolItem tool ? tool.headLevel(context.stack()) : -1;
     }
 
     /** Texture of one render part; overridden where it depends on the stack (mining heads). */

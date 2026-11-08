@@ -1,4 +1,13 @@
 {
+  "bone_textures": {
+    "head": {
+      "head_level_textures": [
+        "techguns:textures/guns/powerhammer.png",
+        "techguns:textures/guns/powerhammer_obsidian.png",
+        "techguns:textures/guns/powerhammer_carbon.png"
+      ]
+    }
+  },
   "charge": {
     "first_person": {
       "animation": "charge_generic",
@@ -9,14 +18,7 @@
     }
   },
   "parts": [
-    {},
-    {
-      "head_level_textures": [
-        "techguns:textures/guns/powerhammer.png",
-        "techguns:textures/guns/powerhammer_obsidian.png",
-        "techguns:textures/guns/powerhammer_carbon.png"
-      ]
-    }
+    {}
   ],
   "recoil": {
     "first_person": {

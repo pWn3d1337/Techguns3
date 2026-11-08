@@ -1,5 +1,6 @@
 package techguns.client.model;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -96,6 +97,13 @@ public abstract class TGModel extends Model {
      * passes ({@link TGGeoBridge#TRANSLUCENT}, {@link TGGeoBridge#CUTOUT}) with it. Only geo models use it.
      */
     public void setPartTexture(@Nullable ResourceLocation texture) {
+    }
+
+    /**
+     * Bones drawn with their own texture in the next part draws (the display file's {@code bone_textures}), by bone name;
+     * set by the gun renderer. Only geo models use it.
+     */
+    public void setBoneTypes(Map<String, RenderType> boneTypes) {
     }
 
     /**

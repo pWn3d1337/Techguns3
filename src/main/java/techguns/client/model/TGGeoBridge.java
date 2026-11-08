@@ -1,5 +1,6 @@
 package techguns.client.model;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -8,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
@@ -46,6 +48,8 @@ public interface TGGeoBridge {
      *
      * @param texture the part's texture for the {@link #TRANSLUCENT} and {@link #CUTOUT} bones; null = those bones are not
      *                drawn
+     * @param boneTypes bones (with their children) left out of the main draw and drawn after it with their own render type,
+     *                  which carries their texture (the display file's {@code bone_textures})
      * @param anim    timer progress the keyframe animations are sampled at
      * @param bones   code-driven bone changes, applied after the keyframe animations
      * @param markers receives the pose of each marker bone's pivot ({@link #isMarker}), in the pose stack's root space, and
@@ -53,7 +57,7 @@ public interface TGGeoBridge {
      * @return false if the model isn't available, so the caller draws the Java model instead
      */
     boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, @Nullable ResourceLocation texture,
-                   int light, int overlay, GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers);
+                   Map<String, RenderType> boneTypes, int light, int overlay, GeoAnimInput anim, Consumer<GeoBones> bones, BiConsumer<String, Matrix4f> markers);
 
     /**
      * Moves {@code poseStack} by the {@code root} bone of animation {@code animation} (the gun's file

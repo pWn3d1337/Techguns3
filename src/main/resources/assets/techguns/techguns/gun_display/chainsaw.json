@@ -1,4 +1,22 @@
 {
+  "bone_textures": {
+    "blade1": {
+      "head_level_textures": [
+        "techguns:textures/guns/chainsaw.png",
+        "techguns:textures/guns/chainsaw_blades_obsidian.png",
+        "techguns:textures/guns/chainsaw_blades_carbon.png"
+      ],
+      "render_type": "cutout"
+    },
+    "blade2": {
+      "head_level_textures": [
+        "techguns:textures/guns/chainsaw.png",
+        "techguns:textures/guns/chainsaw_blades_obsidian.png",
+        "techguns:textures/guns/chainsaw_blades_carbon.png"
+      ],
+      "render_type": "cutout"
+    }
+  },
   "charge": {
     "first_person": {
       "animation": "charge_generic",
@@ -10,14 +28,6 @@
   },
   "parts": [
     {
-      "render_type": "cutout"
-    },
-    {
-      "head_level_textures": [
-        "techguns:textures/guns/chainsaw.png",
-        "techguns:textures/guns/chainsaw_blades_obsidian.png",
-        "techguns:textures/guns/chainsaw_blades_carbon.png"
-      ],
       "render_type": "cutout"
     }
   ],

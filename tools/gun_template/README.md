@@ -49,4 +49,6 @@ The group `root > m4_reference` holds the M4 with its own texture, hidden and no
 - Hold positions: the Bedrock format has no Display tab; edit the `display` block of the item model json (values
   in Blockbench Display units), or tune them in the GeckoLib plugin's animated item format.
 - Texture: box UV, each part has its own color so the UV islands are easy to find. Paint over it.
+- A bone that needs its own texture (a head that changes with the mining head level, a round that changes with the
+  loaded ammo) stays in the same model: list it under `bone_textures` in the display json.
 - A new gun item still needs its registration and renderer in code (`TGGuns`, `TGItemRendererSetup`).

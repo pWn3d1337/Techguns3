@@ -41,6 +41,7 @@ Shared animations and code find bones by name. Every gun uses:
 | `mesh_*` | Empty bones (pivot 0) where the gun model draws a mesh geo cubes can't express (`TGModel#renderMesh`); the grenade launcher's OBJ meshes (implemented). |
 | `*_translucent` / `*_cutout` | Bone (and its children) drawn in a second pass with that render type and the part's texture; replaces the split files of NDR and GML (implemented). |
 | `ammo_*` | Variant bones shown only for the matching loaded ammo (rocket launcher rocket), instead of a separate geo file and texture swap. |
+| any bone in `bone_textures` | Bone (and its children) drawn in its own pass with its own texture and render type from the display JSON: by mining head level or loaded ammo (drill/hammer `head`, chainsaw `blade1`/`blade2`, launcher `rocket`). Replaces their split geo files (implemented). |
 
 Missing bones are fine: GeckoLib skips animation tracks whose bone the model lacks.
 
@@ -133,7 +134,8 @@ Only what isn't motion:
 - muzzle/charge/idle effect type, scale and jitter, `muzzle_follows_animation`;
 - scope overlay and its scale;
 - player arm pose;
-- the shared animations used (names) and the `tg_recoil_move` / `tg_recoil_turn` multipliers.
+- the shared animations used (names) and the `tg_recoil_move` / `tg_recoil_turn` multipliers;
+- `bone_textures`: bone name -> `render_type`, `head_level_textures`, `ammo_textures` (same fields as a `parts` entry); without a match the bone uses the camo or `texture`.
 
 A resource pack can override this file, and an addon gun needs only geo, item model, texture, animation and display files.
 
@@ -341,6 +343,7 @@ A resource pack can override this file, and an addon gun needs only geo, item mo
   - Code renderers without a display file keep their fields (converted to the same effect records) until the fallback is deleted.
   - Checked in game: M4 flash with jitter, SCAR scope overlay with recoil, flamethrower pilot flame, mining drill head texture, rocket launcher rocket texture. Build and 378 GameTests pass.
 - **2026-11-06, phase 7: gun JSON out of datagen.** The 44 `gun_display/<gun>.json` and gun item models (`models/item/<gun>.json`, with the Blockbench display transforms) moved from `src/generated` to `src/main/resources` and are edited by hand now. `TGGunDisplayProvider`, the renderers' `exportDisplay` / `exportItemTransforms` and their helpers are gone; `TGItemModelProvider` no longer writes gun models. Build, runData and 378 GameTests pass.
+- **2026-11-08: per-bone textures, split files gone.** `gun_display` gets `bone_textures` (bone name -> render type, head level and ammo textures). `GeckoLibGunRenderer` leaves those bones out of the main draw and draws each in its own pass (`TGGeoBridge#render` takes the bone render types; markers inside a pass bone are reported by its pass). `chainsaw_1`, `mining_drill_1`, `power_hammer_1` and `rocket_launcher_1` are merged into their main geo files (bones under `root`, no name clashes); every gun is one geo file now. Checked in game: rocket texture follows the loaded ammo (nuke), drill and hammer heads follow the head level (carbon), all four guns draw complete in item frames and in hand.
 - **Next:**
   - Author decision (2026-11-06): the Java gun models, the fallback, `GunAnimation`, the conversion tools and `RenderGunBase90` stay for now; delete them only when the author asks.
   - Phase 7 docs done (design doc section 9.1, `port_status.md`, `migration_26.md`); phase 7 is complete apart from the deferred deletions.
