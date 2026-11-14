@@ -113,6 +113,9 @@ neoForge {
             // in the user's ~/.gradle/gradle.properties
             programArguments.addAll '--width', project.findProperty('client_width') ?: '2560',
                     '--height', project.findProperty('client_height') ?: '1080'
+            // local player skin forced by techguns_dev (the offline profile 'Dev' would get slim Efe); -Pdev_skin=slim/alex
+            // etc. for a slim-arm check, -Pdev_skin=none for the profile's own skin
+            systemProperty 'techguns_dev.skin', project.findProperty('dev_skin') ?: 'wide/efe'
         }
 
         // second player for multiplayer checks: run with -Puse_mcpfabric=false next to runServer and runClient

@@ -660,6 +660,9 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.configuration.tgArmorSystem", "Techguns Armor System");
         add("techguns.configuration.damagePvP", "PvP Damage Multiplier");
         add("techguns.configuration.damageFactorNPC", "NPC Damage Multiplier");
+        add("techguns.configuration.section.techguns.client.toml", "Techguns 3 Client Config");
+        add("techguns.configuration.section.techguns.client.toml.title", "Techguns 3 Client Config");
+        add("techguns.configuration.firstPersonArms", "First Person Arms");
     }
 
     private void addDamage() {

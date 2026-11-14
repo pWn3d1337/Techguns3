@@ -40,8 +40,24 @@ Read this together with [CLAUDE.md](../CLAUDE.md), [Techguns3_design.md](../Tech
   since `fdf6202`; datagen no longer writes it. A `GunItem` with no setup in `TGItemRendererSetup` is drawn from its
   data files alone. After F3+T the log ends with `Gun data check: 44 guns, 44 display files, 18 screen effects, 0
   problem(s)`.
-- Build OK on `master` after the merge. The last full GameTest run (378 pass) was before the 2026-11-08 steps; those
-  were client-only and checked in game, `runData` and `runGameTestServer` were not run since.
+- 2026-11-09 on `master` (`320b6e6`): `runData` leaves the generated files unchanged, build OK, all 378 GameTests
+  pass. Local `master` is 32 commits ahead of `origin/master` (not pushed).
+- 2026-11-09: **first-person arms** (plan doc Progress entry of that date): `hand_right` / `hand_left` bones in all 44
+  geo files and the template, `FirstPersonArms`, client config `firstPersonArms`, `tools/hand_bones.py`, new
+  `/tgdebug handpreview`, `mainarm`, `reloadres`, `shot`, `shotseq`. Hand positions are drafts for the author to polish.
+  Tuning loop without a client restart: `hand_bones.py --set ...`, `./gradlew processResources`, `/tgdebug reloadres`,
+  then `/tgdebug shotseq 40 <guns>` and a contact sheet of `run/screenshots/<gun>.png` (crop 860..2560 x 380..1080).
+- 2026-11-11: the author wants the hand positions adjusted on most guns. The dev client now uses a wide-arm skin
+  (`techguns_dev` `DevSkin`, `-Pdev_skin=...`); the first tuning pass was done with slim arms (`Dev` = slim Efe).
+- 2026-11-12: hands retuned lower with `tools/hand_retune.py` and the wide skin (plan doc Progress entry). Still
+  drafts for the author; the arms step (since `320b6e6`) is not committed yet. The author tunes hands in Blockbench
+  (geo file opened directly, or `art/<gun>.bbmodel`; the M4 is done and saved as `art/m4.bbmodel`); after each export
+  run `python tools/geo_tidy.py <gun>`, which restores the committed bone order and formatting so the diff shows only
+  the edited bones.
+- MCP token: on 2026-11-09 `run/config/mcpfabric.config.json` again held a token other than the MCP server's (this PC);
+  synced from `~/.claude.json` with a Python script (`ConvertFrom-Json` fails on that file: duplicate keys differing in
+  case), never printed. Write the client TOML config with Python, not PowerShell `Set-Content -Encoding utf8` (BOM: the
+  config is recreated with defaults).
 
 ### Next steps (gun animation)
 

@@ -17,8 +17,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import com.mojang.serialization.MapCodec;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -30,8 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Dev-only helper mod (source set {@code dev}, see build.gradle): an infinite Forge Energy source for testing the
- * Techguns machines. It is on every dev run (client, server, GameTests) but never in the Techguns jar or its
- * published dependencies.
+ * Techguns machines, and on the client a fixed wide-arm skin for the local player ({@link DevSkin}). It is on every dev
+ * run (client, server, GameTests) but never in the Techguns jar or its published dependencies.
  */
 @Mod(TechgunsDev.MOD_ID)
 public final class TechgunsDev {
@@ -57,6 +59,9 @@ public final class TechgunsDev {
         BLOCK_ENTITIES.register(modBus);
         modBus.addListener(TechgunsDev::registerCapabilities);
         modBus.addListener(TechgunsDev::addToCreativeTab);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            DevSkin.init();
+        }
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {

@@ -448,15 +448,27 @@ public final class GeckoLibGunRenderer implements TGGeoBridge {
                 if (passDepth > 0) {
                     // markers inside a pass bone (left out of the main draw) are reported by their pass
                     reportMarker(poseStack, bone);
-                    super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+                    renderCubes(poseStack, bone, buffer, packedLight, packedOverlay, colour);
                 }
                 return;
             }
             reportMarker(poseStack, bone);
-            super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+            renderCubes(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+        }
+
+        /** The hand bones' cubes are an arm preview for Blockbench, drawn only with /tgdebug handpreview. */
+        private void renderCubes(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay,
+                                 int colour) {
+            if (!bone.getName().startsWith(TGGeoBridge.HAND) || TGGeoBridge.handPreview()) {
+                super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+            }
         }
 
         private void reportMarker(PoseStack poseStack, GeoBone bone) {
+            if (markers != null && ROOT.equals(bone.getName())) {
+                // the frame of root's children: the model origin moved by the root bone
+                markers.accept(TGGeoBridge.ROOT, new Matrix4f(poseStack.last().pose()));
+            }
             if (markers != null && TGGeoBridge.isMarker(bone.getName())) {
                 Matrix4f pose = new Matrix4f(poseStack.last().pose())
                         .translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);

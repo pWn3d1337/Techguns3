@@ -33,6 +33,9 @@ import techguns.client.render.CamoTextures;
 import techguns.client.render.TGMatrixOps;
 import techguns.client.render.fx.GunEffect;
 import techguns.client.render.fx.IScreenEffect;
+import net.minecraft.client.player.AbstractClientPlayer;
+import techguns.TGConfig;
+import techguns.gun.GunHands;
 import techguns.gun.GunItem;
 import techguns.gun.MeleeToolItem;
 
@@ -336,6 +339,14 @@ public class RenderGunBase extends RenderItemBase {
                 model.setPartTexture(texture);
                 model.render(entity, poseStack, buffers.getBuffer(renderType), state.loadedAmmo(), reloadProgress,
                         transform, i, fireProgress, chargeProgress, light, overlay);
+            }
+            // the holder's arms at the hand bones the draw just reported
+            if (firstPerson && display != null && !leftHand) {
+                FirstPersonArms.remember(this.model);
+            }
+            if (firstPerson && display != null && TGConfig.FIRST_PERSON_ARMS.get() && entity instanceof AbstractClientPlayer player
+                    && !player.isInvisible()) {
+                FirstPersonArms.render(this.model, poseStack, buffers, light, player, leftHand, GunHands.isTwoHanded(context.stack()));
             }
             this.model.setPartTexture(null);
             this.model.setBoneTypes(Map.of());

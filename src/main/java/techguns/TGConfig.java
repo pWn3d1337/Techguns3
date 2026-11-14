@@ -201,6 +201,10 @@ public final class TGConfig {
             .comment("Shows the button of the Techguns inventory tab on the inventory screen when Curios is installed too. The tab's "
                     + "gear slots show the same items as the Curios slots. Without Curios the button is always shown.")
             .define("inventoryTabWithCurios", true);
+    public static final ModConfigSpec.BooleanValue FIRST_PERSON_ARMS = CLIENT
+            .comment("Draws the player's arm holding the gun in first person, and the second arm on two-handed guns. The gun "
+                    + "models place the hands (hand_right and hand_left bones).")
+            .define("firstPersonArms", true);
 
     static final ModConfigSpec CLIENT_SPEC = CLIENT.build();
 

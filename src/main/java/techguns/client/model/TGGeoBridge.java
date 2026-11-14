@@ -37,9 +37,36 @@ public interface TGGeoBridge {
      * ({@link TGModel#renderMesh}, the grenade launcher's OBJ meshes), so the mesh follows the bone's animation.
      */
     String MESH = "mesh_";
+    /**
+     * Hand bones: where the player's first-person arms hold the gun ({@code FirstPersonArms}), authored for a right-handed
+     * hold and mirrored for the left. The pivot is the centre of the hand end of the arm, which extends along the bone's +Y
+     * toward the shoulder. The arm is drawn at vanilla's first-person arm size, whatever the gun's display scale. Their
+     * cubes are an arm-sized preview for Blockbench (4 x 12 x 4 px divided by the first-person display scale) and are
+     * not drawn (see {@link #handPreview}).
+     */
+    String HAND = "hand_";
+    /** The grip (trigger) hand. */
+    String HAND_RIGHT = "hand_right";
+    /** The support hand, drawn on two-handed guns. */
+    String HAND_LEFT = "hand_left";
+    /**
+     * The frame of the {@code root} bone's children (the model origin moved by the root bone), reported with the markers;
+     * mirroring the hands for left-side draws.
+     */
+    String ROOT = "#root";
 
     static boolean isMarker(String bone) {
-        return bone.startsWith(MUZZLE) || bone.startsWith("charge") || bone.startsWith("idle_fx") || bone.startsWith(MESH);
+        return bone.startsWith(MUZZLE) || bone.startsWith("charge") || bone.startsWith("idle_fx") || bone.startsWith(MESH)
+                || bone.startsWith(HAND);
+    }
+
+    /** Dev testing (/tgdebug handpreview): also draws the preview cubes of the hand bones. */
+    static boolean handPreview() {
+        return Holder.handPreview;
+    }
+
+    static void setHandPreview(boolean preview) {
+        Holder.handPreview = preview;
     }
 
     /**
@@ -55,6 +82,7 @@ public interface TGGeoBridge {
      * @param bones   code-driven bone changes, applied after the keyframe animations
      * @param markers receives the pose of each marker bone's pivot ({@link #isMarker}), in the pose stack's root space, and
      *                its rest pose under the name plus {@link #REST}; also the model origin under {@link #MODEL} plus {@code id}
+     *                and the {@code root} bone's frame under {@link #ROOT}
      * @return false if the model isn't available, so the caller draws the Java model instead
      */
     boolean render(String id, PoseStack poseStack, MultiBufferSource buffers, VertexConsumer buffer, @Nullable ResourceLocation texture,
@@ -88,6 +116,7 @@ public interface TGGeoBridge {
     final class Holder {
         private static TGGeoBridge bridge;
         private static boolean enabled = true;
+        private static boolean handPreview;
 
         private Holder() {
         }

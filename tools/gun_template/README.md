@@ -24,6 +24,8 @@ Blockbench.
 | `bolt` | bolt | Moving part; the template `reload` pulls it back. |
 | `sight_glow` | red dot `[-0.5, 10, 0]` | Any bone whose name contains `_glow` is drawn full bright. The dot sits in an open ring sight (cubes in `root`), at the M4 red dot height, so `aim` puts it on the crosshair. |
 | `muzzle` | barrel tip | Empty marker: the muzzle flash is drawn here. Keep it empty and move it to the new barrel tip. |
+| `hand_right` | grip | The player's grip hand in first person. The pivot is the centre of the hand end of the arm; the arm runs along the bone's +Y toward the shoulder, so the bone rotation aims it. The cube is an arm-sized preview (4 x 12 x 4 px divided by the first-person display scale, 8 x 24 x 8 for the M4's 0.5) and is not drawn in game: move and turn the bone until the preview lies where the arm should be. |
+| `hand_left` | handguard | The support hand, drawn on two-handed guns (`hand_type` two-handed); same rules. Both hands are authored for a right-handed hold and mirrored for left-handed players and offhand guns. Parent a hand to a moving part (a pump) to let it follow that part's keyframes. |
 
 Other standard names (`slide`, `barrel`, `hammer`, `cylinder`, `belt`, `drum`, `charge`, `idle_fx`, `mesh_*`,
 `*_translucent`, `*_cutout`, `ammo_*`) are listed in `docs/gun_animation_plan.md` (Bone naming convention). Bones
@@ -58,5 +60,16 @@ The group `root > m4_reference` holds the M4 with its own texture, hidden and no
 - Muzzle flash, charge effect and scope overlay name screen effect files (`techguns/screen_effect/<name>.json`, e.g.
   `rifle`, `laser`, `sniper_scope`); a gun with its own flash adds a file there in its namespace and names it
   `<namespace>:<name>`.
+- Hand bones in game: `/tgdebug handpreview` draws the preview cubes next to the arms; `python tools/hand_bones.py
+  --set <geo file> <hand_right|hand_left> x,y,z rx,ry,rz` moves a hand and keeps its preview cube on the pivot;
+  `python tools/hand_retune.py <gun>` places both hands under the handguard and on the grip from the model geometry,
+  as a starting point. The arms can be turned off in the client config (`firstPersonArms`).
+- Blockbench's orbit view makes a hand look higher than in game, where the arm runs toward the camera and mostly
+  leaves the screen. To judge a hand as the game shows it, hold the gun in game, run `/tgdebug eyepos` and set
+  Blockbench's camera to the printed `eye` (perspective, fov 70, looking along -Z; *View > Angle* can save it).
+- Editing an existing gun: open its `.geo.json` in Blockbench (*File > Open Model*), edit, save or export over it, then
+  run `python tools/geo_tidy.py <gun>`. Blockbench rewrites the whole file (bone order, `0.0` as `0`, visible bounds,
+  `mirror` on per-face UV cubes); the script restores the committed version of everything that didn't change, so the
+  diff shows only the edited bones (`--dry` reports without writing, `--base <rev>` compares with another commit).
 - After a resource reload (F3+T) search the log for `Gun data check:`: missing files, bone names the geo file lacks
   and unknown animation names are listed there, one line each, with a summary line at the end.

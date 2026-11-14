@@ -8,14 +8,20 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
 import net.minecraft.commands.Commands;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import techguns.client.gun.ClientGunController;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.model.TGGeoExporter;
+import techguns.Techguns;
+import techguns.client.render.item.FirstPersonArms;
 import techguns.client.render.item.GunConversion;
 import techguns.client.render.item.GunRenderState;
 import techguns.client.model.gun.ModelSawedOff;
@@ -57,7 +63,41 @@ import techguns.client.render.entity.RenderLateEntityRenderer;
  * Not registered in production builds.
  */
 public final class TGDebugCommands {
+    /** Pending {@code /tgdebug shot}: file name and client ticks left; null = none. */
+    private static String shotName;
+    private static int shotTicks;
+    private static boolean shotListener;
+
     private TGDebugCommands() {
+    }
+
+    /** Pending {@code /tgdebug shotseq}: guns still to hold and shoot, and the delay after each swap. */
+    private static final java.util.ArrayDeque<String> shotGuns = new java.util.ArrayDeque<>();
+    private static int shotDelay;
+
+    private static void scheduleShot(String name, int delay) {
+        shotName = name;
+        shotTicks = delay;
+        if (!shotListener) {
+            shotListener = true;
+            NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> tickShots());
+        }
+    }
+
+    private static void tickShots() {
+        Minecraft mc = Minecraft.getInstance();
+        if (shotName != null && shotTicks-- <= 0) {
+            String file = shotName + ".png";
+            shotName = null;
+            Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), message -> {
+            });
+        } else if (shotName == null && !shotGuns.isEmpty() && mc.player != null) {
+            // the next gun of the sequence into the selected hotbar slot, then a shot once it is equipped
+            String gun = shotGuns.poll();
+            mc.player.connection.sendCommand("item replace entity @s hotbar." + mc.player.getInventory().selected + " with techguns:" + gun);
+            shotName = gun;
+            shotTicks = shotDelay;
+        }
     }
 
     public static void register(RegisterClientCommandsEvent event) {
@@ -147,6 +187,63 @@ public final class TGDebugCommands {
                             // Q3 prototype: switch the M4 between the GeckoLib geo model and the Java model
                             TGGeoBridge.setEnabled(!TGGeoBridge.enabled());
                             ctx.getSource().sendSystemMessage(Component.literal("Geo models: " + TGGeoBridge.enabled()));
+                            return 1;
+                        }))
+                .then(Commands.literal("handpreview")
+                        .executes(ctx -> {
+                            // draws the hand bones' arm-sized preview cubes, to check the first-person arms against them
+                            TGGeoBridge.setHandPreview(!TGGeoBridge.handPreview());
+                            ctx.getSource().sendSystemMessage(Component.literal("Hand bone preview: " + TGGeoBridge.handPreview()));
+                            return 1;
+                        }))
+                .then(Commands.literal("eyepos")
+                        .executes(ctx -> {
+                            // the first-person camera in the held gun's model space (Blockbench coordinates), to view
+                            // hand bones in Blockbench as the game shows them; also written to the log
+                            String report = FirstPersonArms.eyeReport();
+                            if (report == null) {
+                                report = "No first-person gun drawn yet";
+                            }
+                            Techguns.LOGGER.info("Eye position: {}", report);
+                            ctx.getSource().sendSystemMessage(Component.literal(report));
+                            return 1;
+                        }))
+                .then(Commands.literal("shot")
+                        .then(Commands.argument("name", StringArgumentType.word())
+                                .then(Commands.argument("delay", IntegerArgumentType.integer(0, 200))
+                                        .executes(ctx -> {
+                                            // saves a screenshot (run/screenshots/<name>.png) after the delay, e.g. once a
+                                            // newly held gun's equip animation is over; for comparing many guns by file
+                                            scheduleShot(StringArgumentType.getString(ctx, "name"), IntegerArgumentType.getInteger(ctx, "delay"));
+                                            return 1;
+                                        }))))
+                .then(Commands.literal("shotseq")
+                        .then(Commands.argument("delay", IntegerArgumentType.integer(0, 200))
+                                .then(Commands.argument("guns", StringArgumentType.greedyString())
+                                        .executes(ctx -> {
+                                            // holds each gun in turn (item replace into the selected slot) and saves a
+                                            // screenshot run/screenshots/<gun>.png after the delay
+                                            shotGuns.addAll(List.of(StringArgumentType.getString(ctx, "guns").split(" ")));
+                                            shotDelay = IntegerArgumentType.getInteger(ctx, "delay");
+                                            scheduleShot(null, 0);
+                                            return 1;
+                                        }))))
+                .then(Commands.literal("reloadres")
+                        .executes(ctx -> {
+                            // F3+T for tools without key input: reloads the resource packs (run processResources first
+                            // so the dev client sees changed source assets)
+                            Minecraft.getInstance().reloadResourcePacks();
+                            ctx.getSource().sendSystemMessage(Component.literal("Reloading resource packs"));
+                            return 1;
+                        }))
+                .then(Commands.literal("mainarm")
+                        .executes(ctx -> {
+                            // switches the main arm (left-side gun draws, mirrored first-person arms)
+                            Minecraft mc = Minecraft.getInstance();
+                            HumanoidArm arm = mc.options.mainHand().get().getOpposite();
+                            mc.options.mainHand().set(arm);
+                            mc.options.broadcastOptions();
+                            ctx.getSource().sendSystemMessage(Component.literal("Main arm: " + arm));
                             return 1;
                         }))
                 .then(Commands.literal("pose")

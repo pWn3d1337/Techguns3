@@ -26,6 +26,7 @@ import techguns.client.model.GeoGunModel;
 import techguns.client.model.TGGeoBridge;
 import techguns.client.render.fx.IScreenEffect;
 import techguns.client.render.fx.ScreenEffects;
+import techguns.gun.GunHandType;
 import techguns.gun.GunItem;
 
 /**
@@ -140,6 +141,13 @@ final class GunDisplayCheck {
             marker(gun, bones, "idle_effect", "idle_fx");
             effect(gun, "idle_effect", e.effect());
         });
+        if (!bones.isEmpty() && !bones.contains(TGGeoBridge.HAND_RIGHT)) {
+            problems.add(gun + ": no " + TGGeoBridge.HAND_RIGHT + " bone, no first-person arm is drawn");
+        }
+        if (!bones.isEmpty() && BuiltInRegistries.ITEM.get(gun) instanceof GunItem item
+                && item.stats().handType() == GunHandType.TWO_HANDED && !bones.contains(TGGeoBridge.HAND_LEFT)) {
+            problems.add(gun + ": two-handed but no " + TGGeoBridge.HAND_LEFT + " bone, no support arm is drawn");
+        }
         display.scope().ifPresent(s -> effect(gun, "scope", s.effect()));
         display.recoil().ifPresent(m -> motion(gun, animations, "recoil", m));
         display.reload().ifPresent(m -> motion(gun, animations, "reload", m));
