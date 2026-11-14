@@ -32,7 +32,7 @@ public class TGItemTagsProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         // the crowbar is a pickaxe and the Techguns wrench (Techguns 2 tool classes pickaxe and wrench)
         tag(ItemTags.PICKAXES).add(TGItems.CROWBAR.get());
-        tag(Tags.Items.TOOLS_WRENCH).add(TGItems.CROWBAR.get());
+        tag(Tags.Items.TOOLS_WRENCH).add(TGItems.CROWBAR.get(), TGItems.WRENCH.get());
         tag(ItemTags.SWORDS).add(TGItems.COMBAT_KNIFE.get());
         // everything an Ammo Bag accepts: all ammo items, full and empty
         // filled once the healing items are defined

@@ -50,6 +50,12 @@ public abstract class TGMachineMenu<T extends TGMachineBlockEntity> extends Abst
         return addSlot(new SlotItemHandler(machine.getInventory(), index, x, y));
     }
 
+    /** A machine slot of its own class (an output that gives experience); its index must follow the other machine slots. */
+    protected Slot addMachineSlot(Slot slot) {
+        machineSlots++;
+        return addSlot(slot);
+    }
+
     /** A machine slot showing a Techguns 2 empty slot icon ({@code textures/gui/emptyslots/emptyslot_<icon>.png}). */
     protected Slot addMachineSlot(int index, int x, int y, String icon) {
         Slot slot = addMachineSlot(index, x, y);

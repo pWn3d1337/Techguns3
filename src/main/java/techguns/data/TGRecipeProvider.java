@@ -461,6 +461,39 @@ public class TGRecipeProvider extends RecipeProvider {
         usedKeys(output, boots, plating, keys, "p p", "p p");
     }
 
+    /** Cables and pipes: 8 basic from materials; 8 of a tier around one part make 8 of the next tier. */
+    private void pipeRecipes(RecipeOutput output) {
+        var cable = techguns.transport.TGPipeKinds.CABLE;
+        var fluid = techguns.transport.TGPipeKinds.FLUID_PIPE;
+        var item = techguns.transport.TGPipeKinds.ITEM_PIPE;
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGItems.pipe(cable, 0).get(), 8)
+                .pattern("rrr").pattern("www").pattern("rrr")
+                .define('r', TGItems.RUBBER_BAR.get()).define('w', TGItems.COPPER_WIRE.get())
+                .unlockedBy(getHasName(TGItems.COPPER_WIRE.get()), has(TGItems.COPPER_WIRE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGItems.pipe(fluid, 0).get(), 8)
+                .pattern("ppp").pattern("ggg").pattern("ppp")
+                .define('p', TGTags.Items.plate("iron")).define('g', Tags.Items.GLASS_BLOCKS_COLORLESS)
+                .unlockedBy("has_iron_plate", has(TGTags.Items.plate("iron"))).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGItems.pipe(item, 0).get(), 8)
+                .pattern("ppp").pattern("ghg").pattern("ppp")
+                .define('p', TGTags.Items.plate("tin")).define('g', Tags.Items.GLASS_BLOCKS_COLORLESS).define('h', Items.HOPPER)
+                .unlockedBy("has_tin_plate", has(TGTags.Items.plate("tin"))).save(output);
+        upgradePipe(output, cable, 1, TGItems.GOLD_WIRE.get());
+        upgradePipe(output, cable, 2, TGItems.CIRCUIT_BOARD_ADVANCED.get());
+        upgradePipe(output, fluid, 1, TGItems.STEEL_PLATE.get());
+        upgradePipe(output, fluid, 2, TGItems.PUMP_MECHANISM.get());
+        upgradePipe(output, item, 1, TGItems.MECHANICAL_PARTS_IRON.get());
+        upgradePipe(output, item, 2, TGItems.CIRCUIT_BOARD.get());
+    }
+
+    private void upgradePipe(RecipeOutput output, techguns.transport.PipeKind kind, int tier, net.minecraft.world.level.ItemLike part) {
+        var lower = TGItems.pipe(kind, tier - 1).get();
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TGItems.pipe(kind, tier).get(), 8)
+                .pattern("ppp").pattern("pxp").pattern("ppp")
+                .define('p', lower).define('x', part)
+                .unlockedBy(getHasName(lower), has(lower)).save(output);
+    }
+
     /** Techguns 2 machines, the machine upgrade and the machine recipes. */
     private void buildMachineRecipes(RecipeOutput output) {
         // Metal Press: Techguns 2 has a block-of-iron and an iron-plate version
@@ -496,6 +529,28 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('i', TGTags.Items.plate("iron")).define('m', TGItems.MECHANICAL_PARTS_IRON.get())
                 .define('e', TGItems.ELECTRIC_ENGINE.get()).define('r', Tags.Items.DUSTS_REDSTONE)
                 .unlockedBy(getHasName(TGItems.ELECTRIC_ENGINE.get()), has(TGItems.ELECTRIC_ENGINE.get())).save(output);
+
+        // standalone tech (Techguns 3)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.COMBUSTION_GENERATOR.get())
+                .pattern("ppp").pattern("wfw").pattern("pcp")
+                .define('p', TGTags.Items.plate("steel")).define('w', TGItems.COPPER_WIRE.get()).define('f', Items.FURNACE)
+                .define('c', TGItems.COIL.get())
+                .unlockedBy(getHasName(TGItems.COIL.get()), has(TGItems.COIL.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.LIQUID_GENERATOR.get())
+                .pattern("ppp").pattern("ugu").pattern("pcp")
+                .define('p', TGTags.Items.plate("steel")).define('u', TGItems.PUMP_MECHANISM.get())
+                .define('g', TGBlocks.COMBUSTION_GENERATOR.get()).define('c', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(TGBlocks.COMBUSTION_GENERATOR.get()), has(TGBlocks.COMBUSTION_GENERATOR.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.ELECTRIC_FURNACE.get())
+                .pattern("ppp").pattern("cfc").pattern("pbp")
+                .define('p', TGTags.Items.plate("iron")).define('c', TGItems.COIL.get()).define('f', Items.FURNACE)
+                .define('b', TGItems.CIRCUIT_BOARD.get())
+                .unlockedBy(getHasName(TGItems.COIL.get()), has(TGItems.COIL.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TGItems.WRENCH.get())
+                .pattern(" s ").pattern(" ss").pattern("s  ")
+                .define('s', TGTags.Items.ingot("steel"))
+                .unlockedBy("has_steel", has(TGTags.Items.ingot("steel"))).save(output);
+        pipeRecipes(output);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.CHEM_LAB.get())
                 .pattern("igi").pattern("geg").pattern("iri")

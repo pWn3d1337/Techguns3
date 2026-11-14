@@ -1,0 +1,58 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            11.0
+          ]
+        },
+        "north": {
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            11.0
+          ]
+        },
+        "south": {
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            11.0
+          ]
+        },
+        "west": {
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            11.0
+          ]
+        }
+      },
+      "from": [
+        11.5,
+        0,
+        11.5
+      ],
+      "to": [
+        14.5,
+        11,
+        14.5
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "techguns:block/pipe/item_pipe_advanced",
+    "pipe": "techguns:block/pipe/item_pipe_advanced"
+  }
+}

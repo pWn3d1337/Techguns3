@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "p": {
+      "item": "techguns:basic_cable"
+    },
+    "x": {
+      "item": "techguns:gold_wire"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "pxp",
+    "ppp"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:advanced_cable"
+  }
+}

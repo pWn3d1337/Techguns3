@@ -304,6 +304,21 @@ public final class TGBlocks {
     /** Fabric Ammo Bench: no block entity, the menu keeps the inputs. */
     public static final DeferredBlock<AmmoBenchBlock> AMMO_BENCH = withItem("ammo_bench", () -> new AmmoBenchBlock(machine()));
 
+    // --- standalone tech (Techguns 3, design doc §4.8) ---
+    /** The shared block of all cables and pipes; it has no item (the pipe items place it). */
+    public static final DeferredBlock<techguns.transport.TGPipeBlock> PIPE = BLOCKS.register("pipe",
+            () -> new techguns.transport.TGPipeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.0f, 6.0f)
+                    .sound(SoundType.METAL).noOcclusion().dynamicShape()));
+    public static final DeferredBlock<techguns.machine.TGLitMachineBlock> COMBUSTION_GENERATOR = withItem("combustion_generator",
+            () -> new techguns.machine.TGLitMachineBlock(machine().lightLevel(techguns.machine.TGLitMachineBlock::lightLevel),
+                    TGBlockEntities.COMBUSTION_GENERATOR));
+    public static final DeferredBlock<techguns.machine.TGLitMachineBlock> LIQUID_GENERATOR = withItem("liquid_generator",
+            () -> new techguns.machine.TGLitMachineBlock(machine().lightLevel(techguns.machine.TGLitMachineBlock::lightLevel),
+                    TGBlockEntities.LIQUID_GENERATOR));
+    public static final DeferredBlock<techguns.machine.TGLitMachineBlock> ELECTRIC_FURNACE = withItem("electric_furnace",
+            () -> new techguns.machine.TGLitMachineBlock(machine().lightLevel(techguns.machine.TGLitMachineBlock::lightLevel),
+                    TGBlockEntities.ELECTRIC_FURNACE));
+
     private TGBlocks() {
     }
 

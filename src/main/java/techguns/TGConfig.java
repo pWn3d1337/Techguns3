@@ -89,8 +89,66 @@ public final class TGConfig {
             .comment("FE per furnace burn time tick for ore drills: burn time * this value = FE. Only used inside the ore drill.")
             .defineInRange("oreDrillFuelMultiplier", 1000.0, 1.0, 100000.0);
     public static final ModConfigSpec.DoubleValue ORE_DRILL_FUEL_VALUE_FUEL = COMMON
-            .comment("Fuel value of liquid fuels (fluid tag techguns:drill_fuel) in ore drills, per millibucket.")
+            .comment("Fuel value (furnace burn ticks per millibucket) of liquid fuels tagged techguns:fuel that have no techguns:fluid_fuel "
+                    + "data map entry; used by ore drills and liquid fuel generators.")
             .defineInRange("oreDrillFuelValueFuel", 100.0, 1.0, 100000.0);
+
+    static {
+        COMMON.pop();
+        COMMON.push("generators");
+    }
+
+    public static final ModConfigSpec.IntValue COMBUSTION_GENERATOR_FE_PER_TICK = COMMON
+            .comment("FE a Combustion Generator makes per tick while it burns (one furnace burn tick per tick).")
+            .defineInRange("combustionGeneratorFePerTick", 40, 1, 1000000);
+    public static final ModConfigSpec.IntValue LIQUID_GENERATOR_FE_PER_TICK = COMMON
+            .comment("FE a Liquid Fuel Generator makes per tick while it burns (two fuel burn ticks per tick).")
+            .defineInRange("liquidGeneratorFePerTick", 80, 1, 1000000);
+    public static final ModConfigSpec.IntValue ELECTRIC_FURNACE_FE_PER_TICK = COMMON
+            .comment("FE an Electric Furnace uses per tick and item being smelted.")
+            .defineInRange("electricFurnaceFePerTick", 20, 0, 1000000);
+
+    static {
+        COMMON.pop();
+        COMMON.push("transport");
+    }
+
+    public static final ModConfigSpec.IntValue CABLE_RATE_BASIC = COMMON
+            .comment("FE per tick a basic cable section passes (the limit of each zone of basic cables and of each side touching a block).")
+            .defineInRange("cableRateBasic", 256, 1, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue CABLE_RATE_ADVANCED = COMMON
+            .comment("FE per tick an advanced cable section passes.")
+            .defineInRange("cableRateAdvanced", 2048, 1, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue CABLE_RATE_ELITE = COMMON
+            .comment("FE per tick an elite cable section passes.")
+            .defineInRange("cableRateElite", 16384, 1, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue FLUID_PIPE_RATE_BASIC = COMMON
+            .comment("Millibuckets per tick a basic fluid pipe section passes.")
+            .defineInRange("fluidPipeRateBasic", 100, 1, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue FLUID_PIPE_RATE_ADVANCED = COMMON
+            .comment("Millibuckets per tick an advanced fluid pipe section passes.")
+            .defineInRange("fluidPipeRateAdvanced", 500, 1, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue FLUID_PIPE_RATE_ELITE = COMMON
+            .comment("Millibuckets per tick an elite fluid pipe section passes.")
+            .defineInRange("fluidPipeRateElite", 2000, 1, Integer.MAX_VALUE);
+    public static final ModConfigSpec.IntValue ITEM_PIPE_COUNT_BASIC = COMMON
+            .comment("Items a basic item pipe section moves per operation.")
+            .defineInRange("itemPipeCountBasic", 4, 1, 4096);
+    public static final ModConfigSpec.IntValue ITEM_PIPE_COUNT_ADVANCED = COMMON
+            .comment("Items an advanced item pipe section moves per operation.")
+            .defineInRange("itemPipeCountAdvanced", 16, 1, 4096);
+    public static final ModConfigSpec.IntValue ITEM_PIPE_COUNT_ELITE = COMMON
+            .comment("Items an elite item pipe section moves per operation.")
+            .defineInRange("itemPipeCountElite", 64, 1, 4096);
+    public static final ModConfigSpec.IntValue ITEM_PIPE_INTERVAL_BASIC = COMMON
+            .comment("Ticks between two operations of basic item pipes that pull from a block.")
+            .defineInRange("itemPipeIntervalBasic", 10, 1, 1200);
+    public static final ModConfigSpec.IntValue ITEM_PIPE_INTERVAL_ADVANCED = COMMON
+            .comment("Ticks between two operations of advanced item pipes that pull from a block.")
+            .defineInRange("itemPipeIntervalAdvanced", 10, 1, 1200);
+    public static final ModConfigSpec.IntValue ITEM_PIPE_INTERVAL_ELITE = COMMON
+            .comment("Ticks between two operations of elite item pipes that pull from a block.")
+            .defineInRange("itemPipeIntervalElite", 5, 1, 1200);
 
     static {
         COMMON.pop();

@@ -125,8 +125,13 @@ public abstract class TGMachineBlockEntity extends BlockEntity implements MenuPr
                 setChanged();
             }
         };
-        this.energy = new MachineEnergy(energyCapacity, this::setChanged);
+        this.energy = createEnergy(energyCapacity);
         this.automation = new AutomationHandler();
+    }
+
+    /** The power buffer; generators return an extract-only one. Called from the constructor (no subclass fields yet). */
+    protected MachineEnergy createEnergy(int capacity) {
+        return new MachineEnergy(capacity, this::setChanged);
     }
 
     // --- machine specifics ---

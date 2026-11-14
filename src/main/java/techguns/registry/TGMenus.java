@@ -69,6 +69,13 @@ public final class TGMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<techguns.block.Door3x3Menu>> DOOR_3X3 = MENUS.register(
             "door_3x3", () -> IMenuTypeExtension.create(techguns.block.Door3x3Menu::new));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.GeneratorMenu.Combustion>> COMBUSTION_GENERATOR = MENUS.register(
+            "combustion_generator", () -> IMenuTypeExtension.create(techguns.machine.GeneratorMenu.Combustion::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.GeneratorMenu.Liquid>> LIQUID_GENERATOR = MENUS.register(
+            "liquid_generator", () -> IMenuTypeExtension.create(techguns.machine.GeneratorMenu.Liquid::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.ElectricFurnaceMenu>> ELECTRIC_FURNACE = MENUS.register(
+            "electric_furnace", () -> IMenuTypeExtension.create(techguns.machine.ElectricFurnaceMenu::new));
+
     private TGMenus() {
     }
 }

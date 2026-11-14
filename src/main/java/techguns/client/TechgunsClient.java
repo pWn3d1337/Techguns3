@@ -56,6 +56,8 @@ public class TechgunsClient {
         modEventBus.addListener(TGShieldRenderer::register);
         modEventBus.addListener(techguns.client.render.item.GuideBookModel::registerAdditional);
         modEventBus.addListener(techguns.client.render.item.GuideBookModel::modifyBakingResult);
+        modEventBus.addListener(techguns.client.render.block.pipe.PipeModels::registerAdditional);
+        modEventBus.addListener(techguns.client.render.block.pipe.PipeModels::modifyBakingResult);
         modEventBus.addListener(SlotGearLayer::register);
         modEventBus.addListener(TGShieldBlocking::register);
         modEventBus.addListener(TGRenderTypes::registerShaders);

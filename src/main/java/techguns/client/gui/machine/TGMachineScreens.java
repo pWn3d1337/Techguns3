@@ -24,6 +24,9 @@ public final class TGMachineScreens {
         event.register(TGMenus.ORE_DRILL.get(), OreDrillScreen::new);
         event.register(TGMenus.EXPLOSIVE_CHARGE.get(), ExplosiveChargeScreen::new);
         event.register(TGMenus.TURRET.get(), TurretScreen::new);
+        event.register(TGMenus.COMBUSTION_GENERATOR.get(), GeneratorScreens.Combustion::new);
+        event.register(TGMenus.LIQUID_GENERATOR.get(), GeneratorScreens.Liquid::new);
+        event.register(TGMenus.ELECTRIC_FURNACE.get(), ElectricFurnaceScreen::new);
         event.register(TGMenus.DOOR_3X3.get(), Door3x3Screen::new);
         event.register(TGMenus.DUNGEON_TOOL.get(), techguns.client.gui.debug.DungeonToolScreen::new);
     }

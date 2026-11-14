@@ -14,7 +14,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -355,15 +354,9 @@ public class OreDrillBlockEntity extends MultiblockMasterBlockEntity {
         setChanged();
     }
 
-    /** Fuel units per millibucket (Techguns 2 {@code getFuelValueFromInputTank}). */
+    /** Fuel units per millibucket (Techguns 2 {@code getFuelValueFromInputTank}), shared with the generators: {@link FluidFuel}. */
     public static float fuelValue(FluidStack stack) {
-        if (stack.isEmpty()) {
-            return 0.0f;
-        }
-        if (stack.is(FluidTags.LAVA)) {
-            return LAVA_FUEL_VALUE;
-        }
-        return stack.is(TGTags.Fluids.FUEL) ? TGConfig.ORE_DRILL_FUEL_VALUE_FUEL.get().floatValue() : 0.0f;
+        return FluidFuel.burnPerMb(stack);
     }
 
     public int getFuelBuffer() {

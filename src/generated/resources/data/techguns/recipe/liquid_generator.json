@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:circuit_board"
+    },
+    "g": {
+      "item": "techguns:combustion_generator"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "u": {
+      "item": "techguns:pump_mechanism"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "ugu",
+    "pcp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:liquid_generator"
+  }
+}

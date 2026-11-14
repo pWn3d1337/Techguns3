@@ -4,6 +4,20 @@ Tracks every Techguns content entry through the port. Status values:
 `—` not started · `logic` · `rendered` · `tested` · `done`.
 Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 
+### Standalone tech (design doc §4.8, branch `full_tech`)
+
+| Unit | Logic | Assets | Verification |
+|---|---|---|---|
+| `techguns:fluid_fuel` data map, shared fuel lookup (ore drill, liquid generator) | done | — | GameTest `liquidGeneratorBurnsDataMapFuels`, ore drill tests |
+| Combustion Generator | done (furnace fuel, 40 FE/t, pushes to 6 sides, lit state) | `tools/tex_transport.py` front/top, GUI | GameTests `combustionGenerator*`; GUI and lit front checked in game |
+| Liquid Fuel Generator | done (fuel tank, bucket slots, 80 FE/t) | generated front/top, GUI, bucket slot icon | GameTests `liquidGenerator*`; GUI checked in game |
+| Electric Furnace | done (vanilla smelting, half time, stack upgrade, experience) | generated front/top, GUI | GameTests `electricFurnace*` |
+| Wrench | done (`c:tools/wrench`) | generated icon | GameTest `wrenchCyclesTheClickedSide` |
+| Pipe block, lanes, per-side modes, zones (mixed tiers) | done (`techguns.transport`, `core.transport`) | dynamic baked model from 117 generated part models | JUnit `ZoneGraphTest`, `LaneLayoutTest`, `SideModeTest`, `EnergySplitTest`; GameTests `TGTransportTests`; three lanes checked in game |
+| Cables (basic, advanced, elite) | done (256 / 2048 / 16384 FE/t) | generated | GameTests energy section |
+| Fluid pipes (basic, advanced, elite) | done (100 / 500 / 2000 mB/t) | generated | GameTests `fluidPipe*` |
+| Item pipes (basic, advanced, elite) | done (4 / 16 / 64 items per 10 / 10 / 5 ticks, instant, round robin nearest first) | generated | GameTests `itemPipe*`, `hopperPush*` |
+
 ## Phases
 
 | Phase | Status |

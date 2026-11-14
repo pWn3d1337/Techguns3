@@ -1,0 +1,77 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#plate",
+          "uv": [
+            0.0,
+            0.0,
+            5.0,
+            5.0
+          ]
+        },
+        "east": {
+          "texture": "#plate",
+          "uv": [
+            0.0,
+            6.0,
+            5.0,
+            7.0
+          ]
+        },
+        "north": {
+          "texture": "#plate",
+          "uv": [
+            0.0,
+            6.0,
+            5.0,
+            7.0
+          ]
+        },
+        "south": {
+          "texture": "#plate",
+          "uv": [
+            0.0,
+            6.0,
+            5.0,
+            7.0
+          ]
+        },
+        "up": {
+          "texture": "#plate",
+          "uv": [
+            0.0,
+            0.0,
+            5.0,
+            5.0
+          ]
+        },
+        "west": {
+          "texture": "#plate",
+          "uv": [
+            0.0,
+            6.0,
+            5.0,
+            7.0
+          ]
+        }
+      },
+      "from": [
+        0.5,
+        0,
+        0.5
+      ],
+      "to": [
+        5.5,
+        1,
+        5.5
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "techguns:block/pipe/connector_output",
+    "plate": "techguns:block/pipe/connector_output"
+  }
+}

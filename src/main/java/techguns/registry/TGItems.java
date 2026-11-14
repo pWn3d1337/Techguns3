@@ -195,6 +195,35 @@ public final class TGItems {
     public static final DeferredItem<techguns.item.CombatKnifeItem> COMBAT_KNIFE = ITEMS.registerItem("combat_knife",
             techguns.item.CombatKnifeItem::new);
 
+    /** Techguns 3: turns machines, sets pipe side modes (tag {@code c:tools/wrench}, like the crowbar). */
+    public static final DeferredItem<Item> WRENCH = ITEMS.registerSimpleItem("wrench", new Item.Properties().stacksTo(1));
+
+    // --- cables and pipes (Techguns 3), per kind and tier ---
+    private static final java.util.Map<techguns.transport.PipeKind, List<DeferredItem<techguns.transport.PipeItem>>> PIPES = buildPipes();
+
+    private static java.util.Map<techguns.transport.PipeKind, List<DeferredItem<techguns.transport.PipeItem>>> buildPipes() {
+        java.util.Map<techguns.transport.PipeKind, List<DeferredItem<techguns.transport.PipeItem>>> map = new java.util.LinkedHashMap<>();
+        for (techguns.transport.PipeKind kind : List.of(techguns.transport.TGPipeKinds.CABLE, techguns.transport.TGPipeKinds.FLUID_PIPE,
+                techguns.transport.TGPipeKinds.ITEM_PIPE)) {
+            List<DeferredItem<techguns.transport.PipeItem>> tiers = new ArrayList<>();
+            for (int tier = 0; tier < kind.tierCount(); tier++) {
+                int t = tier;
+                tiers.add(ITEMS.registerItem(kind.itemName(tier), props -> new techguns.transport.PipeItem(props, kind, t)));
+            }
+            map.put(kind, List.copyOf(tiers));
+        }
+        return map;
+    }
+
+    public static DeferredItem<techguns.transport.PipeItem> pipe(techguns.transport.PipeKind kind, int tier) {
+        return PIPES.get(kind).get(tier);
+    }
+
+    /** All pipe items: cables, fluid pipes, item pipes, each basic to elite. */
+    public static List<DeferredItem<techguns.transport.PipeItem>> pipes() {
+        return PIPES.values().stream().flatMap(List::stream).toList();
+    }
+
     // --- Techguns 2 debug tools (see TGDebug) ---
     public static final DeferredItem<techguns.debug.WorldGenTestToolItem> WORLDGEN_TEST_TOOL = ITEMS.registerItem("worldgen_test_tool",
             techguns.debug.WorldGenTestToolItem::new);

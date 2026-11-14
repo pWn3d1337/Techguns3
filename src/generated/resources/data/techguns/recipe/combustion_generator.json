@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "techguns:coil"
+    },
+    "f": {
+      "item": "minecraft:furnace"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "w": {
+      "item": "techguns:copper_wire"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "wfw",
+    "pcp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:combustion_generator"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "values": {
+    "minecraft:lava": {
+      "burn_per_mb": 20.0
+    }
+  }
+}

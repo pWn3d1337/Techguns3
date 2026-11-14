@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_combustion_generator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:combustion_generator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:liquid_generator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_combustion_generator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:liquid_generator"
+    ]
+  }
+}

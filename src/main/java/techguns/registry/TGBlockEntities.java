@@ -104,11 +104,30 @@ public final class TGBlockEntities {
             "dungeon_generator", () -> BlockEntityType.Builder.of(techguns.debug.DungeonGeneratorBlockEntity::new, TGBlocks.DUNGEON_GENERATOR.get())
                     .build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.CombustionGeneratorBlockEntity>> COMBUSTION_GENERATOR = BLOCK_ENTITY_TYPES.register(
+            "combustion_generator", () -> BlockEntityType.Builder.of(techguns.machine.CombustionGeneratorBlockEntity::new,
+                    TGBlocks.COMBUSTION_GENERATOR.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.LiquidGeneratorBlockEntity>> LIQUID_GENERATOR = BLOCK_ENTITY_TYPES.register(
+            "liquid_generator", () -> BlockEntityType.Builder.of(techguns.machine.LiquidGeneratorBlockEntity::new,
+                    TGBlocks.LIQUID_GENERATOR.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.ElectricFurnaceBlockEntity>> ELECTRIC_FURNACE = BLOCK_ENTITY_TYPES.register(
+            "electric_furnace", () -> BlockEntityType.Builder.of(techguns.machine.ElectricFurnaceBlockEntity::new,
+                    TGBlocks.ELECTRIC_FURNACE.get()).build(null));
+
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.transport.TGPipeBlockEntity>> PIPE = BLOCK_ENTITY_TYPES.register("pipe",
+            () -> BlockEntityType.Builder.of(techguns.transport.TGPipeBlockEntity::new, TGBlocks.PIPE.get()).build(null));
+
     private TGBlockEntities() {
     }
 
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(TGBlockEntities::registerCapabilities);
+        modEventBus.addListener((net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent event) ->
+                event.register(techguns.machine.FluidFuel.DATA_MAP));
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -126,8 +145,23 @@ public final class TGBlockEntities {
         machine(event, TURRET.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ORE_DRILL.get(), (drill, side) -> drill.getMultiblockFluidHandler());
         multiblockParts(event);
+        machine(event, COMBUSTION_GENERATOR.get());
+        machine(event, LIQUID_GENERATOR.get());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, LIQUID_GENERATOR.get(), (generator, side) -> generator.getFluidHandler());
+        machine(event, ELECTRIC_FURNACE.get());
+        pipes(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());
+    }
+
+    /** Pipe sides offer push ports of their segments (the kind's capability, only on sides that accept pushes). */
+    private static void pipes(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, PIPE.get(),
+                (pipe, side) -> (net.neoforged.neoforge.energy.IEnergyStorage) pipe.port(techguns.transport.TGPipeKinds.CABLE, side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PIPE.get(),
+                (pipe, side) -> (net.neoforged.neoforge.fluids.capability.IFluidHandler) pipe.port(techguns.transport.TGPipeKinds.FLUID_PIPE, side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PIPE.get(),
+                (pipe, side) -> (net.neoforged.neoforge.items.IItemHandler) pipe.port(techguns.transport.TGPipeKinds.ITEM_PIPE, side));
     }
 
     /** Linked parts expose their master's handlers by connector type (Techguns 2 slave capabilities). */

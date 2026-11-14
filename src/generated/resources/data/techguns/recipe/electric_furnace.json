@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "techguns:circuit_board"
+    },
+    "c": {
+      "item": "techguns:coil"
+    },
+    "f": {
+      "item": "minecraft:furnace"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "cfc",
+    "pbp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "techguns:electric_furnace"
+  }
+}

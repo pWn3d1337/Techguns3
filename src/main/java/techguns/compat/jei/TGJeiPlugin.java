@@ -99,6 +99,9 @@ public class TGJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(TGBlocks.METAL_PRESS.get(), MetalPressCategory.TYPE);
+        // standalone tech: vanilla categories
+        registration.addRecipeCatalyst(TGBlocks.ELECTRIC_FURNACE.get(), mezz.jei.api.constants.RecipeTypes.SMELTING);
+        registration.addRecipeCatalyst(TGBlocks.COMBUSTION_GENERATOR.get(), mezz.jei.api.constants.RecipeTypes.FUELING);
         registration.addRecipeCatalyst(TGBlocks.AMMO_PRESS.get(), AmmoPressCategory.TYPE);
         registration.addRecipeCatalyst(TGBlocks.BLAST_FURNACE.get(), BlastFurnaceCategory.TYPE);
         registration.addRecipeCatalyst(TGBlocks.GRINDER.get(), GrinderCategory.TYPE);

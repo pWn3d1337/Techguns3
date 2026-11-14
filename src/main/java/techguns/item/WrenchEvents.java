@@ -16,7 +16,8 @@ import techguns.machine.TGMachineBlock;
  * Wrenches on Techguns blocks (Techguns 2: every item with the tool class "wrench", here the item tag
  * {@code c:tools/wrench}, so the crowbar and other mods' wrenches): sneak + use on a 3x3 door opens its settings; use on
  * a single-block machine (not multiblocks) turns it (turret bases: stand or hang the turret by the face used), sneak +
- * use picks it up with its contents. Handled before the block's own use, which vanilla skips when sneaking with an
+ * use picks it up with its contents. On a pipe block it changes the mode of the clicked side of the clicked kind, sneak + use
+ * takes that kind out. Handled before the block's own use, which vanilla skips when sneaking with an
  * item in hand.
  */
 public final class WrenchEvents {
@@ -40,7 +41,9 @@ public final class WrenchEvents {
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
         boolean sneaking = player.isSecondaryUseActive();
-        if (state.getBlock() instanceof Door3x3Block door && sneaking) {
+        if (state.getBlock() instanceof techguns.transport.TGPipeBlock pipe) {
+            pipe.wrench(level, pos, player, sneaking);
+        } else if (state.getBlock() instanceof Door3x3Block door && sneaking) {
             door.openSettings(level, pos, state, player);
         } else if (state.getBlock() instanceof TGMachineBlock machine && machine.canBeWrenched()) {
             if (sneaking) {

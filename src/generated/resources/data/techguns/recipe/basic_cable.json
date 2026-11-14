@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "r": {
+      "item": "techguns:rubber_bar"
+    },
+    "w": {
+      "item": "techguns:copper_wire"
+    }
+  },
+  "pattern": [
+    "rrr",
+    "www",
+    "rrr"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:basic_cable"
+  }
+}

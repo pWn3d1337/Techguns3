@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "p": {
+      "item": "techguns:advanced_item_pipe"
+    },
+    "x": {
+      "item": "techguns:circuit_board"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "pxp",
+    "ppp"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:elite_item_pipe"
+  }
+}

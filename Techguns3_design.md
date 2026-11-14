@@ -171,6 +171,15 @@ Constraint: rendering is the most version-volatile area (see §3.3). Strategy:
 - Screens: `AbstractContainerMenu` + `AbstractContainerScreen`; reuse Fabric's `TGBaseScreenHandler` ideas. Reuse 1.12 GUI textures.
 - Reconcile Fabric's new **Ammo Bench** with 1.12's **Ammo Press** (Q6).
 
+### 4.8 Standalone tech: power and transport (decided 2026-11-14)
+Techguns 2 had no power source; machines took FE from other mods (or `machinesNeedNoPower`). Techguns 3 adds a small standalone set:
+- **Generators** (`TGMachineBlockEntity` subclasses with an extract-only buffer that push FE into neighbours): Combustion Generator (furnace fuels), Liquid Fuel Generator (fluids of the `techguns:fluid_fuel` data map, burn ticks per mB; lava 20; fluids tagged `techguns:fuel` without an entry use `oreDrillFuelValueFuel`). The ore drill uses the same fuel lookup. **Electric Furnace**: vanilla smelting recipes with FE and the stack upgrade.
+- **Transport** (`techguns.transport`, pure graph code in `techguns.core.transport`): one `techguns:pipe` block whose block entity holds up to three segments in fixed lanes on the block diagonal (fluid, energy, items), so several Techguns pipe kinds share one block without their arms crossing. Kinds are registered in `TGPipeKinds` (heat, gas, ... later). Each kind has three tiers.
+- **Per-side modes** (wrench, crowbar or any `c:tools/wrench` on the clicked arm): endpoints cycle neutral (accepts pushes, delivers), output (delivers only), input (pulls actively), disabled; pipe-to-pipe sides toggle connected/disabled. Sneak + wrench removes the clicked segment.
+- **No buffers:** energy, fluids and items move instantly within the network tick or inside the pushed call; nothing is in transit, item pipes render no items, only segments and modes are saved.
+- **Mixed tiers** connect into one network. Contiguous same-tier segments form **zones**; each zone has a per-tick budget (its tier rate) and every transfer follows the widest zone path, using budget in each zone it crosses, so a low-tier section limits only the flow through it. Item operations move at most the smallest count on the path, at the source zone's interval; targets are served round-robin, nearest first.
+- **Rendering:** no block entity renderer; a dynamic baked model builds the segment quads from model data into the chunk mesh (MIGRATION(26.x): `BlockStateModel`).
+
 ### 4.6 Multi-loader stance
 NeoForge-only for now. But: keep `core/` free of loader imports where cheap, and wrap loader calls (networking, registration, events) in a few helper classes. If we ever want Fabric again, an Architectury/MultiLoader split is then possible without a rewrite.
 
@@ -616,7 +625,7 @@ The main session (**Claude Opus**) acts as **orchestrator**: it plans, decides, 
 | Q4 | ~~Data-driven gun stats?~~ **Decided 2026-10-24:** stats in an immutable `GunStats` record with a Codec, defined in Java now; loading/overriding from datapack JSON comes later without touching gun logic. Behaviour (projectile factories, special guns) stays in Java. 9h: partial overrides from `data/<ns>/techguns/gun_stats/<item>.json` (and armor in `armor_stats`), merged into the Java defaults, `/reload`-able and synced (`docs/stat_overrides.md`). | ✔ Decided |
 | Q5 | Extra slots: Curios dependency vs own system? | **Decided 2026-10-26:** Curios as a soft dependency; built-in fallback slots (attachment + small screen tab) when Curios is absent. |
 | Q6 | Ammo Press (1.12) vs Ammo Bench (Fabric) — keep one, both? | **Decided 2026-10-26: both.** Ammo Press (powered, 1.12 build plans) and the unpowered Fabric Ammo Bench. Camo Bench: 1.12 scope (blocks, guns, armor) with a Fabric-style list to pick the named camo. |
-| Q7 | Energy: plain FE only? | FE only. |
+| Q7 | Energy: plain FE only? | FE only. **Amended 2026-11-14:** Techguns ships its own generators, cables and pipes so it works standalone (§4.8); still plain FE and NeoForge capabilities, so other mods' machines and cables interoperate. |
 | Q8 | Structures: faithful 1.12 rebuilds vs redesign with jigsaw variety? | Faithful first via converter, jigsaw where it adds value. |
 | Q9 | Recipe viewer priority: JEI vs EMI? | JEI first. |
 | Q10 | License for Techguns 3 (1.12 has `LICENSE.txt`, Fabric has `LICENSE`). The Techguns Mod License from 1.12 is in place (`LICENSE.txt`, `mod_license`); 9g kept it. | Author's call. |

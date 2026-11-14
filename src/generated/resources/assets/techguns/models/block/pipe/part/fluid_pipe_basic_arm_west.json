@@ -1,0 +1,62 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "rotation": 90,
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            1.0
+          ]
+        },
+        "north": {
+          "rotation": 90,
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            1.0
+          ]
+        },
+        "south": {
+          "rotation": 90,
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            1.0
+          ]
+        },
+        "up": {
+          "rotation": 90,
+          "texture": "#pipe",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            1.0
+          ]
+        }
+      },
+      "from": [
+        0,
+        1.5,
+        1.5
+      ],
+      "to": [
+        1,
+        4.5,
+        4.5
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "techguns:block/pipe/fluid_pipe_basic",
+    "pipe": "techguns:block/pipe/fluid_pipe_basic"
+  }
+}

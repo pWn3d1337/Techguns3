@@ -12,7 +12,7 @@ import techguns.registry.TGBlocks;
 import techguns.registry.TGItems;
 import techguns.registry.TGTags;
 
-/** Item data maps: Techguns 2 {@code TGRadiationSystem.postInit} radioactive items. */
+/** Data maps: Techguns 2 {@code TGRadiationSystem.postInit} radioactive items, liquid fuels. */
 public class TGDataMapProvider extends DataMapProvider {
     public TGDataMapProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, lookup);
@@ -34,6 +34,10 @@ public class TGDataMapProvider extends DataMapProvider {
         radiation.add(TGTags.Items.ore("uranium"), new ItemRadiation(1), false);
         radiation.add(TGTags.Items.ingot("uranium"), new ItemRadiation(1), false);
         radiation.add(TGTags.Items.rawMaterial("uranium"), new ItemRadiation(1), false);
+
+        // liquid fuels of the generators and the ore drill: furnace burn ticks per millibucket
+        builder(techguns.machine.FluidFuel.DATA_MAP).add(net.minecraft.world.level.material.Fluids.LAVA.builtInRegistryHolder(),
+                new techguns.machine.FluidFuel(techguns.machine.OreDrillBlockEntity.LAVA_FUEL_VALUE), false);
     }
 
     private static net.minecraft.core.Holder<net.minecraft.world.item.Item> item(ItemLike block) {

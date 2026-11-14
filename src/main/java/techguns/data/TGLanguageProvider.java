@@ -146,6 +146,7 @@ public class TGLanguageProvider extends LanguageProvider {
             Map.entry("rifle_rounds_incendiary", "Rifle Rounds (Incendiary)"),
             Map.entry("ammo_box", "Ammo Box (Small)"),
             Map.entry("crowbar", "Crowbar"),
+            Map.entry("liquid_generator", "Liquid Fuel Generator"),
             Map.entry("combat_knife", "Combat Knife"),
             Map.entry("auto_feeder", "Auto-Feeder"),
             Map.entry("worldgen_test_tool", "WorldGen Test Tool"),
@@ -328,6 +329,7 @@ public class TGLanguageProvider extends LanguageProvider {
         add(TGKeyMappings.TOGGLE_STEP_ASSIST.getName(), "Toggle Step Assist");
         addGunTooltips();
         addMachines();
+        addStandaloneTech();
         addRadiation();
         for (String[] entry : TGAdvancementProvider.ENTRIES) {
             add("advancements.techguns." + entry[0] + ".title", entry[1]);
@@ -335,6 +337,46 @@ public class TGLanguageProvider extends LanguageProvider {
         }
         // the Modonomicon manual's texts (Patchouli has its own en_us folder)
         LegacyBook.load().ifPresent(book -> LegacyBook.lang(book, this::add));
+    }
+
+    /** Generators, Electric Furnace, cables and pipes (Techguns 3, design doc §4.8). */
+    private void addStandaloneTech() {
+        add("techguns.configuration.generators", "Generators");
+        add("techguns.configuration.combustionGeneratorFePerTick", "Combustion Generator FE per Tick");
+        add("techguns.configuration.liquidGeneratorFePerTick", "Liquid Fuel Generator FE per Tick");
+        add("techguns.configuration.electricFurnaceFePerTick", "Electric Furnace FE per Tick");
+        add("techguns.configuration.transport", "Cables and Pipes");
+        add("techguns.configuration.cableRateBasic", "Basic Cable FE per Tick");
+        add("techguns.configuration.cableRateAdvanced", "Advanced Cable FE per Tick");
+        add("techguns.configuration.cableRateElite", "Elite Cable FE per Tick");
+        add("techguns.configuration.fluidPipeRateBasic", "Basic Fluid Pipe mB per Tick");
+        add("techguns.configuration.fluidPipeRateAdvanced", "Advanced Fluid Pipe mB per Tick");
+        add("techguns.configuration.fluidPipeRateElite", "Elite Fluid Pipe mB per Tick");
+        add("techguns.configuration.itemPipeCountBasic", "Basic Item Pipe Items per Operation");
+        add("techguns.configuration.itemPipeCountAdvanced", "Advanced Item Pipe Items per Operation");
+        add("techguns.configuration.itemPipeCountElite", "Elite Item Pipe Items per Operation");
+        add("techguns.configuration.itemPipeIntervalBasic", "Basic Item Pipe Interval");
+        add("techguns.configuration.itemPipeIntervalAdvanced", "Advanced Item Pipe Interval");
+        add("techguns.configuration.itemPipeIntervalElite", "Elite Item Pipe Interval");
+        add("techguns.container.burn", "Burning: %s s left");
+        add("block.techguns.pipe", "Pipe");
+        add("techguns.pipe.mode", "%s side: %s");
+        add("techguns.pipe.mode.neutral", "Neutral");
+        add("techguns.pipe.mode.output", "Output");
+        add("techguns.pipe.mode.input", "Input");
+        add("techguns.pipe.mode.disabled", "Disabled");
+        add("techguns.pipe.lane_taken", "No room for this pipe kind in that block");
+        add("techguns.side.down", "Bottom");
+        add("techguns.side.up", "Top");
+        add("techguns.side.north", "North");
+        add("techguns.side.south", "South");
+        add("techguns.side.west", "West");
+        add("techguns.side.east", "East");
+        add("tooltip.techguns.pipe.rate.cable", "Transfers %s FE/t");
+        add("tooltip.techguns.pipe.rate.fluid_pipe", "Transfers %s mB/t");
+        add("tooltip.techguns.pipe.rate.item_pipe", "Moves %s items every %s ticks");
+        add("tooltip.techguns.pipe.hint", "Wrench a side: neutral, output, input, disabled");
+        add("techguns.jei.liquid_fuel", "Burns in the Liquid Fuel Generator and the Ore Drill: %s burn ticks per mB.");
     }
 
     /** Techguns 2 radiation effects, potions, HUD and tooltip. */

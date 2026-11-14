@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "p": {
+      "item": "techguns:basic_item_pipe"
+    },
+    "x": {
+      "item": "techguns:mechanical_parts_iron"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "pxp",
+    "ppp"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:advanced_item_pipe"
+  }
+}

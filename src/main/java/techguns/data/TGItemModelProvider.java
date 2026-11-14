@@ -28,6 +28,7 @@ public class TGItemModelProvider extends ItemModelProvider {
         TGItems.simpleItems().forEach(item -> basicItem(item.get()));
         TGItems.oreDrillHeads().forEach(item -> basicItem(item.get()));
         handheldItem(TGItems.CROWBAR.get());
+        handheldItem(TGItems.WRENCH.get());
         handheldItem(TGItems.COMBAT_KNIFE.get());
         basicItem(TGItems.WORLDGEN_TEST_TOOL.get());
         basicItem(TGItems.BUILDING_SCAN_TOOL.get());

@@ -47,6 +47,8 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
             dropSelf(block.get());
         }
         add(TGBlocks.BIOBLOB.get(), noDrop());
+        // the pipe block drops the items of its segments itself (TGPipeBlock#getDrops)
+        add(TGBlocks.PIPE.get(), noDrop());
         add(TGBlocks.MONSTER_HOLE.get(), noDrop());
         add(TGBlocks.MILITARY_SPAWN_POINT.get(), noDrop());
         TGBlocks.cubeBlocks().forEach(block -> dropSelf(block.get()));
@@ -74,6 +76,9 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
         dropSelf(TGBlocks.GRINDER.get());
         dropSelf(TGBlocks.CHEM_LAB.get());
         dropSelf(TGBlocks.CHARGING_STATION.get());
+        dropSelf(TGBlocks.COMBUSTION_GENERATOR.get());
+        dropSelf(TGBlocks.LIQUID_GENERATOR.get());
+        dropSelf(TGBlocks.ELECTRIC_FURNACE.get());
         dropSelf(TGBlocks.REPAIR_BENCH.get());
         dropSelf(TGBlocks.CAMO_BENCH.get());
         dropSelf(TGBlocks.UPGRADE_BENCH.get());

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_advanced_cable": {
+      "conditions": {
+        "items": [
+          {
+            "items": "techguns:advanced_cable"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "techguns:elite_cable"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_advanced_cable"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "techguns:elite_cable"
+    ]
+  }
+}

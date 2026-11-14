@@ -384,6 +384,10 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         cubeMachine(TGBlocks.REPAIR_BENCH, "repairbench_front", "repairbench_top");
         modelMachine(TGBlocks.UPGRADE_BENCH, "upgrade_bench_base", "upgrade_bench_base");
         modelMachine(TGBlocks.AMMO_BENCH, "ammo_bench_base", "ammo_bench_base");
+        // standalone tech: cubes with a lit front
+        cubeMachineLit(TGBlocks.COMBUSTION_GENERATOR, "combustion_generator_front", "combustion_generator_front_on", "combustion_generator_top");
+        cubeMachineLit(TGBlocks.LIQUID_GENERATOR, "liquid_generator_front", "liquid_generator_front_on", "liquid_generator_top");
+        cubeMachineLit(TGBlocks.ELECTRIC_FURNACE, "electric_furnace_front", "electric_furnace_front_on", "electric_furnace_top");
         multiblocks();
         machine(TGBlocks.TURRET, BASIC_MACHINE_PARTICLE);
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE, "tnt_charge");
@@ -503,6 +507,15 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         ResourceLocation side = tex("paintmachine_side");
         ModelFile model = models().cube("block/" + path(block), side, tex(top), tex(front), side, side, side).texture("particle", side);
         horizontalBlock(block.get(), model, 180);
+        itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
+    }
+
+    /** Techguns 3 cube machine with a lit front ({@link techguns.machine.TGLitMachineBlock#LIT}); sides and bottom {@code machine_side}. */
+    private void cubeMachineLit(DeferredBlock<? extends Block> block, String front, String frontOn, String top) {
+        ResourceLocation side = tex("machine_side");
+        ModelFile off = models().cube("block/" + path(block), side, tex(top), tex(front), side, side, side).texture("particle", side);
+        ModelFile on = models().cube("block/" + path(block) + "_on", side, tex(top), tex(frontOn), side, side, side).texture("particle", side);
+        horizontalBlock(block.get(), state -> state.getValue(techguns.machine.TGLitMachineBlock.LIT) ? on : off, 180);
         itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
     }
 

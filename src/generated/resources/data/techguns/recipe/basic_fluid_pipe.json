@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "g": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "p": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "ggg",
+    "ppp"
+  ],
+  "result": {
+    "count": 8,
+    "id": "techguns:basic_fluid_pipe"
+  }
+}

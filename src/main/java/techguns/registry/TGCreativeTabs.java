@@ -27,6 +27,8 @@ public final class TGCreativeTabs {
                 output.accept(TGItems.AMMO_BOX.get());
                 output.accept(TGItems.AMMO_BOX_LARGE.get());
                 output.accept(TGItems.CROWBAR.get());
+                output.accept(TGItems.WRENCH.get());
+                TGItems.pipes().forEach(item -> output.accept(item.get()));
                 output.accept(TGItems.COMBAT_KNIFE.get());
                 TGArmors.armors().forEach(item -> output.accept(item.get()));
                 TGArmors.shields().forEach(item -> output.accept(item.get()));
