@@ -167,6 +167,8 @@ public final class TransportManager {
             List<Long> linked = new ArrayList<>();
             int linkBits = 0;
             int endBits = 0;
+            int adapterBits = 0;
+            techguns.core.transport.Lane lane = pipe.drawnLane(kind);
             for (Direction side : Direction.values()) {
                 SideMode mode = segment.mode(side);
                 BlockPos next = pos.relative(side);
@@ -184,6 +186,9 @@ public final class TransportManager {
                     if (otherSegment != null && otherSegment.mode(side.getOpposite()).connects()) {
                         linked.add(next.asLong());
                         linkBits |= 1 << side.get3DDataValue();
+                        if (lane != techguns.core.transport.Lane.B && other.drawnLane(kind) != lane) {
+                            adapterBits |= 1 << side.get3DDataValue();
+                        }
                         if (members.add(next.asLong())) {
                             queue.add(other);
                         }
@@ -197,7 +202,7 @@ public final class TransportManager {
                 }
             }
             links.put(pos.asLong(), linked.stream().mapToLong(Long::longValue).toArray());
-            pipe.applyConnections(kind, linkBits, endBits);
+            pipe.applyConnections(kind, linkBits, endBits, adapterBits);
         }
         long[] nodes = members.stream().mapToLong(Long::longValue).toArray();
         ZoneGraph graph = new ZoneGraph(nodes, pos -> pipes.get(pos).segment(kind).tier(), pos -> links.getOrDefault(pos, new long[0]));

@@ -29,7 +29,8 @@ public record PipeHit(PipeSegment segment, PipeParts.Part part, Direction side) 
         PipeHit best = null;
         double bestDistance = Double.MAX_VALUE;
         for (PipeSegment segment : pipe.segments()) {
-            for (PipeParts.Part part : PipeParts.parts(segment.kind().lane(), segment.links(), segment.ends())) {
+            for (PipeParts.Part part : PipeParts.parts(pipe.drawnLane(segment.kind()), segment.links(), segment.ends(),
+                    segment.adapters())) {
                 AABB box = part.box().move(pos);
                 Optional<Vec3> hit = box.clip(from, to);
                 if (hit.isEmpty()) {

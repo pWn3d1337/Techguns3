@@ -20,6 +20,8 @@ public final class PipeSegment {
     private int links;
     /** Bits: a block with the kind's capability (an endpoint). */
     private int ends;
+    /** Bits: linked to a neighbour whose segment of this kind is drawn in another lane (adapter plate there). */
+    private int adapters;
 
     public PipeSegment(PipeKind kind, int tier) {
         this.kind = kind;
@@ -56,11 +58,16 @@ public final class PipeSegment {
     }
 
     /** Sets the computed connections; true if they changed. */
-    public boolean setConnections(int links, int ends) {
-        boolean changed = this.links != links || this.ends != ends;
+    public boolean setConnections(int links, int ends, int adapters) {
+        boolean changed = this.links != links || this.ends != ends || this.adapters != adapters;
         this.links = links;
         this.ends = ends;
+        this.adapters = adapters;
         return changed;
+    }
+
+    public int adapters() {
+        return adapters;
     }
 
     public int links() {
@@ -82,6 +89,7 @@ public final class PipeSegment {
         tag.putByteArray("modes", m);
         tag.putByte("links", (byte) links);
         tag.putByte("ends", (byte) ends);
+        tag.putByte("adapters", (byte) adapters);
         return tag;
     }
 
@@ -98,6 +106,7 @@ public final class PipeSegment {
         }
         segment.links = tag.getByte("links") & 0x3F;
         segment.ends = tag.getByte("ends") & 0x3F;
+        segment.adapters = tag.getByte("adapters") & 0x3F;
         return segment;
     }
 }

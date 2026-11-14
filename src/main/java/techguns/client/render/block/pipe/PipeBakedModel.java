@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.IDynamicBakedModel;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import techguns.core.transport.SideMode;
 import techguns.transport.PipeParts;
 import techguns.transport.TGPipeBlockEntity;
 
@@ -45,14 +46,18 @@ public class PipeBakedModel implements IDynamicBakedModel {
         }
         List<BakedQuad> quads = new ArrayList<>();
         for (TGPipeBlockEntity.SegmentView segment : render.segments()) {
-            add(quads, PipeParts.coreModel(segment.kind(), segment.tier()), state, side, rand, renderType);
+            add(quads, PipeParts.coreModel(segment.kind(), segment.tier(), segment.lane()), state, side, rand, renderType);
             for (Direction dir : Direction.values()) {
                 int bit = 1 << dir.get3DDataValue();
                 if (((segment.links() | segment.ends()) & bit) != 0) {
-                    add(quads, PipeParts.armModel(segment.kind(), segment.tier(), dir), state, side, rand, renderType);
+                    add(quads, PipeParts.armModel(segment.kind(), segment.tier(), segment.lane(), dir), state, side, rand, renderType);
                 }
-                if ((segment.ends() & bit) != 0 && segment.modes()[dir.get3DDataValue()].connects()) {
-                    add(quads, PipeParts.plateModel(segment.kind(), dir, segment.modes()[dir.get3DDataValue()]), state, side, rand, renderType);
+                SideMode mode = segment.modes()[dir.get3DDataValue()];
+                if ((segment.ends() & bit) != 0 && mode.connects()) {
+                    add(quads, PipeParts.plateModel(segment.lane(), dir, mode), state, side, rand, renderType);
+                }
+                if ((segment.adapters() & bit) != 0 && segment.lane() != techguns.core.transport.Lane.B) {
+                    add(quads, PipeParts.adapterModel(segment.kind(), segment.tier(), dir), state, side, rand, renderType);
                 }
             }
         }

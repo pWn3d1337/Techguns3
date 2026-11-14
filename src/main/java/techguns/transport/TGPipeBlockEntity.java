@@ -36,7 +36,7 @@ public class TGPipeBlockEntity extends BlockEntity {
     public static final ModelProperty<RenderState> RENDER_STATE = new ModelProperty<>();
 
     /** What the model draws of one segment. */
-    public record SegmentView(PipeKind kind, int tier, int links, int ends, SideMode[] modes) {
+    public record SegmentView(PipeKind kind, int tier, Lane lane, int links, int ends, int adapters, SideMode[] modes) {
     }
 
     public record RenderState(List<SegmentView> segments) {
@@ -77,6 +77,11 @@ public class TGPipeBlockEntity extends BlockEntity {
 
     public boolean isEmpty() {
         return segments().isEmpty();
+    }
+
+    /** The lane {@code kind} is drawn in here: the centre when alone or first in {@link TGPipeKinds#CENTER_PRIORITY}. */
+    public Lane drawnLane(PipeKind kind) {
+        return TGPipeKinds.drawnLane(kind, k -> segment(k) != null);
     }
 
     /** Whether the lane of {@code kind} is free (or holds that kind). */
@@ -127,9 +132,9 @@ public class TGPipeBlockEntity extends BlockEntity {
     }
 
     /** Server: the connections the network found; synced to clients when they changed. */
-    void applyConnections(PipeKind kind, int links, int ends) {
+    void applyConnections(PipeKind kind, int links, int ends, int adapters) {
         PipeSegment segment = segment(kind);
-        if (segment != null && segment.setConnections(links, ends)) {
+        if (segment != null && segment.setConnections(links, ends, adapters)) {
             changed(false);
         }
     }
@@ -174,7 +179,7 @@ public class TGPipeBlockEntity extends BlockEntity {
         if (parts == null) {
             List<PipeParts.Part> list = new ArrayList<>();
             for (PipeSegment segment : segments()) {
-                list.addAll(PipeParts.parts(segment.kind().lane(), segment.links(), segment.ends()));
+                list.addAll(PipeParts.parts(drawnLane(segment.kind()), segment.links(), segment.ends(), segment.adapters()));
             }
             parts = list;
         }
@@ -288,7 +293,8 @@ public class TGPipeBlockEntity extends BlockEntity {
             for (Direction side : Direction.values()) {
                 modes[side.get3DDataValue()] = segment.mode(side);
             }
-            views.add(new SegmentView(segment.kind(), segment.tier(), segment.links(), segment.ends(), modes));
+            views.add(new SegmentView(segment.kind(), segment.tier(), drawnLane(segment.kind()), segment.links(), segment.ends(),
+                    segment.adapters(), modes));
         }
         return ModelData.builder().with(RENDER_STATE, new RenderState(List.copyOf(views))).build();
     }

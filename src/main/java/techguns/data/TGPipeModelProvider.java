@@ -29,6 +29,9 @@ public class TGPipeModelProvider extends BlockStateProvider {
     private static final float[] CORE_UV = {4, 0, 8, 4};
     private static final float[] PLATE_FACE_UV = {0, 0, 5, 5};
     private static final float[] PLATE_EDGE_UV = {0, 6, 5, 7};
+    /** Adapter plates: the core face texture stretched over the plate, its rim from the tube end strip. */
+    private static final float[] ADAPTER_FACE_UV = {4, 0, 8, 4};
+    private static final float[] ADAPTER_EDGE_UV = {8, 0, 11, 1.5f};
 
     public TGPipeModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, Techguns.MODID, existingFileHelper);
@@ -46,19 +49,31 @@ public class TGPipeModelProvider extends BlockStateProvider {
         for (PipeKind kind : TGPipeKinds.ALL) {
             for (int tier = 0; tier < kind.tierCount(); tier++) {
                 ResourceLocation texture = modLoc("block/pipe/" + kind.textureName(tier));
-                BlockModelBuilder core = part(PipeParts.coreModel(kind, tier)).texture("pipe", texture).texture("particle", texture);
-                box(core, PipeParts.core(kind.lane()), null, "#pipe", CORE_UV, CORE_UV, null);
-                for (Direction side : Direction.values()) {
-                    BlockModelBuilder arm = part(PipeParts.armModel(kind, tier, side)).texture("pipe", texture).texture("particle", texture);
-                    box(arm, PipeParts.arm(kind.lane(), side), side.getAxis(), "#pipe", TUBE_UV, null, null);
+                for (Lane lane : PipeParts.lanes(kind)) {
+                    BlockModelBuilder core = part(PipeParts.coreModel(kind, tier, lane)).texture("pipe", texture).texture("particle", texture);
+                    box(core, PipeParts.core(lane), null, "#pipe", CORE_UV, CORE_UV, null);
+                    for (Direction side : Direction.values()) {
+                        BlockModelBuilder arm = part(PipeParts.armModel(kind, tier, lane, side)).texture("pipe", texture)
+                                .texture("particle", texture);
+                        box(arm, PipeParts.arm(lane, side), side.getAxis(), "#pipe", TUBE_UV, null, null);
+                    }
+                }
+                if (kind.lane() != Lane.B) {
+                    for (Direction side : Direction.values()) {
+                        BlockModelBuilder adapter = part(PipeParts.adapterModel(kind, tier, side)).texture("pipe", texture)
+                                .texture("particle", texture);
+                        box(adapter, PipeParts.adapter(kind.lane(), side), side.getAxis(), "#pipe", ADAPTER_EDGE_UV, ADAPTER_FACE_UV, side);
+                    }
                 }
                 itemModel(kind, tier, texture);
             }
+        }
+        for (Lane lane : Lane.values()) {
             for (Direction side : Direction.values()) {
                 for (SideMode mode : PipeParts.PLATE_MODES) {
                     ResourceLocation texture = modLoc("block/pipe/connector_" + mode.name().toLowerCase(java.util.Locale.ROOT));
-                    BlockModelBuilder plate = part(PipeParts.plateModel(kind, side, mode)).texture("plate", texture).texture("particle", texture);
-                    box(plate, PipeParts.plate(kind.lane(), side), side.getAxis(), "#plate", PLATE_EDGE_UV, PLATE_FACE_UV, side);
+                    BlockModelBuilder plate = part(PipeParts.plateModel(lane, side, mode)).texture("plate", texture).texture("particle", texture);
+                    box(plate, PipeParts.plate(lane, side), side.getAxis(), "#plate", PLATE_EDGE_UV, PLATE_FACE_UV, side);
                 }
             }
         }

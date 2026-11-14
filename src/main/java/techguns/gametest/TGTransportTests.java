@@ -298,6 +298,31 @@ public class TGTransportTests {
         });
     }
 
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void lonePipesSitInTheCentreAndMoveAsideWhenStacked(GameTestHelper helper) {
+        BlockPos stacked = new BlockPos(2, 2, 2);
+        BlockPos alone = new BlockPos(3, 2, 2);
+        TGPipeBlockEntity first = pipe(helper, stacked, TGPipeKinds.ITEM_PIPE, 0);
+        TGPipeBlockEntity second = pipe(helper, alone, TGPipeKinds.ITEM_PIPE, 0);
+        helper.assertTrue(first.drawnLane(TGPipeKinds.ITEM_PIPE) == techguns.core.transport.Lane.B, "A lone item pipe should be centred");
+        first.addSegment(TGPipeKinds.CABLE, 0);
+        first.addSegment(TGPipeKinds.FLUID_PIPE, 0);
+        helper.assertTrue(first.drawnLane(TGPipeKinds.CABLE) == techguns.core.transport.Lane.B, "The cable should keep the centre");
+        helper.assertTrue(first.drawnLane(TGPipeKinds.ITEM_PIPE) == techguns.core.transport.Lane.C, "The item pipe should move aside");
+        helper.assertTrue(first.drawnLane(TGPipeKinds.FLUID_PIPE) == techguns.core.transport.Lane.A, "The fluid pipe should move aside");
+        helper.runAfterDelay(3, () -> {
+            helper.assertTrue(first.segment(TGPipeKinds.ITEM_PIPE).adapters() == 1 << Direction.EAST.get3DDataValue(),
+                    "The moved item pipe should get an adapter towards the centred one");
+            helper.assertTrue(second.segment(TGPipeKinds.ITEM_PIPE).adapters() == 0, "The centred item pipe needs no adapter");
+            first.removeSegment(TGPipeKinds.CABLE);
+            first.removeSegment(TGPipeKinds.FLUID_PIPE);
+        });
+        helper.runAfterDelay(6, () -> {
+            helper.assertTrue(first.segment(TGPipeKinds.ITEM_PIPE).adapters() == 0, "Back in the centre, the adapter should go");
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 60)
     public static void wrenchCyclesTheClickedSide(GameTestHelper helper) {
         BlockPos pos = new BlockPos(2, 1, 2);

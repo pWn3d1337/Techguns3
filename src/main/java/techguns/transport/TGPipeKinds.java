@@ -30,11 +30,27 @@ public final class TGPipeKinds {
             List.of(TGConfig.ITEM_PIPE_INTERVAL_BASIC::get, TGConfig.ITEM_PIPE_INTERVAL_ADVANCED::get, TGConfig.ITEM_PIPE_INTERVAL_ELITE::get),
             new ItemLogic());
 
+    /**
+     * Which kind takes the centre of a block holding several kinds: the first one present. A kind alone in its block is
+     * always drawn in the centre; the others move to their own lanes.
+     */
+    public static final List<PipeKind> CENTER_PRIORITY = List.of(CABLE, ITEM_PIPE, FLUID_PIPE);
+
     /** All kinds, in lane order. */
     public static final List<PipeKind> ALL = List.of(FLUID_PIPE, CABLE, ITEM_PIPE);
     private static final Map<String, PipeKind> BY_NAME = ALL.stream().collect(Collectors.toMap(PipeKind::name, Function.identity()));
 
     private TGPipeKinds() {
+    }
+
+    /** The lane {@code kind} is drawn in when the kinds {@code present} share its block. */
+    public static techguns.core.transport.Lane drawnLane(PipeKind kind, java.util.function.Predicate<PipeKind> present) {
+        for (PipeKind first : CENTER_PRIORITY) {
+            if (present.test(first)) {
+                return first == kind ? techguns.core.transport.Lane.B : kind.lane();
+            }
+        }
+        return techguns.core.transport.Lane.B;
     }
 
     @Nullable
