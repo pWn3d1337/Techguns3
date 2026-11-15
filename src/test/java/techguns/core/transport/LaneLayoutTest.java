@@ -57,14 +57,35 @@ class LaneLayoutTest {
         }
     }
 
-    /** Adapter plate (as {@code techguns.transport.PipeParts#adapter}): both tube openings on the face, 1.5 deep. */
-    private static double[] adapter(Lane lane, int axis, boolean positive) {
-        double lo = Math.min(lane.center, Lane.B.center) - 2.0;
-        double hi = Math.max(lane.center, Lane.B.center) + 2.0;
-        double[] b = {lo, lo, lo, hi, hi, hi};
-        b[axis] = positive ? 14.5 : 0;
-        b[axis + 3] = positive ? 16 : 1.5;
-        return b;
+    /**
+     * Points inside the diagonal adapter (as {@code techguns.transport.PipeParts#adapter}) on the face of {@code axis}:
+     * a tube-wide piece from this lane's tube to the centre tube, turned 45 degrees in the face plane.
+     */
+    private static List<double[]> adapterPoints(Lane lane, int axis, boolean positive) {
+        List<double[]> points = new ArrayList<>();
+        double m = (lane.center + Lane.B.center) / 2;
+        double half = Math.abs(lane.center - Lane.B.center) * Math.sqrt(2) / 2 + Lane.TUBE_HALF;
+        double t = Lane.TUBE_HALF;
+        double d0 = positive ? 16 - 2 * t : 0;
+        int u = (axis + 1) % 3;
+        int v = (axis + 2) % 3;
+        for (double a = -half + 0.01; a <= half - 0.01; a += 0.25) {
+            for (double b = -t + 0.01; b <= t - 0.01; b += 0.25) {
+                for (double d = d0 + 0.01; d <= d0 + 2 * t - 0.01; d += 0.5) {
+                    double[] p = new double[3];
+                    // along the diagonal (1,1)/sqrt2 by a, across it (-1,1)/sqrt2 by b
+                    p[u] = m + (a - b) / Math.sqrt(2);
+                    p[v] = m + (a + b) / Math.sqrt(2);
+                    p[axis] = d;
+                    points.add(p);
+                }
+            }
+        }
+        return points;
+    }
+
+    private static boolean inside(double[] p, double[] box) {
+        return p[0] > box[0] && p[0] < box[3] && p[1] > box[1] && p[1] < box[4] && p[2] > box[2] && p[2] < box[5];
     }
 
     /** Parts of the centre lane except the arm and plate on the adapter's face (no link there: the neighbour differs). */
@@ -83,12 +104,15 @@ class LaneLayoutTest {
             Lane other = lane == Lane.A ? Lane.C : Lane.A;
             for (int axis = 0; axis < 3; axis++) {
                 for (boolean positive : new boolean[]{true, false}) {
-                    double[] a = adapter(lane, axis, positive);
-                    for (double[] b : parts(other)) {
-                        assertFalse(overlap(a, b), "adapter of " + lane + " hits lane " + other);
-                    }
-                    for (double[] b : centreParts(axis, positive)) {
-                        assertFalse(overlap(a, b), "adapter of " + lane + " hits the centre lane");
+                    List<double[]> blocked = new ArrayList<>(parts(other));
+                    blocked.addAll(centreParts(axis, positive));
+                    for (double[] p : adapterPoints(lane, axis, positive)) {
+                        for (int i = 0; i < 3; i++) {
+                            assertTrue(p[i] >= 0 && p[i] <= 16, "adapter of " + lane + " leaves the block");
+                        }
+                        for (double[] box : blocked) {
+                            assertFalse(inside(p, box), "adapter of " + lane + " cuts into another kind's part");
+                        }
                     }
                 }
             }

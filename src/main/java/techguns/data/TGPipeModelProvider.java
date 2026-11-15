@@ -29,9 +29,6 @@ public class TGPipeModelProvider extends BlockStateProvider {
     private static final float[] CORE_UV = {4, 0, 8, 4};
     private static final float[] PLATE_FACE_UV = {0, 0, 5, 5};
     private static final float[] PLATE_EDGE_UV = {0, 6, 5, 7};
-    /** Adapter plates: the core face texture stretched over the plate, its rim from the tube end strip. */
-    private static final float[] ADAPTER_FACE_UV = {4, 0, 8, 4};
-    private static final float[] ADAPTER_EDGE_UV = {8, 0, 11, 1.5f};
 
     public TGPipeModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, Techguns.MODID, existingFileHelper);
@@ -62,7 +59,8 @@ public class TGPipeModelProvider extends BlockStateProvider {
                     for (Direction side : Direction.values()) {
                         BlockModelBuilder adapter = part(PipeParts.adapterModel(kind, tier, side)).texture("pipe", texture)
                                 .texture("particle", texture);
-                        box(adapter, PipeParts.adapter(kind.lane(), side), side.getAxis(), "#pipe", ADAPTER_EDGE_UV, ADAPTER_FACE_UV, side);
+                        PipeParts.Bridge bridge = PipeParts.adapter(kind.lane(), side);
+                        box(adapter, bridge.box(), bridge.longAxis(), "#pipe", TUBE_UV, null, null, bridge);
                     }
                 }
                 itemModel(kind, tier, texture);
@@ -90,7 +88,17 @@ public class TGPipeModelProvider extends BlockStateProvider {
      */
     private static <T extends ModelBuilder<T>> void box(T model, double[] b, Direction.Axis axis, String texture, float[] sideUv,
                                                         float[] endUv, Direction cull) {
+        box(model, b, axis, texture, sideUv, endUv, cull, null);
+    }
+
+    /** {@link #box} turned as {@code bridge} says (the diagonal adapter pieces). */
+    private static <T extends ModelBuilder<T>> void box(T model, double[] b, Direction.Axis axis, String texture, float[] sideUv,
+                                                        float[] endUv, Direction cull, PipeParts.Bridge bridge) {
         var element = model.element().from((float) b[0], (float) b[1], (float) b[2]).to((float) b[3], (float) b[4], (float) b[5]);
+        if (bridge != null) {
+            element.rotation().angle(bridge.angle()).axis(bridge.rotationAxis())
+                    .origin((float) bridge.origin()[0], (float) bridge.origin()[1], (float) bridge.origin()[2]).rescale(false).end();
+        }
         for (Direction face : Direction.values()) {
             float[] uv;
             boolean turn = false;

@@ -16,15 +16,14 @@ import techguns.core.transport.SideMode;
 /**
  * Geometry of the pipe parts in 1/16 block, shared by the block shape, the hit test (which side and kind a wrench hit)
  * and the part models (datagen {@code TGPipeModelProvider}): per segment a core cube, an arm to each connected side, a
- * connector plate on each endpoint side and an adapter plate on each side where the neighbouring pipe of the same kind
- * sits in the centre while this one was moved aside (several kinds in one block).
+ * connector plate on each endpoint side and a diagonal adapter piece on each side where the neighbouring pipe of the
+ * same kind sits in the centre while this one was moved aside (several kinds in one block).
  */
 public final class PipeParts {
     public enum Type { CORE, ARM, PLATE, ADAPTER }
 
-    /** Half size of an adapter plate's tube openings, and its depth (1/16 block). */
-    public static final double ADAPTER_HALF = 2.0;
-    public static final double ADAPTER_DEPTH = 1.5;
+    /** Depth of the diagonal adapter piece at the face: one tube width (1/16 block). */
+    public static final double ADAPTER_DEPTH = 2 * Lane.TUBE_HALF;
 
     /** A part box in block coordinates (0..1); {@code side} is null for the core. */
     public record Part(Type type, @Nullable Direction side, AABB box) {
@@ -52,18 +51,43 @@ public final class PipeParts {
     }
 
     /**
-     * The adapter plate on the face {@code side} joining this segment's tube in {@code lane} to the neighbour's tube in
-     * the centre lane: it spans both tube openings, in 1/16 block.
+     * A diagonal tube piece: {@code box} (unrotated, in 1/16 block) is turned by {@code angle} degrees about
+     * {@code rotationAxis} through {@code origin}; its length runs along {@code longAxis}.
      */
-    public static double[] adapter(Lane lane, Direction side) {
-        double lo = Math.min(lane.center, Lane.B.center) - ADAPTER_HALF;
-        double hi = Math.max(lane.center, Lane.B.center) + ADAPTER_HALF;
-        double[] range = faceRange(side, ADAPTER_DEPTH);
+    public record Bridge(double[] box, Direction.Axis longAxis, Direction.Axis rotationAxis, float angle, double[] origin) {
+    }
+
+    /**
+     * The adapter on the face {@code side}: a tube piece lying diagonally in the face plane from this segment's tube in
+     * {@code lane} to the neighbour's tube in the centre lane (the lanes sit on the block diagonal, so the offset is
+     * the same on both axes of the face and a 45 degree turn about the arm axis lines it up).
+     */
+    public static Bridge adapter(Lane lane, Direction side) {
+        double m = (lane.center + Lane.B.center) / 2;
+        double half = (Math.abs(lane.center - Lane.B.center) * Math.sqrt(2)) / 2 + Lane.TUBE_HALF;
+        double t = Lane.TUBE_HALF;
+        double[] r = faceRange(side, ADAPTER_DEPTH);
+        double c = (r[0] + r[1]) / 2;
+        // element rotations are right-handed: +45 about Z turns +X to (1,1,0), about X turns +Y to (0,1,1); about Y
+        // +X turns to (1,0,-1), so -45 there
         return switch (side.getAxis()) {
-            case X -> new double[]{range[0], lo, lo, range[1], hi, hi};
-            case Y -> new double[]{lo, range[0], lo, hi, range[1], hi};
-            case Z -> new double[]{lo, lo, range[0], hi, hi, range[1]};
+            case Z -> new Bridge(new double[]{m - half, m - t, r[0], m + half, m + t, r[1]}, Direction.Axis.X, Direction.Axis.Z, 45.0f,
+                    new double[]{m, m, c});
+            case X -> new Bridge(new double[]{r[0], m - half, m - t, r[1], m + half, m + t}, Direction.Axis.Y, Direction.Axis.X, 45.0f,
+                    new double[]{c, m, m});
+            case Y -> new Bridge(new double[]{m - half, r[0], m - t, m + half, r[1], m + t}, Direction.Axis.X, Direction.Axis.Y, -45.0f,
+                    new double[]{m, c, m});
         };
+    }
+
+    /** Boxes along the diagonal adapter for the shape and the hit test (an outline cannot be turned), in 1/16 block. */
+    public static List<double[]> adapterBoxes(Lane lane, Direction side) {
+        List<double[]> boxes = new ArrayList<>();
+        for (double f : new double[]{0.0, 0.5, 1.0}) {
+            double p = lane.center + f * (Lane.B.center - lane.center);
+            boxes.add(along(p, p, side, Lane.TUBE_HALF, faceRange(side, ADAPTER_DEPTH)));
+        }
+        return boxes;
     }
 
     private static double[] faceRange(Direction side, double depth) {
@@ -98,7 +122,9 @@ public final class PipeParts {
                 parts.add(new Part(Type.PLATE, side, box(plate(lane, side))));
             }
             if ((adapters & bit) != 0 && lane != Lane.B) {
-                parts.add(new Part(Type.ADAPTER, side, box(adapter(lane, side))));
+                for (double[] b : adapterBoxes(lane, side)) {
+                    parts.add(new Part(Type.ADAPTER, side, box(b)));
+                }
             }
         }
         return parts;
