@@ -24,6 +24,14 @@ public final class PipeParts {
 
     /** Depth of the fittings at both ends of a diagonal adapter, and of the diagonal piece inside them (1/16 block). */
     public static final double JOINT_DEPTH = 2 * Lane.CORE_HALF;
+    /**
+     * Half size of the fittings on faces of {@code axis}: larger than the core, which a fitting overlaps on the faces
+     * near its lane, and different per axis, since fittings on two faces of one block can overlap too (same sized faces
+     * in one plane would flicker).
+     */
+    public static double jointHalf(Direction.Axis axis) {
+        return Lane.CORE_HALF + 0.25 + 0.1 * axis.ordinal();
+    }
     public static final double DIAGONAL_INSET = 0.5;
 
     /** A part box in block coordinates (0..1); {@code side} is null for the core. */
@@ -89,8 +97,8 @@ public final class PipeParts {
      */
     public static List<double[]> adapterJoints(Lane lane, Direction side) {
         double[] range = faceRange(side, JOINT_DEPTH);
-        return List.of(along(lane.center, lane.center, side, Lane.CORE_HALF, range),
-                along(Lane.B.center, Lane.B.center, side, Lane.CORE_HALF, range));
+        double half = jointHalf(side.getAxis());
+        return List.of(along(lane.center, lane.center, side, half, range), along(Lane.B.center, Lane.B.center, side, half, range));
     }
 
     /** Boxes covering the whole adapter for the shape and the hit test (an outline cannot be turned), in 1/16 block. */

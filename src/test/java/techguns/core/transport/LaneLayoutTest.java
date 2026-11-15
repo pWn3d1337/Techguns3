@@ -57,11 +57,12 @@ class LaneLayoutTest {
         }
     }
 
-    /** Fittings of the adapter (as {@code PipeParts#adapterJoints}): core-sized cubes at the face, 4 deep. */
+    /** Fittings of the adapter (as {@code PipeParts#adapterJoints}): cubes a bit larger than the core at the face, 4 deep. */
     private static List<double[]> joints(Lane lane, int axis, boolean positive) {
         List<double[]> joints = new ArrayList<>();
         for (double c : new double[]{lane.center, Lane.B.center}) {
-            double[] b = {c - 2, c - 2, c - 2, c + 2, c + 2, c + 2};
+            double h = 2.25 + 0.1 * axis;
+            double[] b = {c - h, c - h, c - h, c + h, c + h, c + h};
             b[axis] = positive ? 12 : 0;
             b[axis + 3] = positive ? 16 : 4;
             joints.add(b);
@@ -148,6 +149,53 @@ class LaneLayoutTest {
                         for (int i = 0; i < 3; i++) {
                             assertTrue(joint[i] >= 0 && joint[i + 3] <= 16, "adapter fitting leaves the block");
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void fittingsShareNoFacePlaneWithTheCore() {
+        for (Lane lane : new Lane[]{Lane.A, Lane.C}) {
+            double[] core = parts(lane).get(0);
+            for (int axis = 0; axis < 3; axis++) {
+                for (boolean positive : new boolean[]{true, false}) {
+                    for (double[] joint : joints(lane, axis, positive)) {
+                        if (!overlap(joint, core)) {
+                            continue;
+                        }
+                        for (int i = 0; i < 3; i++) {
+                            if (i == axis) {
+                                continue;
+                            }
+                            assertTrue(joint[i] != core[i] && joint[i + 3] != core[i + 3],
+                                    "a fitting of " + lane + " shares a face plane with the core it overlaps");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void overlappingFittingsShareNoFacePlane() {
+        for (Lane lane : new Lane[]{Lane.A, Lane.C}) {
+            List<double[]> all = new ArrayList<>();
+            for (int axis = 0; axis < 3; axis++) {
+                for (boolean positive : new boolean[]{true, false}) {
+                    all.addAll(joints(lane, axis, positive));
+                }
+            }
+            for (int i = 0; i < all.size(); i++) {
+                for (int j = i + 1; j < all.size(); j++) {
+                    double[] a = all.get(i);
+                    double[] b = all.get(j);
+                    if (!overlap(a, b)) {
+                        continue;
+                    }
+                    for (int k = 0; k < 6; k++) {
+                        assertTrue(a[k] != b[k], "two overlapping fittings of " + lane + " share a face plane");
                     }
                 }
             }
