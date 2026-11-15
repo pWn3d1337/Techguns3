@@ -61,6 +61,9 @@ public class TGPipeModelProvider extends BlockStateProvider {
                                 .texture("particle", texture);
                         PipeParts.Bridge bridge = PipeParts.adapter(kind.lane(), side);
                         box(adapter, bridge.box(), bridge.longAxis(), "#pipe", TUBE_UV, null, null, bridge);
+                        for (double[] joint : PipeParts.adapterJoints(kind.lane(), side)) {
+                            box(adapter, joint, null, "#pipe", CORE_UV, CORE_UV, side);
+                        }
                     }
                 }
                 itemModel(kind, tier, texture);

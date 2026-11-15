@@ -22,8 +22,9 @@ import techguns.core.transport.SideMode;
 public final class PipeParts {
     public enum Type { CORE, ARM, PLATE, ADAPTER }
 
-    /** Depth of the diagonal adapter piece at the face: one tube width (1/16 block). */
-    public static final double ADAPTER_DEPTH = 2 * Lane.TUBE_HALF;
+    /** Depth of the fittings at both ends of a diagonal adapter, and of the diagonal piece inside them (1/16 block). */
+    public static final double JOINT_DEPTH = 2 * Lane.CORE_HALF;
+    public static final double DIAGONAL_INSET = 0.5;
 
     /** A part box in block coordinates (0..1); {@code side} is null for the core. */
     public record Part(Type type, @Nullable Direction side, AABB box) {
@@ -58,15 +59,17 @@ public final class PipeParts {
     }
 
     /**
-     * The adapter on the face {@code side}: a tube piece lying diagonally in the face plane from this segment's tube in
-     * {@code lane} to the neighbour's tube in the centre lane (the lanes sit on the block diagonal, so the offset is
-     * the same on both axes of the face and a 45 degree turn about the arm axis lines it up).
+     * The diagonal piece of the adapter on the face {@code side}: a tube lying diagonally in the face plane from this
+     * segment's tube in {@code lane} to the neighbour's tube in the centre lane (the lanes sit on the block diagonal, so
+     * the offset is the same on both axes of the face and a 45 degree turn about the arm axis lines it up). It runs
+     * from centre to centre and sits inside the depth of the two {@link #adapterJoints joints}, which hide its cut ends.
      */
     public static Bridge adapter(Lane lane, Direction side) {
         double m = (lane.center + Lane.B.center) / 2;
-        double half = (Math.abs(lane.center - Lane.B.center) * Math.sqrt(2)) / 2 + Lane.TUBE_HALF;
+        double half = Math.abs(lane.center - Lane.B.center) * Math.sqrt(2) / 2;
         double t = Lane.TUBE_HALF;
-        double[] r = faceRange(side, ADAPTER_DEPTH);
+        double[] j = faceRange(side, JOINT_DEPTH);
+        double[] r = {j[0] + DIAGONAL_INSET, j[1] - DIAGONAL_INSET};
         double c = (r[0] + r[1]) / 2;
         // element rotations are right-handed: +45 about Z turns +X to (1,1,0), about X turns +Y to (0,1,1); about Y
         // +X turns to (1,0,-1), so -45 there
@@ -80,13 +83,21 @@ public final class PipeParts {
         };
     }
 
-    /** Boxes along the diagonal adapter for the shape and the hit test (an outline cannot be turned), in 1/16 block. */
+    /**
+     * The two fittings of the adapter on the face {@code side}, core-sized cubes at the face around this segment's tube
+     * and around the neighbour's centred tube: they close both tube ends and cover the ends of the diagonal piece.
+     */
+    public static List<double[]> adapterJoints(Lane lane, Direction side) {
+        double[] range = faceRange(side, JOINT_DEPTH);
+        return List.of(along(lane.center, lane.center, side, Lane.CORE_HALF, range),
+                along(Lane.B.center, Lane.B.center, side, Lane.CORE_HALF, range));
+    }
+
+    /** Boxes covering the whole adapter for the shape and the hit test (an outline cannot be turned), in 1/16 block. */
     public static List<double[]> adapterBoxes(Lane lane, Direction side) {
-        List<double[]> boxes = new ArrayList<>();
-        for (double f : new double[]{0.0, 0.5, 1.0}) {
-            double p = lane.center + f * (Lane.B.center - lane.center);
-            boxes.add(along(p, p, side, Lane.TUBE_HALF, faceRange(side, ADAPTER_DEPTH)));
-        }
+        List<double[]> boxes = new ArrayList<>(adapterJoints(lane, side));
+        double p = (lane.center + Lane.B.center) / 2;
+        boxes.add(along(p, p, side, Lane.TUBE_HALF, faceRange(side, JOINT_DEPTH)));
         return boxes;
     }
 

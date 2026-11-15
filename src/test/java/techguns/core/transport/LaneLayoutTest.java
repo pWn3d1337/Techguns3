@@ -57,21 +57,37 @@ class LaneLayoutTest {
         }
     }
 
+    /** Fittings of the adapter (as {@code PipeParts#adapterJoints}): core-sized cubes at the face, 4 deep. */
+    private static List<double[]> joints(Lane lane, int axis, boolean positive) {
+        List<double[]> joints = new ArrayList<>();
+        for (double c : new double[]{lane.center, Lane.B.center}) {
+            double[] b = {c - 2, c - 2, c - 2, c + 2, c + 2, c + 2};
+            b[axis] = positive ? 12 : 0;
+            b[axis + 3] = positive ? 16 : 4;
+            joints.add(b);
+        }
+        return joints;
+    }
+
     /**
-     * Points inside the diagonal adapter (as {@code techguns.transport.PipeParts#adapter}) on the face of {@code axis}:
-     * a tube-wide piece from this lane's tube to the centre tube, turned 45 degrees in the face plane.
+     * Points of the diagonal piece (as {@code PipeParts#adapter}) on the face of {@code axis}, from centre to centre,
+     * tube wide, 0.5 inside the fitting depth; {@code step} 0 gives only its corners.
      */
-    private static List<double[]> adapterPoints(Lane lane, int axis, boolean positive) {
+    private static List<double[]> diagonalPoints(Lane lane, int axis, boolean positive, double step) {
         List<double[]> points = new ArrayList<>();
         double m = (lane.center + Lane.B.center) / 2;
-        double half = Math.abs(lane.center - Lane.B.center) * Math.sqrt(2) / 2 + Lane.TUBE_HALF;
+        double half = Math.abs(lane.center - Lane.B.center) * Math.sqrt(2) / 2;
         double t = Lane.TUBE_HALF;
-        double d0 = positive ? 16 - 2 * t : 0;
+        double d0 = positive ? 12.5 : 0.5;
+        double d1 = positive ? 15.5 : 3.5;
         int u = (axis + 1) % 3;
         int v = (axis + 2) % 3;
-        for (double a = -half + 0.01; a <= half - 0.01; a += 0.25) {
-            for (double b = -t + 0.01; b <= t - 0.01; b += 0.25) {
-                for (double d = d0 + 0.01; d <= d0 + 2 * t - 0.01; d += 0.5) {
+        double[] as = step == 0 ? new double[]{-half, half} : range(-half, half, step);
+        double[] bs = step == 0 ? new double[]{-t, t} : range(-t, t, step);
+        double[] ds = step == 0 ? new double[]{d0, d1} : range(d0, d1, step);
+        for (double a : as) {
+            for (double b : bs) {
+                for (double d : ds) {
                     double[] p = new double[3];
                     // along the diagonal (1,1)/sqrt2 by a, across it (-1,1)/sqrt2 by b
                     p[u] = m + (a - b) / Math.sqrt(2);
@@ -82,6 +98,20 @@ class LaneLayoutTest {
             }
         }
         return points;
+    }
+
+    private static double[] range(double from, double to, double step) {
+        int n = (int) Math.floor((to - from) / step) + 1;
+        double[] values = new double[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = Math.min(to, from + i * step);
+        }
+        return values;
+    }
+
+    private static boolean within(double[] p, double[] box) {
+        double e = 1e-6;
+        return p[0] >= box[0] - e && p[0] <= box[3] + e && p[1] >= box[1] - e && p[1] <= box[4] + e && p[2] >= box[2] - e && p[2] <= box[5] + e;
     }
 
     private static boolean inside(double[] p, double[] box) {
@@ -106,13 +136,33 @@ class LaneLayoutTest {
                 for (boolean positive : new boolean[]{true, false}) {
                     List<double[]> blocked = new ArrayList<>(parts(other));
                     blocked.addAll(centreParts(axis, positive));
-                    for (double[] p : adapterPoints(lane, axis, positive)) {
-                        for (int i = 0; i < 3; i++) {
-                            assertTrue(p[i] >= 0 && p[i] <= 16, "adapter of " + lane + " leaves the block");
-                        }
+                    for (double[] p : diagonalPoints(lane, axis, positive, 0.25)) {
                         for (double[] box : blocked) {
                             assertFalse(inside(p, box), "adapter of " + lane + " cuts into another kind's part");
                         }
+                    }
+                    for (double[] joint : joints(lane, axis, positive)) {
+                        for (double[] box : blocked) {
+                            assertFalse(overlap(joint, box), "adapter fitting of " + lane + " cuts into another kind's part");
+                        }
+                        for (int i = 0; i < 3; i++) {
+                            assertTrue(joint[i] >= 0 && joint[i + 3] <= 16, "adapter fitting leaves the block");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void diagonalEndsHideInTheFittings() {
+        for (Lane lane : new Lane[]{Lane.A, Lane.C}) {
+            for (int axis = 0; axis < 3; axis++) {
+                for (boolean positive : new boolean[]{true, false}) {
+                    List<double[]> joints = joints(lane, axis, positive);
+                    for (double[] corner : diagonalPoints(lane, axis, positive, 0)) {
+                        assertTrue(joints.stream().anyMatch(j -> within(corner, j)),
+                                "a corner of the diagonal piece of " + lane + " sticks out of its fittings");
                     }
                 }
             }
