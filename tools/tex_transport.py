@@ -7,7 +7,7 @@ Pure standard library and deterministic: the same output on every run. Run from 
 Writes (all 32x32 unless noted, in the Techguns 2 machine style: noisy dark metal, bevelled frames, rivets):
   block/{combustion_generator,liquid_generator,electric_furnace}_{front,front_on,top}.png
   block/pipe/{cable,fluid_pipe,item_pipe}_{basic,advanced,elite}.png   pipe part atlas, see PIPE LAYOUT
-  block/pipe/connector_{neutral,input,output}.png                     connector plate atlas
+  block/pipe/connector_{neutral,input,output,disabled}.png            connector plate atlas (disabled: core marks only)
   gui/{combustion_generator,liquid_generator,electric_furnace}_gui.png  256x256, panel from blast_furnace_gui.png
   gui/emptyslots/emptyslot_bucket.png                                 16x16
   item/wrench.png
@@ -16,7 +16,8 @@ PIPE LAYOUT (model units of 1/16 block; 1 unit = 2 texels of the 32x32 texture):
   tube side   u 0..3,  v 0..16  (the tube runs along v)
   core face   u 4..8,  v 0..4
   tube end    u 8..11, v 0..3
-CONNECTOR LAYOUT: plate face u 0..5, v 0..5; plate edge u 0..5, v 6..7.
+CONNECTOR LAYOUT: plate face u 0..5, v 0..5; plate edge u 0..5, v 6..7 (its middle, v 6.5..7, is plain mode colour:
+the side mode marks on bare core faces use it).
 Model coordinates must match techguns.transport.PipeParts and TGPipeModelProvider.
 """
 import os
@@ -472,7 +473,7 @@ def pipe_texture(kind, tier):
     return img
 
 
-CONNECTOR = {'neutral': (150, 150, 155), 'input': (60, 125, 235), 'output': (245, 145, 40)}
+CONNECTOR = {'neutral': (150, 150, 155), 'input': (60, 125, 235), 'output': (245, 145, 40), 'disabled': (175, 40, 35)}
 
 
 def connector_texture(mode):

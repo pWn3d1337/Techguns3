@@ -176,6 +176,28 @@ public final class PipeParts {
         return "plate_" + lane(lane) + "_" + side.getName() + "_" + mode.name().toLowerCase(Locale.ROOT);
     }
 
+    /** Half size and height of the side mode mark on a bare core face (1/16 block). */
+    public static final double MARK_HALF = 1.0;
+    public static final double MARK_HEIGHT = 0.15;
+
+    /**
+     * The side mode mark of {@code lane} on the core face {@code side}: a small flat square on the face, shown when the
+     * side has a mode other than neutral but no connection, in 1/16 block.
+     */
+    public static double[] mark(Lane lane, Direction side) {
+        double face = lane.center + (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? Lane.CORE_HALF : -Lane.CORE_HALF);
+        double[] range = side.getAxisDirection() == Direction.AxisDirection.POSITIVE
+                ? new double[]{face, face + MARK_HEIGHT} : new double[]{face - MARK_HEIGHT, face};
+        return along(lane.center, lane.center, side, MARK_HALF, range);
+    }
+
+    public static String markModel(Lane lane, Direction side, SideMode mode) {
+        return "mark_" + lane(lane) + "_" + side.getName() + "_" + mode.name().toLowerCase(Locale.ROOT);
+    }
+
+    /** Modes marked on a bare core face (neutral is the default and stays unmarked). */
+    public static final List<SideMode> MARK_MODES = List.of(SideMode.OUTPUT, SideMode.INPUT, SideMode.DISABLED);
+
     /** Modes that show a connector plate (an endpoint side is never disabled). */
     public static final List<SideMode> PLATE_MODES = List.of(SideMode.NEUTRAL, SideMode.OUTPUT, SideMode.INPUT);
 
@@ -201,6 +223,9 @@ public final class PipeParts {
             for (Direction side : Direction.values()) {
                 for (SideMode mode : PLATE_MODES) {
                     names.add(plateModel(lane, side, mode));
+                }
+                for (SideMode mode : MARK_MODES) {
+                    names.add(markModel(lane, side, mode));
                 }
             }
         }

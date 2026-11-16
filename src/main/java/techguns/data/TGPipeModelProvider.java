@@ -29,6 +29,8 @@ public class TGPipeModelProvider extends BlockStateProvider {
     private static final float[] CORE_UV = {4, 0, 8, 4};
     private static final float[] PLATE_FACE_UV = {0, 0, 5, 5};
     private static final float[] PLATE_EDGE_UV = {0, 6, 5, 7};
+    /** Plain mode colour in the middle of the plate edge strip. */
+    private static final float[] MARK_UV = {1, 6.5f, 4, 7};
 
     public TGPipeModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, Techguns.MODID, existingFileHelper);
@@ -75,6 +77,11 @@ public class TGPipeModelProvider extends BlockStateProvider {
                     ResourceLocation texture = modLoc("block/pipe/connector_" + mode.name().toLowerCase(java.util.Locale.ROOT));
                     BlockModelBuilder plate = part(PipeParts.plateModel(lane, side, mode)).texture("plate", texture).texture("particle", texture);
                     box(plate, PipeParts.plate(lane, side), side.getAxis(), "#plate", PLATE_EDGE_UV, PLATE_FACE_UV, side);
+                }
+                for (SideMode mode : PipeParts.MARK_MODES) {
+                    ResourceLocation texture = modLoc("block/pipe/connector_" + mode.name().toLowerCase(java.util.Locale.ROOT));
+                    BlockModelBuilder mark = part(PipeParts.markModel(lane, side, mode)).texture("mark", texture).texture("particle", texture);
+                    box(mark, PipeParts.mark(lane, side), null, "#mark", MARK_UV, MARK_UV, null);
                 }
             }
         }

@@ -21,8 +21,9 @@ import techguns.transport.PipeParts;
 import techguns.transport.TGPipeBlockEntity;
 
 /**
- * The pipe block's model: for each segment in the block entity's model data the core, the arms to connected sides and
- * the connector plates (coloured by side mode) from the standalone part models. The quads go into the chunk mesh like
+ * The pipe block's model: for each segment in the block entity's model data the core, the arms to connected sides,
+ * the connector plates (coloured by side mode), the adapters and, on unconnected sides with a mode other than neutral, a
+ * small colour mark on the core face, from the standalone part models. The quads go into the chunk mesh like
  * any block model; there is no block entity renderer.
  */
 // MIGRATION(26.x): IDynamicBakedModel / ModelData are replaced by BlockStateModel#collectParts in 1.21.5+.
@@ -55,6 +56,10 @@ public class PipeBakedModel implements IDynamicBakedModel {
                 SideMode mode = segment.modes()[dir.get3DDataValue()];
                 if ((segment.ends() & bit) != 0 && mode.connects()) {
                     add(quads, PipeParts.plateModel(segment.lane(), dir, mode), state, side, rand, renderType);
+                }
+                // a mode set on a side without a connection shows as a small colour mark on the core face
+                if (((segment.links() | segment.ends()) & bit) == 0 && mode != SideMode.NEUTRAL) {
+                    add(quads, PipeParts.markModel(segment.lane(), dir, mode), state, side, rand, renderType);
                 }
                 if ((segment.adapters() & bit) != 0 && segment.lane() != techguns.core.transport.Lane.B) {
                     add(quads, PipeParts.adapterModel(segment.kind(), segment.tier(), dir), state, side, rand, renderType);
