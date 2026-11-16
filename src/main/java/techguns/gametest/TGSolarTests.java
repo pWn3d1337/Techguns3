@@ -85,6 +85,25 @@ public class TGSolarTests {
         });
     }
 
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void solarMenuShowsTheArray(GameTestHelper helper) {
+        for (int x = 1; x <= 3; x++) {
+            panel(helper, new BlockPos(x, 1, 2));
+            helper.setBlock(new BlockPos(x, 3, 2), Blocks.STONE);
+        }
+        helper.runAfterDelay(2, () -> {
+            SolarPanelBlockEntity middle = (SolarPanelBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 2));
+            middle.array().setEnergy(70000 - 58000);
+            net.minecraft.world.entity.player.Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+            techguns.machine.SolarPanelMenu menu = new techguns.machine.SolarPanelMenu(0, player.getInventory(), middle);
+            helper.assertTrue(menu.panels() == 3, "The menu should show three panels, got " + menu.panels());
+            helper.assertTrue(menu.capacity() == 3 * SolarPanelBlockEntity.CAPACITY, "The menu should show the array capacity");
+            helper.assertTrue(menu.energy() == 12000, "The menu should show the pooled energy, got " + menu.energy());
+            helper.assertTrue(menu.output() == 0.0, "A covered array makes nothing");
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 60)
     public static void solarArrayPushesIntoMachines(GameTestHelper helper) {
         for (int x = 1; x <= 2; x++) {

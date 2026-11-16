@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -30,7 +29,7 @@ import techguns.registry.TGBlockEntities;
 /**
  * Solar Panel (Techguns 3): a slab-high generator. Panels side by side join into one array ({@link SolarArray}) and
  * one surface: {@link #NORTH} etc. say which sides touch another panel, the frame is drawn only on the others. Use
- * shows the array's size, energy and output.
+ * opens a screen with the array's power bar, size and output.
  */
 public class SolarPanelBlock extends BaseEntityBlock {
     public static final MapCodec<SolarPanelBlock> CODEC = simpleCodec(SolarPanelBlock::new);
@@ -120,12 +119,9 @@ public class SolarPanelBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof SolarPanelBlockEntity panel) {
-            SolarArray array = panel.array();
-            if (array != null) {
-                player.displayClientMessage(Component.translatable("techguns.solar.status", array.panels(), array.getEnergyStored(),
-                        array.getMaxEnergyStored(), String.format(java.util.Locale.ROOT, "%.1f", array.lastPerTick())), true);
-            }
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer && level.getBlockEntity(pos) instanceof SolarPanelBlockEntity panel) {
+            serverPlayer.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inventory, p) -> new SolarPanelMenu(id, inventory, panel),
+                    getName()), buf -> buf.writeBlockPos(pos));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

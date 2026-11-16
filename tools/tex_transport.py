@@ -9,7 +9,7 @@ Writes (all 32x32 unless noted, in the Techguns 2 machine style: noisy dark meta
   block/solar_panel_{top,side,frame}.png                              solar panel (top tiles seamlessly)
   block/pipe/{cable,fluid_pipe,item_pipe}_{basic,advanced,elite}.png   pipe part atlas, see PIPE LAYOUT
   block/pipe/connector_{neutral,input,output,disabled}.png            connector plate atlas (disabled: core marks only)
-  gui/{combustion_generator,liquid_generator,electric_furnace}_gui.png  256x256, panel from blast_furnace_gui.png
+  gui/{combustion_generator,liquid_generator,electric_furnace,solar_panel}_gui.png  256x256, panel from blast_furnace_gui.png
   gui/emptyslots/emptyslot_bucket.png                                 16x16
   item/wrench.png
 
@@ -402,6 +402,11 @@ def gui_liquid(textures):
     return img
 
 
+def gui_solar(textures):
+    """Only the power bar and the text: the machine panel without slots."""
+    return gui_base(textures)
+
+
 def gui_furnace(textures):
     img = gui_base(textures)
     slot(img, 55, 34)
@@ -602,6 +607,7 @@ def main():
     write_png(gui_combustion(root), os.path.join(gui, 'combustion_generator_gui.png'))
     write_png(gui_liquid(root), os.path.join(gui, 'liquid_generator_gui.png'))
     write_png(gui_furnace(root), os.path.join(gui, 'electric_furnace_gui.png'))
+    write_png(gui_solar(root), os.path.join(gui, 'solar_panel_gui.png'))
     write_png(bucket_icon(), os.path.join(gui, 'emptyslots', 'emptyslot_bucket.png'))
     write_png(wrench_icon(), os.path.join(root, 'item', 'wrench.png'))
 

@@ -346,7 +346,9 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.configuration.liquidGeneratorFePerTick", "Liquid Fuel Generator FE per Tick");
         add("techguns.configuration.electricFurnaceFePerTick", "Electric Furnace FE per Tick");
         add("techguns.configuration.solarPanelFePerTick", "Solar Panel FE per Tick (Sunlight)");
-        add("techguns.solar.status", "Solar array: %s panels, %s/%s FE, %s FE/t");
+        add("techguns.solar.panels", "Panels in array: %s");
+        add("techguns.solar.output", "Output: %s FE/t");
+        add("techguns.solar.stored", "Stored: %s/%s FE");
         add("techguns.configuration.transport", "Cables and Pipes");
         add("techguns.configuration.cableRateBasic", "Basic Cable FE per Tick");
         add("techguns.configuration.cableRateAdvanced", "Advanced Cable FE per Tick");
