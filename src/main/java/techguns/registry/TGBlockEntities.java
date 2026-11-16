@@ -154,8 +154,9 @@ public final class TGBlockEntities {
         machine(event, LIQUID_GENERATOR.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, LIQUID_GENERATOR.get(), (generator, side) -> generator.getFluidHandler());
         machine(event, ELECTRIC_FURNACE.get());
-        // every panel drains its array's shared pool
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, SOLAR_PANEL.get(), (panel, side) -> panel.array());
+        // every panel drains its array's shared pool, through its sides and bottom (the top is the cell surface)
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, SOLAR_PANEL.get(),
+                (panel, side) -> side == net.minecraft.core.Direction.UP ? null : panel.array());
         pipes(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());

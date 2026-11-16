@@ -59,7 +59,7 @@ public class TGSolarTests {
             helper.assertTrue(array.panels() == 4, "Four panels in a row should form one array, got " + array.panels());
             helper.assertTrue(array.getMaxEnergyStored() == 4 * SolarPanelBlockEntity.CAPACITY, "The array should pool the capacity");
             array.setEnergy(10000);
-            IEnergyStorage far = helper.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, helper.absolutePos(last), Direction.UP);
+            IEnergyStorage far = helper.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, helper.absolutePos(last), Direction.NORTH);
             helper.assertTrue(far != null && far.extractEnergy(Integer.MAX_VALUE, false) == 10000,
                     "The far panel should hand out the whole pool at once");
             BlockState state = helper.getBlockState(new BlockPos(2, 1, 2));
@@ -180,6 +180,61 @@ public class TGSolarTests {
             helper.assertTrue(menu.capacity() == 3 * SolarPanelBlockEntity.CAPACITY, "The menu should show the array capacity");
             helper.assertTrue(menu.energy() == 12000, "The menu should show the pooled energy, got " + menu.energy());
             helper.assertTrue(menu.output() == 0.0, "A covered array makes nothing");
+            helper.succeed();
+        });
+    }
+
+    /** A covered panel with power, a cable east of it whose west side has {@code mode}, and a press after the cable. */
+    private static MetalPressBlockEntity cableSetup(GameTestHelper helper, techguns.core.transport.SideMode mode) {
+        panel(helper, new BlockPos(1, 1, 2));
+        helper.setBlock(new BlockPos(1, 3, 2), Blocks.STONE);
+        techguns.transport.TGPipeBlockEntity cable = TGTransportTests.pipe(helper, new BlockPos(2, 1, 2), techguns.transport.TGPipeKinds.CABLE, 0);
+        cable.setMode(techguns.transport.TGPipeKinds.CABLE, Direction.WEST, mode);
+        helper.setBlock(new BlockPos(3, 1, 2), TGBlocks.METAL_PRESS.get());
+        helper.runAfterDelay(2, () -> ((SolarPanelBlockEntity) helper.getBlockEntity(new BlockPos(1, 1, 2))).array().setEnergy(4000));
+        return (MetalPressBlockEntity) helper.getBlockEntity(new BlockPos(3, 1, 2));
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void solarPowersNeutralCables(GameTestHelper helper) {
+        MetalPressBlockEntity press = cableSetup(helper, techguns.core.transport.SideMode.NEUTRAL);
+        helper.succeedWhen(() -> helper.assertTrue(press.getEnergy().getEnergyStored() > 0, "A neutral cable side should take the panel's power"));
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void solarPowersInputCables(GameTestHelper helper) {
+        MetalPressBlockEntity press = cableSetup(helper, techguns.core.transport.SideMode.INPUT);
+        helper.succeedWhen(() -> helper.assertTrue(press.getEnergy().getEnergyStored() > 0, "An input cable side should take the panel's power"));
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void solarSkipsOutputAndDisabledCables(GameTestHelper helper) {
+        MetalPressBlockEntity output = cableSetup(helper, techguns.core.transport.SideMode.OUTPUT);
+        helper.runAfterDelay(20, () -> {
+            helper.assertTrue(output.getEnergy().getEnergyStored() == 0, "An output cable side should not get the panel's power");
+            techguns.transport.TGPipeBlockEntity cable = (techguns.transport.TGPipeBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 2));
+            cable.setMode(techguns.transport.TGPipeKinds.CABLE, Direction.WEST, techguns.core.transport.SideMode.DISABLED);
+        });
+        helper.runAfterDelay(40, () -> {
+            helper.assertTrue(output.getEnergy().getEnergyStored() == 0, "A disabled cable side should not get the panel's power");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void solarPowersBelowNotAbove(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(2, 1, 2), TGBlocks.METAL_PRESS.get());
+        helper.setBlock(new BlockPos(2, 3, 2), TGBlocks.METAL_PRESS.get());
+        panel(helper, new BlockPos(2, 2, 2));
+        MetalPressBlockEntity below = (MetalPressBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 2));
+        MetalPressBlockEntity above = (MetalPressBlockEntity) helper.getBlockEntity(new BlockPos(2, 3, 2));
+        helper.runAfterDelay(2, () -> ((SolarPanelBlockEntity) helper.getBlockEntity(new BlockPos(2, 2, 2))).array().setEnergy(4000));
+        helper.runAfterDelay(6, () -> {
+            helper.assertTrue(below.getEnergy().getEnergyStored() == 4000, "The machine below should get the power, got "
+                    + below.getEnergy().getEnergyStored());
+            helper.assertTrue(above.getEnergy().getEnergyStored() == 0, "Nothing should go out through the cell surface");
+            helper.assertTrue(helper.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, helper.absolutePos(new BlockPos(2, 2, 2)),
+                    Direction.UP) == null, "The top should offer no energy access");
             helper.succeed();
         });
     }

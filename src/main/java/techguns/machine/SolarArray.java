@@ -226,7 +226,10 @@ public final class SolarArray implements IEnergyStorage {
         energy = 0;
     }
 
-    /** Finds the blocks with an energy capability next to {@code panel} (neighbouring block entities only). */
+    /**
+     * Finds the blocks with an energy capability next to {@code panel} on its sides and bottom (neighbouring block
+     * entities only). Cables take the push on neutral and input sides; output and disabled sides offer no capability.
+     */
     void scanNeighbours(SolarPanelBlockEntity panel) {
         if (!valid || panel.currentArray() != this) {
             return;
@@ -235,7 +238,8 @@ public final class SolarArray implements IEnergyStorage {
         for (Direction side : Direction.values()) {
             BlockPos next = panel.getBlockPos().relative(side);
             BlockEntity other = level.isLoaded(next) ? level.getBlockEntity(next) : null;
-            boolean wanted = other != null && !(other instanceof SolarPanelBlockEntity);
+            // the top is the cell surface: power leaves through the sides and the bottom only
+            boolean wanted = side != Direction.UP && other != null && !(other instanceof SolarPanelBlockEntity);
             int i = side.ordinal();
             if (wanted && caches[i] == null) {
                 caches[i] = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, level, next, side.getOpposite());
