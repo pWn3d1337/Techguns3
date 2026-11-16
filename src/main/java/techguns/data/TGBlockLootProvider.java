@@ -80,6 +80,7 @@ public class TGBlockLootProvider extends BlockLootSubProvider {
         dropSelf(TGBlocks.LIQUID_GENERATOR.get());
         dropSelf(TGBlocks.ELECTRIC_FURNACE.get());
         dropSelf(TGBlocks.SOLAR_PANEL.get());
+        dropSelf(TGBlocks.WIND_TURBINE.get());
         dropSelf(TGBlocks.REPAIR_BENCH.get());
         dropSelf(TGBlocks.CAMO_BENCH.get());
         dropSelf(TGBlocks.UPGRADE_BENCH.get());

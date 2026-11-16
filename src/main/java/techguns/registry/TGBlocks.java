@@ -318,6 +318,9 @@ public final class TGBlocks {
     public static final DeferredBlock<techguns.machine.SolarPanelBlock> SOLAR_PANEL = withItem("solar_panel",
             () -> new techguns.machine.SolarPanelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLUE)
                     .requiresCorrectToolForDrops().strength(2.0f, 6.0f).sound(SoundType.METAL)));
+    public static final DeferredBlock<techguns.machine.WindTurbineBlock> WIND_TURBINE = withItem("wind_turbine",
+            () -> new techguns.machine.WindTurbineBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
+                    .requiresCorrectToolForDrops().strength(2.0f, 6.0f).sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<techguns.machine.TGLitMachineBlock> ELECTRIC_FURNACE = withItem("electric_furnace",
             () -> new techguns.machine.TGLitMachineBlock(machine().lightLevel(techguns.machine.TGLitMachineBlock::lightLevel),
                     TGBlockEntities.ELECTRIC_FURNACE));

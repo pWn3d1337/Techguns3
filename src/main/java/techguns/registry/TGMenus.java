@@ -75,6 +75,8 @@ public final class TGMenus {
             "liquid_generator", () -> IMenuTypeExtension.create(techguns.machine.GeneratorMenu.Liquid::new));
     public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.SolarPanelMenu>> SOLAR_PANEL = MENUS.register(
             "solar_panel", () -> IMenuTypeExtension.create(techguns.machine.SolarPanelMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.WindTurbineMenu>> WIND_TURBINE = MENUS.register(
+            "wind_turbine", () -> IMenuTypeExtension.create(techguns.machine.WindTurbineMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<techguns.machine.ElectricFurnaceMenu>> ELECTRIC_FURNACE = MENUS.register(
             "electric_furnace", () -> IMenuTypeExtension.create(techguns.machine.ElectricFurnaceMenu::new));
 

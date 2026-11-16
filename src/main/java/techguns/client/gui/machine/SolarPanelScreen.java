@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import techguns.TGIds;
-import techguns.machine.SolarEfficiency;
+import techguns.machine.BiomeEfficiency;
 import techguns.machine.SolarPanelMenu;
 
 /**
@@ -53,7 +53,7 @@ public class SolarPanelScreen extends AbstractContainerScreen<SolarPanelMenu> {
         graphics.drawString(font, Component.translatable("techguns.solar.stored", menu.energy(), menu.capacity()), 22, 44, TEXT_COLOR, false);
         // the biome of this panel: the efficiency data map is synced, so the client looks it up itself
         if (minecraft != null && minecraft.level != null) {
-            SolarEfficiency efficiency = SolarEfficiency.of(minecraft.level.getBiome(menu.pos()));
+            BiomeEfficiency efficiency = BiomeEfficiency.solar(minecraft.level.getBiome(menu.pos()));
             graphics.drawString(font, Component.translatable("techguns.solar.biome", Component.translatable(efficiency.translationKey()),
                     String.format(Locale.ROOT, "%.2f", efficiency.multiplier())), 22, 56, TEXT_COLOR, false);
         }

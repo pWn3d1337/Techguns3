@@ -1,0 +1,104 @@
+{
+  "values": {
+    "#c:is_badlands": {
+      "type": "badlands",
+      "multiplier": 1.25,
+      "priority": 110
+    },
+    "#c:is_beach": {
+      "type": "beach",
+      "multiplier": 1.4,
+      "priority": 160
+    },
+    "#c:is_dense_vegetation/overworld": {
+      "type": "dense",
+      "multiplier": 0.75,
+      "priority": 10
+    },
+    "#c:is_desert": {
+      "type": "desert",
+      "multiplier": 1.2,
+      "priority": 100
+    },
+    "#c:is_forest": {
+      "type": "forest",
+      "multiplier": 0.75,
+      "priority": 30
+    },
+    "#c:is_hill": {
+      "type": "hill",
+      "multiplier": 1.25,
+      "priority": 120
+    },
+    "#c:is_jungle": {
+      "type": "jungle",
+      "multiplier": 0.5,
+      "priority": 60
+    },
+    "#c:is_mountain/peak": {
+      "type": "mountain_peak",
+      "multiplier": 1.5,
+      "priority": 190
+    },
+    "#c:is_mountain/slope": {
+      "type": "mountain_slope",
+      "multiplier": 1.3,
+      "priority": 150
+    },
+    "#c:is_ocean": {
+      "type": "ocean",
+      "multiplier": 1.5,
+      "priority": 180
+    },
+    "#c:is_plains": {
+      "type": "plains",
+      "multiplier": 1.2,
+      "priority": 80
+    },
+    "#c:is_plateau": {
+      "type": "plateau",
+      "multiplier": 1.3,
+      "priority": 130
+    },
+    "#c:is_river": {
+      "type": "river",
+      "multiplier": 1.1,
+      "priority": 70
+    },
+    "#c:is_savanna": {
+      "type": "savanna",
+      "multiplier": 1.2,
+      "priority": 90
+    },
+    "#c:is_snowy_plains": {
+      "type": "snowy_plains",
+      "multiplier": 1.3,
+      "priority": 140
+    },
+    "#c:is_sparse_vegetation/overworld": {
+      "type": "sparse",
+      "multiplier": 1.15,
+      "priority": 20
+    },
+    "#c:is_stony_shores": {
+      "type": "stony_shores",
+      "multiplier": 1.4,
+      "priority": 170
+    },
+    "#c:is_swamp": {
+      "type": "swamp",
+      "multiplier": 0.8,
+      "priority": 50
+    },
+    "#c:is_taiga": {
+      "type": "taiga",
+      "multiplier": 0.8,
+      "priority": 40
+    },
+    "#c:is_windswept": {
+      "type": "windswept",
+      "multiplier": 1.75,
+      "priority": 200
+    }
+  }
+}

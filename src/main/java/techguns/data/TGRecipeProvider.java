@@ -551,6 +551,11 @@ public class TGRecipeProvider extends RecipeProvider {
                 .define('g', Tags.Items.GLASS_PANES_COLORLESS).define('l', Tags.Items.GEMS_LAPIS)
                 .define('w', TGItems.COPPER_WIRE.get()).define('p', TGTags.Items.plate("iron"))
                 .unlockedBy(getHasName(TGItems.COPPER_WIRE.get()), has(TGItems.COPPER_WIRE.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TGBlocks.WIND_TURBINE.get(), 2)
+                .pattern("psp").pattern("pmp").pattern("pcp")
+                .define('p', TGItems.PLASTIC_SHEET.get()).define('s', TGTags.Items.ingot("steel"))
+                .define('m', TGItems.MECHANICAL_PARTS_IRON.get()).define('c', TGItems.COIL.get())
+                .unlockedBy(getHasName(TGItems.COIL.get()), has(TGItems.COIL.get())).save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TGItems.WRENCH.get())
                 .pattern(" s ").pattern(" ss").pattern("s  ")
                 .define('s', TGTags.Items.ingot("steel"))

@@ -103,8 +103,8 @@ public class TGSolarTests {
         });
     }
 
-    private static techguns.machine.SolarEfficiency efficiency(GameTestHelper helper, net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> biome) {
-        return techguns.machine.SolarEfficiency.of(helper.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
+    private static techguns.machine.BiomeEfficiency efficiency(GameTestHelper helper, net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> biome) {
+        return techguns.machine.BiomeEfficiency.solar(helper.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
                 .getHolderOrThrow(biome));
     }
 
@@ -127,7 +127,7 @@ public class TGSolarTests {
         };
         for (Object[] row : expected) {
             @SuppressWarnings("unchecked")
-            techguns.machine.SolarEfficiency e = efficiency(helper,
+            techguns.machine.BiomeEfficiency e = efficiency(helper,
                     (net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>) row[0]);
             helper.assertTrue(e.type().equals(row[1]) && e.multiplier() == (float) row[2],
                     row[0] + " should be " + row[1] + " x" + row[2] + ", got " + e.type() + " x" + e.multiplier());
@@ -139,7 +139,7 @@ public class TGSolarTests {
     public static void solarOutputUsesTheBiome(GameTestHelper helper) {
         SolarPanelBlockEntity panel = panel(helper, new BlockPos(2, 1, 2));
         helper.runAfterDelay(25, () -> {
-            float factor = techguns.machine.SolarEfficiency.of(helper.getLevel().getBiome(helper.absolutePos(new BlockPos(2, 1, 2)))).multiplier();
+            float factor = techguns.machine.BiomeEfficiency.solar(helper.getLevel().getBiome(helper.absolutePos(new BlockPos(2, 1, 2)))).multiplier();
             double expected = factor * techguns.core.power.SolarOutput.perTick(techguns.TGConfig.SOLAR_PANEL_FE_PER_TICK.get(), true, true,
                     helper.getLevel().isDay());
             helper.assertTrue(Math.abs(panel.array().lastPerTick() - expected) < 1e-6,

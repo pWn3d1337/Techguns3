@@ -44,6 +44,7 @@ public final class TGMachineRenderers {
         event.registerBlockEntityRenderer(TGBlockEntities.DOOR_3X3.get(), Door3x3Renderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.DUNGEON_SCANNER.get(), DungeonToolRenderer::new);
         event.registerBlockEntityRenderer(TGBlockEntities.DUNGEON_GENERATOR.get(), DungeonToolRenderer::new);
+        event.registerBlockEntityRenderer(TGBlockEntities.WIND_TURBINE.get(), WindTurbineRenderer::new);
     }
 
     private static void registerItems(RegisterClientExtensionsEvent event) {
@@ -52,6 +53,7 @@ public final class TGMachineRenderers {
         TGMachineItemRenderer.register(event, TGBlocks.CHEM_LAB.get(), CHEM_LAB);
         TGMachineItemRenderer.register(event, TGBlocks.TURRET.get(),
                 (poseStack, buffer, light, overlay) -> TurretBaseRenderer.renderBase(poseStack, buffer, light, overlay, false, 0));
+        TGMachineItemRenderer.register(event, TGBlocks.WIND_TURBINE.get(), WindTurbineRenderer::renderItem);
     }
 
     /** Bakes on first use (after resource loading). */

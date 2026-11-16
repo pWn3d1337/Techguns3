@@ -390,6 +390,7 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         cubeMachineLit(TGBlocks.LIQUID_GENERATOR, "liquid_generator_front", "liquid_generator_front_on", "liquid_generator_top");
         cubeMachineLit(TGBlocks.ELECTRIC_FURNACE, "electric_furnace_front", "electric_furnace_front_on", "electric_furnace_top");
         solarPanel();
+        machine(TGBlocks.WIND_TURBINE, "wind_turbine");
         multiblocks();
         machine(TGBlocks.TURRET, BASIC_MACHINE_PARTICLE);
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE, "tnt_charge");

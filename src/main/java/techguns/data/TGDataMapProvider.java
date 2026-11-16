@@ -40,6 +40,7 @@ public class TGDataMapProvider extends DataMapProvider {
         builder(techguns.machine.FluidFuel.DATA_MAP).add(net.minecraft.world.level.material.Fluids.LAVA.builtInRegistryHolder(),
                 new techguns.machine.FluidFuel(techguns.machine.OreDrillBlockEntity.LAVA_FUEL_VALUE), false);
         solarEfficiency();
+        windEfficiency();
     }
 
     /**
@@ -47,7 +48,7 @@ public class TGDataMapProvider extends DataMapProvider {
      * from the general climate fallbacks (low priority) to the most specific biome types (high priority).
      */
     private void solarEfficiency() {
-        var solar = builder(techguns.machine.SolarEfficiency.DATA_MAP);
+        var solar = builder(techguns.machine.BiomeEfficiency.SOLAR);
         String[][] rows = {
                 // type, tag path under c:, multiplier; most specific last. The climate fallbacks come first: they only
                 // count for biomes no named type matches.
@@ -74,9 +75,46 @@ public class TGDataMapProvider extends DataMapProvider {
             String[] row = rows[i];
             // later rows are more specific: higher priority
             solar.add(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BIOME, TGIds.of("c", row[1])),
-                    new techguns.machine.SolarEfficiency(row[0], Float.parseFloat(row[2]), (i + 1) * 10), false);
+                    new techguns.machine.BiomeEfficiency(row[0], Float.parseFloat(row[2]), (i + 1) * 10), false);
         }
     }
+
+    /**
+     * Wind turbine biome multipliers, built like the solar ones: general vegetation fallbacks first, the most specific
+     * (windswept, mountains, open water) last. The height factor already favours mountains, so peaks get a modest bonus.
+     */
+    private void windEfficiency() {
+        var wind = builder(techguns.machine.BiomeEfficiency.WIND);
+        for (int i = 0; i < WIND_ROWS.length; i++) {
+            String[] row = WIND_ROWS[i];
+            wind.add(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BIOME, TGIds.of("c", row[1])),
+                    new techguns.machine.BiomeEfficiency(row[0], Float.parseFloat(row[2]), (i + 1) * 10), false);
+        }
+    }
+
+    /** Wind biome types: type, tag path under c:, multiplier; most specific last. */
+    public static final String[][] WIND_ROWS = {
+            {"dense", "is_dense_vegetation/overworld", "0.75"},
+            {"sparse", "is_sparse_vegetation/overworld", "1.15"},
+            {"forest", "is_forest", "0.75"},
+            {"taiga", "is_taiga", "0.8"},
+            {"swamp", "is_swamp", "0.8"},
+            {"jungle", "is_jungle", "0.5"},
+            {"river", "is_river", "1.1"},
+            {"plains", "is_plains", "1.2"},
+            {"savanna", "is_savanna", "1.2"},
+            {"desert", "is_desert", "1.2"},
+            {"badlands", "is_badlands", "1.25"},
+            {"hill", "is_hill", "1.25"},
+            {"plateau", "is_plateau", "1.3"},
+            {"snowy_plains", "is_snowy_plains", "1.3"},
+            {"mountain_slope", "is_mountain/slope", "1.3"},
+            {"beach", "is_beach", "1.4"},
+            {"stony_shores", "is_stony_shores", "1.4"},
+            {"ocean", "is_ocean", "1.5"},
+            {"mountain_peak", "is_mountain/peak", "1.5"},
+            {"windswept", "is_windswept", "1.75"},
+    };
 
     /** Solar biome types in the order of the design table (most specific first), for lang and tests. */
     public static final String[] SOLAR_TYPES = {"desert", "badlands", "savanna", "mountain_peak", "beach", "dry", "hot", "plains", "jungle",

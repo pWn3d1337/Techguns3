@@ -32,7 +32,7 @@ import techguns.core.transport.EnergySplit;
  * <p>Built for large fields: panels do not tick, the level's {@link Manager} ticks each array once. A placed panel joins
  * the array next to it in constant time; only removing a panel or joining two arrays rebuilds (a search over the
  * panels). Per-panel work (sky check, finding machines and cables next to it, marking the chunk for saving) runs on a
- * twentieth of the panels each tick; output comes from a running sum of the biome multipliers ({@link SolarEfficiency})
+ * twentieth of the panels each tick; output comes from a running sum of the biome multipliers ({@link BiomeEfficiency})
  * of the panels under open sky. Dissolving an array
  * hands the pool back to the panels, so nothing is lost when chunks unload.
  */
@@ -196,7 +196,7 @@ public final class SolarArray implements IEnergyStorage {
         energy = Math.min(getMaxEnergyStored(), energy + own);
         boolean sky = level.canSeeSky(panel.getBlockPos().above());
         panel.setSky(sky);
-        panel.setBiomeFactor(SolarEfficiency.of(level.getBiome(panel.getBlockPos())).multiplier());
+        panel.setBiomeFactor(BiomeEfficiency.solar(level.getBiome(panel.getBlockPos())).multiplier());
         if (sky) {
             skyCount++;
         }
@@ -280,7 +280,7 @@ public final class SolarArray implements IEnergyStorage {
             // the biome is looked up again too: datapacks can change the multipliers on reload
             double before = panel.contribution();
             panel.setSky(sky);
-            panel.setBiomeFactor(SolarEfficiency.of(level.getBiome(panel.getBlockPos())).multiplier());
+            panel.setBiomeFactor(BiomeEfficiency.solar(level.getBiome(panel.getBlockPos())).multiplier());
             skyFactorSum = Math.max(0.0, skyFactorSum + panel.contribution() - before);
             scanNeighbours(panel);
             panel.setChanged();

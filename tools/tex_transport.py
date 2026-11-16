@@ -7,9 +7,10 @@ Pure standard library and deterministic: the same output on every run. Run from 
 Writes (all 32x32 unless noted, in the Techguns 2 machine style: noisy dark metal, bevelled frames, rivets):
   block/{combustion_generator,liquid_generator,electric_furnace}_{front,front_on,top}.png
   block/solar_panel_{top,side,frame}.png                              solar panel (top tiles seamlessly)
+  block/wind_turbine.png                                              wind turbine renderer texture
   block/pipe/{cable,fluid_pipe,item_pipe}_{basic,advanced,elite}.png   pipe part atlas, see PIPE LAYOUT
   block/pipe/connector_{neutral,input,output,disabled}.png            connector plate atlas (disabled: core marks only)
-  gui/{combustion_generator,liquid_generator,electric_furnace,solar_panel}_gui.png  256x256, panel from blast_furnace_gui.png
+  gui/{combustion_generator,liquid_generator,electric_furnace,solar_panel,wind_turbine}_gui.png  256x256, panel from blast_furnace_gui.png
   gui/emptyslots/emptyslot_bucket.png                                 16x16
   item/wrench.png
 
@@ -582,6 +583,48 @@ def solar_frame():
     return img
 
 
+# --- wind turbine ------------------------------------------------------------------------------------------------
+
+def wind_turbine():
+    """Renderer texture: blade (0-15, 0-15; u along the chord, v along the height), shaft, strut, hub, foot plate."""
+    rng = Rng('wind_turbine')
+    img = Img(32, 32)
+    # blade: off-white composite, darker leading and trailing edge, a faint seam along the chord middle
+    for y in range(16):
+        for x in range(16):
+            c = scale((226, 229, 233), 1.0 + rng.range(-0.025, 0.025))
+            if x in (0, 15):
+                c = scale(c, 0.78)
+            elif x in (1, 14):
+                c = scale(c, 0.9)
+            elif x == 8:
+                c = scale(c, 0.95)
+            img.set(x, y, c)
+    # shaft: a steel cylinder, lit from one side
+    for y in range(16):
+        for x in range(16, 24):
+            t = (x - 16) / 7.0
+            c = scale((150, 153, 160), 0.75 + 0.45 * (1.0 - abs(t - 0.35) * 1.6) + rng.range(-0.03, 0.03))
+            img.set(x, y, c)
+    noise_rect(img, rng, 24, 0, 31, 7, (118, 121, 128), 0.05)
+    bevel(img, 24, 0, 31, 7, True, 0.25)
+    noise_rect(img, rng, 24, 8, 31, 15, (72, 74, 80), 0.05)
+    bevel(img, 24, 8, 31, 15, True, 0.3)
+    # foot plate with four bolts
+    noise_rect(img, rng, 0, 16, 15, 31, (128, 130, 136), 0.05)
+    bevel(img, 0, 16, 15, 31, True, 0.3)
+    for bx, by in ((2, 18), (13, 18), (2, 29), (13, 29)):
+        img.set(bx, by, (175, 177, 182))
+        img.set(bx, by + 1, (60, 60, 64))
+    noise_rect(img, rng, 16, 16, 31, 31, (110, 112, 118), 0.05)
+    return img
+
+
+def gui_wind(textures):
+    """Only the power bar and the text, like the solar panel."""
+    return gui_base(textures)
+
+
 def main():
     if len(sys.argv) != 2:
         print(__doc__)
@@ -598,6 +641,7 @@ def main():
     write_png(solar_top(), os.path.join(block, 'solar_panel_top.png'))
     write_png(solar_side(), os.path.join(block, 'solar_panel_side.png'))
     write_png(solar_frame(), os.path.join(block, 'solar_panel_frame.png'))
+    write_png(wind_turbine(), os.path.join(block, 'wind_turbine.png'))
     for kind in ('cable', 'fluid_pipe', 'item_pipe'):
         for tier in TIERS:
             write_png(pipe_texture(kind, tier), os.path.join(block, 'pipe', kind + '_' + tier + '.png'))
@@ -608,6 +652,7 @@ def main():
     write_png(gui_liquid(root), os.path.join(gui, 'liquid_generator_gui.png'))
     write_png(gui_furnace(root), os.path.join(gui, 'electric_furnace_gui.png'))
     write_png(gui_solar(root), os.path.join(gui, 'solar_panel_gui.png'))
+    write_png(gui_wind(root), os.path.join(gui, 'wind_turbine_gui.png'))
     write_png(bucket_icon(), os.path.join(gui, 'emptyslots', 'emptyslot_bucket.png'))
     write_png(wrench_icon(), os.path.join(root, 'item', 'wrench.png'))
 

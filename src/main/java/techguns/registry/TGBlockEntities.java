@@ -120,6 +120,8 @@ public final class TGBlockEntities {
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<techguns.machine.SolarPanelBlockEntity>> SOLAR_PANEL = BLOCK_ENTITY_TYPES.register(
             "solar_panel", () -> BlockEntityType.Builder.of(techguns.machine.SolarPanelBlockEntity::new, TGBlocks.SOLAR_PANEL.get()).build(null));
+    public static final Supplier<BlockEntityType<techguns.machine.WindTurbineBlockEntity>> WIND_TURBINE = BLOCK_ENTITY_TYPES.register(
+            "wind_turbine", () -> BlockEntityType.Builder.of(techguns.machine.WindTurbineBlockEntity::new, TGBlocks.WIND_TURBINE.get()).build(null));
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<techguns.transport.TGPipeBlockEntity>> PIPE = BLOCK_ENTITY_TYPES.register("pipe",
             () -> BlockEntityType.Builder.of(techguns.transport.TGPipeBlockEntity::new, TGBlocks.PIPE.get()).build(null));
@@ -131,7 +133,8 @@ public final class TGBlockEntities {
         modEventBus.addListener(TGBlockEntities::registerCapabilities);
         modEventBus.addListener((net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent event) -> {
             event.register(techguns.machine.FluidFuel.DATA_MAP);
-            event.register(techguns.machine.SolarEfficiency.DATA_MAP);
+            event.register(techguns.machine.BiomeEfficiency.SOLAR);
+            event.register(techguns.machine.BiomeEfficiency.WIND);
         });
     }
 
@@ -157,6 +160,9 @@ public final class TGBlockEntities {
         // every panel drains its array's shared pool, through its sides and bottom (the top is the cell surface)
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, SOLAR_PANEL.get(),
                 (panel, side) -> side == net.minecraft.core.Direction.UP ? null : panel.array());
+        // a turbine column's energy leaves through its lowest segment's sides and bottom
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, WIND_TURBINE.get(),
+                (turbine, side) -> turbine.isBase() && side != net.minecraft.core.Direction.UP ? turbine.storage() : null);
         pipes(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());

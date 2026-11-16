@@ -27,7 +27,7 @@ public class SolarPanelBlockEntity extends BlockEntity {
     /** Own energy while not in an array (and what was loaded). */
     private int stored;
     private boolean sky;
-    /** Biome multiplier of this panel ({@link SolarEfficiency}). */
+    /** Biome multiplier of this panel ({@link BiomeEfficiency}). */
     private float biomeFactor = 1.0f;
     /** The array's capability caches of the blocks next to this panel, by {@link Direction#ordinal()}. */
     @SuppressWarnings("unchecked")

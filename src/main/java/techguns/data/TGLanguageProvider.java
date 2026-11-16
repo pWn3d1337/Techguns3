@@ -355,7 +355,18 @@ public class TGLanguageProvider extends LanguageProvider {
                 {"jungle", "Jungle"}, {"swamp", "Swamp"}, {"spooky", "Gloomy"}, {"taiga", "Taiga"}, {"snowy", "Snowy"}, {"icy", "Icy"},
                 {"ocean", "Ocean"}, {"mushroom", "Mushroom"}, {"cold", "Cold"}, {"wet", "Wet"}};
         for (String[] type : solarTypes) {
-            add("techguns.solar.biome_type." + type[0], type[1]);
+            add("techguns.biome_type." + type[0], type[1]);
+        }
+        add("techguns.configuration.windTurbineFePerTick", "Wind Turbine FE per Tick and Segment");
+        add("techguns.wind_turbine.segments", "Segments: %s");
+        add("techguns.wind_turbine.factors", "Height ×%s, weather ×%s");
+        add("techguns.wind_turbine.blocked", "No open sky above the top");
+        add("techguns.wind_turbine.too_close", "Too close to another wind turbine");
+        String[][] windTypes = {{"dense", "Dense"}, {"sparse", "Sparse"}, {"forest", "Forest"}, {"river", "River"},
+                {"hill", "Hills"}, {"plateau", "Plateau"}, {"snowy_plains", "Tundra"}, {"stony_shores", "Stony Shore"},
+                {"mountain_slope", "Mountain Slope"}, {"windswept", "Windswept"}};
+        for (String[] type : windTypes) {
+            add("techguns.biome_type." + type[0], type[1]);
         }
         add("techguns.configuration.transport", "Cables and Pipes");
         add("techguns.configuration.cableRateBasic", "Basic Cable FE per Tick");
