@@ -15,7 +15,7 @@ import techguns.machine.WindTurbineBlock;
 import techguns.machine.WindTurbineBlockEntity;
 
 /**
- * Wind Turbine segment: a central shaft, three helical blades with one full winding per block (so stacked segments
+ * Wind Turbine segment: a central shaft, three wide helical blades turning a third of a turn per block (one winding per block together, so stacked segments
  * join into one seamless helix) and a strut per blade at half height, all turning with the column's rotor angle. The
  * lowest segment adds a fixed generator housing, the highest a hub cap; blade ends are closed only at the column ends.
  * The mesh is built once in rotor space; each frame only the rotation changes.
@@ -27,11 +27,16 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     private static final int BLADES = 3;
     /** Height slices per block and chord steps per blade. */
     private static final int SLICES = 16;
-    private static final int CHORD_STEPS = 2;
+    private static final int CHORD_STEPS = 6;
     private static final float OUTER = 6.5f * PX;
     private static final float INNER = 5.75f * PX;
     /** Half the blade chord as an angle. */
-    private static final float HALF_CHORD = (float) Math.toRadians(22.0);
+    private static final float HALF_CHORD = (float) Math.toRadians(38.0);
+    /**
+     * Twist per block: a third of a turn, so each blade ends where the next one starts in the segment above and the
+     * three blades together make one winding per block.
+     */
+    private static final double TWIST_PER_BLOCK = Math.PI * 2.0 / BLADES;
 
     // texture regions (32x32 texture, in 0..1)
     private static final float[] UV_BLADE = {0.0f, 0.0f, 0.5f, 0.5f};
@@ -90,9 +95,9 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
 
     // --- mesh ---
 
-    /** Blade angle (radians) of blade {@code blade} at height {@code y} (0..1): one full turn per block. */
+    /** Blade angle (radians) of blade {@code blade} at height {@code y} (0..1). */
     private static double twist(int blade, double y) {
-        return blade * (Math.PI * 2.0 / BLADES) + y * Math.PI * 2.0;
+        return blade * (Math.PI * 2.0 / BLADES) + y * TWIST_PER_BLOCK;
     }
 
     private static Mesh rotor() {
