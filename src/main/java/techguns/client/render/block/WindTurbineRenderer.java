@@ -18,7 +18,8 @@ import techguns.machine.WindTurbineBlockEntity;
  * per block together, so stacked segments join into one seamless helix), all turning with the column's rotor angle.
  * Every segment has one strut per blade at half height. Four variants by the segment's place in the column: the
  * bottom segment stands on a fixed generator housing and its blades start above it; the top segment is open, its
- * blades stop just below the block top and the shaft ends at about 90% height; a single segment has both ends.
+ * blades stop just below the block top with rounded corners and the shaft ends at about 90% height; a single
+ * segment has both ends.
  * The meshes are built once in rotor space; each frame only the rotation changes.
  */
 // MIGRATION(26.x): BlockEntityRenderer#render gets a render state and submit collector in 1.21.9+.
@@ -41,6 +42,9 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     /** Slices where the blades start in the bottom segment (above the housing) and end in the top segment. */
     private static final int BOTTOM_SLICE = 4;
     private static final int TOP_SLICE = 15;
+    /** Radius in pixels of the rounded upper blade corners on the top segment, and slices per pixel there. */
+    private static final float TIP_RADIUS = 3.0f;
+    private static final int TIP_STEPS_PER_PIXEL = 4;
     /** Where the shaft ends in the top segment (about 90% of the block); the top stays open, without a hub. */
     private static final float SHAFT_TOP = 14.5f * PX;
 
@@ -96,26 +100,29 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
         int to = top ? TOP_SLICE : SLICES;
         float low = (float) from / SLICES;
         float high = (float) to / SLICES;
+        float[] heights = sliceHeights(from, to, top);
         for (int b = 0; b < BLADES; b++) {
-            for (int s = from; s < to; s++) {
-                float y0 = (float) s / SLICES;
-                float y1 = (float) (s + 1) / SLICES;
+            for (int s = 0; s + 1 < heights.length; s++) {
+                float y0 = heights[s];
+                float y1 = heights[s + 1];
                 double c0 = twist(b, y0);
                 double c1 = twist(b, y1);
+                double h0 = halfChord(y0, top, high);
+                double h1 = halfChord(y1, top, high);
                 float v0 = lerp(UV_BLADE[1], UV_BLADE[3], y0);
                 float v1 = lerp(UV_BLADE[1], UV_BLADE[3], y1);
                 for (int k = 0; k < CHORD_STEPS; k++) {
-                    double t0 = -HALF_CHORD + 2.0 * HALF_CHORD * k / CHORD_STEPS;
-                    double t1 = -HALF_CHORD + 2.0 * HALF_CHORD * (k + 1) / CHORD_STEPS;
+                    double f0 = -1.0 + 2.0 * k / CHORD_STEPS;
+                    double f1 = -1.0 + 2.0 * (k + 1) / CHORD_STEPS;
                     float u0 = lerp(UV_BLADE[0], UV_BLADE[2], (float) k / CHORD_STEPS);
                     float u1 = lerp(UV_BLADE[0], UV_BLADE[2], (float) (k + 1) / CHORD_STEPS);
                     // outer and inner skin, normals along the radius
-                    mesh.radialQuad(OUTER, c0 + t0, c0 + t1, c1 + t1, c1 + t0, y0, y1, u0, v0, u1, v1, 1.0f);
-                    mesh.radialQuad(INNER, c0 + t1, c0 + t0, c1 + t0, c1 + t1, y0, y1, u1, v0, u0, v1, -1.0f);
+                    mesh.radialQuad(OUTER, c0 + f0 * h0, c0 + f1 * h0, c1 + f1 * h1, c1 + f0 * h1, y0, y1, u0, v0, u1, v1, 1.0f);
+                    mesh.radialQuad(INNER, c0 + f1 * h0, c0 + f0 * h0, c1 + f0 * h1, c1 + f1 * h1, y0, y1, u1, v0, u0, v1, -1.0f);
                 }
                 // leading and trailing edge
-                mesh.edgeQuad(c0 - HALF_CHORD, c1 - HALF_CHORD, y0, y1, -1.0f, UV_BLADE[0], v0, UV_BLADE[0] + 0.03f, v1);
-                mesh.edgeQuad(c0 + HALF_CHORD, c1 + HALF_CHORD, y0, y1, 1.0f, UV_BLADE[2] - 0.03f, v0, UV_BLADE[2], v1);
+                mesh.edgeQuad(c0 - h0, c1 - h1, y0, y1, -1.0f, UV_BLADE[0], v0, UV_BLADE[0] + 0.03f, v1);
+                mesh.edgeQuad(c0 + h0, c1 + h1, y0, y1, 1.0f, UV_BLADE[2] - 0.03f, v0, UV_BLADE[2], v1);
             }
             // one strut from the shaft to the blade at half height, in every variant
             mesh.rotatedBox(twist(b, 0.5), 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
@@ -134,18 +141,59 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     private static void bladeEnds(Mesh mesh, boolean bottom, float low, boolean top, float high) {
         for (int b = 0; b < BLADES; b++) {
             if (bottom) {
-                bladeEnd(mesh, twist(b, low), low, -1.0f);
+                bladeEnd(mesh, twist(b, low), HALF_CHORD, low, -1.0f);
             }
             if (top) {
-                bladeEnd(mesh, twist(b, high), high, 1.0f);
+                bladeEnd(mesh, twist(b, high), halfChord(high, true, high), high, 1.0f);
             }
         }
     }
 
-    private static void bladeEnd(Mesh mesh, double c, float y, float ny) {
+    /** Slice heights from slice {@code from} to {@code to}; finer where the top segment rounds the blade tips. */
+    private static float[] sliceHeights(int from, int to, boolean top) {
+        java.util.List<Float> heights = new java.util.ArrayList<>();
+        float roundFrom = to - TIP_RADIUS;
+        for (int s = from; s < to; s++) {
+            heights.add((float) s / SLICES);
+            if (top && s + 1 > roundFrom) {
+                for (int k = 1; k < TIP_STEPS_PER_PIXEL; k++) {
+                    float y = s + (float) k / TIP_STEPS_PER_PIXEL;
+                    if (y > roundFrom) {
+                        heights.add(y / SLICES);
+                    }
+                }
+            }
+        }
+        heights.add((float) to / SLICES);
+        float[] out = new float[heights.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = heights.get(i);
+        }
+        return out;
+    }
+
+    /**
+     * Half the blade chord (radians) at height {@code y}: the full chord, but on the top segment the blade's two upper
+     * corners are rounded with a radius of {@link #TIP_RADIUS} pixels.
+     */
+    private static double halfChord(float y, boolean top, float high) {
+        if (!top) {
+            return HALF_CHORD;
+        }
+        double radius = TIP_RADIUS * PX;
+        double into = y - (high - radius);
+        if (into <= 0.0) {
+            return HALF_CHORD;
+        }
+        double t = Math.min(1.0, into / radius);
+        // the corner arc, as an angle on the blade's outer skin
+        return HALF_CHORD - radius / OUTER * (1.0 - Math.sqrt(1.0 - t * t));
+    }
+
+    private static void bladeEnd(Mesh mesh, double c, double half, float y, float ny) {
         for (int k = 0; k < CHORD_STEPS; k++) {
-            double t0 = c - HALF_CHORD + 2.0 * HALF_CHORD * k / CHORD_STEPS;
-            double t1 = c - HALF_CHORD + 2.0 * HALF_CHORD * (k + 1) / CHORD_STEPS;
+            double t0 = c - half + 2.0 * half * k / CHORD_STEPS;
+            double t1 = c - half + 2.0 * half * (k + 1) / CHORD_STEPS;
             mesh.quad(0.0f, ny, 0.0f,
                     new float[]{cos(t0) * INNER, y, sin(t0) * INNER, UV_BLADE[0], UV_BLADE[1]},
                     new float[]{cos(t0) * OUTER, y, sin(t0) * OUTER, UV_BLADE[0], UV_BLADE[1] + 0.03f},
