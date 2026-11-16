@@ -18,8 +18,8 @@ import techguns.machine.WindTurbineBlockEntity;
  * per block together, so stacked segments join into one seamless helix), all turning with the column's rotor angle.
  * Every segment has one strut per blade at half height. Four variants by the segment's place in the column: the
  * bottom segment stands on a fixed generator housing and its blades start above it; the top segment is open, its
- * blades stop just below the block top with rounded corners and the shaft ends at about 90% height; a single
- * segment has both ends.
+ * blades stop just below the block top with rounded corners and the round shaft ends at three quarters height in a
+ * rounded tip; a single segment has both ends.
  * The meshes are built once in rotor space; each frame only the rotation changes.
  */
 // MIGRATION(26.x): BlockEntityRenderer#render gets a render state and submit collector in 1.21.9+.
@@ -45,8 +45,14 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     /** Radius in pixels of the rounded upper blade corners on the top segment, and slices per pixel there. */
     private static final float TIP_RADIUS = 3.0f;
     private static final int TIP_STEPS_PER_PIXEL = 4;
-    /** Where the shaft ends in the top segment (about 90% of the block); the top stays open, without a hub. */
-    private static final float SHAFT_TOP = 14.5f * PX;
+    /** Where the shaft's dome tip starts in the top segment; the top stays open, without a hub. */
+    private static final float SHAFT_TOP = 12.0f * PX;
+    /** The round shaft: radius and sides. */
+    private static final float SHAFT_RADIUS = 1.1f * PX;
+    private static final int SHAFT_SIDES = 8;
+    /** One texel of the blade's slightly darker rim column, for blade edges and ends. */
+    private static final float RIM_U = 1.5f / 32.0f;
+    private static final float RIM_V = 8.5f / 32.0f;
 
     // texture regions (32x32 texture, in 0..1)
     private static final float[] UV_BLADE = {0.0f, 0.0f, 0.5f, 0.5f};
@@ -121,15 +127,19 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
                     mesh.radialQuad(INNER, c0 + f1 * h0, c0 + f0 * h0, c1 + f0 * h1, c1 + f1 * h1, y0, y1, u1, v0, u0, v1, -1.0f);
                 }
                 // leading and trailing edge
-                mesh.edgeQuad(c0 - h0, c1 - h1, y0, y1, -1.0f, UV_BLADE[0], v0, UV_BLADE[0] + 0.03f, v1);
-                mesh.edgeQuad(c0 + h0, c1 + h1, y0, y1, 1.0f, UV_BLADE[2] - 0.03f, v0, UV_BLADE[2], v1);
+                // leading and trailing edge, in the rim colour (they become the rounded tip's top on the top segment)
+                mesh.edgeQuad(c0 - h0, c1 - h1, y0, y1, -1.0f, RIM_U, RIM_V, RIM_U, RIM_V);
+                mesh.edgeQuad(c0 + h0, c1 + h1, y0, y1, 1.0f, RIM_U, RIM_V, RIM_U, RIM_V);
             }
             // one strut from the shaft to the blade at half height, in every variant
             mesh.rotatedBox(twist(b, 0.5), 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
         }
         bladeEnds(mesh, bottom, low, top, high);
-        // shaft; on the top segment it ends at about 90% height
-        mesh.box(-1.0f * PX, 0.0f, -1.0f * PX, 1.0f * PX, top ? SHAFT_TOP : 1.0f, 1.0f * PX, UV_SHAFT);
+        // round shaft; on the top segment it ends at three quarters of the block in a rounded tip
+        mesh.prism(SHAFT_RADIUS, 0.0f, top ? SHAFT_TOP : 1.0f, SHAFT_SIDES, UV_SHAFT);
+        if (top) {
+            mesh.dome(SHAFT_RADIUS, SHAFT_TOP, SHAFT_RADIUS, SHAFT_SIDES, 3, UV_SHAFT);
+        }
         if (bottom) {
             // a turning disc on the generator, where the shaft leaves it
             mesh.box(-2.0f * PX, low - 1.5f * PX, -2.0f * PX, 2.0f * PX, low - 1.0f * PX, 2.0f * PX, UV_HUB);
@@ -194,11 +204,12 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
         for (int k = 0; k < CHORD_STEPS; k++) {
             double t0 = c - half + 2.0 * half * k / CHORD_STEPS;
             double t1 = c - half + 2.0 * half * (k + 1) / CHORD_STEPS;
+            // one plain rim texel: a texture strip stretched over the chord shows as stripes
             mesh.quad(0.0f, ny, 0.0f,
-                    new float[]{cos(t0) * INNER, y, sin(t0) * INNER, UV_BLADE[0], UV_BLADE[1]},
-                    new float[]{cos(t0) * OUTER, y, sin(t0) * OUTER, UV_BLADE[0], UV_BLADE[1] + 0.03f},
-                    new float[]{cos(t1) * OUTER, y, sin(t1) * OUTER, UV_BLADE[2], UV_BLADE[1] + 0.03f},
-                    new float[]{cos(t1) * INNER, y, sin(t1) * INNER, UV_BLADE[2], UV_BLADE[1]});
+                    new float[]{cos(t0) * INNER, y, sin(t0) * INNER, RIM_U, RIM_V},
+                    new float[]{cos(t0) * OUTER, y, sin(t0) * OUTER, RIM_U, RIM_V},
+                    new float[]{cos(t1) * OUTER, y, sin(t1) * OUTER, RIM_U, RIM_V},
+                    new float[]{cos(t1) * INNER, y, sin(t1) * INNER, RIM_U, RIM_V});
         }
     }
 
@@ -267,6 +278,45 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
             vertex(cos(a0) * OUTER, y0, sin(a0) * OUTER, u1, v1, nx0, 0.0f, nz0);
             vertex(cos(a1) * OUTER, y1, sin(a1) * OUTER, u1, v0, nx1, 0.0f, nz1);
             vertex(cos(a1) * INNER, y1, sin(a1) * INNER, u0, v0, nx1, 0.0f, nz1);
+        }
+
+        /** A vertical prism of {@code sides} sides around the axis; u around it, v along its height. */
+        void prism(float r, float y0, float y1, int sides, float[] uv) {
+            for (int i = 0; i < sides; i++) {
+                double a0 = Math.PI * 2.0 * i / sides;
+                double a1 = Math.PI * 2.0 * (i + 1) / sides;
+                float u0 = lerp(uv[0], uv[2], (float) i / sides);
+                float u1 = lerp(uv[0], uv[2], (float) (i + 1) / sides);
+                float v0 = lerp(uv[1], uv[3], 1.0f - y1);
+                float v1 = lerp(uv[1], uv[3], 1.0f - y0);
+                radialQuad(r, a0, a1, a1, a0, y0, y1, u0, v0, u1, v1, 1.0f);
+            }
+        }
+
+        /** A rounded cap on a prism: {@code rings} rings up to a point {@code height} above {@code y}. */
+        void dome(float r, float y, float height, int sides, int rings, float[] uv) {
+            for (int k = 0; k < rings; k++) {
+                double p0 = Math.PI / 2.0 * k / rings;
+                double p1 = Math.PI / 2.0 * (k + 1) / rings;
+                float r0 = (float) (r * Math.cos(p0));
+                float r1 = (float) (r * Math.cos(p1));
+                float y0 = y + (float) (height * Math.sin(p0));
+                float y1 = y + (float) (height * Math.sin(p1));
+                float ny = (float) Math.sin((p0 + p1) / 2.0);
+                float nr = (float) Math.cos((p0 + p1) / 2.0);
+                for (int i = 0; i < sides; i++) {
+                    double a0 = Math.PI * 2.0 * i / sides;
+                    double a1 = Math.PI * 2.0 * (i + 1) / sides;
+                    float u0 = lerp(uv[0], uv[2], (float) i / sides);
+                    float u1 = lerp(uv[0], uv[2], (float) (i + 1) / sides);
+                    float am = (float) ((a0 + a1) / 2.0);
+                    quad(cos(am) * nr, ny, sin(am) * nr,
+                            new float[]{cos(a0) * r0, y0, sin(a0) * r0, u0, uv[3]},
+                            new float[]{cos(a1) * r0, y0, sin(a1) * r0, u1, uv[3]},
+                            new float[]{cos(a1) * r1, y1, sin(a1) * r1, u1, uv[1]},
+                            new float[]{cos(a0) * r1, y1, sin(a0) * r1, u0, uv[1]});
+                }
+            }
         }
 
         /** An axis-aligned box; every face gets the whole {@code uv} region. */
