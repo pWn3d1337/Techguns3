@@ -128,8 +128,8 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
                 }
                 // leading and trailing edge
                 // leading and trailing edge, in the rim colour (they become the rounded tip's top on the top segment)
-                mesh.edgeQuad(c0 - h0, c1 - h1, y0, y1, -1.0f, RIM_U, RIM_V, RIM_U, RIM_V);
-                mesh.edgeQuad(c0 + h0, c1 + h1, y0, y1, 1.0f, RIM_U, RIM_V, RIM_U, RIM_V);
+                mesh.edgeQuad(c0 - h0, c1 - h1, y0, y1, RIM_U, RIM_V, RIM_U, RIM_V);
+                mesh.edgeQuad(c0 + h0, c1 + h1, y0, y1, RIM_U, RIM_V, RIM_U, RIM_V);
             }
             // one strut from the shaft to the blade at half height, in every variant
             mesh.rotatedBox(twist(b, 0.5), 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
@@ -151,10 +151,10 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     private static void bladeEnds(Mesh mesh, boolean bottom, float low, boolean top, float high) {
         for (int b = 0; b < BLADES; b++) {
             if (bottom) {
-                bladeEnd(mesh, twist(b, low), halfChord(low, bottom, low, top, high), low, -1.0f);
+                bladeEnd(mesh, twist(b, low), halfChord(low, bottom, low, top, high), low);
             }
             if (top) {
-                bladeEnd(mesh, twist(b, high), halfChord(high, bottom, low, top, high), high, 1.0f);
+                bladeEnd(mesh, twist(b, high), halfChord(high, bottom, low, top, high), high);
             }
         }
     }
@@ -201,16 +201,19 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
         return HALF_CHORD - radius / OUTER * (1.0 - Math.sqrt(1.0 - t * t));
     }
 
-    private static void bladeEnd(Mesh mesh, double c, double half, float y, float ny) {
+    /**
+     * Closes a blade end at height {@code y} with one plain texel (a texture strip stretched over the chord shows as
+     * stripes) and radial normals like the outer skin: an up or down normal would be lit brighter or darker than the
+     * blade face beside it.
+     */
+    private static void bladeEnd(Mesh mesh, double c, double half, float y) {
         for (int k = 0; k < CHORD_STEPS; k++) {
             double t0 = c - half + 2.0 * half * k / CHORD_STEPS;
             double t1 = c - half + 2.0 * half * (k + 1) / CHORD_STEPS;
-            // one plain rim texel: a texture strip stretched over the chord shows as stripes
-            mesh.quad(0.0f, ny, 0.0f,
-                    new float[]{cos(t0) * INNER, y, sin(t0) * INNER, RIM_U, RIM_V},
-                    new float[]{cos(t0) * OUTER, y, sin(t0) * OUTER, RIM_U, RIM_V},
-                    new float[]{cos(t1) * OUTER, y, sin(t1) * OUTER, RIM_U, RIM_V},
-                    new float[]{cos(t1) * INNER, y, sin(t1) * INNER, RIM_U, RIM_V});
+            mesh.vertex(cos(t0) * INNER, y, sin(t0) * INNER, RIM_U, RIM_V, cos(t0), 0.0f, sin(t0));
+            mesh.vertex(cos(t0) * OUTER, y, sin(t0) * OUTER, RIM_U, RIM_V, cos(t0), 0.0f, sin(t0));
+            mesh.vertex(cos(t1) * OUTER, y, sin(t1) * OUTER, RIM_U, RIM_V, cos(t1), 0.0f, sin(t1));
+            mesh.vertex(cos(t1) * INNER, y, sin(t1) * INNER, RIM_U, RIM_V, cos(t1), 0.0f, sin(t1));
         }
     }
 
@@ -269,16 +272,13 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
             vertex(cos(a3) * r, y1, sin(a3) * r, u0, v0, cos(a3) * sign, 0.0f, sin(a3) * sign);
         }
 
-        /** A blade edge between the inner and outer skin at angle a0 (y0) to a1 (y1); normal along the turn. */
-        void edgeQuad(double a0, double a1, float y0, float y1, float sign, float u0, float v0, float u1, float v1) {
-            float nx0 = -sin(a0) * sign;
-            float nz0 = cos(a0) * sign;
-            float nx1 = -sin(a1) * sign;
-            float nz1 = cos(a1) * sign;
-            vertex(cos(a0) * INNER, y0, sin(a0) * INNER, u0, v1, nx0, 0.0f, nz0);
-            vertex(cos(a0) * OUTER, y0, sin(a0) * OUTER, u1, v1, nx0, 0.0f, nz0);
-            vertex(cos(a1) * OUTER, y1, sin(a1) * OUTER, u1, v0, nx1, 0.0f, nz1);
-            vertex(cos(a1) * INNER, y1, sin(a1) * INNER, u0, v0, nx1, 0.0f, nz1);
+        /** A blade edge between the inner and outer skin at angle a0 (y0) to a1 (y1). */
+        void edgeQuad(double a0, double a1, float y0, float y1, float u0, float v0, float u1, float v1) {
+            // radial normals like the outer skin, so the thin edge is lit the same as the blade face beside it
+            vertex(cos(a0) * INNER, y0, sin(a0) * INNER, u0, v1, cos(a0), 0.0f, sin(a0));
+            vertex(cos(a0) * OUTER, y0, sin(a0) * OUTER, u1, v1, cos(a0), 0.0f, sin(a0));
+            vertex(cos(a1) * OUTER, y1, sin(a1) * OUTER, u1, v0, cos(a1), 0.0f, sin(a1));
+            vertex(cos(a1) * INNER, y1, sin(a1) * INNER, u0, v0, cos(a1), 0.0f, sin(a1));
         }
 
         /** A vertical prism of {@code sides} sides around the axis; u around it, v along its height. */
