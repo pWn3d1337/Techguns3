@@ -104,6 +104,9 @@ public final class TGConfig {
     public static final ModConfigSpec.IntValue LIQUID_GENERATOR_FE_PER_TICK = COMMON
             .comment("FE a Liquid Fuel Generator makes per tick while it burns (two fuel burn ticks per tick).")
             .defineInRange("liquidGeneratorFePerTick", 80, 1, 1000000);
+    public static final ModConfigSpec.IntValue SOLAR_PANEL_FE_PER_TICK = COMMON
+            .comment("FE a Solar Panel makes per tick in sunlight under open sky; in moonlight an eighth of it.")
+            .defineInRange("solarPanelFePerTick", 8, 0, 1000000);
     public static final ModConfigSpec.IntValue ELECTRIC_FURNACE_FE_PER_TICK = COMMON
             .comment("FE an Electric Furnace uses per tick and item being smelted.")
             .defineInRange("electricFurnaceFePerTick", 20, 0, 1000000);

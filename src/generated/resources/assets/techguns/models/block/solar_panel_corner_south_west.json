@@ -1,0 +1,49 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            14.5,
+            6.5,
+            16.0,
+            8.0
+          ]
+        },
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            0.0,
+            6.5,
+            1.5,
+            8.0
+          ]
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        }
+      },
+      "from": [
+        0,
+        8,
+        14.5
+      ],
+      "to": [
+        1.5,
+        9.5,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "frame": "techguns:block/solar_panel_frame",
+    "particle": "techguns:block/solar_panel_frame"
+  }
+}

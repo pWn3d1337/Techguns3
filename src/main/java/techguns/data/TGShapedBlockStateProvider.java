@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -388,6 +389,7 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         cubeMachineLit(TGBlocks.COMBUSTION_GENERATOR, "combustion_generator_front", "combustion_generator_front_on", "combustion_generator_top");
         cubeMachineLit(TGBlocks.LIQUID_GENERATOR, "liquid_generator_front", "liquid_generator_front_on", "liquid_generator_top");
         cubeMachineLit(TGBlocks.ELECTRIC_FURNACE, "electric_furnace_front", "electric_furnace_front_on", "electric_furnace_top");
+        solarPanel();
         multiblocks();
         machine(TGBlocks.TURRET, BASIC_MACHINE_PARTICLE);
         explosiveCharge(TGBlocks.EXPLOSIVE_CHARGE, "tnt_charge");
@@ -508,6 +510,76 @@ public class TGShapedBlockStateProvider extends BlockStateProvider {
         ModelFile model = models().cube("block/" + path(block), side, tex(top), tex(front), side, side, side).texture("particle", side);
         horizontalBlock(block.get(), model, 180);
         itemModels().withExistingParent(path(block), modLoc("block/" + path(block)));
+    }
+
+    /**
+     * Solar Panel: a slab whose cells tile seamlessly, with a raised frame rail on every side that does not touch another
+     * panel and corner posts where either side is open, so a field of panels reads as one surface with one frame.
+     */
+    private void solarPanel() {
+        ResourceLocation top = tex("solar_panel_top");
+        ResourceLocation side = tex("solar_panel_side");
+        ResourceLocation frame = tex("solar_panel_frame");
+        ResourceLocation bottom = tex("machine_side");
+        BlockModelBuilder base = models().getBuilder("block/solar_panel").texture("top", top).texture("side", side)
+                .texture("bottom", bottom).texture("particle", side);
+        solarBase(base);
+        float lo = 1.5f;
+        float hi = 14.5f;
+        float h0 = 8.0f;
+        float h1 = 9.5f;
+        float[][] rails = {{lo, h0, 0, hi, h1, lo}, {hi, h0, lo, 16, h1, hi}, {lo, h0, hi, hi, h1, 16}, {0, h0, lo, lo, h1, hi}};
+        String[] railNames = {"north", "east", "south", "west"};
+        float[][] corners = {{hi, h0, 0, 16, h1, lo}, {hi, h0, hi, 16, h1, 16}, {0, h0, hi, lo, h1, 16}, {0, h0, 0, lo, h1, lo}};
+        String[] cornerNames = {"north_east", "south_east", "south_west", "north_west"};
+        var multipart = getMultipartBuilder(TGBlocks.SOLAR_PANEL.get()).part().modelFile(base).addModel().end();
+        net.minecraft.world.level.block.state.properties.BooleanProperty[] sides = {techguns.machine.SolarPanelBlock.NORTH,
+                techguns.machine.SolarPanelBlock.EAST, techguns.machine.SolarPanelBlock.SOUTH, techguns.machine.SolarPanelBlock.WEST};
+        for (int i = 0; i < 4; i++) {
+            BlockModelBuilder rail = models().getBuilder("block/solar_panel_rail_" + railNames[i]).texture("frame", frame).texture("particle", frame);
+            solarBox(rail, rails[i]);
+            multipart = multipart.part().modelFile(rail).addModel().condition(sides[i], false).end();
+            BlockModelBuilder corner = models().getBuilder("block/solar_panel_corner_" + cornerNames[i]).texture("frame", frame)
+                    .texture("particle", frame);
+            solarBox(corner, corners[i]);
+            // each corner lies between side i and the next one clockwise
+            multipart = multipart.part().modelFile(corner).addModel().useOr().condition(sides[i], false).condition(sides[(i + 1) % 4], false).end();
+        }
+        ItemModelBuilder item = itemModels().getBuilder("solar_panel").parent(new ModelFile.UncheckedModelFile(mcLoc("block/block")))
+                .texture("top", top).texture("side", side).texture("bottom", bottom).texture("frame", frame).texture("particle", side);
+        solarBase(item);
+        for (int i = 0; i < 4; i++) {
+            solarBox(item, rails[i]);
+            solarBox(item, corners[i]);
+        }
+    }
+
+    private static <T extends ModelBuilder<T>> void solarBase(T model) {
+        model.element().from(0, 0, 0).to(16, 8, 16)
+                .face(Direction.UP).uvs(0, 0, 16, 16).texture("#top").end()
+                .face(Direction.DOWN).uvs(0, 0, 16, 16).texture("#bottom").cullface(Direction.DOWN).end()
+                .face(Direction.NORTH).uvs(0, 8, 16, 16).texture("#side").cullface(Direction.NORTH).end()
+                .face(Direction.SOUTH).uvs(0, 8, 16, 16).texture("#side").cullface(Direction.SOUTH).end()
+                .face(Direction.WEST).uvs(0, 8, 16, 16).texture("#side").cullface(Direction.WEST).end()
+                .face(Direction.EAST).uvs(0, 8, 16, 16).texture("#side").cullface(Direction.EAST).end()
+                .end();
+    }
+
+    /** A frame rail or corner post; its faces take the matching part of the frame texture. */
+    private static <T extends ModelBuilder<T>> void solarBox(T model, float[] b) {
+        var element = model.element().from(b[0], b[1], b[2]).to(b[3], b[4], b[5]);
+        for (Direction face : Direction.values()) {
+            if (face == Direction.DOWN) {
+                continue;
+            }
+            float[] uv = switch (face.getAxis()) {
+                case Y -> new float[]{b[0], b[2], b[3], b[5]};
+                case X -> new float[]{b[2], 16 - b[4], b[5], 16 - b[1]};
+                case Z -> new float[]{b[0], 16 - b[4], b[3], 16 - b[1]};
+            };
+            element.face(face).uvs(uv[0], uv[1], uv[2], uv[3]).texture("#frame").end();
+        }
+        element.end();
     }
 
     /** Techguns 3 cube machine with a lit front ({@link techguns.machine.TGLitMachineBlock#LIT}); sides and bottom {@code machine_side}. */

@@ -118,6 +118,9 @@ public final class TGBlockEntities {
                     TGBlocks.ELECTRIC_FURNACE.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<techguns.machine.SolarPanelBlockEntity>> SOLAR_PANEL = BLOCK_ENTITY_TYPES.register(
+            "solar_panel", () -> BlockEntityType.Builder.of(techguns.machine.SolarPanelBlockEntity::new, TGBlocks.SOLAR_PANEL.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<techguns.transport.TGPipeBlockEntity>> PIPE = BLOCK_ENTITY_TYPES.register("pipe",
             () -> BlockEntityType.Builder.of(techguns.transport.TGPipeBlockEntity::new, TGBlocks.PIPE.get()).build(null));
 
@@ -149,6 +152,8 @@ public final class TGBlockEntities {
         machine(event, LIQUID_GENERATOR.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, LIQUID_GENERATOR.get(), (generator, side) -> generator.getFluidHandler());
         machine(event, ELECTRIC_FURNACE.get());
+        // every panel drains its array's shared pool
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, SOLAR_PANEL.get(), (panel, side) -> panel.array());
         pipes(event);
         // benches have no power; hoppers can fill the Repair Bench materials
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REPAIR_BENCH.get(), (bench, side) -> bench.getAutomationHandler());

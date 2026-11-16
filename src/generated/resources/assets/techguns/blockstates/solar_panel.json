@@ -1,0 +1,101 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_rail_north"
+      },
+      "when": {
+        "north": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_corner_north_east"
+      },
+      "when": {
+        "OR": [
+          {
+            "north": "false"
+          },
+          {
+            "east": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_rail_east"
+      },
+      "when": {
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_corner_south_east"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "false"
+          },
+          {
+            "south": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_rail_south"
+      },
+      "when": {
+        "south": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_corner_south_west"
+      },
+      "when": {
+        "OR": [
+          {
+            "south": "false"
+          },
+          {
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_rail_west"
+      },
+      "when": {
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "techguns:block/solar_panel_corner_north_west"
+      },
+      "when": {
+        "OR": [
+          {
+            "west": "false"
+          },
+          {
+            "north": "false"
+          }
+        ]
+      }
+    }
+  ]
+}

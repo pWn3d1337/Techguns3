@@ -6,6 +6,7 @@ Pure standard library and deterministic: the same output on every run. Run from 
 
 Writes (all 32x32 unless noted, in the Techguns 2 machine style: noisy dark metal, bevelled frames, rivets):
   block/{combustion_generator,liquid_generator,electric_furnace}_{front,front_on,top}.png
+  block/solar_panel_{top,side,frame}.png                              solar panel (top tiles seamlessly)
   block/pipe/{cable,fluid_pipe,item_pipe}_{basic,advanced,elite}.png   pipe part atlas, see PIPE LAYOUT
   block/pipe/connector_{neutral,input,output,disabled}.png            connector plate atlas (disabled: core marks only)
   gui/{combustion_generator,liquid_generator,electric_furnace}_gui.png  256x256, panel from blast_furnace_gui.png
@@ -532,6 +533,50 @@ def wrench_icon():
     return out
 
 
+# --- solar panel -------------------------------------------------------------------------------------------------
+
+def solar_top():
+    """Seamless cells: a grid line every 8 texels (also on the edge), so neighbouring panels read as one surface."""
+    rng = Rng('solar_top')
+    img = Img(32, 32)
+    for y in range(32):
+        for x in range(32):
+            if x % 8 == 0 or y % 8 == 0:
+                img.set(x, y, scale((168, 172, 182), 1.0 + rng.range(-0.04, 0.04)))
+                continue
+            cx, cy = x % 8, y % 8
+            shade = 0.85 + 0.25 * (cx + cy) / 14.0
+            c = scale((30, 55, 110), shade * (1.0 + rng.range(-0.05, 0.05)))
+            if cy == 4:
+                c = mix(c, (110, 140, 190), 0.45)
+            if cx == 6 and cy == 2:
+                c = mix(c, (200, 220, 255), 0.6)
+            img.set(x, y, c)
+    return img
+
+
+def solar_side():
+    """Slab side (the lower half is used): a metal frame with a lit top edge."""
+    rng = Rng('solar_side')
+    img = Img(32, 32)
+    noise_rect(img, rng, 0, 0, 31, 31, (104, 106, 112), 0.07)
+    for y in (16, 31):
+        img.rect(0, y, 31, y, (150, 152, 160) if y == 16 else (60, 60, 64))
+    for x in range(2, 32, 10):
+        img.set(x, 23, (170, 170, 175))
+        img.set(x + 1, 24, (55, 55, 58))
+    return img
+
+
+def solar_frame():
+    """The raised rail around the outer edge of a panel array."""
+    rng = Rng('solar_frame')
+    img = Img(32, 32)
+    noise_rect(img, rng, 0, 0, 31, 31, (150, 152, 160), 0.06)
+    bevel(img, 0, 0, 31, 31, True, 0.25)
+    return img
+
+
 def main():
     if len(sys.argv) != 2:
         print(__doc__)
@@ -545,6 +590,9 @@ def main():
     write_png(top_face('combustion_top', 'exhaust'), os.path.join(block, 'combustion_generator_top.png'))
     write_png(top_face('liquid_top', 'cap'), os.path.join(block, 'liquid_generator_top.png'))
     write_png(top_face('furnace_top', 'vents'), os.path.join(block, 'electric_furnace_top.png'))
+    write_png(solar_top(), os.path.join(block, 'solar_panel_top.png'))
+    write_png(solar_side(), os.path.join(block, 'solar_panel_side.png'))
+    write_png(solar_frame(), os.path.join(block, 'solar_panel_frame.png'))
     for kind in ('cable', 'fluid_pipe', 'item_pipe'):
         for tier in TIERS:
             write_png(pipe_texture(kind, tier), os.path.join(block, 'pipe', kind + '_' + tier + '.png'))
