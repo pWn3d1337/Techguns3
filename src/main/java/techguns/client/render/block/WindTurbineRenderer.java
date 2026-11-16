@@ -15,10 +15,12 @@ import techguns.machine.WindTurbineBlock;
 import techguns.machine.WindTurbineBlockEntity;
 
 /**
- * Wind Turbine segment: a central shaft, three wide helical blades turning a third of a turn per block (one winding per block together, so stacked segments
- * join into one seamless helix) and a strut per blade at half height, all turning with the column's rotor angle. The
- * lowest segment adds a fixed generator housing, the highest a hub cap; blade ends are closed only at the column ends.
- * The mesh is built once in rotor space; each frame only the rotation changes.
+ * Wind Turbine segment: a central shaft and three wide helical blades turning a third of a turn per block (one winding
+ * per block together, so stacked segments join into one seamless helix), all turning with the column's rotor angle.
+ * Four variants by the segment's place in the column: a middle segment has a strut per blade at half height; the
+ * bottom segment stands on a fixed generator housing, its blades start above it and end struts tie them to the shaft;
+ * the top segment's blades stop below the block top under end struts and a hub cap; a single segment has both caps.
+ * The meshes are built once in rotor space; each frame only the rotation changes.
  */
 // MIGRATION(26.x): BlockEntityRenderer#render gets a render state and submit collector in 1.21.9+.
 public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlockEntity> {
@@ -37,6 +39,9 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
      * three blades together make one winding per block.
      */
     private static final double TWIST_PER_BLOCK = Math.PI * 2.0 / BLADES;
+    /** Slices where the blades start in the bottom segment (above the housing) and end in the top segment. */
+    private static final int BOTTOM_SLICE = 4;
+    private static final int TOP_SLICE = 13;
 
     // texture regions (32x32 texture, in 0..1)
     private static final float[] UV_BLADE = {0.0f, 0.0f, 0.5f, 0.5f};
@@ -45,10 +50,8 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     private static final float[] UV_HUB = {0.75f, 0.25f, 1.0f, 0.5f};
     private static final float[] UV_HOUSING = {0.0f, 0.5f, 0.5f, 1.0f};
 
-    private static final Mesh ROTOR = rotor();
-    private static final Mesh BLADE_BOTTOMS = bladeEnds(0.0f, -1.0f);
-    private static final Mesh BLADE_TOPS = bladeEnds(1.0f, 1.0f);
-    private static final Mesh HUB = hub();
+    /** Rotor meshes by variant: bit 0 bottom segment, bit 1 top segment (0 middle, 3 single). */
+    private static final Mesh[] ROTORS = {rotor(false, false), rotor(true, false), rotor(false, true), rotor(true, true)};
     private static final Mesh HOUSING = housing();
 
     public WindTurbineRenderer(BlockEntityRendererProvider.Context context) {
@@ -61,7 +64,7 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
                 !state.getValue(WindTurbineBlock.UP));
     }
 
-    /** Item: one segment with housing and hub. */
+    /** Item: a single segment (housing and hub cap). */
     public static void renderItem(PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
         renderSegment(poseStack, buffer, light, overlay, 0.0f, true, true);
     }
@@ -75,21 +78,13 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
             HOUSING.emit(poseStack.last(), consumer, light, overlay);
         }
         poseStack.mulPose(Axis.YP.rotationDegrees(angle));
-        PoseStack.Pose pose = poseStack.last();
-        ROTOR.emit(pose, consumer, light, overlay);
-        if (bottom) {
-            BLADE_BOTTOMS.emit(pose, consumer, light, overlay);
-        }
-        if (top) {
-            BLADE_TOPS.emit(pose, consumer, light, overlay);
-            HUB.emit(pose, consumer, light, overlay);
-        }
+        ROTORS[(bottom ? 1 : 0) | (top ? 2 : 0)].emit(poseStack.last(), consumer, light, overlay);
         poseStack.popPose();
     }
 
     @Override
     public AABB getRenderBoundingBox(WindTurbineBlockEntity turbine) {
-        // the hub sticks out above the block
+        // the hub's spire sticks out above the block
         return new AABB(turbine.getBlockPos()).expandTowards(0.0, 0.25, 0.0);
     }
 
@@ -100,10 +95,14 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
         return blade * (Math.PI * 2.0 / BLADES) + y * TWIST_PER_BLOCK;
     }
 
-    private static Mesh rotor() {
+    private static Mesh rotor(boolean bottom, boolean top) {
         Mesh mesh = new Mesh();
+        int from = bottom ? BOTTOM_SLICE : 0;
+        int to = top ? TOP_SLICE : SLICES;
+        float low = (float) from / SLICES;
+        float high = (float) to / SLICES;
         for (int b = 0; b < BLADES; b++) {
-            for (int s = 0; s < SLICES; s++) {
+            for (int s = from; s < to; s++) {
                 float y0 = (float) s / SLICES;
                 float y1 = (float) (s + 1) / SLICES;
                 double c0 = twist(b, y0);
@@ -123,45 +122,64 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
                 mesh.edgeQuad(c0 - HALF_CHORD, c1 - HALF_CHORD, y0, y1, -1.0f, UV_BLADE[0], v0, UV_BLADE[0] + 0.03f, v1);
                 mesh.edgeQuad(c0 + HALF_CHORD, c1 + HALF_CHORD, y0, y1, 1.0f, UV_BLADE[2] - 0.03f, v0, UV_BLADE[2], v1);
             }
-            // a strut from the shaft to the blade at half height
-            double mid = twist(b, 0.5);
-            mesh.rotatedBox(mid, 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
-        }
-        // shaft
-        mesh.box(-1.0f * PX, 0.0f, -1.0f * PX, 1.0f * PX, 1.0f, 1.0f * PX, UV_SHAFT);
-        return mesh;
-    }
-
-    /** Closes the blade ends at height {@code y}; {@code ny} the normal's direction. */
-    private static Mesh bladeEnds(float y, float ny) {
-        Mesh mesh = new Mesh();
-        for (int b = 0; b < BLADES; b++) {
-            double c = twist(b, y);
-            for (int k = 0; k < CHORD_STEPS; k++) {
-                double t0 = c - HALF_CHORD + 2.0 * HALF_CHORD * k / CHORD_STEPS;
-                double t1 = c - HALF_CHORD + 2.0 * HALF_CHORD * (k + 1) / CHORD_STEPS;
-                mesh.quad(0.0f, ny, 0.0f,
-                        new float[]{cos(t0) * INNER, y, sin(t0) * INNER, UV_BLADE[0], UV_BLADE[1]},
-                        new float[]{cos(t0) * OUTER, y, sin(t0) * OUTER, UV_BLADE[0], UV_BLADE[1] + 0.03f},
-                        new float[]{cos(t1) * OUTER, y, sin(t1) * OUTER, UV_BLADE[2], UV_BLADE[1] + 0.03f},
-                        new float[]{cos(t1) * INNER, y, sin(t1) * INNER, UV_BLADE[2], UV_BLADE[1]});
+            if (bottom || top) {
+                // end struts: a wide arm over each blade end, from the shaft to the blade's outer skin
+                if (bottom) {
+                    mesh.rotatedBox(twist(b, low), 1.0f * PX, OUTER + 0.25f * PX, low - 1.0f * PX, low, 1.0f * PX, UV_STRUT);
+                }
+                if (top) {
+                    mesh.rotatedBox(twist(b, high), 1.0f * PX, OUTER + 0.25f * PX, high, high + 1.0f * PX, 1.0f * PX, UV_STRUT);
+                }
+            } else {
+                // a strut from the shaft to the blade at half height
+                mesh.rotatedBox(twist(b, 0.5), 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
             }
         }
+        bladeEnds(mesh, bottom, low, top, high);
+        // shaft, up into the hub on the top segment
+        mesh.box(-1.0f * PX, 0.0f, -1.0f * PX, 1.0f * PX, top ? high + 1.0f * PX : 1.0f, 1.0f * PX, UV_SHAFT);
+        if (top) {
+            // hub cap and spire
+            mesh.box(-2.0f * PX, high + 1.0f * PX, -2.0f * PX, 2.0f * PX, high + 2.5f * PX, 2.0f * PX, UV_HUB);
+            mesh.box(-1.0f * PX, high + 2.5f * PX, -1.0f * PX, 1.0f * PX, high + 3.0f * PX, 1.0f * PX, UV_HUB);
+            mesh.box(-0.5f * PX, high + 3.0f * PX, -0.5f * PX, 0.5f * PX, high + 5.0f * PX, 0.5f * PX, UV_SHAFT);
+        }
+        if (bottom) {
+            // a turning disc on the generator, where the shaft leaves it
+            mesh.box(-2.0f * PX, low - 1.5f * PX, -2.0f * PX, 2.0f * PX, low - 1.0f * PX, 2.0f * PX, UV_HUB);
+        }
         return mesh;
     }
 
-    private static Mesh hub() {
-        Mesh mesh = new Mesh();
-        mesh.box(-2.0f * PX, 15.0f * PX, -2.0f * PX, 2.0f * PX, 17.0f * PX, 2.0f * PX, UV_HUB);
-        mesh.box(-0.5f * PX, 17.0f * PX, -0.5f * PX, 0.5f * PX, 18.0f * PX, 0.5f * PX, UV_SHAFT);
-        return mesh;
+    /** Closes the blade ends at the column's ends. */
+    private static void bladeEnds(Mesh mesh, boolean bottom, float low, boolean top, float high) {
+        for (int b = 0; b < BLADES; b++) {
+            if (bottom) {
+                bladeEnd(mesh, twist(b, low), low, -1.0f);
+            }
+            if (top) {
+                bladeEnd(mesh, twist(b, high), high, 1.0f);
+            }
+        }
     }
 
+    private static void bladeEnd(Mesh mesh, double c, float y, float ny) {
+        for (int k = 0; k < CHORD_STEPS; k++) {
+            double t0 = c - HALF_CHORD + 2.0 * HALF_CHORD * k / CHORD_STEPS;
+            double t1 = c - HALF_CHORD + 2.0 * HALF_CHORD * (k + 1) / CHORD_STEPS;
+            mesh.quad(0.0f, ny, 0.0f,
+                    new float[]{cos(t0) * INNER, y, sin(t0) * INNER, UV_BLADE[0], UV_BLADE[1]},
+                    new float[]{cos(t0) * OUTER, y, sin(t0) * OUTER, UV_BLADE[0], UV_BLADE[1] + 0.03f},
+                    new float[]{cos(t1) * OUTER, y, sin(t1) * OUTER, UV_BLADE[2], UV_BLADE[1] + 0.03f},
+                    new float[]{cos(t1) * INNER, y, sin(t1) * INNER, UV_BLADE[2], UV_BLADE[1]});
+        }
+    }
+
+    /** The fixed generator under the bottom segment: a wide foot plate and the generator box. */
     private static Mesh housing() {
         Mesh mesh = new Mesh();
-        // a foot plate that stays inside the blades' sweep, and the generator box the shaft runs into
-        mesh.box(-4.0f * PX, 0.0f, -4.0f * PX, 4.0f * PX, 1.0f * PX, 4.0f * PX, UV_HOUSING);
-        mesh.box(-2.5f * PX, 1.0f * PX, -2.5f * PX, 2.5f * PX, 4.0f * PX, 2.5f * PX, UV_HUB);
+        mesh.box(-6.0f * PX, 0.0f, -6.0f * PX, 6.0f * PX, 1.0f * PX, 6.0f * PX, UV_HOUSING);
+        mesh.box(-3.5f * PX, 1.0f * PX, -3.5f * PX, 3.5f * PX, (BOTTOM_SLICE - 1.5f) * PX, 3.5f * PX, UV_HUB);
         return mesh;
     }
 
