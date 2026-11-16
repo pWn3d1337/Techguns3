@@ -16,10 +16,9 @@ import techguns.machine.WindTurbineBlockEntity;
 /**
  * Wind Turbine segment: a central shaft and three wide helical blades turning a third of a turn per block (one winding
  * per block together, so stacked segments join into one seamless helix), all turning with the column's rotor angle.
- * Four variants by the segment's place in the column: a middle segment has a strut per blade at half height; the
- * bottom segment stands on a fixed generator housing, its blades start above it and end struts tie them to the shaft;
- * the top segment is open: its blades stop just below the block top and the shaft ends at about 90% height, tied to
- * the blades by struts there; a single segment has both ends.
+ * Every segment has one strut per blade at half height. Four variants by the segment's place in the column: the
+ * bottom segment stands on a fixed generator housing and its blades start above it; the top segment is open, its
+ * blades stop just below the block top and the shaft ends at about 90% height; a single segment has both ends.
  * The meshes are built once in rotor space; each frame only the rotation changes.
  */
 // MIGRATION(26.x): BlockEntityRenderer#render gets a render state and submit collector in 1.21.9+.
@@ -118,20 +117,8 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
                 mesh.edgeQuad(c0 - HALF_CHORD, c1 - HALF_CHORD, y0, y1, -1.0f, UV_BLADE[0], v0, UV_BLADE[0] + 0.03f, v1);
                 mesh.edgeQuad(c0 + HALF_CHORD, c1 + HALF_CHORD, y0, y1, 1.0f, UV_BLADE[2] - 0.03f, v0, UV_BLADE[2], v1);
             }
-            if (bottom || top) {
-                // end struts: a wide arm over each blade end, from the shaft to the blade's outer skin
-                if (bottom) {
-                    mesh.rotatedBox(twist(b, low), 1.0f * PX, OUTER + 0.25f * PX, low - 1.0f * PX, low, 1.0f * PX, UV_STRUT);
-                }
-                if (top) {
-                    // under the open top, level with the shaft's end
-                    double at = SHAFT_TOP - 0.5f * PX;
-                    mesh.rotatedBox(twist(b, at), 1.0f * PX, INNER + 0.2f * PX, SHAFT_TOP - 1.0f * PX, SHAFT_TOP, 0.75f * PX, UV_STRUT);
-                }
-            } else {
-                // a strut from the shaft to the blade at half height
-                mesh.rotatedBox(twist(b, 0.5), 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
-            }
+            // one strut from the shaft to the blade at half height, in every variant
+            mesh.rotatedBox(twist(b, 0.5), 1.0f * PX, INNER + 0.2f * PX, 7.5f * PX, 8.5f * PX, 0.5f * PX, UV_STRUT);
         }
         bladeEnds(mesh, bottom, low, top, high);
         // shaft; on the top segment it ends at about 90% height
