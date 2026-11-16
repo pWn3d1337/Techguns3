@@ -3,17 +3,20 @@ package techguns.machine;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import techguns.registry.TGBlockEntities;
 
 /**
  * A solar panel (Techguns 3): its energy lives in the {@link SolarArray} of all panels next to it while that array
- * exists; alone (between arrays, or saved) it keeps its own part. The first panel of an array ticks the whole array.
+ * exists; alone (between arrays, or saved) it keeps its own part. Panels do not tick: the level's array manager ticks
+ * each array once.
  */
 public class SolarPanelBlockEntity extends BlockEntity {
     /** FE one panel adds to its array's pool. */
@@ -24,30 +27,18 @@ public class SolarPanelBlockEntity extends BlockEntity {
     /** Own energy while not in an array (and what was loaded). */
     private int stored;
     private boolean sky;
-    private boolean skyChecked;
+    /** The array's capability caches of the blocks next to this panel, by {@link Direction#ordinal()}. */
+    @SuppressWarnings("unchecked")
+    private final BlockCapabilityCache<IEnergyStorage, Direction>[] neighbourCaches = new BlockCapabilityCache[6];
 
     public SolarPanelBlockEntity(BlockPos pos, BlockState state) {
         super(TGBlockEntities.SOLAR_PANEL.get(), pos, state);
     }
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, SolarPanelBlockEntity panel) {
-        SolarArray array = panel.array();
-        if (array != null && array.isMaster(panel)) {
-            array.tick();
-        }
-    }
-
     /** Server: the array this panel belongs to, built if needed. */
     @Nullable
     public SolarArray array() {
-        if (!(level instanceof ServerLevel server) || isRemoved()) {
-            return null;
-        }
-        if (array == null || !array.isValid()) {
-            array = null;
-            SolarArray.build(server, this);
-        }
-        return array;
+        return level instanceof ServerLevel server && !isRemoved() ? SolarArray.manager(server).arrayOf(this) : null;
     }
 
     @Nullable
@@ -57,6 +48,7 @@ public class SolarPanelBlockEntity extends BlockEntity {
 
     void join(SolarArray array) {
         this.array = array;
+        this.stored = 0;
     }
 
     void leave(int share) {
@@ -73,31 +65,34 @@ public class SolarPanelBlockEntity extends BlockEntity {
         return sky;
     }
 
-    boolean skyChecked() {
-        return skyChecked;
-    }
-
     void setSky(boolean sky) {
         this.sky = sky;
-        this.skyChecked = true;
+    }
+
+    BlockCapabilityCache<IEnergyStorage, Direction>[] neighbourCaches() {
+        return neighbourCaches;
+    }
+
+    /** A block next to the panel changed: the array looks for machines and cables there again. */
+    void neighbourChanged() {
+        SolarArray current = currentArray();
+        if (current != null) {
+            current.scanNeighbours(this);
+        }
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        // a panel appearing joins the panels around it
-        if (level != null) {
-            SolarArray.invalidateAround(level, worldPosition);
+        if (level instanceof ServerLevel server) {
+            SolarArray.manager(server).added(this);
         }
     }
 
     @Override
     public void setRemoved() {
-        if (level != null && !level.isClientSide) {
-            SolarArray current = currentArray();
-            if (current != null) {
-                current.dissolve();
-            }
+        if (level instanceof ServerLevel server) {
+            SolarArray.manager(server).removed(this);
         }
         super.setRemoved();
     }

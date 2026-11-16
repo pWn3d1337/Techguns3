@@ -16,15 +16,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import techguns.registry.TGBlockEntities;
 
 /**
  * Solar Panel (Techguns 3): a slab-high generator. Panels side by side join into one array ({@link SolarArray}) and
@@ -95,12 +92,12 @@ public class SolarPanelBlock extends BaseEntityBlock {
         return state;
     }
 
-    /** A block next to the array changed (a cable or machine placed or removed): the array is rebuilt with it. */
+    /** A block next to the panel changed (a cable or machine placed or removed): the array looks at that panel's sides again. */
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
-        if (level.getBlockEntity(pos) instanceof SolarPanelBlockEntity panel && panel.currentArray() != null) {
-            panel.currentArray().dissolve();
+        if (level.getBlockEntity(pos) instanceof SolarPanelBlockEntity panel) {
+            panel.neighbourChanged();
         }
     }
 
@@ -108,13 +105,6 @@ public class SolarPanelBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SolarPanelBlockEntity(pos, state);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide || type != TGBlockEntities.SOLAR_PANEL.get() ? null
-                : (l, p, s, be) -> SolarPanelBlockEntity.serverTick(l, p, s, (SolarPanelBlockEntity) be);
     }
 
     @Override

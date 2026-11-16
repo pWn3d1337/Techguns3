@@ -86,6 +86,24 @@ public class TGSolarTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void solarArraysNextToEachOtherMerge(GameTestHelper helper) {
+        panel(helper, new BlockPos(1, 1, 2));
+        panel(helper, new BlockPos(2, 1, 2));
+        helper.runAfterDelay(2, () -> {
+            // the far panel waits for an array while the middle one joins the existing array right away
+            panel(helper, new BlockPos(4, 1, 2));
+            panel(helper, new BlockPos(3, 1, 2));
+        });
+        helper.runAfterDelay(4, () -> {
+            SolarArray first = ((SolarPanelBlockEntity) helper.getBlockEntity(new BlockPos(1, 1, 2))).array();
+            SolarArray last = ((SolarPanelBlockEntity) helper.getBlockEntity(new BlockPos(4, 1, 2))).array();
+            helper.assertTrue(first == last && first.panels() == 4, "Panels in one row should end up in one array, got "
+                    + first.panels() + " and " + last.panels());
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
     public static void solarMenuShowsTheArray(GameTestHelper helper) {
         for (int x = 1; x <= 3; x++) {
             panel(helper, new BlockPos(x, 1, 2));

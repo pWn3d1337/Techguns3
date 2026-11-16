@@ -53,6 +53,7 @@ public class Techguns {
         techguns.stats.StatOverrideEvents.init(NeoForge.EVENT_BUS);
         AmmoBagEvents.init(NeoForge.EVENT_BUS);
         techguns.transport.TransportManager.init(NeoForge.EVENT_BUS);
+        techguns.machine.SolarArray.init(NeoForge.EVENT_BUS);
         techguns.item.WrenchEvents.init(NeoForge.EVENT_BUS);
         techguns.gun.GunHands.init(NeoForge.EVENT_BUS);
         TGSpawnManager.init(modEventBus, NeoForge.EVENT_BUS);
