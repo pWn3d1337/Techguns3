@@ -18,8 +18,8 @@ import techguns.machine.WindTurbineBlockEntity;
  * per block together, so stacked segments join into one seamless helix), all turning with the column's rotor angle.
  * Every segment has one strut per blade at half height. Four variants by the segment's place in the column: the
  * bottom segment stands on a fixed generator housing and its blades start above it; the top segment is open, its
- * blades stop just below the block top with rounded corners and the round shaft ends at three quarters height in a
- * rounded tip; a single segment has both ends.
+ * blades stop just below the block top and the round shaft ends at three quarters height in a
+ * rounded tip; a single segment has both ends. Blade corners are rounded at both column ends.
  * The meshes are built once in rotor space; each frame only the rotation changes.
  */
 // MIGRATION(26.x): BlockEntityRenderer#render gets a render state and submit collector in 1.21.9+.
@@ -42,7 +42,7 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     /** Slices where the blades start in the bottom segment (above the housing) and end in the top segment. */
     private static final int BOTTOM_SLICE = 4;
     private static final int TOP_SLICE = 15;
-    /** Radius in pixels of the rounded upper blade corners on the top segment, and slices per pixel there. */
+    /** Radius in pixels of the rounded blade corners at the column ends, and slices per pixel there. */
     private static final float TIP_RADIUS = 3.0f;
     private static final int TIP_STEPS_PER_PIXEL = 4;
     /** Where the shaft's dome tip starts in the top segment; the top stays open, without a hub. */
@@ -50,8 +50,8 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     /** The round shaft: radius and sides. */
     private static final float SHAFT_RADIUS = 1.1f * PX;
     private static final int SHAFT_SIDES = 8;
-    /** One texel of the blade's slightly darker rim column, for blade edges and ends. */
-    private static final float RIM_U = 1.5f / 32.0f;
+    /** One texel of the blade's plain body colour, for blade edges and ends. */
+    private static final float RIM_U = 4.5f / 32.0f;
     private static final float RIM_V = 8.5f / 32.0f;
 
     // texture regions (32x32 texture, in 0..1)
@@ -106,15 +106,15 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
         int to = top ? TOP_SLICE : SLICES;
         float low = (float) from / SLICES;
         float high = (float) to / SLICES;
-        float[] heights = sliceHeights(from, to, top);
+        float[] heights = sliceHeights(from, to, bottom, top);
         for (int b = 0; b < BLADES; b++) {
             for (int s = 0; s + 1 < heights.length; s++) {
                 float y0 = heights[s];
                 float y1 = heights[s + 1];
                 double c0 = twist(b, y0);
                 double c1 = twist(b, y1);
-                double h0 = halfChord(y0, top, high);
-                double h1 = halfChord(y1, top, high);
+                double h0 = halfChord(y0, bottom, low, top, high);
+                double h1 = halfChord(y1, bottom, low, top, high);
                 float v0 = lerp(UV_BLADE[1], UV_BLADE[3], y0);
                 float v1 = lerp(UV_BLADE[1], UV_BLADE[3], y1);
                 for (int k = 0; k < CHORD_STEPS; k++) {
@@ -151,26 +151,23 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     private static void bladeEnds(Mesh mesh, boolean bottom, float low, boolean top, float high) {
         for (int b = 0; b < BLADES; b++) {
             if (bottom) {
-                bladeEnd(mesh, twist(b, low), HALF_CHORD, low, -1.0f);
+                bladeEnd(mesh, twist(b, low), halfChord(low, bottom, low, top, high), low, -1.0f);
             }
             if (top) {
-                bladeEnd(mesh, twist(b, high), halfChord(high, true, high), high, 1.0f);
+                bladeEnd(mesh, twist(b, high), halfChord(high, bottom, low, top, high), high, 1.0f);
             }
         }
     }
 
-    /** Slice heights from slice {@code from} to {@code to}; finer where the top segment rounds the blade tips. */
-    private static float[] sliceHeights(int from, int to, boolean top) {
+    /** Slice heights from slice {@code from} to {@code to}; finer where the blade corners are rounded at either end. */
+    private static float[] sliceHeights(int from, int to, boolean bottom, boolean top) {
         java.util.List<Float> heights = new java.util.ArrayList<>();
-        float roundFrom = to - TIP_RADIUS;
         for (int s = from; s < to; s++) {
             heights.add((float) s / SLICES);
-            if (top && s + 1 > roundFrom) {
+            boolean rounding = (top && s + 1 > to - TIP_RADIUS) || (bottom && s < from + TIP_RADIUS);
+            if (rounding) {
                 for (int k = 1; k < TIP_STEPS_PER_PIXEL; k++) {
-                    float y = s + (float) k / TIP_STEPS_PER_PIXEL;
-                    if (y > roundFrom) {
-                        heights.add(y / SLICES);
-                    }
+                    heights.add((s + (float) k / TIP_STEPS_PER_PIXEL) / SLICES);
                 }
             }
         }
@@ -183,15 +180,19 @@ public class WindTurbineRenderer implements BlockEntityRenderer<WindTurbineBlock
     }
 
     /**
-     * Half the blade chord (radians) at height {@code y}: the full chord, but on the top segment the blade's two upper
-     * corners are rounded with a radius of {@link #TIP_RADIUS} pixels.
+     * Half the blade chord (radians) at height {@code y}: the full chord, but at the column's ends (the bottom segment's
+     * lower blade end, the top segment's upper one) the blade's two corners are rounded with a radius of
+     * {@link #TIP_RADIUS} pixels.
      */
-    private static double halfChord(float y, boolean top, float high) {
-        if (!top) {
-            return HALF_CHORD;
-        }
+    private static double halfChord(float y, boolean bottom, float low, boolean top, float high) {
         double radius = TIP_RADIUS * PX;
-        double into = y - (high - radius);
+        double into = 0.0;
+        if (top) {
+            into = Math.max(into, y - (high - radius));
+        }
+        if (bottom) {
+            into = Math.max(into, (low + radius) - y);
+        }
         if (into <= 0.0) {
             return HALF_CHORD;
         }
