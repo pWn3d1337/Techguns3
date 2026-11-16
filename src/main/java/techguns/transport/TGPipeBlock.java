@@ -169,7 +169,7 @@ public class TGPipeBlock extends BaseEntityBlock {
             case NEUTRAL -> ChatFormatting.GRAY;
             case OUTPUT -> ChatFormatting.GOLD;
             case INPUT -> ChatFormatting.BLUE;
-            case DISABLED -> ChatFormatting.DARK_RED;
+            case DISABLED -> ChatFormatting.DARK_GRAY;
         };
     }
 }

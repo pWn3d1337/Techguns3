@@ -473,7 +473,7 @@ def pipe_texture(kind, tier):
     return img
 
 
-CONNECTOR = {'neutral': (150, 150, 155), 'input': (60, 125, 235), 'output': (245, 145, 40), 'disabled': (175, 40, 35)}
+CONNECTOR = {'neutral': (150, 150, 155), 'input': (60, 125, 235), 'output': (245, 145, 40), 'disabled': (108, 108, 112)}
 
 
 def connector_texture(mode):
