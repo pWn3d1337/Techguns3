@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.data.DataMapProvider;
+import techguns.TGIds;
 import techguns.radiation.ItemRadiation;
 import techguns.registry.TGAmmo;
 import techguns.registry.TGBlocks;
@@ -38,7 +39,48 @@ public class TGDataMapProvider extends DataMapProvider {
         // liquid fuels of the generators and the ore drill: furnace burn ticks per millibucket
         builder(techguns.machine.FluidFuel.DATA_MAP).add(net.minecraft.world.level.material.Fluids.LAVA.builtInRegistryHolder(),
                 new techguns.machine.FluidFuel(techguns.machine.OreDrillBlockEntity.LAVA_FUEL_VALUE), false);
+        solarEfficiency();
     }
+
+    /**
+     * Solar panel biome multipliers. A biome in several tags takes the entry with the highest priority, so the list runs
+     * from the general climate fallbacks (low priority) to the most specific biome types (high priority).
+     */
+    private void solarEfficiency() {
+        var solar = builder(techguns.machine.SolarEfficiency.DATA_MAP);
+        String[][] rows = {
+                // type, tag path under c:, multiplier; most specific last. The climate fallbacks come first: they only
+                // count for biomes no named type matches.
+                {"wet", "is_wet/overworld", "0.9"},
+                {"cold", "is_cold/overworld", "0.9"},
+                {"hot", "is_hot/overworld", "1.25"},
+                {"dry", "is_dry/overworld", "1.5"},
+                {"mushroom", "is_mushroom", "0.9"},
+                {"ocean", "is_ocean", "1.0"},
+                {"icy", "is_icy", "0.75"},
+                {"snowy", "is_snowy", "0.75"},
+                {"taiga", "is_taiga", "0.9"},
+                {"spooky", "is_spooky", "0.75"},
+                {"swamp", "is_swamp", "0.75"},
+                {"jungle", "is_jungle", "0.8"},
+                {"plains", "is_plains", "1.1"},
+                {"beach", "is_beach", "1.25"},
+                {"mountain_peak", "is_mountain/peak", "1.5"},
+                {"savanna", "is_savanna", "1.5"},
+                {"badlands", "is_badlands", "2.0"},
+                {"desert", "is_desert", "2.0"},
+        };
+        for (int i = 0; i < rows.length; i++) {
+            String[] row = rows[i];
+            // later rows are more specific: higher priority
+            solar.add(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BIOME, TGIds.of("c", row[1])),
+                    new techguns.machine.SolarEfficiency(row[0], Float.parseFloat(row[2]), (i + 1) * 10), false);
+        }
+    }
+
+    /** Solar biome types in the order of the design table (most specific first), for lang and tests. */
+    public static final String[] SOLAR_TYPES = {"desert", "badlands", "savanna", "mountain_peak", "beach", "dry", "hot", "plains", "jungle",
+            "swamp", "spooky", "taiga", "snowy", "icy", "ocean", "mushroom", "cold", "wet"};
 
     private static net.minecraft.core.Holder<net.minecraft.world.item.Item> item(ItemLike block) {
         return block.asItem().builtInRegistryHolder();

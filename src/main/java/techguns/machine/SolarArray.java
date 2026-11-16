@@ -32,7 +32,8 @@ import techguns.core.transport.EnergySplit;
  * <p>Built for large fields: panels do not tick, the level's {@link Manager} ticks each array once. A placed panel joins
  * the array next to it in constant time; only removing a panel or joining two arrays rebuilds (a search over the
  * panels). Per-panel work (sky check, finding machines and cables next to it, marking the chunk for saving) runs on a
- * twentieth of the panels each tick; output comes from a running count of panels under open sky. Dissolving an array
+ * twentieth of the panels each tick; output comes from a running sum of the biome multipliers ({@link SolarEfficiency})
+ * of the panels under open sky. Dissolving an array
  * hands the pool back to the panels, so nothing is lost when chunks unload.
  */
 public final class SolarArray implements IEnergyStorage {
@@ -44,6 +45,8 @@ public final class SolarArray implements IEnergyStorage {
     private final Set<BlockCapabilityCache<IEnergyStorage, Direction>> targets = new LinkedHashSet<>();
     private int energy;
     private int skyCount;
+    /** Sum of the biome multipliers of the panels under open sky. */
+    private double skyFactorSum;
     private int cursor;
     private final double[] remainder = {0.0};
     private boolean valid = true;
@@ -84,6 +87,10 @@ public final class SolarArray implements IEnergyStorage {
 
         /** A panel loaded or was placed: it joins the one array next to it, or arrays are rebuilt. */
         void added(SolarPanelBlockEntity panel) {
+            // an array built while the chunk loaded may already hold this panel before its onLoad runs
+            if (panel.currentArray() != null) {
+                return;
+            }
             Set<SolarArray> around = new HashSet<>();
             for (Direction side : Direction.Plane.HORIZONTAL) {
                 BlockPos next = panel.getBlockPos().relative(side);
@@ -180,15 +187,20 @@ public final class SolarArray implements IEnergyStorage {
 
     /** Adds {@code panel} with its own energy (constant time). */
     private void join(SolarPanelBlockEntity panel) {
+        if (panel.currentArray() == this) {
+            return;
+        }
         int own = panel.storedAlone();
         members.add(panel);
         panel.join(this);
         energy = Math.min(getMaxEnergyStored(), energy + own);
         boolean sky = level.canSeeSky(panel.getBlockPos().above());
         panel.setSky(sky);
+        panel.setBiomeFactor(SolarEfficiency.of(level.getBiome(panel.getBlockPos())).multiplier());
         if (sky) {
             skyCount++;
         }
+        skyFactorSum += panel.contribution();
         scanNeighbours(panel);
         // cables and machines next to the panel fetch the array as its capability
         level.invalidateCapabilities(panel.getBlockPos());
@@ -260,12 +272,16 @@ public final class SolarArray implements IEnergyStorage {
             boolean sky = level.canSeeSky(panel.getBlockPos().above());
             if (sky != panel.seesSky()) {
                 skyCount += sky ? 1 : -1;
-                panel.setSky(sky);
             }
+            // the biome is looked up again too: datapacks can change the multipliers on reload
+            double before = panel.contribution();
+            panel.setSky(sky);
+            panel.setBiomeFactor(SolarEfficiency.of(level.getBiome(panel.getBlockPos())).multiplier());
+            skyFactorSum = Math.max(0.0, skyFactorSum + panel.contribution() - before);
             scanNeighbours(panel);
             panel.setChanged();
         }
-        lastPerTick = skyCount * SolarOutput.perTick(TGConfig.SOLAR_PANEL_FE_PER_TICK.get(), true, level.dimensionType().hasSkyLight(),
+        lastPerTick = skyFactorSum * SolarOutput.perTick(TGConfig.SOLAR_PANEL_FE_PER_TICK.get(), true, level.dimensionType().hasSkyLight(),
                 level.isDay());
         int made = SolarOutput.produce(lastPerTick, remainder);
         if (made > 0) {
@@ -317,6 +333,11 @@ public final class SolarArray implements IEnergyStorage {
     /** Panels of the array under open sky. */
     public int panelsUnderSky() {
         return skyCount;
+    }
+
+    /** Average biome multiplier of the panels under open sky (1 when none). */
+    public double averageBiomeFactor() {
+        return skyCount == 0 ? 1.0 : skyFactorSum / skyCount;
     }
 
     /** FE per tick the array makes now. */

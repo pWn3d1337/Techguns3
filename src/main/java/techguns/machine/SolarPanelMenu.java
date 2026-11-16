@@ -55,6 +55,11 @@ public class SolarPanelMenu extends AbstractContainerMenu {
         }
     }
 
+    /** The panel this screen was opened on. */
+    public BlockPos pos() {
+        return pos;
+    }
+
     private int combined(int low, int high) {
         return (data.get(high) & 0xFFFF) << 16 | (data.get(low) & 0xFFFF);
     }

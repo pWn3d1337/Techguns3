@@ -8,11 +8,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import techguns.TGIds;
+import techguns.machine.SolarEfficiency;
 import techguns.machine.SolarPanelMenu;
 
 /**
- * Solar Panel screen (Techguns 3): the power bar of the machine screens (array energy) and the array's size, output
- * and stored energy as text.
+ * Solar Panel screen (Techguns 3): the power bar of the machine screens (array energy) and the array's size, output,
+ * stored energy and this panel's biome type and multiplier as text.
  */
 // MIGRATION(26.x): GuiGraphics#blit and screen rendering change with deferred GUI rendering (1.21.6).
 public class SolarPanelScreen extends AbstractContainerScreen<SolarPanelMenu> {
@@ -46,9 +47,15 @@ public class SolarPanelScreen extends AbstractContainerScreen<SolarPanelMenu> {
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, TEXT_COLOR, false);
         graphics.drawString(font, playerInventoryTitle, 8, imageHeight - 96 + 2, TEXT_COLOR, false);
-        graphics.drawString(font, Component.translatable("techguns.solar.panels", menu.panels()), 22, 22, TEXT_COLOR, false);
+        graphics.drawString(font, Component.translatable("techguns.solar.panels", menu.panels()), 22, 20, TEXT_COLOR, false);
         graphics.drawString(font, Component.translatable("techguns.solar.output", String.format(Locale.ROOT, "%.1f", menu.output())),
-                22, 36, TEXT_COLOR, false);
-        graphics.drawString(font, Component.translatable("techguns.solar.stored", menu.energy(), menu.capacity()), 22, 50, TEXT_COLOR, false);
+                22, 32, TEXT_COLOR, false);
+        graphics.drawString(font, Component.translatable("techguns.solar.stored", menu.energy(), menu.capacity()), 22, 44, TEXT_COLOR, false);
+        // the biome of this panel: the efficiency data map is synced, so the client looks it up itself
+        if (minecraft != null && minecraft.level != null) {
+            SolarEfficiency efficiency = SolarEfficiency.of(minecraft.level.getBiome(menu.pos()));
+            graphics.drawString(font, Component.translatable("techguns.solar.biome", Component.translatable(efficiency.translationKey()),
+                    String.format(Locale.ROOT, "%.2f", efficiency.multiplier())), 22, 56, TEXT_COLOR, false);
+        }
     }
 }

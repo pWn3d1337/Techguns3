@@ -103,6 +103,68 @@ public class TGSolarTests {
         });
     }
 
+    private static techguns.machine.SolarEfficiency efficiency(GameTestHelper helper, net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> biome) {
+        return techguns.machine.SolarEfficiency.of(helper.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
+                .getHolderOrThrow(biome));
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void solarBiomeMultipliers(GameTestHelper helper) {
+        // the specific type wins over the climate fallbacks (desert is hot and dry as well)
+        Object[][] expected = {
+                {net.minecraft.world.level.biome.Biomes.DESERT, "desert", 2.0f},
+                {net.minecraft.world.level.biome.Biomes.ERODED_BADLANDS, "badlands", 2.0f},
+                {net.minecraft.world.level.biome.Biomes.SAVANNA_PLATEAU, "savanna", 1.5f},
+                {net.minecraft.world.level.biome.Biomes.JAGGED_PEAKS, "mountain_peak", 1.5f},
+                {net.minecraft.world.level.biome.Biomes.BEACH, "beach", 1.25f},
+                {net.minecraft.world.level.biome.Biomes.PLAINS, "plains", 1.1f},
+                {net.minecraft.world.level.biome.Biomes.JUNGLE, "jungle", 0.8f},
+                {net.minecraft.world.level.biome.Biomes.MANGROVE_SWAMP, "swamp", 0.75f},
+                {net.minecraft.world.level.biome.Biomes.DARK_FOREST, "spooky", 0.75f},
+                {net.minecraft.world.level.biome.Biomes.ICE_SPIKES, "snowy", 0.75f},
+                {net.minecraft.world.level.biome.Biomes.MUSHROOM_FIELDS, "mushroom", 0.9f},
+                {net.minecraft.world.level.biome.Biomes.FOREST, "default", 1.0f},
+        };
+        for (Object[] row : expected) {
+            @SuppressWarnings("unchecked")
+            techguns.machine.SolarEfficiency e = efficiency(helper,
+                    (net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>) row[0]);
+            helper.assertTrue(e.type().equals(row[1]) && e.multiplier() == (float) row[2],
+                    row[0] + " should be " + row[1] + " x" + row[2] + ", got " + e.type() + " x" + e.multiplier());
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void solarOutputUsesTheBiome(GameTestHelper helper) {
+        SolarPanelBlockEntity panel = panel(helper, new BlockPos(2, 1, 2));
+        helper.runAfterDelay(25, () -> {
+            float factor = techguns.machine.SolarEfficiency.of(helper.getLevel().getBiome(helper.absolutePos(new BlockPos(2, 1, 2)))).multiplier();
+            double expected = factor * techguns.core.power.SolarOutput.perTick(techguns.TGConfig.SOLAR_PANEL_FE_PER_TICK.get(), true, true,
+                    helper.getLevel().isDay());
+            helper.assertTrue(Math.abs(panel.array().lastPerTick() - expected) < 1e-6,
+                    "A panel should make the base output times its biome multiplier: " + panel.array().lastPerTick() + " vs " + expected);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void solarPanelsJoinOnlyOnce(GameTestHelper helper) {
+        for (int x = 1; x <= 3; x++) {
+            panel(helper, new BlockPos(x, 1, 2));
+        }
+        helper.runAfterDelay(2, () -> {
+            SolarPanelBlockEntity middle = (SolarPanelBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 2));
+            // a chunk load can run onLoad on a panel an array already took in
+            middle.onLoad();
+            middle.onLoad();
+            SolarArray array = middle.array();
+            helper.assertTrue(array.panels() == 3 && array.getMaxEnergyStored() == 3 * SolarPanelBlockEntity.CAPACITY,
+                    "A panel must count once, got " + array.panels());
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 40)
     public static void solarMenuShowsTheArray(GameTestHelper helper) {
         for (int x = 1; x <= 3; x++) {

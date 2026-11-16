@@ -349,6 +349,14 @@ public class TGLanguageProvider extends LanguageProvider {
         add("techguns.solar.panels", "Panels in array: %s");
         add("techguns.solar.output", "Output: %s FE/t");
         add("techguns.solar.stored", "Stored: %s/%s FE");
+        add("techguns.solar.biome", "Biome: %s (×%s)");
+        String[][] solarTypes = {{"default", "Normal"}, {"desert", "Desert"}, {"badlands", "Badlands"}, {"savanna", "Savanna"},
+                {"mountain_peak", "Mountain Peak"}, {"beach", "Beach"}, {"dry", "Dry"}, {"hot", "Hot"}, {"plains", "Plains"},
+                {"jungle", "Jungle"}, {"swamp", "Swamp"}, {"spooky", "Gloomy"}, {"taiga", "Taiga"}, {"snowy", "Snowy"}, {"icy", "Icy"},
+                {"ocean", "Ocean"}, {"mushroom", "Mushroom"}, {"cold", "Cold"}, {"wet", "Wet"}};
+        for (String[] type : solarTypes) {
+            add("techguns.solar.biome_type." + type[0], type[1]);
+        }
         add("techguns.configuration.transport", "Cables and Pipes");
         add("techguns.configuration.cableRateBasic", "Basic Cable FE per Tick");
         add("techguns.configuration.cableRateAdvanced", "Advanced Cable FE per Tick");

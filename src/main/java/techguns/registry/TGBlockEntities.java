@@ -129,8 +129,10 @@ public final class TGBlockEntities {
 
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(TGBlockEntities::registerCapabilities);
-        modEventBus.addListener((net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent event) ->
-                event.register(techguns.machine.FluidFuel.DATA_MAP));
+        modEventBus.addListener((net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent event) -> {
+            event.register(techguns.machine.FluidFuel.DATA_MAP);
+            event.register(techguns.machine.SolarEfficiency.DATA_MAP);
+        });
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {

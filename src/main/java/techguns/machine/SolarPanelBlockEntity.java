@@ -27,6 +27,8 @@ public class SolarPanelBlockEntity extends BlockEntity {
     /** Own energy while not in an array (and what was loaded). */
     private int stored;
     private boolean sky;
+    /** Biome multiplier of this panel ({@link SolarEfficiency}). */
+    private float biomeFactor = 1.0f;
     /** The array's capability caches of the blocks next to this panel, by {@link Direction#ordinal()}. */
     @SuppressWarnings("unchecked")
     private final BlockCapabilityCache<IEnergyStorage, Direction>[] neighbourCaches = new BlockCapabilityCache[6];
@@ -67,6 +69,19 @@ public class SolarPanelBlockEntity extends BlockEntity {
 
     void setSky(boolean sky) {
         this.sky = sky;
+    }
+
+    float biomeFactor() {
+        return biomeFactor;
+    }
+
+    void setBiomeFactor(float biomeFactor) {
+        this.biomeFactor = biomeFactor;
+    }
+
+    /** What this panel adds to its array's sunlit sum: its biome multiplier under open sky, else nothing. */
+    double contribution() {
+        return sky ? biomeFactor : 0.0;
     }
 
     BlockCapabilityCache<IEnergyStorage, Direction>[] neighbourCaches() {

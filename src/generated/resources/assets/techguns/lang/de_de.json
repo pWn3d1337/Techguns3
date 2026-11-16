@@ -463,6 +463,8 @@
   "techguns.repairbench.fullcondition": "Rüstung vollständing repariert",
   "techguns.repairbench.noarmor": "Keine Rüstung",
   "techguns.repairbench.requiredmats": "Benötigte Resourcen:",
+  "techguns.solar.biome_type.desert": "Wüste",
+  "techguns.solar.biome_type.swamp": "Sumpf",
   "techguns.tool_class.axe": "Axt",
   "techguns.tool_class.pickaxe": "Spitzhacke",
   "techguns.tool_class.shovel": "Schaufel",
