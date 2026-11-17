@@ -1,0 +1,14 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "tag": "c:raw_materials/gold"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:gold_dust"
+      }
+    }
+  ]
+}

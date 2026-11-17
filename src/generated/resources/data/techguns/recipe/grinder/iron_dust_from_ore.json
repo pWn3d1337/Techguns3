@@ -1,0 +1,14 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "tag": "c:ores/iron"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:iron_dust"
+      }
+    }
+  ]
+}

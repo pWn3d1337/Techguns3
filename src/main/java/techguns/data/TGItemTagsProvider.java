@@ -83,6 +83,15 @@ public class TGItemTagsProvider extends ItemTagsProvider {
         ingot("obsidian_steel", TGItems.OBSIDIAN_STEEL_INGOT);
         ingot("titanium", TGItems.TITANIUM_INGOT);
 
+        // Dusts
+        dust("iron", TGItems.IRON_DUST);
+        dust("gold", TGItems.GOLD_DUST);
+        dust("copper", TGItems.COPPER_DUST);
+        dust("tin", TGItems.TIN_DUST);
+        dust("lead", TGItems.LEAD_DUST);
+        dust("titanium", TGItems.TITANIUM_DUST);
+        dust("uranium", TGItems.URANIUM_DUST);
+
         // Nuggets
         nugget("copper", TGItems.COPPER_NUGGET);
         nugget("lead", TGItems.LEAD_NUGGET);
@@ -113,6 +122,11 @@ public class TGItemTagsProvider extends ItemTagsProvider {
     private void ingot(String material, DeferredItem<Item> item) {
         tag(TGTags.Items.ingot(material)).add(item.get());
         tag(Tags.Items.INGOTS).addTag(TGTags.Items.ingot(material));
+    }
+
+    private void dust(String material, DeferredItem<Item> item) {
+        tag(TGTags.Items.dust(material)).add(item.get());
+        tag(Tags.Items.DUSTS).addTag(TGTags.Items.dust(material));
     }
 
     private void nugget(String material, DeferredItem<Item> item) {

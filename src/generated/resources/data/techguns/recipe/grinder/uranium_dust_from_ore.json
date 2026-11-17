@@ -1,0 +1,14 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "tag": "c:ores/uranium"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:uranium_dust"
+      }
+    }
+  ]
+}

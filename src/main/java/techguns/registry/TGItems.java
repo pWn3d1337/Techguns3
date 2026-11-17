@@ -39,6 +39,16 @@ public final class TGItems {
     public static final DeferredItem<Item> OBSIDIAN_STEEL_INGOT = simple("obsidian_steel_ingot");
     public static final DeferredItem<Item> TITANIUM_INGOT = simple("titanium_ingot");
 
+    // --- Dusts (Techguns 3): one ore ground into two dust in the Grinder, smelted into the ingot ---
+    public static final DeferredItem<Item> IRON_DUST = simple("iron_dust");
+    public static final DeferredItem<Item> GOLD_DUST = simple("gold_dust");
+    public static final DeferredItem<Item> COPPER_DUST = simple("copper_dust");
+    public static final DeferredItem<Item> TIN_DUST = simple("tin_dust");
+    public static final DeferredItem<Item> LEAD_DUST = simple("lead_dust");
+    public static final DeferredItem<Item> TITANIUM_DUST = simple("titanium_dust");
+    /** No uranium ingot exists, so this dust has no smelting recipe. */
+    public static final DeferredItem<Item> URANIUM_DUST = simple("uranium_dust");
+
     // --- Nuggets ---
     public static final DeferredItem<Item> COPPER_NUGGET = simple("copper_nugget");
     public static final DeferredItem<Item> LEAD_NUGGET = simple("lead_nugget");

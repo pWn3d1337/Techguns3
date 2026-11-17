@@ -1,0 +1,14 @@
+{
+  "type": "techguns:grinder",
+  "input": {
+    "tag": "c:ores/titanium"
+  },
+  "outputs": [
+    {
+      "item": {
+        "count": 2,
+        "id": "techguns:titanium_dust"
+      }
+    }
+  ]
+}

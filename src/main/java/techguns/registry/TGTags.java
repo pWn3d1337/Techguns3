@@ -100,6 +100,10 @@ public final class TGTags {
             return common("ingots/" + material);
         }
 
+        public static TagKey<Item> dust(String material) {
+            return common("dusts/" + material);
+        }
+
         public static TagKey<Item> nugget(String material) {
             return common("nuggets/" + material);
         }

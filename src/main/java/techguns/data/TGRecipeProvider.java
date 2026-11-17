@@ -77,6 +77,13 @@ public class TGRecipeProvider extends RecipeProvider {
                 TGItems.LEAD_INGOT.get(), 0.8f, "lead_ingot");
         blastingOnly(output, List.of(TGItems.RAW_TITANIUM.get(), TGBlocks.TITANIUM_ORE.get(), TGBlocks.DEEPSLATE_TITANIUM_ORE.get()),
                 TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
+        // dusts from the Grinder; titanium stays blast furnace only like its ore
+        smeltingAndBlasting(output, List.of(TGItems.IRON_DUST.get()), Items.IRON_INGOT, 0.7f, "iron_ingot");
+        smeltingAndBlasting(output, List.of(TGItems.GOLD_DUST.get()), Items.GOLD_INGOT, 1.0f, "gold_ingot");
+        smeltingAndBlasting(output, List.of(TGItems.COPPER_DUST.get()), Items.COPPER_INGOT, 0.7f, "copper_ingot");
+        smeltingAndBlasting(output, List.of(TGItems.TIN_DUST.get()), TGItems.TIN_INGOT.get(), 0.7f, "tin_ingot");
+        smeltingAndBlasting(output, List.of(TGItems.LEAD_DUST.get()), TGItems.LEAD_INGOT.get(), 0.8f, "lead_ingot");
+        blastingOnly(output, List.of(TGItems.TITANIUM_DUST.get()), TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
         smeltingAndBlasting(output, List.of(TGItems.RAW_RUBBER.get()), TGItems.RUBBER_BAR.get(), 0.5f, "rubber_bar");
         smeltingAndBlasting(output, List.of(TGItems.RAW_PLASTIC.get()), TGItems.PLASTIC_SHEET.get(), 0.5f, "plastic_sheet");
 
@@ -1009,6 +1016,15 @@ public class TGRecipeProvider extends RecipeProvider {
                 new ItemStack(TGItems.CARBON_FIBERS.get(), 4)));
         grinder(output, TGItems.CARBON_PLATE.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get())));
 
+        // ores and raw ores: two dust each (Techguns 3)
+        oreGrinder(output, "iron", TGItems.IRON_DUST.get());
+        oreGrinder(output, "gold", TGItems.GOLD_DUST.get());
+        oreGrinder(output, "copper", TGItems.COPPER_DUST.get());
+        oreGrinder(output, "tin", TGItems.TIN_DUST.get());
+        oreGrinder(output, "lead", TGItems.LEAD_DUST.get());
+        oreGrinder(output, "titanium", TGItems.TITANIUM_DUST.get());
+        oreGrinder(output, "uranium", TGItems.URANIUM_DUST.get());
+
         // rounds: lead and copper nuggets, sometimes powder (blaze powder / TGX for special rounds)
         ItemStack lead = new ItemStack(TGItems.LEAD_NUGGET.get());
         ItemStack copper = new ItemStack(TGItems.COPPER_NUGGET.get());
@@ -1066,6 +1082,15 @@ public class TGRecipeProvider extends RecipeProvider {
         java.util.List<GrinderRecipe.Output> list = java.util.Arrays.stream(outputs).flatMap(java.util.Arrays::stream)
                 .map(GrinderRecipe.Output::of).toList();
         output.accept(TGIds.id("grinder/" + getItemName(input)), new GrinderRecipe(Ingredient.of(input), list), null);
+    }
+
+    /** {@code c:ores/<material>} and {@code c:raw_materials/<material>} into 2 dust, ids {@code grinder/<dust>_from_ore} / {@code _from_raw}. */
+    private static void oreGrinder(RecipeOutput output, String material, Item dust) {
+        List<GrinderRecipe.Output> twoDust = List.of(GrinderRecipe.Output.of(new ItemStack(dust, 2)));
+        output.accept(TGIds.id("grinder/" + getItemName(dust) + "_from_ore"),
+                new GrinderRecipe(Ingredient.of(TGTags.Items.ore(material)), twoDust), null);
+        output.accept(TGIds.id("grinder/" + getItemName(dust) + "_from_raw"),
+                new GrinderRecipe(Ingredient.of(TGTags.Items.rawMaterial(material)), twoDust), null);
     }
 
     private static GrinderRecipe.Output out(ItemStack stack, float chance) {

@@ -22,7 +22,7 @@ import techguns.registry.TGItems;
 
 /**
  * Machines (Phase 5b2a): Ammo Press build plans, Blast Furnace counted inputs and per-recipe power, Grinder gun
- * recycling and rolled round outputs with the stack upgrade.
+ * recycling, ore and raw ore into two dust, and rolled round outputs with the stack upgrade.
  */
 @GameTestHolder(Techguns.MODID)
 @PrefixGameTestTemplate(false)
@@ -143,6 +143,39 @@ public class TGMachineTests2 {
             helper.assertTrue(count(inv, first, last, TGItems.OBSIDIAN_STEEL_INGOT.get()) == 3, "The M4 barrel gives 3 obsidian steel");
             helper.assertTrue(count(inv, first, last, TGItems.STEEL_INGOT.get()) == 2, "The M4 gives 2 steel");
             helper.assertTrue(count(inv, first, last, TGItems.PLASTIC_SHEET.get()) == 2, "The M4 gives 2 plastic");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void grinderGrindsOreIntoTwoDust(GameTestHelper helper) {
+        helper.setBlock(POS, TGBlocks.GRINDER.get());
+        GrinderBlockEntity grinder = (GrinderBlockEntity) helper.getBlockEntity(POS);
+        grinder.getEnergy().setEnergy(GrinderBlockEntity.ENERGY_CAPACITY);
+        IItemHandlerModifiable inv = grinder.getInventory();
+        inv.setStackInSlot(GrinderBlockEntity.SLOT_INPUT, new ItemStack(TGBlocks.TIN_ORE.get()));
+
+        helper.runAfterDelay(OPERATION_TICKS, () -> {
+            int first = GrinderBlockEntity.SLOT_OUTPUT_FIRST;
+            int last = GrinderBlockEntity.SLOT_OUTPUT_LAST;
+            helper.assertTrue(count(inv, first, last, TGItems.TIN_DUST.get()) == 2, "One tin ore gives 2 tin dust");
+            helper.assertTrue(inv.getStackInSlot(GrinderBlockEntity.SLOT_INPUT).isEmpty(), "The ore is used up");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 200)
+    public static void grinderGrindsRawIronIntoTwoDust(GameTestHelper helper) {
+        helper.setBlock(POS, TGBlocks.GRINDER.get());
+        GrinderBlockEntity grinder = (GrinderBlockEntity) helper.getBlockEntity(POS);
+        grinder.getEnergy().setEnergy(GrinderBlockEntity.ENERGY_CAPACITY);
+        IItemHandlerModifiable inv = grinder.getInventory();
+        inv.setStackInSlot(GrinderBlockEntity.SLOT_INPUT, new ItemStack(Items.RAW_IRON));
+
+        helper.runAfterDelay(OPERATION_TICKS, () -> {
+            int first = GrinderBlockEntity.SLOT_OUTPUT_FIRST;
+            int last = GrinderBlockEntity.SLOT_OUTPUT_LAST;
+            helper.assertTrue(count(inv, first, last, TGItems.IRON_DUST.get()) == 2, "One raw iron gives 2 iron dust");
             helper.succeed();
         });
     }
