@@ -1016,13 +1016,12 @@ public class TGRecipeProvider extends RecipeProvider {
                 new ItemStack(TGItems.CARBON_FIBERS.get(), 4)));
         grinder(output, TGItems.CARBON_PLATE.get(), stacks(new ItemStack(TGItems.CARBON_FIBERS.get())));
 
-        // ores and raw ores: two dust each (Techguns 3)
+        // ores and raw ores: two dust each (Techguns 3); titanium has no Grinder recipe
         oreGrinder(output, "iron", TGItems.IRON_DUST.get());
         oreGrinder(output, "gold", TGItems.GOLD_DUST.get());
         oreGrinder(output, "copper", TGItems.COPPER_DUST.get());
         oreGrinder(output, "tin", TGItems.TIN_DUST.get());
         oreGrinder(output, "lead", TGItems.LEAD_DUST.get());
-        oreGrinder(output, "titanium", TGItems.TITANIUM_DUST.get());
         oreGrinder(output, "uranium", TGItems.URANIUM_DUST.get());
 
         // rounds: lead and copper nuggets, sometimes powder (blaze powder / TGX for special rounds)
