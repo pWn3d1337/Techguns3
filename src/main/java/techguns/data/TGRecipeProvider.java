@@ -77,13 +77,13 @@ public class TGRecipeProvider extends RecipeProvider {
                 TGItems.LEAD_INGOT.get(), 0.8f, "lead_ingot");
         blastingOnly(output, List.of(TGItems.RAW_TITANIUM.get(), TGBlocks.TITANIUM_ORE.get(), TGBlocks.DEEPSLATE_TITANIUM_ORE.get()),
                 TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
-        // dusts from the Grinder; titanium stays blast furnace only like its ore
+        // dusts from the Grinder: every dust with an ingot smelts and blasts into it (uranium has none)
         smeltingAndBlasting(output, List.of(TGItems.IRON_DUST.get()), Items.IRON_INGOT, 0.7f, "iron_ingot");
         smeltingAndBlasting(output, List.of(TGItems.GOLD_DUST.get()), Items.GOLD_INGOT, 1.0f, "gold_ingot");
         smeltingAndBlasting(output, List.of(TGItems.COPPER_DUST.get()), Items.COPPER_INGOT, 0.7f, "copper_ingot");
         smeltingAndBlasting(output, List.of(TGItems.TIN_DUST.get()), TGItems.TIN_INGOT.get(), 0.7f, "tin_ingot");
         smeltingAndBlasting(output, List.of(TGItems.LEAD_DUST.get()), TGItems.LEAD_INGOT.get(), 0.8f, "lead_ingot");
-        blastingOnly(output, List.of(TGItems.TITANIUM_DUST.get()), TGItems.TITANIUM_INGOT.get(), 1.5f, 200, "titanium_ingot");
+        smeltingAndBlasting(output, List.of(TGItems.TITANIUM_DUST.get()), TGItems.TITANIUM_INGOT.get(), 1.5f, "titanium_ingot");
         smeltingAndBlasting(output, List.of(TGItems.RAW_RUBBER.get()), TGItems.RUBBER_BAR.get(), 0.5f, "rubber_bar");
         smeltingAndBlasting(output, List.of(TGItems.RAW_PLASTIC.get()), TGItems.PLASTIC_SHEET.get(), 0.5f, "plastic_sheet");
 
