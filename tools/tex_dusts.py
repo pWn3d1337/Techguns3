@@ -4,11 +4,10 @@ Pure standard library and deterministic: the same output on every run. Run from 
 
     python -I tools/tex_dusts.py src/main/resources/assets/techguns/textures
 
-Writes item/<material>_dust.png (32x32, like most Techguns items) for every material in MATERIALS: one shared heap
-shape with coarse and fine grains and a dark outline, shaded from the top left like the vanilla items, tinted per
-material from a dark, a mid and a light colour. Two materials are animated like their ores (a vertical frame strip and
-a .png.mcmeta next to it): titanium sparkles with white glints that flare up one after another, uranium glows with a
-slow yellow-green pulse.
+Writes item/<material>_dust.png (16x16) for every material in MATERIALS: one shared heap shape with grains, shaded
+from the top left like the vanilla items, tinted per material from a dark, a mid and a light colour. Two materials are
+animated like their ores (a vertical frame strip and a .png.mcmeta next to it): titanium sparkles with white glints
+that flare up one after another, uranium glows with a slow yellow-green pulse over its top surface (not its base).
 """
 import math
 import os
@@ -25,15 +24,11 @@ MATERIALS = {
     'tin': ((104, 112, 108), (184, 194, 188), (240, 246, 240)),
     'lead': ((44, 46, 62), (92, 96, 120), (148, 154, 178)),
     'titanium': ((56, 58, 96), (118, 126, 180), (186, 196, 240)),
-    'uranium': ((36, 72, 22), (92, 162, 48), (176, 234, 100)),
+    'uranium': ((40, 78, 26), (96, 168, 52), (186, 240, 110)),
 }
 
-SIZE = 32
-# heap: centre column, base row, peak height and half width (texels)
-CX = 15.5
-BASE = 27
-HEIGHT = 19.0
-HALF = 14.5
+SIZE = 16
+BASE = 13
 
 # animation frames and ticks per frame (interpolated like the titanium and uranium ores)
 SPARKLE_FRAMES = 16
@@ -79,51 +74,41 @@ class Rng:
         return self.s / 0x7fffffff
 
 
-def heap_top(x):
-    dx = (x - CX) / HALF
-    if abs(dx) > 1.0:
-        return None
-    return BASE - HEIGHT * max(0.0, 1.0 - dx * dx) ** 1.3
-
-
 def heap_shape():
     """Shade per texel: None outside the heap, else 0 (shadow) .. 1 (highlight). The same for every material."""
-    rng = Rng('dust_heap_32')
-    # coarse grains: one random value per 2x2 block, so the heap reads as granular at 32 px
-    coarse = [[rng.next() - 0.5 for _ in range(SIZE // 2 + 1)] for _ in range(SIZE // 2 + 1)]
+    rng = Rng('dust_heap')
     shade = [[None] * SIZE for _ in range(SIZE)]
+    # a wide mound: half ellipse over a flat base, centre x 7.5, base row 13, peak row 3
     for y in range(SIZE):
         for x in range(SIZE):
-            top = heap_top(x)
-            if top is None or y < round(top) or y > BASE:
+            dx = (x - 7.5) / 7.0
+            top = 13.0 - 9.0 * max(0.0, 1.0 - dx * dx) ** 1.3
+            if y < round(top) or y > BASE or abs(dx) > 1.0:
                 continue
-            dx = (x - CX) / HALF
             # light from the top left: higher and further left is brighter, the base is darker
-            height = (BASE - y) / HEIGHT
-            s = 0.3 + 0.55 * height - 0.35 * dx + 0.1
-            # the lit crest just under the surface
-            if y - round(top) <= 1:
-                s += 0.12
-            s += coarse[y // 2][x // 2] * 0.28 + (rng.next() - 0.5) * 0.16
+            height = (13.0 - y) / 9.0
+            s = 0.25 + 0.55 * height - 0.35 * dx + 0.15
+            if y == round(top):
+                s += 0.15
+            s += (rng.next() - 0.5) * 0.3
             shade[y][x] = max(0.0, min(1.0, s))
-    # ragged outline on the upper slopes
+    # ragged outline: drop some edge texels, scatter loose grains beside the base
     for y in range(SIZE):
         for x in range(SIZE):
-            if shade[y][x] is None or y > BASE - 4:
+            if shade[y][x] is None:
                 continue
             edge = any(not (0 <= x + ox < SIZE and 0 <= y + oy < SIZE) or shade[y + oy][x + ox] is None
                        for ox, oy in ((1, 0), (-1, 0), (0, -1)))
-            if edge and rng.next() < 0.18:
+            if edge and y < 11 and rng.next() < 0.12:
                 shade[y][x] = None
-    # loose grains rolled off beside the base
-    for x, y, s in ((0, BASE - 1, 0.3), (1, BASE - 2, 0.4), (30, BASE - 1, 0.15), (31, BASE, 0.1), (2, BASE, 0.35)):
+    for x, y, s in ((0, 12, 0.3), (15, 12, 0.15), (1, 11, 0.35)):
         if shade[y][x] is None:
             shade[y][x] = s
     # bright grains on the lit side, dark grains in the shadow
-    for _ in range(26):
+    for _ in range(9):
         x, y = int(rng.next() * SIZE), int(rng.next() * SIZE)
         if shade[y][x] is not None:
-            shade[y][x] = 1.0 if x < CX else 0.0
+            shade[y][x] = 1.0 if x < 8 else 0.0
     return shade
 
 
@@ -145,21 +130,10 @@ def tint(shade, colours):
                 continue
             c = mix(dark, mid, s * 2.0) if s < 0.5 else mix(mid, light, (s - 0.5) * 2.0)
             px[y][x] = clamp(c) + (255,)
-    outline = clamp(tuple(v * 0.45 for v in dark)) + (255,)
-    # a dark rim along the base, and a dark outline around the outside of the heap like the Techguns 32 px items
+    # a dark rim along the base of the heap, like the vanilla item outlines
     for x in range(SIZE):
         if px[BASE][x][3]:
             px[BASE][x] = clamp(tuple(v * 0.6 for v in dark)) + (255,)
-    edges = []
-    for y in range(SIZE):
-        for x in range(SIZE):
-            if px[y][x][3]:
-                continue
-            if any(0 <= x + ox < SIZE and 0 <= y + oy < SIZE and shade[y + oy][x + ox] is not None
-                   for ox, oy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
-                edges.append((x, y))
-    for x, y in edges:
-        px[y][x] = outline
     return px
 
 
@@ -167,57 +141,59 @@ def copy(px):
     return [list(row) for row in px]
 
 
+def surface(shade):
+    """Texels on the heap's upper surface: open to the sky above them, above the base."""
+    return [(x, y) for y in range(BASE) for x in range(SIZE)
+            if shade[y][x] is not None and (y == 0 or shade[y - 1][x] is None)]
+
+
 # --- titanium: glints flaring up one after another ---
 
 def sparkle_frames(base, shade):
     rng = Rng('titanium_sparkle')
     spots = []
-    while len(spots) < 9:
-        x, y = 3 + int(rng.next() * (SIZE - 6)), 6 + int(rng.next() * (BASE - 8))
-        if shade[y][x] is not None and all(abs(x - sx) + abs(y - sy) > 6 for sx, sy, _ in spots):
-            spots.append((x, y, len(spots) / 9.0))
+    while len(spots) < 6:
+        x, y = 2 + int(rng.next() * (SIZE - 4)), 4 + int(rng.next() * (BASE - 5))
+        if shade[y][x] is not None and all(abs(x - sx) + abs(y - sy) > 3 for sx, sy, _ in spots):
+            spots.append((x, y, len(spots) / 6.0))
     white = (255, 255, 255)
     frames = []
     for f in range(SPARKLE_FRAMES):
         px = copy(base)
         for x, y, phase in spots:
-            # each glint is bright for about a quarter of the loop
+            # each glint is bright for about a third of the loop
             t = (f / SPARKLE_FRAMES + phase) % 1.0
             k = max(0.0, math.cos((t - 0.5) * math.pi * 3.0)) if 1.0 / 6.0 < t < 5.0 / 6.0 else 0.0
             if k <= 0.05:
                 continue
-            arm = 3 if k > 0.7 else 2 if k > 0.35 else 1
-            points = [(0, 0, 1.0)] + [(d * sx, d * sy, 1.0 / d) for d in range(1, arm + 1)
-                                      for sx, sy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
-            if k > 0.7:
-                points += [(sx, sy, 0.45) for sx, sy in ((1, 1), (-1, 1), (1, -1), (-1, -1))]
+            points = [(0, 0, 1.0)]
+            if k > 0.5:
+                points += [(sx, sy, 0.8) for sx, sy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
             for ox, oy, w in points:
                 tx, ty = x + ox, y + oy
-                if 0 <= tx < SIZE and 0 <= ty < SIZE and px[ty][tx][3] == 255 and shade[ty][tx] is not None:
-                    c = px[ty][tx][:3]
-                    px[ty][tx] = clamp(mix(c, white, min(1.0, k * w))) + (255,)
+                if 0 <= tx < SIZE and 0 <= ty < BASE and shade[ty][tx] is not None:
+                    px[ty][tx] = clamp(mix(px[ty][tx][:3], white, min(1.0, k * w))) + (255,)
         frames.append(px)
     return frames
 
 
-# --- uranium: a slow glow pulse ---
+# --- uranium: a slow glow pulse over the top surface ---
 
 def glow_frames(shade, colours):
     dark, mid, light = colours
-    hot = (226, 255, 120)
+    hot = (230, 255, 130)
     rng = Rng('uranium_glow')
-    # glowing grains with their own phase
-    grains = [(int(rng.next() * SIZE), int(rng.next() * SIZE), rng.next()) for _ in range(40)]
+    grains = [(int(rng.next() * SIZE), int(rng.next() * BASE), rng.next()) for _ in range(14)]
+    crest = surface(shade)
     frames = []
     for f in range(GLOW_FRAMES):
         p = 0.5 - 0.5 * math.cos(2.0 * math.pi * f / GLOW_FRAMES)
-        lit = (mix(dark, mid, 0.45 * p), mix(mid, light, 0.6 * p), mix(light, hot, 0.9 * p))
+        # the heap brightens with the pulse; the base rim stays dark
+        lit = (mix(dark, mid, 0.3 * p), mix(mid, light, 0.5 * p), mix(light, hot, 0.8 * p))
         px = tint(shade, lit)
-        # the outline glows with the pulse
-        for y in range(SIZE):
-            for x in range(SIZE):
-                if px[y][x][3] and shade[y][x] is None:
-                    px[y][x] = clamp(mix(px[y][x][:3], (110, 190, 40), 0.85 * p)) + (255,)
+        px[BASE] = tint(shade, colours)[BASE]
+        for x, y in crest:
+            px[y][x] = clamp(mix(px[y][x][:3], hot, 0.25 + 0.6 * p)) + (255,)
         for x, y, phase in grains:
             if shade[y][x] is None:
                 continue
