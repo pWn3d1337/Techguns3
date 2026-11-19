@@ -4,7 +4,7 @@ Tracks every Techguns content entry through the port. Status values:
 `—` not started · `logic` · `rendered` · `tested` · `done`.
 Sources: **F** = Fabric 1.19.4 port, **12** = Techguns 2 (1.12.2).
 
-### Standalone tech (design doc §4.8, branch `full_tech`)
+### Standalone tech (design doc §4.8, branch `full_tech`; plan and handoff in [full_tech_plan.md](full_tech_plan.md))
 
 | Unit | Logic | Assets | Verification |
 |---|---|---|---|
